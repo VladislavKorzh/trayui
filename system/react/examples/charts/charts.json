@@ -1,0 +1,360 @@
+{
+  "groups": [
+    {
+      "id": "area",
+      "nav": "Area",
+      "title": "Area charts",
+      "summary": "A volume over time: a 2px line over a quiet fill. One series is ink; several take the data colours and a key.",
+      "charts": [
+        {
+          "id": "area-interactive",
+          "title": "Interactive",
+          "note": "A period switch in the head of the card.",
+          "wide": true
+        },
+        {
+          "id": "area-default",
+          "title": "Default",
+          "note": "One series, straight segments."
+        },
+        {
+          "id": "area-smooth",
+          "title": "Smooth",
+          "note": "A curve through the points."
+        },
+        {
+          "id": "area-step",
+          "title": "Step",
+          "note": "For a value that holds until it changes."
+        },
+        {
+          "id": "area-axes",
+          "title": "Value axis",
+          "note": "With amounts along the side."
+        },
+        {
+          "id": "area-peak",
+          "title": "Peak labelled",
+          "note": "The extreme named in the plot."
+        },
+        {
+          "id": "area-stacked",
+          "title": "Stacked",
+          "note": "Parts of a whole over time."
+        },
+        {
+          "id": "area-percent",
+          "title": "Stacked to 100%",
+          "note": "Shares instead of amounts."
+        },
+        {
+          "id": "area-inverse",
+          "title": "On an ink card",
+          "note": "A single series turns yellow."
+        }
+      ]
+    },
+    {
+      "id": "bar",
+      "nav": "Bar",
+      "title": "Bar charts",
+      "summary": "Separate periods, rankings and parts of a whole: bars 24px wide at most, with 4px corners at the end that carries the value.",
+      "charts": [
+        {
+          "id": "bar-interactive",
+          "title": "Interactive",
+          "note": "A channel switch in the head of the card.",
+          "wide": true
+        },
+        {
+          "id": "bar-default",
+          "title": "Default",
+          "note": "One series."
+        },
+        {
+          "id": "bar-peak",
+          "title": "Peak labelled",
+          "note": "A value axis, and the extreme named."
+        },
+        {
+          "id": "bar-horizontal",
+          "title": "Ranking",
+          "note": "Horizontal bars, sorted, every value written."
+        },
+        {
+          "id": "bar-multiple",
+          "title": "Two series",
+          "note": "Side by side, 2px apart."
+        },
+        {
+          "id": "bar-stacked",
+          "title": "Stacked",
+          "note": "Parts of a whole, set apart by a gap."
+        },
+        {
+          "id": "bar-negative",
+          "title": "Negative values",
+          "note": "Bars grow from zero in both directions."
+        },
+        {
+          "id": "bar-active",
+          "title": "One bar picked out",
+          "note": "The subject in ink, the rest as context."
+        },
+        {
+          "id": "bar-target",
+          "title": "With a plan line",
+          "note": "A dashed reference line."
+        }
+      ]
+    },
+    {
+      "id": "line",
+      "nav": "Line",
+      "title": "Line charts",
+      "summary": "A trend: 2px lines, no dots unless each reading matters. Never a second value axis.",
+      "charts": [
+        {
+          "id": "line-default",
+          "title": "Default",
+          "note": "One series, straight segments."
+        },
+        {
+          "id": "line-smooth",
+          "title": "Smooth",
+          "note": "A curve through the points."
+        },
+        {
+          "id": "line-step",
+          "title": "Step",
+          "note": "For a count that holds until it changes."
+        },
+        {
+          "id": "line-multiple",
+          "title": "Two series",
+          "note": "The first two data colours and a key."
+        },
+        {
+          "id": "line-dots",
+          "title": "Dots",
+          "note": "A dot on each reading."
+        },
+        {
+          "id": "line-peak",
+          "title": "Peak labelled",
+          "note": "The extreme named in the plot."
+        },
+        {
+          "id": "line-dashed",
+          "title": "Dashed comparison",
+          "note": "The subject in ink, last season dashed in grey."
+        },
+        {
+          "id": "line-axes",
+          "title": "Value axis",
+          "note": "With amounts along the side."
+        }
+      ]
+    },
+    {
+      "id": "pie",
+      "nav": "Pie",
+      "title": "Pie charts",
+      "summary": "Parts of a whole at one moment, five at most, clockwise from the top and set apart by a gap.",
+      "charts": [
+        {
+          "id": "pie-default",
+          "title": "Pie",
+          "note": "Whole slices and a key."
+        },
+        {
+          "id": "pie-donut",
+          "title": "Donut",
+          "note": "A thin ring with the total in the middle."
+        },
+        {
+          "id": "pie-labels",
+          "title": "Labelled",
+          "note": "A value beside each part."
+        },
+        {
+          "id": "pie-active",
+          "title": "Active part",
+          "note": "The middle names the part under the pointer."
+        },
+        {
+          "id": "pie-half",
+          "title": "Half ring",
+          "note": "One share of a whole."
+        }
+      ]
+    },
+    {
+      "id": "radar",
+      "nav": "Radar",
+      "title": "Radar charts",
+      "summary": "Several measures of one thing, on a hairline web. Two series at most.",
+      "charts": [
+        {
+          "id": "radar-default",
+          "title": "Default",
+          "note": "One series, in ink."
+        },
+        {
+          "id": "radar-dots",
+          "title": "Dots",
+          "note": "A dot on each score."
+        },
+        {
+          "id": "radar-multiple",
+          "title": "Two series",
+          "note": "Two shapes and a key."
+        },
+        {
+          "id": "radar-lines",
+          "title": "Outlines",
+          "note": "No fill, where shapes cover each other."
+        },
+        {
+          "id": "radar-circle",
+          "title": "Round grid",
+          "note": "Rings instead of a web."
+        }
+      ]
+    },
+    {
+      "id": "radial",
+      "nav": "Radial",
+      "title": "Radial charts",
+      "summary": "A single share or score as a ring on a track, with its figure in the middle.",
+      "charts": [
+        {
+          "id": "radial-default",
+          "title": "Default",
+          "note": "One share and its figure."
+        },
+        {
+          "id": "radial-accent",
+          "title": "On the yellow card",
+          "note": "The ring stays ink."
+        },
+        {
+          "id": "radial-rings",
+          "title": "Rings",
+          "note": "A ring for each of a few things."
+        },
+        {
+          "id": "radial-half",
+          "title": "Gauge",
+          "note": "Half a ring from empty to full."
+        },
+        {
+          "id": "radial-stacked",
+          "title": "Stacked",
+          "note": "Two parts of one total."
+        }
+      ]
+    },
+    {
+      "id": "tooltip",
+      "nav": "Tooltip",
+      "title": "Tooltips",
+      "summary": "What the tooltip can say. Each is shown open; point at another bar to move it.",
+      "charts": [
+        {
+          "id": "tooltip-default",
+          "title": "Default",
+          "note": "The category, then each series with its swatch."
+        },
+        {
+          "id": "tooltip-line",
+          "title": "Line mark",
+          "note": "A line instead of a swatch."
+        },
+        {
+          "id": "tooltip-none",
+          "title": "No mark",
+          "note": "Names and values alone."
+        },
+        {
+          "id": "tooltip-nolabel",
+          "title": "No first line",
+          "note": "Without the category."
+        },
+        {
+          "id": "tooltip-label",
+          "title": "Own first line",
+          "note": "The category written by a formatter."
+        },
+        {
+          "id": "tooltip-unit",
+          "title": "Unit",
+          "note": "A unit after every value."
+        },
+        {
+          "id": "tooltip-format",
+          "title": "Formatter",
+          "note": "Each value written by hand."
+        },
+        {
+          "id": "tooltip-total",
+          "title": "Total",
+          "note": "A last row sums the series."
+        },
+        {
+          "id": "tooltip-cursor",
+          "title": "No highlight",
+          "note": "Without the column highlight."
+        }
+      ]
+    },
+    {
+      "id": "ready",
+      "nav": "The Chart component",
+      "title": "The Chart component",
+      "summary": "One component for the six usual forms: give it labels and series, and it composes the chart, its key and its table of figures.",
+      "charts": [
+        {
+          "id": "ready-bar",
+          "title": "Bars",
+          "note": "type=\"bar\", with the peak labelled."
+        },
+        {
+          "id": "ready-area",
+          "title": "Area on ink",
+          "note": "type=\"area\" in an ink card."
+        },
+        {
+          "id": "ready-line",
+          "title": "Two lines",
+          "note": "type=\"line\" with two series."
+        },
+        {
+          "id": "ready-stacked",
+          "title": "Stacked bars",
+          "note": "type=\"bar\" stacked."
+        },
+        {
+          "id": "ready-donut",
+          "title": "Donut and its key",
+          "note": "type=\"donut\" side: the key sits beside the ring when the card has room."
+        },
+        {
+          "id": "ready-radial",
+          "title": "Radial",
+          "note": "type=\"radial\"."
+        },
+        {
+          "id": "ready-ranking",
+          "title": "Ranking",
+          "note": "type=\"bar\" horizontal."
+        },
+        {
+          "id": "ready-radar",
+          "title": "Radar",
+          "note": "type=\"radar\" with two series."
+        }
+      ]
+    }
+  ]
+}

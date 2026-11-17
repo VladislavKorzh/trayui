@@ -1,0 +1,21 @@
+<!-- @dsCard group="App shell" height=638 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>NotificationCenter — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--start" style="justify-content: flex-end; padding-inline-end: var(--space-6)">
+<span class="tray-anchor" data-tray="popover"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip" data-notices-count></span><div class="tray-pop tray-pop--end tray-notices" data-tray="notices" data-open>
+<div class="tray-notices__head"><h2>Notifications</h2><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button" data-notices="read-all">Mark all as read</button></div>
+<div class="tray-notices__bar"><div class="tray-seg tray-seg--sm" role="radiogroup" aria-label="Show"><label class="tray-seg__item"><input type="radio" name="notices-view" value="all" checked><span>All</span></label><label class="tray-seg__item"><input type="radio" name="notices-view" value="unread"><span>Unread</span></label></div></div>
+<ul class="tray-notices__list">
+<li><a class="tray-notice" href="#" data-unread><span class="tray-avatar tray-avatar--sm" aria-hidden="true">DK</span><span class="tray-notice__body"><span><b>Dana Kovalenko</b> placed order PL-20431, two jars of 50 g.</span><span class="tray-notice__meta">4 minutes ago</span></span><span class="tray-notice__mark"><span class="tray-vh">Unread</span></span></a></li>
+<li><a class="tray-notice" href="#" data-unread><span class="tray-avatar tray-avatar--sm" aria-hidden="true"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg></span><span class="tray-notice__body"><span><b>The courier</b> could not reach the address for PL-20418.</span><span class="tray-notice__meta">32 minutes ago</span></span><span class="tray-notice__mark"><span class="tray-vh">Unread</span></span></a></li>
+<li><a class="tray-notice" href="#"><span class="tray-avatar tray-avatar--sm" aria-hidden="true"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg></span><span class="tray-notice__body"><span><b>Invoice CN-0042</b> was paid, $29.00.</span><span class="tray-notice__meta">Yesterday, 09:12</span></span><span class="tray-notice__mark"></span></a></li>
+<li><a class="tray-notice" href="#"><span class="tray-avatar tray-avatar--sm" aria-hidden="true">BS</span><span class="tray-notice__body"><span><b>Bohdan Savchuk</b> joined the workspace as a packer.</span><span class="tray-notice__meta">12 November</span></span><span class="tray-notice__mark"></span></a></li>
+</ul>
+<p class="tray-list__empty" data-notices="empty" hidden>Nothing unread.</p>
+<div class="tray-notices__foot"><a class="tray-btn tray-btn--link" href="#">Notification settings</a></div>
+</div></span>
+</div>
+</body>
+</html>

@@ -1,0 +1,51 @@
+name: Bug report
+description: Something in a component, a block, the script or the React package does not work or look as it should.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens
+      description: What you saw, and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to see it
+      description: The smallest markup or React code that shows it, and the steps to take.
+      render: html
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Component or block
+      placeholder: Dialog, Select, sidebar-03…
+  - type: dropdown
+    id: flavour
+    attributes:
+      label: Used as
+      options:
+        - Plain HTML and CSS
+        - trayui-react
+        - Both
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and system
+      placeholder: Safari 26 on macOS, Chrome 142 on Android…
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Tray UI version
+      placeholder: 0.1.0
+  - type: textarea
+    id: more
+    attributes:
+      label: Anything else
+      description: Theme, window width, screen reader, reduced motion, a screenshot.

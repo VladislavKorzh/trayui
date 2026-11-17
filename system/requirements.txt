@@ -1,0 +1,3 @@
+# The build, the site and the checks (system/tools). The browser checks also need Google Chrome: python3 -m playwright install chrome
+playwright>=1.48
+Pillow>=10

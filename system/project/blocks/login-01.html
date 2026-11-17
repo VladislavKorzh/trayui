@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign-in form</title>
+<meta name="description" content="A simple sign-in form in a card, centred on the page.">
+<meta name="tray-category" content="Login">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-screen">
+  <main class="tray-screen__body tray-screen__body--center">
+    <form class="tray-card tray-auth" action="/signin" method="post">
+      <a class="tray-wordmark" href="/">Counter</a>
+      <div class="tray-auth__head">
+        <h1 class="title">Sign in</h1>
+        <p>Welcome back to Perly Farm.</p>
+      </div>
+      <div class="tray-stack">
+        <div class="tray-field">
+          <label class="tray-label" for="email">Email</label>
+          <input class="tray-input" id="email" name="email" type="email" autocomplete="username" placeholder="you@farm.example" required>
+        </div>
+        <div class="tray-field">
+          <div class="tray-auth__row"><label class="tray-label" for="password">Password</label><a href="/reset">Forgot it?</a></div>
+          <div class="tray-input-group">
+            <input class="tray-input" id="password" name="password" type="password" autocomplete="current-password" required>
+            <button class="tray-input-group__btn" type="button" data-tray="reveal" aria-label="Show password"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <button class="tray-btn tray-btn--block" type="submit">Sign in</button>
+      <div class="tray-stack tray-stack--sm">
+        <p class="tray-rule tray-rule--label">or continue with</p>
+        <div class="tray-providers" role="group" aria-label="Sign in with another account">
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/google" aria-label="Continue with Google">Google</a>
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/apple" aria-label="Continue with Apple">Apple</a>
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/facebook" aria-label="Continue with Facebook">Facebook</a>
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/telegram" aria-label="Continue with Telegram">Telegram</a>
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/linkedin" aria-label="Continue with LinkedIn">LinkedIn</a>
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/microsoft" aria-label="Continue with Microsoft">Microsoft</a>
+        </div>
+      </div>
+      <p class="tray-auth__foot">New here? <a href="/signup">Create an account</a></p>
+    </form>
+  </main>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+name: Component or block request
+description: A component, a variant or a block the system does not have yet.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What you need it for
+      description: The screen or the task, and why the components there are not enough.
+    validations:
+      required: true
+  - type: textarea
+    id: shape
+    attributes:
+      label: What it would be
+      description: How it looks and behaves. Links to the same thing in other systems help.
+  - type: textarea
+    id: tried
+    attributes:
+      label: What you tried
+      description: The nearest component or block, and where it falls short.

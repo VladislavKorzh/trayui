@@ -1,0 +1,29 @@
+<!-- @dsCard group="Forms" height=669 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>DatePicker — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--start">
+<div class="tray-field" style="inline-size: 19rem">
+<span class="tray-label" id="d2">Report period</span>
+<div class="tray-anchor tray-anchor--block" data-tray="datepicker">
+<button class="tray-select-trigger" type="button" aria-labelledby="d2"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-calendar"/></svg><span class="tray-select-trigger__value">Pick a period</span></button>
+<div class="tray-pop tray-pop--roomy" data-open>
+<div class="tray-datepicker__presets"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" data-preset="7">Last 7 days</button><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" data-preset="30">Last 30 days</button><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" data-preset="90">Last 90 days</button></div>
+<div data-tray="calendar" data-mode="range" data-months="2" data-today="2026-11-15" data-month="2026-10" data-value="2026-10-26/2026-11-08" data-max="2026-11-15"></div>
+<div class="tray-pop__foot"><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button" data-clear>Clear</button><button class="tray-btn tray-btn--dark tray-btn--xs" type="button" data-apply>Apply</button></div>
+</div>
+<input type="hidden" name="period">
+</div>
+</div>
+<div class="tray-field" style="inline-size: 17rem">
+<span class="tray-label" id="d1">Delivery day</span>
+<div class="tray-anchor tray-anchor--block" data-tray="datepicker">
+<button class="tray-select-trigger" type="button" data-placeholder aria-labelledby="d1"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-calendar"/></svg><span class="tray-select-trigger__value">Pick a day</span></button>
+<div class="tray-pop tray-pop--roomy"><div data-tray="calendar" data-today="2026-11-15" data-min="2026-11-15"></div></div>
+<input type="hidden" name="day">
+</div>
+</div>
+</div>
+</body>
+</html>

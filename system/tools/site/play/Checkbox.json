@@ -1,0 +1,11 @@
+{
+  "lead": "One checkbox: on or off, a consent not given yet, and a second line under its label.",
+  "controls": [
+    { "name": "checked", "label": "Checked", "type": "switch" },
+    { "name": "invalid", "label": "Invalid", "type": "switch" },
+    { "name": "disabled", "label": "Disabled", "type": "switch" },
+    { "name": "label", "label": "Label", "type": "text", "default": "I agree to the terms of the order", "max": 60 },
+    { "name": "detail", "label": "Second line", "type": "text", "default": "Unopened jars can be returned within 14 days.", "max": 90 }
+  ],
+  "template": "<label class=\"tray-check\"><input type=\"checkbox\"{{#checked}} checked{{/checked}}{{#invalid}} aria-invalid=\"true\" aria-describedby=\"pg-terms-error\"{{/invalid}}{{#disabled}} disabled{{/disabled}}><span class=\"tray-check__box\"><svg viewBox=\"0 0 20 20\" aria-hidden=\"true\"><path class=\"tray-check__tick\" d=\"M4 10.5l4 4 8-9\"/><path class=\"tray-check__dash\" d=\"M5 10h10\"/></svg></span>{{#invalid}}<span class=\"tray-check__text\">{{label}}<small class=\"tray-danger\" id=\"pg-terms-error\">Agree to the terms to place the order.</small></span>{{/invalid}}{{^invalid}}{{#detail}}<span class=\"tray-check__text\">{{label}}<small>{{detail}}</small></span>{{/detail}}{{^detail}}<span>{{label}}</span>{{/detail}}{{/invalid}}</label>"
+}

@@ -1,0 +1,60 @@
+/* ---------- Shared: a floating panel under its trigger, and the list of options inside it ---------- */
+
+.tray-anchor { position: relative; display: inline-block; }
+.tray-anchor--block { display: block; }
+.tray-pop {
+  --tray-ground: var(--raised); --tray-fill: var(--surface); --tray-ground-up: var(--raised); --tray-fill-up: var(--surface); --tray-off: var(--ink-hint);
+  position: absolute;
+  inset-block-start: calc(100% + var(--space-2));
+  inset-inline-start: 0;
+  z-index: var(--z-float);
+  inline-size: max-content;
+  min-inline-size: max(100%, 12rem);
+  max-inline-size: calc(100vw - 2rem);
+  padding: 6px;
+  border-radius: var(--radius-button);
+  background: var(--raised);
+  color: var(--ink);
+  box-shadow: var(--shadow-float);
+}
+.tray-pop--end { inset-inline-start: auto; inset-inline-end: 0; }
+.tray-pop--top { inset-block-start: auto; inset-block-end: calc(100% + var(--space-2)); }
+.tray-pop--side { inset-block-start: -6px; inset-inline-start: calc(100% + var(--space-2)); }
+.tray-pop--roomy { padding: var(--space-5); border-radius: var(--radius-panel); }
+.tray-pop__foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-block-start: var(--space-4); padding-block-start: var(--space-4); border-block-start: 1px solid var(--hairline); }
+
+.tray-list { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.tray-list__label { padding: var(--space-2) var(--space-3) var(--space-1); color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
+.tray-list__rule { block-size: 1px; margin: 6px var(--space-3); border: 0; background: var(--hairline); }
+.tray-list__empty { padding: var(--space-5) var(--space-3); color: var(--ink-muted); font: 400 1rem/1.4 var(--font-sans); text-align: center; }
+.tray-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  inline-size: 100%;
+  min-block-size: var(--size-hit);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--ink);
+  font: 500 1rem/1.3 var(--font-sans);
+  text-align: start;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.tray-option:hover, .tray-option[data-active] { background: var(--tray-fill); }
+.tray-option:focus-visible { outline: 3px solid var(--ink); outline-offset: -3px; }
+.tray-option[aria-disabled="true"], .tray-option:disabled { opacity: var(--opacity-disabled); cursor: not-allowed; background: none; }
+.tray-option__text { flex: 1; min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; }
+.tray-option__meta { margin-inline-start: auto; padding-inline-start: var(--space-4); color: var(--ink-muted); font: 400 .875rem/1 var(--font-sans); }
+.tray-option__check { margin-inline-start: auto; visibility: hidden; }
+.tray-option[aria-selected="true"], .tray-option[aria-checked="true"] { font-weight: 600; }
+.tray-option[aria-selected="true"] .tray-option__check, .tray-option[aria-checked="true"] .tray-option__check { visibility: visible; }
+/* A menu of links marks the page you are on, the way the second level of a sidebar does. */
+.tray-option[aria-current] { background: var(--tray-fill); font-weight: 600; }
+.tray-option--danger { color: var(--danger); }
+.tray-option--two { align-items: flex-start; min-block-size: 0; padding-block: var(--space-3); white-space: normal; }
+.tray-option--two b { display: block; font-weight: 600; }
+.tray-option--two small { display: block; margin-block-start: 2px; color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }

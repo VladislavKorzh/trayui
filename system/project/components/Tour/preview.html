@@ -1,0 +1,21 @@
+<!-- @dsCard group="Onboarding" height=464 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Tour — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--col">
+<div class="tray-tour-area" data-tray="tour" style="min-block-size: 26rem">
+<div class="tray-pagehead"><div class="tray-pagehead__row"><div class="tray-pagehead__text"><h2 class="title">Orders</h2></div><div class="tray-pagehead__actions"><button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" id="tr-export"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-download"/></svg>Export</button><button class="tray-btn tray-btn--sm" type="button" id="tr-new"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg>New order</button></div></div>
+<div class="tray-row tray-row--sm"><div class="tray-tabs" id="tr-tabs"><a class="tray-tab" href="#" aria-current="page">To pack<span class="tray-badge tray-badge--count">12</span></a><a class="tray-tab" href="#">With the courier</a><a class="tray-tab" href="#">Delivered</a></div></div></div>
+<div class="tray-table-wrap" style="margin-block-start: var(--space-5)"><table class="tray-table"><thead><tr><th scope="col">Order</th><th scope="col">Customer</th><th scope="col" data-num>Total</th></tr></thead><tbody>
+<tr><th scope="row">PL-20431</th><td>Dana Kovalenko</td><td data-num>$118.00</td></tr>
+<tr><th scope="row">PL-20430</th><td>Marta Hrytsenko</td><td data-num>$59.00</td></tr>
+<tr><th scope="row">PL-20429</th><td>Taras Shevchuk</td><td data-num>$236.00</td></tr>
+</tbody></table></div>
+<div class="tray-tour tray-raised" role="dialog" aria-labelledby="tr-1" data-for="#tr-tabs"><p class="tray-tour__count"></p><h2 class="nav" id="tr-1" style="font-weight: 600; font-size: 1.0625rem">Orders move left to right</h2><p class="tray-pop__text">Everything new lands in &ldquo;To pack&rdquo;. Marking it packed sends it on.</p><div class="tray-tour__foot"><button class="tray-btn tray-btn--link" type="button" data-tour="skip">Skip the tour</button><button class="tray-btn tray-btn--dark tray-btn--xs" type="button" data-tour="next">Next</button></div></div>
+<div class="tray-tour tray-raised" role="dialog" aria-labelledby="tr-2" data-for="#tr-export" hidden><p class="tray-tour__count"></p><h2 class="nav" id="tr-2" style="font-weight: 600; font-size: 1.0625rem">Take the list with you</h2><p class="tray-pop__text">Export what you see as a spreadsheet, filters included.</p><div class="tray-tour__foot"><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button" data-tour="back">Back</button><button class="tray-btn tray-btn--dark tray-btn--xs" type="button" data-tour="next">Next</button></div></div>
+<div class="tray-tour tray-raised" role="dialog" aria-labelledby="tr-3" data-for="#tr-new" hidden><p class="tray-tour__count"></p><h2 class="nav" id="tr-3" style="font-weight: 600; font-size: 1.0625rem">Orders by phone go here</h2><p class="tray-pop__text">Add an order yourself when a customer calls the farm.</p><div class="tray-tour__foot"><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button" data-tour="back">Back</button><button class="tray-btn tray-btn--dark tray-btn--xs" type="button" data-tour="next">Done</button></div></div>
+</div>
+</div>
+</body>
+</html>

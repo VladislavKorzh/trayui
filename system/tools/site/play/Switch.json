@@ -1,0 +1,11 @@
+{
+  "lead": "A setting that applies the moment it moves: beside its label, or as a full row with a line of detail.",
+  "controls": [
+    { "name": "form", "label": "Form", "options": [["", "Inline"], ["row", "Row"]] },
+    { "name": "on", "label": "On", "type": "switch" },
+    { "name": "disabled", "label": "Disabled", "type": "switch" },
+    { "name": "label", "label": "Label", "type": "text", "default": "Gift box", "max": 40 },
+    { "name": "detail", "label": "Detail, in a row", "type": "text", "default": "A card box with a note from you, $12", "max": 80 }
+  ],
+  "template": "{{^form=row}}<label class=\"tray-switch\"><input type=\"checkbox\" role=\"switch\"{{#on}} checked{{/on}}{{#disabled}} disabled{{/disabled}}><span class=\"tray-switch__track\"></span><span>{{label}}</span></label>{{/form=row}}{{#form=row}}<div><label class=\"tray-switch tray-switch--row\">{{#detail}}<span class=\"tray-switch__text\"><b>{{label}}</b><small>{{detail}}</small></span>{{/detail}}{{^detail}}<span>{{label}}</span>{{/detail}}<input type=\"checkbox\" role=\"switch\"{{#on}} checked{{/on}}{{#disabled}} disabled{{/disabled}}><span class=\"tray-switch__track\"></span></label></div>{{/form=row}}"
+}

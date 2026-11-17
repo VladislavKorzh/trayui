@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign-up card with a picture</title>
+<meta name="description" content="A sign-up card with the form beside a picture.">
+<meta name="tray-category" content="Signup">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-screen">
+  <main class="tray-screen__body tray-screen__body--center">
+    <div class="tray-card tray-auth-wide">
+      <div class="tray-auth-wide__form">
+        <form class="tray-auth" action="/signup" method="post">
+          <div class="tray-auth__head">
+            <h1 class="title">Sign up for Counter</h1>
+            <p>Already have one? <a href="/signin">Sign in</a></p>
+          </div>
+          <div class="tray-stack">
+            <div class="tray-field">
+              <label class="tray-label" for="email">Work email</label>
+              <input class="tray-input" id="email" name="email" type="email" autocomplete="username" placeholder="you@farm.example" required>
+            </div>
+            <div class="tray-field">
+              <label class="tray-label" for="password">Password</label>
+              <div class="tray-input-group">
+                <input class="tray-input" id="password" name="password" type="password" autocomplete="new-password" minlength="12" aria-describedby="password-hint" required>
+                <button class="tray-input-group__btn" type="button" data-tray="reveal" aria-label="Show password"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></button>
+              </div>
+              <p class="tray-field__hint" id="password-hint">At least 12 characters.</p>
+            </div>
+          </div>
+          <button class="tray-btn tray-btn--block" type="submit">Create the account</button>
+          <div class="tray-stack tray-stack--sm">
+            <p class="tray-rule tray-rule--label">or continue with</p>
+            <div class="tray-providers" role="group" aria-label="Sign up with another account">
+              <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/google" aria-label="Continue with Google">Google</a>
+              <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/apple" aria-label="Continue with Apple">Apple</a>
+              <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/facebook" aria-label="Continue with Facebook">Facebook</a>
+              <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/telegram" aria-label="Continue with Telegram">Telegram</a>
+              <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/linkedin" aria-label="Continue with LinkedIn">LinkedIn</a>
+              <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/microsoft" aria-label="Continue with Microsoft">Microsoft</a>
+            </div>
+          </div>
+          <p class="tray-auth__foot">By signing up you accept the <a href="/terms">terms</a>.</p>
+        </form>
+      </div>
+      <aside class="tray-auth-wide__media tray-island" aria-label="The first day with Counter">
+        <h2 class="title">Three steps to the first packed order</h2>
+        <ol class="tray-items">
+          <li class="tray-item">
+            <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-tag"/></svg></span>
+            <span class="tray-item__body">
+              <span class="tray-item__title">Add your products</span>
+              <span class="tray-item__text">Jars, sizes and prices.</span>
+            </span>
+          </li>
+          <li class="tray-item">
+            <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-link"/></svg></span>
+            <span class="tray-item__body">
+              <span class="tray-item__title">Share the order page</span>
+              <span class="tray-item__text">Customers order by themselves.</span>
+            </span>
+          </li>
+          <li class="tray-item">
+            <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg></span>
+            <span class="tray-item__body">
+              <span class="tray-item__title">Pack the first order</span>
+              <span class="tray-item__text">The label prints and the courier is told.</span>
+            </span>
+          </li>
+        </ol>
+      </aside>
+    </div>
+  </main>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

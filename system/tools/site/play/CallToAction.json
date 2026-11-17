@@ -1,0 +1,13 @@
+{
+  "lead": "The card that closes a page: the offer in a headline and the button that takes it, or a field for an email instead. It is the one yellow card of its screen.",
+  "width": "36rem",
+  "grounds": false,
+  "controls": [
+    {"name": "card", "label": "Card", "options": [[" tray-card--accent", "Yellow"], ["", "Tray"]]},
+    {"name": "action", "label": "Action", "options": [["buttons", "Buttons"], ["email", "Email"]]},
+    {"name": "second", "label": "Second button", "type": "switch", "default": true},
+    {"name": "headline", "label": "Headline", "type": "text", "default": "Pack tomorrow’s orders with Counter", "max": 60},
+    {"name": "text", "label": "Sentence", "type": "text", "default": "Free for 14 days. Your products and customers stay yours.", "max": 100}
+  ],
+  "template": "<section class=\"tray-card{{card}} tray-cta\"><div class=\"tray-cta__text\">{{#headline}}<h2 class=\"headline\">{{headline}}</h2>{{/headline}}{{#text}}<p>{{text}}</p>{{/text}}</div>{{#action=buttons}}<div class=\"tray-cta__actions\"><a class=\"tray-btn{{#card= tray-card--accent}} tray-btn--dark{{/card= tray-card--accent}}\" href=\"/signup\">Start free</a>{{#second}}<a class=\"tray-btn tray-btn--quiet\" href=\"/contact\">Talk to us</a>{{/second}}</div>{{/action=buttons}}{{#action=email}}<form class=\"tray-input-group\" style=\"flex: 1 1 20rem; max-inline-size: 26rem\"><input class=\"tray-input\" type=\"email\" placeholder=\"you@farm.example\" aria-label=\"Email\" autocomplete=\"email\"><button class=\"tray-input-group__btn tray-input-group__btn--accent\" type=\"submit\">Start free</button></form>{{/action=email}}</section>"
+}

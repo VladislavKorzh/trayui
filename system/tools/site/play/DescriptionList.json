@@ -1,0 +1,10 @@
+{
+  "lead": "The facts about one order as pairs: ruled rows or plain ones, the term beside its value or over it, and a value that carries a copy button.",
+  "controls": [
+    {"name": "rows", "label": "Rows", "options": [["", "Ruled"], [" tray-dl--plain", "Plain"]]},
+    {"name": "stack", "label": "Term over value", "type": "switch"},
+    {"name": "copy", "label": "Copy button", "type": "switch", "default": true},
+    {"name": "customer", "label": "Customer", "type": "text", "default": "Dana Kovalenko", "max": 40}
+  ],
+  "template": "<dl class=\"tray-dl{{rows}}{{#stack}} tray-dl--stack{{/stack}}\"><div><dt>Customer</dt><dd><a href=\"/customers/2041\">{{customer}}</a></dd></div><div><dt>Status</dt><dd><span class=\"tray-badge\">To pack</span></dd></div><div><dt>Delivery</dt><dd>Courier, chilled box, 16 November</dd></div><div><dt>Tracking number</dt><dd><span{{#copy}} id=\"pg-track\"{{/copy}} class=\"tray-num\">PL20431UA</span>{{#copy}}<button class=\"tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon\" type=\"button\" data-tray=\"copy\" data-target=\"#pg-track\" aria-label=\"Copy the tracking number\"><svg class=\"tray-icon\" aria-hidden=\"true\"><use href=\"#tray-i-copy\"/></svg></button>{{/copy}}</dd></div><div><dt>Gift note</dt><dd>None</dd></div><div><dt>Total</dt><dd class=\"tray-num\">$118.00</dd></div></dl>"
+}

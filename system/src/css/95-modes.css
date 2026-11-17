@@ -1,0 +1,146 @@
+/* ---------- Modes: the page for someone who asks for more contrast, forces their own colours, or prints ----------
+   The system draws most things as fills with no edge: a tray on the page, an ink fill for what is chosen. Each mode
+   below keeps that readable when the fills are weak, are taken away, or do not print.
+   More contrast also moves each grey one step towards the ink: tokens.css does that, theme by theme. Print takes the
+   light values of every token: tokens.css does that too. */
+
+/* ---------- More contrast (prefers-contrast: more): every fill gets an edge ---------- */
+
+@media (prefers-contrast: more) {
+  .tray-input, .tray-textarea, .tray-select select, .tray-select-trigger, .tray-input-group, .tray-otp input, .tray-tags, .tray-composer, .tray-topbar__search,
+  .tray-btn--quiet, .tray-btn-group, .tray-seg, .tray-tabs, .tray-toggle, .tray-nav__links, .tray-menubar, .tray-page--step, .tray-switcher, .tray-scale span,
+  .tray-card, .tray-panel, .tray-stat, .tray-integration, .tray-item, .tray-choice, .tray-switch--row, .tray-alert, .tray-banner, .tray-bubble, .tray-attachment,
+  .tray-code, .tray-secret, .tray-badge, .tray-chip, .tray-kbd, .tray-avatar, .tray-tile, .tray-sidebar, .tray-context, .tray-step__mark {
+    box-shadow: inset 0 0 0 1px var(--hairline);
+  }
+  .tray-input-group .tray-input, .tray-tags input, .tray-composer textarea, .tray-bubble--plain { box-shadow: none; }
+  /* The accent is bright but light: on a pale page its edge is drawn in its own ink. */
+  .tray-btn:not(.tray-btn--quiet, .tray-btn--ghost, .tray-btn--link, .tray-btn--dark, .tray-btn--danger), .tray-card--accent, .tray-island, .tray-badge--accent { box-shadow: inset 0 0 0 1px var(--on-accent); }
+  .tray-pop, .tray-dialog, .tray-sheet, .tray-drawer, .tray-toast, .tray-command, .tray-raised { box-shadow: var(--shadow-float), 0 0 0 1px var(--hairline); }
+  .tray-check__box, .tray-radio__ring { border-width: 2px; }
+  .tray-switch__track { box-shadow: inset 0 0 0 1px var(--ink); }
+}
+
+/* ---------- Forced colours (Windows high contrast and the like) ----------
+   The browser replaces every colour with the few the person chose, and takes fills and shadows away. So whatever was a
+   fill gets an edge, and what is chosen is drawn in the system's own colours for a chosen item (SelectedItem), with
+   forced-color-adjust: none so the browser leaves them as they are. Marks of a chart keep the colours of their series. */
+
+@media (forced-colors: active) {
+  /* controls and fields: an edge where there was a fill */
+  .tray-btn:not(.tray-btn--ghost, .tray-btn--link), .tray-btn-group, .tray-toggle, .tray-seg, .tray-tabs, .tray-nav__links, .tray-menubar, .tray-page--step,
+  .tray-input-group__btn, .tray-switcher, .tray-reaction, .tray-scale span, .tray-chip { border: 1px solid ButtonText; }
+  .tray-input, .tray-textarea, .tray-select select, .tray-select-trigger, .tray-input-group, .tray-otp input, .tray-tags, .tray-composer, .tray-topbar__search, .tray-secret { border: 1px solid FieldText; }
+  .tray-input-group .tray-input, .tray-tags input, .tray-composer textarea { border: 0; }
+  .tray-btn:disabled, .tray-btn[aria-disabled="true"], .tray-toggle:disabled, .tray-tab:disabled, .tray-page:disabled, .tray-page[aria-disabled="true"] { border-color: GrayText; color: GrayText; opacity: 1; }
+  /* surfaces: trays, panels and what floats above the page */
+  .tray-card, .tray-panel, .tray-stat, .tray-integration, .tray-item, .tray-choice, .tray-switch--row, .tray-alert, .tray-banner, .tray-bubble, .tray-attachment,
+  .tray-code, .tray-badge, .tray-kbd, .tray-avatar, .tray-tile, .tray-step__mark, .tray-context, .tray-sidebar, .tray-empty__icon, .tray-feed__mark, .tray-trace__icon,
+  .tray-pop, .tray-dialog, .tray-sheet, .tray-drawer, .tray-toast, .tray-command, .tray-tooltip, .tray-tip { border: 1px solid CanvasText; }
+  .tray-bubble--plain { border: 0; }
+  .tray-dialog::backdrop, .tray-sheet::backdrop, .tray-drawer::backdrop { background: rgb(0 0 0 / .6); }
+
+  /* what is chosen: the tab, the segment, the pressed toggle, the page you are on, the day picked */
+  .tray-toggle[aria-pressed="true"], .tray-seg__item input:checked + span, .tray-tab[aria-selected="true"], .tray-tab[aria-current], .tray-page[aria-current="page"],
+  .tray-sidebar__item[aria-current], .tray-cal__day[aria-pressed="true"] .tray-cal__num, .tray-scale input:checked + span, .tray-reaction[aria-pressed="true"],
+  .tray-stepper > li[aria-current] .tray-step__mark, .tray-task[data-done] .tray-task__mark, .tray-bubble--own {
+    forced-color-adjust: none; border-color: SelectedItem; background: SelectedItem; color: SelectedItemText;
+  }
+  .tray-tab[aria-selected="true"] .tray-badge, .tray-tab[aria-current] .tray-badge, .tray-sidebar__item[aria-current] .tray-badge { border-color: SelectedItemText; background: SelectedItemText; color: SelectedItem; }
+  .tray-tab[aria-selected="true"]:focus-visible, .tray-tab[aria-current]:focus-visible, .tray-sidebar__item[aria-current]:focus-visible,
+  .tray-cal__day[aria-pressed="true"]:focus-visible .tray-cal__num { outline-color: SelectedItemText; }
+  .tray-seg__item input:focus-visible + span { outline-color: CanvasText; }
+  /* the option under the keyboard or the pointer in a list, and the link to the page you are on in a menu */
+  .tray-option:hover, .tray-option[data-active] { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+  .tray-option:hover *, .tray-option[data-active] * { color: HighlightText; }
+  .tray-option:hover .tray-kbd, .tray-option[data-active] .tray-kbd { border-color: HighlightText; background: Highlight; }
+  .tray-option[aria-current], .tray-notice[aria-current], .tray-task[aria-current], .tray-table tbody tr[aria-selected="true"] { outline: 2px solid Highlight; outline-offset: -2px; }
+  .tray-cal__day[data-in-range] .tray-cal__num { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .25em; }
+
+  /* checkbox, radio, switch, slider: drawn in the system's colours, since each is nothing but fills */
+  .tray-check input:checked + .tray-check__box, .tray-check input:indeterminate + .tray-check__box { forced-color-adjust: none; border-color: SelectedItem; background: SelectedItem; }
+  .tray-check input:checked + .tray-check__box svg, .tray-check input:indeterminate + .tray-check__box svg { stroke: SelectedItemText; }
+  .tray-radio input:checked + .tray-radio__ring, .tray-choice input:checked + .tray-radio__ring { forced-color-adjust: none; border-color: SelectedItem; background: SelectedItemText; }
+  .tray-switch__track { forced-color-adjust: none; background: Canvas; box-shadow: inset 0 0 0 1px CanvasText; }
+  .tray-switch__track::before { background: CanvasText; }
+  .tray-switch input:checked + .tray-switch__track { background: SelectedItem; box-shadow: none; }
+  .tray-switch input:checked + .tray-switch__track::before { background: SelectedItemText; }
+  .tray-switch input:focus-visible + .tray-switch__track { outline-color: CanvasText; }
+  .tray-switch:has(input:disabled) .tray-switch__track { background: Canvas; box-shadow: inset 0 0 0 1px GrayText; }
+  .tray-switch:has(input:disabled) .tray-switch__track::before { background: GrayText; }
+  .tray-slider { forced-color-adjust: none; }
+  .tray-slider::-webkit-slider-runnable-track { background: linear-gradient(SelectedItem 0 0) 0 / var(--tray-v) 100% no-repeat, Canvas; box-shadow: inset 0 0 0 1px CanvasText; }
+  .tray-slider::-moz-range-track { background: Canvas; box-shadow: inset 0 0 0 1px CanvasText; }
+  .tray-slider::-moz-range-progress { background: SelectedItem; }
+  .tray-slider::-webkit-slider-thumb { background: SelectedItem; box-shadow: 0 0 0 2px Canvas, 0 0 0 3px CanvasText; }
+  .tray-slider::-moz-range-thumb { background: SelectedItem; box-shadow: 0 0 0 2px Canvas, 0 0 0 3px CanvasText; }
+  .tray-slider:focus-visible::-webkit-slider-thumb, .tray-slider:focus-visible::-moz-range-thumb { outline-color: CanvasText; }
+
+  /* meters and steps: the track is an edge, what is done is solid */
+  .tray-progress__bar, .tray-steps span, .tray-stepper > li::before { forced-color-adjust: none; background: Canvas; box-shadow: inset 0 0 0 1px CanvasText; }
+  .tray-progress__bar::before, .tray-steps span[data-done], .tray-stepper > li[data-done]::before, .tray-stepper > li[aria-current]::before { background: CanvasText; }
+  .tray-stepper--v > li[aria-current]::before { background: Canvas; }
+  /* rules drawn as a thin fill */
+  .tray-rule:not(.tray-rule--label), .tray-rule--label::before, .tray-rule--label::after, .tray-list__rule, .tray-btn-group__rule, .tray-marker--separator::before, .tray-marker--separator::after,
+  .tray-feed > li:not(:last-child)::before, .tray-trace::before, .tray-otp__sep, .tray-drawer__grip, .tray-split__handle::before { forced-color-adjust: none; background: CanvasText; }
+  .tray-chart__grid span { forced-color-adjust: none; background: CanvasText; opacity: .3; }
+  /* a placeholder is the outline of what is coming */
+  .tray-skeleton { border: 1px solid CanvasText; }
+  .tray-notice[data-unread] .tray-notice__mark { forced-color-adjust: none; background: Highlight; }
+
+  /* charts: the marks keep the colours of their series, so the key still tells them apart; the text and rules are the system's */
+  /* a chart of one series draws it in ink: here, in the text colour of the system */
+  .tray-chart--single, .tray-card--inverse .tray-chart--single { --tray-s1: CanvasText; }
+  .tray-chart__bar, .tray-chart__dot, .tray-swatch, .tray-chart__rows .tray-chart__track span, .tray-uptime__bars, .tray-uptime__key i,
+  .tray-chart__plot > svg, .tray-chart__round > svg, .tray-chart__canvas svg { forced-color-adjust: none; }
+  .tray-chart__canvas svg text, .tray-chart__round > svg text { fill: CanvasText; }
+  .tray-chart__canvas .recharts-cartesian-grid line, .tray-chart__canvas .recharts-polar-grid line, .tray-chart__canvas .recharts-polar-grid path,
+  .tray-chart__canvas .recharts-polar-grid circle, .tray-chart__web { stroke: CanvasText; stroke-opacity: .3; }
+  .tray-chart__canvas .recharts-cartesian-axis-line, .tray-chart__canvas .recharts-reference-line-line, .tray-chart__canvas .recharts-curve.recharts-tooltip-cursor,
+  .tray-chart__canvas .recharts-pie-label-line, .tray-chart__ring { stroke: CanvasText; }
+  .tray-chart__canvas .recharts-dot, .tray-chart__canvas .recharts-pie-sector .recharts-sector, .tray-chart__canvas .recharts-radial-bar-sector, .tray-chart__dot { stroke: Canvas; }
+  .tray-chart__dot { box-shadow: 0 0 0 2px Canvas; }
+  .tray-chart__canvas .recharts-rectangle.recharts-tooltip-cursor, .tray-chart__canvas .recharts-sector.recharts-tooltip-cursor { fill: CanvasText; fill-opacity: .15; }
+  .tray-chart__canvas .recharts-radial-bar-background-sector { fill: CanvasText; fill-opacity: .15; }
+  .tray-chart__col[data-active]::before { forced-color-adjust: none; background: CanvasText; opacity: .15; }
+  .tray-chart__cross { forced-color-adjust: none; background: CanvasText; }
+}
+
+/* ---------- Print: ink on paper ----------
+   The page prints in the light values of its theme (tokens.css), whatever theme it wears on screen. Browsers leave fills
+   out of print, so a tray gets an edge instead; a fill that carries meaning (what is chosen, a bar of a chart, a meter,
+   the ink card) prints as it is. The navigation and what floats over the page stay off paper. tray-noprint keeps anything
+   else off paper; tray-print-only shows a thing on paper alone. */
+
+.tray-print-only { display: none; }
+
+@media print {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  body { background: none; }
+  .tray-noprint, .tray-app__side, .tray-app__menu, .tray-toasts, .tray-tooltip, .tray-tip, .tray-pop, .tray-tour, .tray-consent--fixed, .tray-scroller__jump, dialog:not([open]) { display: none !important; }
+  .tray-print-only { display: revert; }
+  .tray-app { display: block; min-block-size: 0; padding: 0; }
+  .tray-topbar--sticky { position: static; }
+  .tray-scroll, .tray-table-wrap, .tray-tabs { max-block-size: none; overflow: visible; }
+  .tray-pop, .tray-raised, .tray-dialog, .tray-sheet, .tray-drawer, .tray-toast { box-shadow: none; }
+
+  /* trays: an edge in place of the fill */
+  .tray-card, .tray-panel, .tray-stat, .tray-integration, .tray-item, .tray-choice, .tray-switch--row, .tray-alert, .tray-banner, .tray-bubble, .tray-attachment,
+  .tray-code, .tray-secret, .tray-kbd, .tray-tile, .tray-input, .tray-textarea, .tray-select select, .tray-select-trigger, .tray-input-group, .tray-tags,
+  .tray-btn--quiet, .tray-btn-group, .tray-seg, .tray-tabs, .tray-nav__links, .tray-menubar, .tray-chip, .tray-badge, .tray-avatar { border: 1px solid var(--rule-strong); }
+  .tray-input-group .tray-input, .tray-bubble--plain { border: 0; }
+  .tray-btn:not(.tray-btn--ghost, .tray-btn--link) { border: 1px solid var(--ink); }
+
+  /* fills that carry meaning print as they are */
+  .tray-btn--dark, .tray-card--inverse, .tray-inverse, .tray-bubble--own, .tray-toggle[aria-pressed="true"], .tray-seg__item input:checked + span, .tray-tab[aria-selected="true"], .tray-tab[aria-current],
+  .tray-page[aria-current="page"], .tray-sidebar__item[aria-current], .tray-cal__day, .tray-scale span, .tray-check__box, .tray-radio__ring, .tray-switch__track, .tray-slider,
+  .tray-progress__bar, .tray-steps, .tray-stepper, .tray-step__mark, .tray-task__mark, .tray-badge, .tray-avatar, .tray-swatch, .tray-chart, .tray-uptime, .tray-notice__mark {
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+
+  /* a link in running text says where it goes */
+  .tray-prose a[href^="http"]::after { content: " (" attr(href) ")"; color: var(--ink-soft); font-size: .875em; overflow-wrap: anywhere; }
+  /* what belongs together stays on one sheet */
+  .tray-card, .tray-stat, .tray-alert, .tray-banner, .tray-item, .tray-chart, figure, tr, .tray-integration, .tray-choice, .tray-bubble { break-inside: avoid; }
+  h1, h2, h3, h4, .title, .subtitle, .headline { break-after: avoid; }
+}

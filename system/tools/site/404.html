@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page not found - Tray UI</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='10' fill='%23ffd426'/%3E%3Crect x='8' y='14' width='16' height='10' rx='4' fill='%23141414'/%3E%3C/svg%3E">
+<script>
+(function () {
+  var t = null;
+  try { t = localStorage.getItem('tray-site-theme'); } catch (e) { t = null; }
+  if (!t || !/^[a-z0-9-]+$/.test(t)) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+<link rel="stylesheet" href="/tokens.css">
+<link rel="stylesheet" href="/components/bundle.css">
+<link rel="stylesheet" href="/site.css">
+</head>
+<body>
+<div class="tray-screen">
+  <header class="tray-screen__bar">
+    <a class="tray-wordmark site-logo" href="/">{{mark}}<span>Tray UI</span></a>
+  </header>
+  <main class="tray-screen__body tray-screen__body--narrow tray-screen__body--center">
+    <div class="tray-stack tray-stack--lg">
+      <div class="tray-stack">
+        <h1 class="headline">There is no page at this address</h1>
+        <p class="lead tray-soft">It may have moved, or the address may have a typing mistake. Everything on the site can be found from the home page or by searching.</p>
+      </div>
+      <div class="tray-row">
+        <a class="tray-btn" href="/">Go to the home page</a>
+        <a class="tray-btn tray-btn--quiet" href="#components">Browse the components</a>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="/components/bundle.js"></script>
+</body>
+</html>

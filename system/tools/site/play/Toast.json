@@ -1,0 +1,12 @@
+{
+  "lead": "One toast drawn in place: TrayUI.toast() builds this markup in the corner of the screen. Pick its tone, its words and whether it offers one action.",
+  "width": "24rem",
+  "grounds": false,
+  "controls": [
+    { "name": "tone", "label": "Tone", "options": [["", "Neutral"], ["success", "Success"], ["danger", "Danger"]] },
+    { "name": "title", "label": "Title", "type": "text", "default": "Order archived", "max": 40 },
+    { "name": "text", "label": "Text", "type": "text", "default": "PL-20418, two jars of 50 g", "max": 80 },
+    { "name": "action", "label": "Action", "type": "switch", "default": true }
+  ],
+  "template": "<div class=\"tray-toast{{#tone}} tray-toast--{{tone}}{{/tone}}\" role=\"{{#tone=danger}}alert{{/tone=danger}}{{^tone=danger}}status{{/tone=danger}}\">{{#tone=success}}{{icon:circle-check}}{{/tone=success}}{{#tone=danger}}{{icon:circle-alert}}{{/tone=danger}}<div class=\"tray-toast__body\"><p class=\"tray-toast__title\">{{title}}</p>{{#text}}<p class=\"tray-toast__text\">{{text}}</p>{{/text}}</div><div class=\"tray-toast__actions\">{{#action}}<button class=\"tray-btn tray-btn--ghost tray-btn--xs\" type=\"button\">{{#tone=danger}}Retry{{/tone=danger}}{{^tone=danger}}Undo{{/tone=danger}}</button>{{/action}}<button class=\"tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon\" type=\"button\" aria-label=\"Dismiss\">{{icon:x}}</button></div></div>"
+}

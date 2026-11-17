@@ -1,0 +1,11 @@
+{
+  "lead": "The browser's own menu in the system's field: its size, its state, and whether a choice is made for the person.",
+  "controls": [
+    { "name": "size", "label": "Size", "options": [["", "56px"], [" tray-select--sm", "48px"]] },
+    { "name": "state", "label": "State", "options": [["", "Normal"], ["invalid", "Invalid"], ["disabled", "Disabled"]] },
+    { "name": "empty", "label": "Nothing chosen", "type": "switch" },
+    { "name": "label", "label": "Label", "type": "text", "default": "Delivery window", "max": 40 },
+    { "name": "hint", "label": "Hint", "type": "text", "default": "We text you when the courier sets off.", "max": 90 }
+  ],
+  "template": "<div class=\"tray-field\"{{#state=disabled}} data-disabled{{/state=disabled}}><label class=\"tray-label\" for=\"pg-window\">{{label}}</label><span class=\"tray-select{{size}}\"><select id=\"pg-window\"{{#state=invalid}} aria-invalid=\"true\" aria-describedby=\"pg-window-error\"{{/state=invalid}}{{^state=invalid}}{{#hint}} aria-describedby=\"pg-window-hint\"{{/hint}}{{/state=invalid}}{{#state=disabled}} disabled{{/state=disabled}}>{{#empty}}<option value=\"\" disabled selected>Choose a window</option>{{/empty}}<option>10:00 to 14:00</option><option{{^empty}} selected{{/empty}}>14:00 to 18:00</option><option>18:00 to 22:00</option></select></span>{{#state=invalid}}<p class=\"tray-field__error\" id=\"pg-window-error\">{{#empty}}Choose a window, so the courier can plan the route.{{/empty}}{{^empty}}The 14:00 window is full on Friday. Choose another.{{/empty}}</p>{{/state=invalid}}{{^state=invalid}}{{#hint}}<p class=\"tray-field__hint\" id=\"pg-window-hint\">{{hint}}</p>{{/hint}}{{/state=invalid}}</div>"
+}

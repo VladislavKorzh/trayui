@@ -1,0 +1,13 @@
+# Headers for the site on Cloudflare Workers. The three files and the font may be linked from other sites.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+/tokens.css
+  Access-Control-Allow-Origin: *
+/components/*
+  Access-Control-Allow-Origin: *
+/fonts/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=604800
+/llms.txt
+  Content-Type: text/plain; charset=utf-8

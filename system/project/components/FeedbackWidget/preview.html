@@ -1,0 +1,19 @@
+<!-- @dsCard group="Onboarding" height=413 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>FeedbackWidget — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--start">
+<form class="tray-card tray-feedback" style="flex: 1 1 24rem; inline-size: auto; padding: var(--space-8)" data-tray="feedback" onsubmit="return false">
+<div class="tray-stack tray-stack--sm" data-feedback="ask"><fieldset class="tray-scale" style="grid-template-columns: repeat(11, minmax(0, 1fr))"><legend class="tray-label" style="grid-column: 1 / -1; margin-block-end: var(--space-3); font-size: 1.0625rem">How likely are you to recommend Counter to another farm?</legend><label><input type="radio" name="rating" value="0"><span>0</span></label><label><input type="radio" name="rating" value="1"><span>1</span></label><label><input type="radio" name="rating" value="2"><span>2</span></label><label><input type="radio" name="rating" value="3"><span>3</span></label><label><input type="radio" name="rating" value="4"><span>4</span></label><label><input type="radio" name="rating" value="5"><span>5</span></label><label><input type="radio" name="rating" value="6"><span>6</span></label><label><input type="radio" name="rating" value="7"><span>7</span></label><label><input type="radio" name="rating" value="8"><span>8</span></label><label><input type="radio" name="rating" value="9"><span>9</span></label><label><input type="radio" name="rating" value="10"><span>10</span></label></fieldset><p class="tray-scale__ends"><span>Not at all</span><span>Very</span></p></div>
+<div class="tray-stack" data-feedback="more" hidden><div class="tray-field"><label class="tray-label" for="fb-why">What is the main reason? <span class="tray-label__opt">Optional</span></label><textarea class="tray-textarea" id="fb-why" style="min-block-size: 5.5rem"></textarea></div><div><button class="tray-btn tray-btn--sm" type="submit">Send</button></div></div>
+<p data-feedback="thanks" hidden>Thank you. Oksana reads every answer.</p>
+</form>
+<form class="tray-card tray-feedback" style="flex: 1 1 18rem; inline-size: auto; padding: var(--space-8)" data-tray="feedback" onsubmit="return false">
+<div class="tray-stack tray-stack--sm" data-feedback="ask"><fieldset class="tray-scale"><legend class="tray-label" style="grid-column: 1 / -1; margin-block-end: var(--space-3); font-size: 1.0625rem">How easy was packing today?</legend><label><input type="radio" name="rating" value="1"><span>1</span></label><label><input type="radio" name="rating" value="2"><span>2</span></label><label><input type="radio" name="rating" value="3"><span>3</span></label><label><input type="radio" name="rating" value="4" checked><span>4</span></label><label><input type="radio" name="rating" value="5"><span>5</span></label></fieldset><p class="tray-scale__ends"><span>Hard</span><span>Easy</span></p></div>
+<div class="tray-stack" data-feedback="more"><div class="tray-field"><label class="tray-label" for="fb-why2">What got in the way? <span class="tray-label__opt">Optional</span></label><textarea class="tray-textarea" id="fb-why2" style="min-block-size: 5.5rem">The label printer went offline twice.</textarea></div><div><button class="tray-btn tray-btn--sm" type="submit">Send</button></div></div>
+<p data-feedback="thanks" hidden>Thank you. We will look at the printer.</p>
+</form>
+</div>
+</body>
+</html>

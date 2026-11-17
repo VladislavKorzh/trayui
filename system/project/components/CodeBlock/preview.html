@@ -1,0 +1,21 @@
+<!-- @dsCard group="Conversation" height=390 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>CodeBlock — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--col">
+<div class="tray-code tray-code--numbered" dir="ltr">
+<div class="tray-code__head"><span>stock.js</span><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button" data-tray="copy" data-target="#cb-code"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-copy"/></svg><span data-label>Copy</span></button></div>
+<pre tabindex="0"><code id="cb-code"><span class="tray-code__line"><span class="hljs-comment">// The jars left in a batch</span></span>
+<span class="tray-code__line"><span class="hljs-keyword">function</span> <span class="hljs-title function_">jarsLeft</span>(<span class="hljs-params">batch</span>) {</span>
+<span class="tray-code__line" data-mark>  <span class="hljs-keyword">return</span> batch.<span class="hljs-property">packed</span> - batch.<span class="hljs-property">reserved</span>;</span>
+<span class="tray-code__line">}</span>
+<span class="tray-code__line"></span>
+<span class="tray-code__line"><span class="hljs-title function_">jarsLeft</span>({ <span class="hljs-attr">name</span>: <span class="hljs-string">'autumn'</span>, <span class="hljs-attr">packed</span>: <span class="hljs-number">412</span>, <span class="hljs-attr">reserved</span>: <span class="hljs-number">280</span> });</span></code></pre>
+</div>
+<p>Run <span class="tray-code-inline">npm run stock</span> to print the same figure in the terminal:</p>
+<div class="tray-code tray-code--sm" dir="ltr"><pre tabindex="0"><code>$ npm run stock
+autumn batch: 412 packed, 280 reserved, 132 left</code></pre></div>
+</div>
+</body>
+</html>

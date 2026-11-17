@@ -1,0 +1,66 @@
+/* ---------- Dialog, Alert dialog ---------- */
+
+.tray-dialog, .tray-sheet, .tray-drawer {
+  --tray-ground: var(--raised); --tray-fill: var(--surface); --tray-ground-up: var(--raised); --tray-fill-up: var(--surface); --tray-off: var(--ink-hint);
+  max-inline-size: none; max-block-size: none; margin: 0; padding: var(--card-pad); border: 0; background: var(--raised); color: var(--ink); box-shadow: var(--shadow-float);
+}
+.tray-dialog::backdrop, .tray-sheet::backdrop, .tray-drawer::backdrop { overflow: hidden; overscroll-behavior: contain; background: var(--scrim); }
+/* A scroll inside an open modal, or over its veil, stays there: it does not scroll the page behind it. */
+:is(.tray-dialog, .tray-sheet, .tray-drawer):modal { overscroll-behavior: contain; }
+.tray-dialog { position: fixed; inset: 0; inline-size: min(100% - 2rem, 32rem); block-size: fit-content; max-block-size: calc(100% - 2rem); margin: auto; border-radius: var(--radius-card); overflow: auto; }
+/* A small dialog keeps its padding in step with its own width, not the window's, so two buttons fit on one line. */
+.tray-dialog--sm { inline-size: min(100% - 2rem, 26rem); padding: min(var(--card-pad), var(--space-8)); }
+.tray-dialog--lg { inline-size: min(100% - 2rem, 44rem); }
+.tray-dialog__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); margin-block-end: var(--space-4); }
+.tray-dialog__head > div { display: grid; gap: var(--space-2); }
+.tray-dialog__head .tray-btn { margin: -8px -8px 0 0; }
+[dir="rtl"] .tray-dialog__head .tray-btn { margin: -8px 0 0 -8px; }
+.tray-dialog__text { color: var(--ink-soft); font: 400 1.0625rem/1.45 var(--font-sans); }
+.tray-dialog__body { display: grid; gap: var(--space-4); }
+.tray-dialog__foot { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); margin-block-start: var(--space-7); }
+@media (max-width: 34rem) { .tray-dialog__foot { flex-direction: column-reverse; } .tray-dialog__foot .tray-btn { inline-size: 100%; } }
+
+/* ---------- Sheet (from a side) and Drawer (from the bottom) ---------- */
+
+.tray-sheet { position: fixed; inset-block: 0; inset-inline: auto 0; inline-size: min(100%, 26rem); block-size: 100%; border-start-start-radius: var(--radius-card); border-end-start-radius: var(--radius-card); overflow: auto; }
+.tray-sheet--start { inset-inline: 0 auto; border-radius: 0; border-start-end-radius: var(--radius-card); border-end-end-radius: var(--radius-card); }
+.tray-drawer { position: fixed; inset-block: auto 0; inset-inline: 0; inline-size: min(100%, 40rem); max-block-size: 85%; margin-inline: auto; padding-block-start: var(--space-3); border-start-start-radius: var(--radius-card); border-start-end-radius: var(--radius-card); overflow: auto; }
+.tray-drawer__grip { display: block; inline-size: 48px; block-size: 4px; margin: 0 auto var(--space-6); border-radius: var(--radius-pill); background: var(--rule-strong); }
+/* Inside a stage an overlay is shown in place, not over the page. */
+.tray-stage > .tray-dialog { position: relative; inset: auto; max-block-size: none; margin: 0; }
+.tray-stage > .tray-sheet, .tray-stage > .tray-drawer { position: absolute; }
+
+/* ---------- Popover and Hover card (the panel is .tray-pop) ---------- */
+
+.tray-pop__title { font: 700 1.25rem/1.2 var(--font-sans); letter-spacing: -.02em; }
+.tray-pop__text { color: var(--ink-soft); font: 400 1rem/1.45 var(--font-sans); }
+.tray-pop--card { inline-size: min(22rem, calc(100vw - 2rem)); padding: var(--space-5); border-radius: var(--radius-panel); }
+.tray-submenu { position: relative; }
+.tray-submenu > .tray-pop { display: none; }
+.tray-submenu:hover > .tray-pop, .tray-submenu:focus-within > .tray-pop, .tray-submenu > .tray-pop[data-open] { display: block; }
+
+/* ---------- Tooltip ---------- */
+
+.tray-tooltip { position: absolute; inset-block-end: calc(100% + var(--space-2)); inset-inline-start: 50%; z-index: var(--z-float); transform: translateX(-50%); padding: var(--space-2) var(--space-3); border-radius: var(--radius-chip); background: var(--ink); color: var(--tray-on-ink); box-shadow: var(--shadow-float); font: 600 .9375rem/1.2 var(--font-sans); white-space: nowrap; pointer-events: none; }
+[dir="rtl"] .tray-tooltip { transform: translateX(50%); }
+.tray-tooltip--bottom { inset-block: calc(100% + var(--space-2)) auto; }
+.tray-tooltip .tray-kbd { margin-inline-start: var(--space-2); background: var(--tray-on-ink); color: var(--ink); }
+
+/* ---------- Context menu ---------- */
+
+.tray-context { position: relative; display: grid; place-items: center; min-block-size: 16rem; border-radius: var(--radius-panel); background: var(--tray-fill); color: var(--ink-soft); font: 500 1rem/1.3 var(--font-sans); }
+.tray-context > .tray-pop { inset-block-start: 0; min-inline-size: 14rem; }
+
+/* ---------- Toast ---------- */
+
+.tray-toasts { position: fixed; inset-block-end: var(--space-4); inset-inline-end: var(--space-4); z-index: var(--z-toast); display: grid; gap: var(--space-2); inline-size: min(24rem, calc(100vw - 2rem)); }
+.tray-toast { --tray-ground: var(--raised); --tray-fill: var(--surface); --tray-ground-up: var(--raised); --tray-fill-up: var(--surface); display: flex; align-items: flex-start; gap: var(--space-3); padding: 14px var(--space-4); border-radius: var(--radius-input); background: var(--raised); color: var(--ink); box-shadow: var(--shadow-float); }
+.tray-toast > .tray-icon { margin-block-start: 2px; }
+.tray-toast__body { flex: 1; display: grid; gap: 2px; min-inline-size: 0; }
+.tray-toast__title { font: 600 1rem/1.3 var(--font-sans); }
+.tray-toast__text { color: var(--ink-soft); font: 400 .9375rem/1.4 var(--font-sans); }
+.tray-toast__actions { display: flex; align-items: center; gap: var(--space-1); margin: -6px -8px -6px 0; }
+[dir="rtl"] .tray-toast__actions { margin: -6px 0 -6px -8px; }
+.tray-toast--success > .tray-icon { color: var(--success); }
+.tray-toast--danger > .tray-icon { color: var(--danger); }
+/* A toast's coming and going: 92-motion.css. */

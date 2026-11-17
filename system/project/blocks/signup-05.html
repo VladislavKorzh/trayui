@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign-up with sign-in providers</title>
+<meta name="description" content="A sign-up form that offers six sign-in providers first.">
+<meta name="tray-category" content="Signup">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-screen">
+  <header class="tray-screen__bar">
+    <a class="tray-wordmark" href="/">Counter</a>
+  </header>
+  <main class="tray-screen__body tray-screen__body--center-wide">
+    <form class="tray-auth" action="/signup" method="post">
+      <div class="tray-auth__head">
+        <h1 class="title">Create an account</h1>
+        <p>Already have one? <a href="/signin">Sign in</a></p>
+      </div>
+      <div class="tray-stack tray-stack--sm">
+        <p class="label" id="providers-label">Continue with</p>
+        <div class="tray-providers" role="group" aria-labelledby="providers-label">
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/google" aria-label="Continue with Google">Google</a>
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/apple" aria-label="Continue with Apple">Apple</a>
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/facebook" aria-label="Continue with Facebook">Facebook</a>
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/telegram" aria-label="Continue with Telegram">Telegram</a>
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/linkedin" aria-label="Continue with LinkedIn">LinkedIn</a>
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/microsoft" aria-label="Continue with Microsoft">Microsoft</a>
+        </div>
+      </div>
+      <p class="tray-rule tray-rule--label">or with your email</p>
+      <div class="tray-stack">
+        <div class="tray-field">
+          <label class="tray-label" for="email">Work email</label>
+          <input class="tray-input" id="email" name="email" type="email" autocomplete="username" placeholder="you@farm.example" required>
+        </div>
+        <div class="tray-field">
+          <label class="tray-label" for="password">Password</label>
+          <div class="tray-input-group">
+            <input class="tray-input" id="password" name="password" type="password" autocomplete="new-password" minlength="12" aria-describedby="password-hint" required>
+            <button class="tray-input-group__btn" type="button" data-tray="reveal" aria-label="Show password"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></button>
+          </div>
+          <p class="tray-field__hint" id="password-hint">At least 12 characters.</p>
+        </div>
+      </div>
+      <button class="tray-btn tray-btn--block" type="submit">Create the account</button>
+      <p class="tray-auth__foot">By signing up you accept the <a href="/terms">terms</a>.</p>
+    </form>
+  </main>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

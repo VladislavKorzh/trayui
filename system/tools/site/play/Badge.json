@@ -1,0 +1,9 @@
+{
+  "lead": "One badge in each of its tones, the 24px count and the 40px chip that states a plain fact.",
+  "controls": [
+    { "name": "variant", "label": "Variant", "options": [["", "Neutral"], [" tray-badge--accent", "Accent"], [" tray-badge--ink", "Ink"], [" tray-badge--off", "Off"], [" tray-badge--danger", "Danger"], [" tray-badge--success", "Success"], [" tray-badge--ink tray-badge--count", "Count"], ["chip", "Chip"]], "default": " tray-badge--accent" },
+    { "name": "text", "label": "Text", "type": "text", "default": "In season", "max": 30 },
+    { "name": "remove", "label": "Remove (chip)", "type": "switch" }
+  ],
+  "template": "<span class=\"{{#variant=chip}}tray-chip{{/variant=chip}}{{^variant=chip}}tray-badge{{variant}}{{/variant=chip}}\">{{#variant= tray-badge--danger}}{{icon:circle-alert:sm}}{{/variant= tray-badge--danger}}{{#variant= tray-badge--success}}{{icon:circle-check:sm}}{{/variant= tray-badge--success}}{{#variant= tray-badge--ink tray-badge--count}}12{{/variant= tray-badge--ink tray-badge--count}}{{^variant= tray-badge--ink tray-badge--count}}{{text}}{{/variant= tray-badge--ink tray-badge--count}}{{#variant=chip}}{{#remove}}<button class=\"tray-chip__x\" type=\"button\" aria-label=\"Remove the filter {{text}}\">{{icon:x:sm}}</button>{{/remove}}{{/variant=chip}}</span>"
+}

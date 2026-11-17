@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One-page checkout</title>
+<meta name="description" content="Contact, delivery with a day and a time slot, and the payment method on one page, beside the order summary.">
+<meta name="tray-category" content="Checkout">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-screen">
+  <header class="tray-screen__bar">
+    <a class="tray-wordmark" href="/">Perly Farm</a>
+    <a class="tray-back" href="/cart"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-arrow-left"/></svg>Back to the cart</a>
+  </header>
+  <main class="tray-screen__body">
+    <div class="tray-stack tray-stack--sm">
+      <h1 class="title">Delivery and payment</h1>
+      <p class="tray-soft">Four jars from batch 14. Nothing is charged until you press Pay.</p>
+    </div>
+    <div class="tray-with-aside">
+      <form class="tray-form" id="checkout" action="/checkout" method="post">
+        <fieldset>
+          <legend class="tray-legend subtitle">Contact</legend>
+          <div class="tray-fields">
+            <div class="tray-field tray-field--full">
+              <label class="tray-label" for="email">Email</label>
+              <input class="tray-input" id="email" name="email" type="email" autocomplete="email" value="dana@kovalenko.example" aria-describedby="email-hint">
+              <p class="tray-field__hint" id="email-hint">We send the receipt and the tracking link here.</p>
+            </div>
+            <div class="tray-field">
+              <label class="tray-label" for="name">Name</label>
+              <input class="tray-input" id="name" name="name" autocomplete="name" value="Dana Kovalenko">
+            </div>
+            <div class="tray-field">
+              <label class="tray-label" for="phone">Phone</label>
+              <input class="tray-input" id="phone" name="phone" type="tel" autocomplete="tel" value="+380 00 555 01 42" aria-describedby="phone-hint">
+              <p class="tray-field__hint" id="phone-hint">The courier calls ten minutes before arriving.</p>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="tray-legend subtitle">Delivery</legend>
+          <div class="tray-stack tray-stack--lg">
+            <div class="tray-choices tray-choices--two" role="radiogroup" aria-label="How the jars come to you">
+              <label class="tray-choice">
+                <input type="radio" name="method" value="courier" checked>
+                <span class="tray-radio__ring"></span>
+                <span class="tray-choice__text"><b>Courier</b><span>Chilled box, to your door</span></span>
+                <span class="tray-choice__end">$9</span>
+              </label>
+              <label class="tray-choice">
+                <input type="radio" name="method" value="pickup">
+                <span class="tray-radio__ring"></span>
+                <span class="tray-choice__text"><b>Farm shop</b><span>Farm road 4, from 10:00</span></span>
+                <span class="tray-choice__end">Free</span>
+              </label>
+            </div>
+            <div class="tray-fields" id="address">
+              <div class="tray-field tray-field--full">
+                <label class="tray-label" for="street">Street and house</label>
+                <input class="tray-input" id="street" name="street" autocomplete="address-line1" value="8 Fernleaf Street">
+              </div>
+              <div class="tray-field">
+                <label class="tray-label" for="flat">Flat or entrance <span class="tray-label__opt">(optional)</span></label>
+                <input class="tray-input" id="flat" name="flat" autocomplete="address-line2" value="Flat 12">
+              </div>
+              <div class="tray-field">
+                <label class="tray-label" for="city">City</label>
+                <span class="tray-select"><select id="city" name="city" autocomplete="address-level2"><option selected>Kyiv</option><option>Bila Tserkva</option><option>Brovary</option><option>Irpin</option></select></span>
+              </div>
+            </div>
+            <div class="tray-stack tray-stack--sm" role="radiogroup" aria-labelledby="day-label">
+              <p class="tray-label" id="day-label">Day</p>
+              <div class="tray-seg tray-seg--fill">
+                <label class="tray-seg__item"><input type="radio" name="day" value="2026-11-16" data-day="Today" checked><span>Today</span></label>
+                <label class="tray-seg__item"><input type="radio" name="day" value="2026-11-17" data-day="Tuesday 17 November"><span>Tue 17</span></label>
+                <label class="tray-seg__item"><input type="radio" name="day" value="2026-11-18" data-day="Wednesday 18 November"><span>Wed 18</span></label>
+                <label class="tray-seg__item"><input type="radio" name="day" value="2026-11-19" data-day="Thursday 19 November"><span>Thu 19</span></label>
+              </div>
+            </div>
+            <div class="tray-stack tray-stack--sm" role="radiogroup" aria-labelledby="slot-label" id="slots">
+              <p class="tray-label" id="slot-label">Time</p>
+              <div class="tray-choices tray-choices--two">
+                <label class="tray-choice">
+                  <input type="radio" name="slot" value="10-12" disabled data-today-off>
+                  <span class="tray-radio__ring"></span>
+                  <span class="tray-choice__text"><b>10:00 to 12:00</b><span data-today-off-text="Gone for today">Gone for today</span></span>
+                </label>
+                <label class="tray-choice">
+                  <input type="radio" name="slot" value="12-14">
+                  <span class="tray-radio__ring"></span>
+                  <span class="tray-choice__text"><b>12:00 to 14:00</b><span>One place left</span></span>
+                </label>
+                <label class="tray-choice">
+                  <input type="radio" name="slot" value="14-16">
+                  <span class="tray-radio__ring"></span>
+                  <span class="tray-choice__text"><b>14:00 to 16:00</b><span>Four places left</span></span>
+                </label>
+                <label class="tray-choice">
+                  <input type="radio" name="slot" value="16-18" checked>
+                  <span class="tray-radio__ring"></span>
+                  <span class="tray-choice__text"><b>16:00 to 18:00</b><span>Six places left</span></span>
+                </label>
+              </div>
+            </div>
+            <div class="tray-field">
+              <label class="tray-label" for="note">Note to the courier <span class="tray-label__opt">(optional)</span></label>
+              <textarea class="tray-textarea" id="note" name="note" rows="2">Call from the gate: the bell for flat 12 sticks.</textarea>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="tray-legend subtitle">Payment</legend>
+          <div class="tray-stack tray-stack--lg">
+            <div class="tray-choices tray-choices--two" role="radiogroup" aria-label="How to pay">
+              <label class="tray-choice">
+                <input type="radio" name="pay" value="card" checked>
+                <span class="tray-radio__ring"></span>
+                <span class="tray-choice__text"><b>Card, now</b><span>Charged when the jars are packed</span></span>
+              </label>
+              <label class="tray-choice">
+                <input type="radio" name="pay" value="door">
+                <span class="tray-radio__ring"></span>
+                <span class="tray-choice__text"><b>At the door</b><span>By card or cash, to the courier</span></span>
+              </label>
+            </div>
+            <div class="tray-fields" id="card">
+              <div class="tray-field tray-field--full">
+                <label class="tray-label" for="card-number">Card number</label>
+                <div class="tray-input-group">
+                  <span class="tray-input-group__addon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg></span>
+                  <input class="tray-input" id="card-number" name="card" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" data-tray="mask" data-mask="card">
+                </div>
+              </div>
+              <div class="tray-field">
+                <label class="tray-label" for="card-exp">Expires</label>
+                <input class="tray-input" id="card-exp" name="exp" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" data-tray="mask" data-mask="expiry">
+              </div>
+              <div class="tray-field">
+                <label class="tray-label" for="card-cvc">Security code</label>
+                <input class="tray-input" id="card-cvc" name="cvc" inputmode="numeric" autocomplete="cc-csc" placeholder="3 digits" aria-describedby="card-cvc-hint">
+                <p class="tray-field__hint" id="card-cvc-hint">The three digits on the back of the card.</p>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="tray-form__foot">
+          <div class="tray-stack tray-stack--sm">
+            <label class="tray-check">
+              <input type="checkbox" name="texts" checked>
+              <span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span>
+              <span>Text me when the courier sets off</span>
+            </label>
+            <label class="tray-check">
+              <input type="checkbox" name="batches">
+              <span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span>
+              <span class="tray-check__text">Email me when a new batch is ready<small>About once a month, in the season</small></span>
+            </label>
+          </div>
+        </div>
+      </form>
+
+      <aside class="tray-with-aside__aside" aria-label="Your order">
+        <div class="tray-card tray-summary" style="padding: var(--space-7)">
+          <div class="tray-row tray-row--between">
+            <h2 class="subtitle">Your order</h2>
+            <a class="tray-btn tray-btn--link" href="/cart">Change</a>
+          </div>
+          <ul class="tray-summary__lines">
+            <li class="tray-summary__line"><span>Snail caviar, 30 g<small>1 &times; $38.00</small></span><span>$38.00</span></li>
+            <li class="tray-summary__line"><span>Snail caviar, 50 g<small>2 &times; $59.00</small></span><span>$118.00</span></li>
+            <li class="tray-summary__line"><span>Snail caviar, 100 g<small>1 &times; $109.00</small></span><span>$109.00</span></li>
+            <li class="tray-summary__line"><span id="way-name">Courier, chilled box<small id="way-when">Today, 16:00 to 18:00</small></span><span id="way-sum">$9.00</span></li>
+          </ul>
+          <p class="tray-summary__total" aria-live="polite"><span>Total</span><span id="total">$274.00</span></p>
+          <button class="tray-btn tray-btn--block" type="submit" form="checkout" id="pay">Pay $274.00</button>
+          <p class="tray-summary__note"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-lock"/></svg>We never see the card number.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+  <footer class="tray-screen__foot">
+    <p>By paying you accept the <a href="/terms">terms of sale</a>. Prices include VAT. Every name and figure here is demo data.</p>
+  </footer>
+</div>
+<script>
+/* Keeps the summary in step with the form: the way the jars come, the day and the time, and how the order is paid.
+   The farm shop needs no address and no time slot; paying at the door needs no card. Amounts are in cents. */
+(function () {
+  var JARS = 26500, COURIER = 900;
+  var form = document.getElementById('checkout');
+  var $ = function (id) { return document.getElementById(id); };
+  var picked = function (name) { return form.querySelector('input[name="' + name + '"]:checked'); };
+  var money = function (c) { return '$' + (c / 100).toFixed(2); };
+  function work() {
+    var courier = picked('method').value === 'courier', today = picked('day').value === '2026-11-16';
+    [].forEach.call(form.querySelectorAll('[data-today-off]'), function (slot) {
+      slot.disabled = today;
+      if (today && slot.checked) { slot.checked = false; form.querySelector('input[name="slot"][value="16-18"]').checked = true; }
+      slot.parentNode.querySelector('[data-today-off-text]').textContent = today ? 'Gone for today' : 'Five places left';
+    });
+    var slot = picked('slot'), day = picked('day').getAttribute('data-day');
+    $('address').hidden = !courier;
+    $('slots').hidden = !courier;
+    $('card').hidden = picked('pay').value !== 'card';
+    $('way-name').firstChild.textContent = courier ? 'Courier, chilled box' : 'Farm shop pickup';
+    $('way-when').textContent = day + ', ' + (courier && slot ? slot.parentNode.querySelector('b').textContent : 'from 10:00');
+    $('way-sum').textContent = courier ? money(COURIER) : 'Free';
+    var total = money(JARS + (courier ? COURIER : 0));
+    $('total').textContent = total;
+    $('pay').textContent = picked('pay').value === 'card' ? 'Pay ' + total : 'Place the order';
+  }
+  form.addEventListener('change', work);
+})();
+</script>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

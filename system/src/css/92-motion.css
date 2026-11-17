@@ -1,0 +1,200 @@
+/* ---------- Motion ----------
+   Every change answers the hand that made it. What appears comes in from where it belongs, over duration-in on the
+   system's ease; what goes away leaves quicker, over duration-out on ease-exit, so a closed thing is out of the way at
+   once. A press answers at once (duration-press), a choice slides to its place (duration-move).
+   Movement and scale are only for a visitor who has not asked for less motion. For one who has, an overlay fades in a
+   tenth of a second and everything else changes at once.
+   Entrances are CSS alone (@starting-style). Exits keep a thing shown while it leaves (transition-behavior: allow-discrete,
+   and overlay for a dialog); where the browser cannot, the behaviours set data-closing first and close once it has left
+   (hide, show and shut in 10-core.js). */
+
+/* ---------- Floating panels: menus, popovers, listboxes, the date picker, hover cards, tooltips ---------- */
+
+.tray-pop, .tray-tooltip {
+  opacity: 1;
+  transition-property: opacity, scale, translate, display;
+  transition-duration: var(--duration-in);
+  transition-timing-function: var(--ease);
+  transition-behavior: allow-discrete;
+}
+.tray-pop:is([hidden], [data-closing]), .tray-tooltip:is([hidden], [data-closing]) {
+  opacity: 0;
+  transition-duration: var(--duration-out);
+  transition-timing-function: var(--ease-exit);
+}
+@starting-style {
+  .tray-pop, .tray-tooltip { opacity: 0; }
+}
+/* A submenu is shown by hover alone: it comes in, and goes at once. */
+.tray-submenu > .tray-pop { transition-property: opacity, scale, translate; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* A panel opens from the corner that touches its trigger. */
+  .tray-pop { transform-origin: top left; scale: 1; translate: 0 0; }
+  .tray-pop--end, .tray-pop:not(.tray-pop--end):dir(rtl) { transform-origin: top right; }
+  .tray-pop--end:dir(rtl) { transform-origin: top left; }
+  .tray-pop--top { transform-origin: bottom left; }
+  .tray-pop--top.tray-pop--end { transform-origin: bottom right; }
+  .tray-pop:is([hidden], [data-closing]) { scale: .96; translate: 0 -4px; }
+  .tray-pop--top:is([hidden], [data-closing]) { translate: 0 4px; }
+  @starting-style {
+    .tray-pop { scale: .96; translate: 0 -4px; }
+    .tray-pop--top { translate: 0 4px; }
+  }
+  /* A tooltip rises a little towards its words. */
+  .tray-tooltip { translate: 0 0; }
+  .tray-tooltip:is([hidden], [data-closing]) { translate: 0 3px; }
+  .tray-tooltip--bottom:is([hidden], [data-closing]) { translate: 0 -3px; }
+  @starting-style {
+    .tray-tooltip { translate: 0 3px; }
+    .tray-tooltip--bottom { translate: 0 -3px; }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tray-pop, .tray-tooltip,
+  .tray-pop:is([hidden], [data-closing]), .tray-tooltip:is([hidden], [data-closing]) { transition-duration: .1s; }
+}
+
+/* ---------- Overlays: dialog, alert dialog, sheet, drawer, lightbox (not the ones shown in place in a stage) ---------- */
+
+:is(.tray-dialog, .tray-sheet, .tray-drawer, .tray-lightbox):not(.tray-stage > *) {
+  opacity: 0;
+  transition-property: opacity, scale, translate, display, overlay;
+  transition-duration: var(--duration-out);
+  transition-timing-function: var(--ease-exit);
+  transition-behavior: allow-discrete;
+}
+:is(.tray-dialog, .tray-sheet, .tray-drawer, .tray-lightbox)[open]:not([data-closing], .tray-stage > *) {
+  opacity: 1;
+  transition-duration: var(--duration-in);
+  transition-timing-function: var(--ease);
+}
+@starting-style {
+  :is(.tray-dialog, .tray-sheet, .tray-drawer, .tray-lightbox)[open]:not(.tray-stage > *) { opacity: 0; }
+}
+/* The veil darkens as the overlay comes, and clears as it goes. */
+:is(.tray-dialog, .tray-sheet, .tray-drawer, .tray-lightbox)::backdrop {
+  background-color: transparent;
+  transition-property: background-color, display, overlay;
+  transition-duration: var(--duration-out);
+  transition-timing-function: var(--ease-exit);
+  transition-behavior: allow-discrete;
+}
+:is(.tray-dialog, .tray-sheet, .tray-drawer)[open]:not([data-closing])::backdrop { background-color: var(--scrim); transition-duration: var(--duration-in); transition-timing-function: var(--ease); }
+.tray-lightbox[open]:not([data-closing])::backdrop { background-color: var(--inverse); transition-duration: var(--duration-in); transition-timing-function: var(--ease); }
+@starting-style {
+  :is(.tray-dialog, .tray-sheet, .tray-drawer, .tray-lightbox)[open]::backdrop { background-color: transparent; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* A dialog rises a little and settles; a sheet comes in from its edge; a drawer from the foot. */
+  .tray-dialog:not(.tray-stage > *) { translate: 0 12px; scale: .97; }
+  .tray-sheet:not(.tray-stage > *) { translate: 100% 0; }
+  .tray-sheet--start:not(.tray-stage > *), .tray-sheet:not(.tray-sheet--start, .tray-stage > *):dir(rtl) { translate: -100% 0; }
+  .tray-sheet--start:not(.tray-stage > *):dir(rtl) { translate: 100% 0; }
+  .tray-drawer:not(.tray-stage > *) { translate: 0 100%; }
+  .tray-dialog[open]:not([data-closing], .tray-stage > *) { translate: 0 0; scale: 1; }
+  :is(.tray-sheet, .tray-drawer)[open]:not([data-closing], .tray-stage > *) { translate: 0 0; }
+  @starting-style {
+    .tray-dialog[open]:not(.tray-stage > *) { translate: 0 12px; scale: .97; }
+    .tray-sheet[open]:not(.tray-stage > *) { translate: 100% 0; }
+    .tray-sheet--start[open]:not(.tray-stage > *), .tray-sheet[open]:not(.tray-sheet--start, .tray-stage > *):dir(rtl) { translate: -100% 0; }
+    .tray-sheet--start[open]:not(.tray-stage > *):dir(rtl) { translate: 100% 0; }
+    .tray-drawer[open]:not(.tray-stage > *) { translate: 0 100%; }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.tray-dialog, .tray-sheet, .tray-drawer, .tray-lightbox):not(.tray-stage > *),
+  :is(.tray-dialog, .tray-sheet, .tray-drawer, .tray-lightbox)[open]:not([data-closing], .tray-stage > *),
+  :is(.tray-dialog, .tray-sheet, .tray-drawer, .tray-lightbox)::backdrop,
+  :is(.tray-dialog, .tray-sheet, .tray-drawer, .tray-lightbox)[open]:not([data-closing])::backdrop { transition-duration: .1s; }
+}
+
+/* ---------- Toasts: rise in, sink out ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .tray-toast[data-enter] { animation: tray-rise var(--duration-in) var(--ease); }
+  .tray-toast[data-leaving] { animation: tray-sink var(--duration-out) var(--ease-exit) forwards; }
+}
+@keyframes tray-rise { from { opacity: 0; translate: 0 12px; scale: .97; } }
+@keyframes tray-sink { to { opacity: 0; translate: 0 10px; scale: .97; } }
+
+/* A block that is dismissed (a banner, a notice) fades before it goes. */
+[data-dismissable] { transition-property: opacity, display; transition-duration: var(--duration-out); transition-timing-function: var(--ease-exit); transition-behavior: allow-discrete; }
+[data-dismissable]:is([hidden], [data-closing]) { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { [data-dismissable] { transition-duration: .1s; } }
+
+/* ---------- Choices: checkbox, radio, switch ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* The box gives a little under the press, and the tick draws itself. */
+  .tray-check__box { scale: 1; transition: background-color var(--duration-fill) var(--ease), border-color var(--duration-fill) var(--ease), scale var(--duration-press) var(--ease); }
+  .tray-check:not(:has(input:disabled)):active .tray-check__box { scale: .88; }
+  .tray-check__tick { stroke-dasharray: 20; stroke-dashoffset: 20; transition: stroke-dashoffset var(--duration-move) var(--ease) calc(var(--duration-fill) / 2); }
+  .tray-check input:checked:not(:indeterminate) + .tray-check__box .tray-check__tick { stroke-dashoffset: 0; }
+  /* The ring of a radio gives too, and its dot closes in (the ring's border is already eased). */
+  .tray-radio__ring { scale: 1; }
+  :is(.tray-radio, .tray-choice):not(:has(input:disabled)):active .tray-radio__ring { scale: .88; }
+  /* The knob of a switch stretches under the finger, and leans the way it will go. */
+  .tray-switch__track::before { transition: transform var(--duration-move) var(--ease), inline-size var(--duration-press) var(--ease); }
+  .tray-switch:not(:has(input:disabled)):active .tray-switch__track::before { inline-size: 32px; }
+  .tray-switch:not(:has(input:disabled)):active input:checked + .tray-switch__track::before { transform: translateX(18px); }
+  [dir="rtl"] .tray-switch:not(:has(input:disabled)):active input:checked + .tray-switch__track::before { transform: translateX(-18px); }
+}
+.tray-radio__ring { transition-property: border-width, border-color, background-color, scale; transition-duration: var(--duration-fill); transition-timing-function: var(--ease); }
+
+/* ---------- The sliding pill of a segmented control and a strip of tabs ----------
+   The behaviour puts a .tray-glide behind the strip's items and moves it to the chosen one (glide in 10-core.js). Until
+   it runs, and with forced colours, the chosen item keeps its own fill. */
+
+.tray-seg { position: relative; }
+.tray-glide { display: none; }
+@media (forced-colors: none) {
+  [data-glide] > .tray-glide {
+    display: block; position: absolute; left: 0; top: 0;
+    inline-size: var(--tray-glide-w); block-size: var(--tray-glide-h); translate: var(--tray-glide-x) var(--tray-glide-y);
+    border-radius: var(--radius-control); background: var(--ink); pointer-events: none;
+  }
+  .tray-seg[data-glide] .tray-seg__item input:checked + span,
+  .tray-tabs[data-glide] :is(.tray-tab[aria-selected="true"], .tray-tab[aria-current]:not([aria-current="false"])) { background: transparent; }
+  .tray-tabs[data-glide] .tray-tab { position: relative; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-glide]:not([data-glide-still]) > .tray-glide { transition: translate var(--duration-move) var(--ease), inline-size var(--duration-move) var(--ease), block-size var(--duration-move) var(--ease); }
+  .tray-seg[data-glide] .tray-seg__item span { transition: color var(--duration-move) var(--ease); }
+}
+
+/* ---------- Disclosure: accordion, collapsible, a group of a trace ----------
+   The answer unfolds to its height. Where the browser cannot ease to an intrinsic size it opens at once. */
+
+:is(.tray-accordion details, details.tray-collapsible, details.tray-trace-group)::details-content { interpolate-size: allow-keywords; overflow: clip; contain: layout; }
+:is(.tray-accordion details, details.tray-collapsible, details.tray-trace-group):not([open])::details-content { block-size: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  :is(.tray-accordion details, details.tray-collapsible, details.tray-trace-group)::details-content {
+    transition-property: block-size, content-visibility;
+    transition-duration: var(--duration-in);
+    transition-timing-function: var(--ease);
+    transition-behavior: allow-discrete;
+  }
+}
+
+/* ---------- Feedback in place ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* A tab panel chosen by a press fades in (the first one is simply there). */
+  [data-switched] [role="tabpanel"]:not([hidden]) { transition: opacity var(--duration-fill) var(--ease); }
+  @starting-style { [data-switched] [role="tabpanel"]:not([hidden]) { opacity: 0; } }
+  /* A field's error comes in under it. */
+  .tray-field__error { transition: opacity var(--duration-in) var(--ease), translate var(--duration-in) var(--ease); }
+  @starting-style { .tray-field__error { opacity: 0; translate: 0 -4px; } }
+  /* Work starting: the spinner of a busy button pops in. */
+  .tray-btn[aria-busy="true"] > .tray-spinner { animation: tray-spin .8s linear infinite, tray-pop-in var(--duration-in) var(--ease-spring); }
+  /* Copied, or not: the new word pops in. */
+  :is([data-copied], [data-failed]) [data-label] { display: inline-block; animation: tray-pop-in var(--duration-in) var(--ease-spring); }
+  /* A count that changes bumps: the stepper's number. */
+  output[data-bump="a"] { display: inline-block; animation: tray-bump-a calc(var(--duration-in) * 1.6) var(--ease-spring); }
+  output[data-bump="b"] { display: inline-block; animation: tray-bump-b calc(var(--duration-in) * 1.6) var(--ease-spring); }
+}
+@keyframes tray-pop-in { from { opacity: 0; scale: .5; } }
+@keyframes tray-bump-a { 40% { scale: 1.3; } }
+@keyframes tray-bump-b { 40% { scale: 1.3; } }

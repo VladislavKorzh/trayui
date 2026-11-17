@@ -1,0 +1,27 @@
+<!-- @dsCard group="Display" height=648 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>VideoPlayer — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--col">
+<figure class="tray-player" data-tray="player" data-of="of">
+<div class="tray-player__frame">
+<video width="1280" height="720" preload="metadata" poster="../../assets/Media/farm-poster.webp" playsinline controls>
+<source src="../../assets/Media/farm.mp4" type="video/mp4">
+<track kind="captions" src="../../assets/Media/farm.en.vtt" srclang="en" label="English">
+</video>
+<button class="tray-player__big" type="button" data-play aria-label="Play the film"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-play"/></svg></button>
+</div>
+<div class="tray-player__bar">
+<button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" data-play aria-label="Play" data-label-pause="Pause"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-play"/></svg></button>
+<span class="tray-player__time"><span data-now>0:00</span><span class="tray-player__of"> / </span><span data-total>0:13</span></span>
+<input class="tray-slider tray-player__seek" type="range" min="0" max="13.2" step="0.1" value="0" aria-label="Position in the film" data-seek>
+<button class="tray-toggle tray-toggle--icon" type="button" data-captions aria-pressed="false" aria-label="Captions"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-captions"/></svg></button>
+<button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" data-mute aria-label="Mute" data-label-unmute="Turn the sound on"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-volume-2"/></svg></button>
+<button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" data-full aria-label="Full screen" data-label-exit="Leave full screen"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-maximize"/></svg></button>
+</div>
+<figcaption class="tray-player__caption">From the snail beds to a shop counter in 13 seconds, with captions and the sound of the wind.</figcaption>
+</figure>
+</div>
+</body>
+</html>

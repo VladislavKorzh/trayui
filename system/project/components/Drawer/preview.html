@@ -1,0 +1,20 @@
+<!-- @dsCard group="Overlays" height=496 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Drawer — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--col">
+<div class="tray-stage tray-stage--scrim" style="min-block-size: 28rem">
+<dialog class="tray-drawer" open data-tray="dialog" aria-labelledby="dr-t">
+<span class="tray-drawer__grip" aria-hidden="true"></span>
+<h2 class="title" id="dr-t">Add to the order</h2>
+<div class="tray-stack" style="margin-block-start: var(--space-5)">
+<div class="tray-seg tray-seg--fill" role="radiogroup" aria-label="Jar size"><label class="tray-seg__item"><input type="radio" name="drj"><span>30 g</span></label><label class="tray-seg__item"><input type="radio" name="drj" checked><span>50 g</span></label><label class="tray-seg__item"><input type="radio" name="drj"><span>100 g</span></label></div>
+<div class="tray-row tray-row--between"><span class="nav">Jars</span><div class="tray-btn-group" role="group" aria-label="Quantity" data-tray="stepper" data-min="1" data-max="9"><button class="tray-btn-group__item tray-btn-group__item--icon" type="button" data-step="-1" aria-label="One fewer"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg></button><output class="tray-btn-group__value">2</output><button class="tray-btn-group__item tray-btn-group__item--icon" type="button" data-step="1" aria-label="One more"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg></button></div></div>
+</div>
+<div class="tray-dialog__foot"><button class="tray-btn tray-btn--split tray-btn--block" type="button" data-close><span>Add to the order</span><span>$118</span></button></div>
+</dialog>
+</div>
+</div>
+</body>
+</html>

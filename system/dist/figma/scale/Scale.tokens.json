@@ -1,0 +1,616 @@
+{
+  "space": {
+    "1": {
+      "$type": "dimension",
+      "$value": {
+        "value": 4,
+        "unit": "px"
+      },
+      "$description": "--space-1. The gap between segments, tabs and stepper buttons; the padding of the tray that holds them."
+    },
+    "2": {
+      "$type": "dimension",
+      "$value": {
+        "value": 8,
+        "unit": "px"
+      },
+      "$description": "--space-2. Label to field; icon to text in a small control; between stacked choices."
+    },
+    "3": {
+      "$type": "dimension",
+      "$value": {
+        "value": 12,
+        "unit": "px"
+      },
+      "$description": "--space-3. Control to its text (checkbox, radio, avatar); rows of a compact list."
+    },
+    "4": {
+      "$type": "dimension",
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      },
+      "$description": "--space-4. The grid gap between cards; between fields; icon to label in a large button."
+    },
+    "5": {
+      "$type": "dimension",
+      "$value": {
+        "value": 20,
+        "unit": "px"
+      },
+      "$description": "--space-5. The padding of an accordion row or a list row."
+    },
+    "6": {
+      "$type": "dimension",
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      },
+      "$description": "--space-6. Between a heading and its content inside a card."
+    },
+    "7": {
+      "$type": "dimension",
+      "$value": {
+        "value": 28,
+        "unit": "px"
+      },
+      "$description": "--space-7. Card padding on a phone (the lower end of card-pad)."
+    },
+    "8": {
+      "$type": "dimension",
+      "$value": {
+        "value": 32,
+        "unit": "px"
+      },
+      "$description": "--space-8. Horizontal padding of a large button; between groups inside a card."
+    },
+    "9": {
+      "$type": "dimension",
+      "$value": {
+        "value": 36,
+        "unit": "px"
+      },
+      "$description": "--space-9. Between sections of a form."
+    },
+    "10": {
+      "$type": "dimension",
+      "$value": {
+        "value": 40,
+        "unit": "px"
+      },
+      "$description": "--space-10. Page padding on desktop (the upper end of page-pad)."
+    },
+    "12": {
+      "$type": "dimension",
+      "$value": {
+        "value": 48,
+        "unit": "px"
+      },
+      "$description": "--space-12. Card padding on desktop (the upper end of card-pad)."
+    },
+    "16": {
+      "$type": "dimension",
+      "$value": {
+        "value": 64,
+        "unit": "px"
+      },
+      "$description": "--space-16. Between the parts of an empty state; large vertical breathing room inside a card."
+    }
+  },
+  "radius": {
+    "card": {
+      "$type": "dimension",
+      "$value": {
+        "value": 40,
+        "unit": "px"
+      },
+      "$description": "--radius-card. Cards, dialogs, sheets and drawers."
+    },
+    "panel": {
+      "$type": "dimension",
+      "$value": {
+        "value": 28,
+        "unit": "px"
+      },
+      "$description": "--radius-panel. A panel inside a card; popovers and hover cards."
+    },
+    "button": {
+      "$type": "dimension",
+      "$value": {
+        "value": 20,
+        "unit": "px"
+      },
+      "$description": "--radius-button. Large buttons; the tray of a segmented control, tab strip or stepper; menus."
+    },
+    "input": {
+      "$type": "dimension",
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      },
+      "$description": "--radius-input. Inputs, selects, textareas, choice cards, medium buttons, toasts."
+    },
+    "control": {
+      "$type": "dimension",
+      "$value": {
+        "value": 14,
+        "unit": "px"
+      },
+      "$description": "--radius-control. Small buttons, segments, tabs, menu items, calendar days."
+    },
+    "chip": {
+      "$type": "dimension",
+      "$value": {
+        "value": 12,
+        "unit": "px"
+      },
+      "$description": "--radius-chip. Chips, badges, tooltips, extra-small buttons, avatars."
+    },
+    "mark": {
+      "$type": "dimension",
+      "$value": {
+        "value": 4,
+        "unit": "px"
+      },
+      "$description": "--radius-mark. Chart marks and their key swatches, the checkbox, a key cap."
+    },
+    "pill": {
+      "$type": "dimension",
+      "$value": {
+        "value": 999,
+        "unit": "px"
+      },
+      "$description": "--radius-pill. Meters, sliders and the switch only."
+    }
+  },
+  "size": {
+    "lg": {
+      "$type": "dimension",
+      "$value": {
+        "value": 64,
+        "unit": "px"
+      },
+      "$description": "--size-lg. Height of a large button: the main action of a page or card."
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": {
+        "value": 56,
+        "unit": "px"
+      },
+      "$description": "--size-md. Height of inputs, selects, and a medium button that sits in a row with them."
+    },
+    "segment": {
+      "$type": "dimension",
+      "$value": {
+        "value": 52,
+        "unit": "px"
+      },
+      "$description": "--size-segment. Height of a segment and of a stepper button."
+    },
+    "sm": {
+      "$type": "dimension",
+      "$value": {
+        "value": 48,
+        "unit": "px"
+      },
+      "$description": "--size-sm. Height of a small button and of the theme switch, in a header or toolbar."
+    },
+    "hit": {
+      "$type": "dimension",
+      "$value": {
+        "value": 44,
+        "unit": "px"
+      },
+      "$description": "--size-hit. The smallest target: tabs, menu items, calendar days, icon buttons in a row."
+    },
+    "xs": {
+      "$type": "dimension",
+      "$value": {
+        "value": 40,
+        "unit": "px"
+      },
+      "$description": "--size-xs. Height of a chip, and of an extra-small button in a dense toolbar or table."
+    },
+    "icon": {
+      "$type": "dimension",
+      "$value": {
+        "value": 20,
+        "unit": "px"
+      },
+      "$description": "--size-icon. The icon box."
+    }
+  },
+  "layout": {
+    "container": {
+      "$type": "dimension",
+      "$value": {
+        "value": 1360,
+        "unit": "px"
+      },
+      "$description": "--container. The widest the centred page container gets."
+    },
+    "page-pad": {
+      "$type": "dimension",
+      "$value": {
+        "value": 40,
+        "unit": "px"
+      },
+      "$description": "--page-pad. Padding between the viewport edge and the container."
+    },
+    "card-pad": {
+      "$type": "dimension",
+      "$value": {
+        "value": 48,
+        "unit": "px"
+      },
+      "$description": "--card-pad. Padding inside every card, dialog and sheet."
+    },
+    "section-gap": {
+      "$type": "dimension",
+      "$value": {
+        "value": 128,
+        "unit": "px"
+      },
+      "$description": "--section-gap. The even gap between page sections."
+    },
+    "grid-gap": {
+      "$type": "dimension",
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      },
+      "$description": "--grid-gap. The gap between cards in a bento row."
+    },
+    "measure": {
+      "$type": "dimension",
+      "$value": {
+        "value": 608,
+        "unit": "px"
+      },
+      "$description": "--measure. The width of a reading column: about 70 characters of body."
+    },
+    "bp-phone": {
+      "$type": "dimension",
+      "$value": {
+        "value": 544,
+        "unit": "px"
+      },
+      "$description": "--bp-phone. Below this, segmented controls stack their labels and chart labels grow."
+    },
+    "bp-tablet": {
+      "$type": "dimension",
+      "$value": {
+        "value": 640,
+        "unit": "px"
+      },
+      "$description": "--bp-tablet. From here, fields and choices sit two to a row."
+    },
+    "bp-bento": {
+      "$type": "dimension",
+      "$value": {
+        "value": 896,
+        "unit": "px"
+      },
+      "$description": "--bp-bento. From here, cards take unequal widths in a row; below, every card is full width."
+    },
+    "bp-header": {
+      "$type": "dimension",
+      "$value": {
+        "value": 1216,
+        "unit": "px"
+      },
+      "$description": "--bp-header. From here, the header is one row; below, the tab strip takes a second, pinned row."
+    }
+  },
+  "type": {
+    "display": {
+      "size": {
+        "$type": "dimension",
+        "$value": {
+          "value": 96,
+          "unit": "px"
+        },
+        "$description": ".display: its size, the largest on a fluid style."
+      },
+      "weight": {
+        "$type": "number",
+        "$value": 700,
+        "$description": ".display: its weight."
+      }
+    },
+    "headline": {
+      "size": {
+        "$type": "dimension",
+        "$value": {
+          "value": 64,
+          "unit": "px"
+        },
+        "$description": ".headline: its size, the largest on a fluid style."
+      },
+      "weight": {
+        "$type": "number",
+        "$value": 700,
+        "$description": ".headline: its weight."
+      }
+    },
+    "title": {
+      "size": {
+        "$type": "dimension",
+        "$value": {
+          "value": 40,
+          "unit": "px"
+        },
+        "$description": ".title: its size, the largest on a fluid style."
+      },
+      "weight": {
+        "$type": "number",
+        "$value": 700,
+        "$description": ".title: its weight."
+      }
+    },
+    "subtitle": {
+      "size": {
+        "$type": "dimension",
+        "$value": {
+          "value": 28,
+          "unit": "px"
+        },
+        "$description": ".subtitle: its size, the largest on a fluid style."
+      },
+      "weight": {
+        "$type": "number",
+        "$value": 700,
+        "$description": ".subtitle: its weight."
+      }
+    },
+    "figure": {
+      "size": {
+        "$type": "dimension",
+        "$value": {
+          "value": 112,
+          "unit": "px"
+        },
+        "$description": ".figure: its size, the largest on a fluid style."
+      },
+      "weight": {
+        "$type": "number",
+        "$value": 700,
+        "$description": ".figure: its weight."
+      }
+    },
+    "lead": {
+      "size": {
+        "$type": "dimension",
+        "$value": {
+          "value": 20,
+          "unit": "px"
+        },
+        "$description": ".lead: its size, the largest on a fluid style."
+      },
+      "weight": {
+        "$type": "number",
+        "$value": 400,
+        "$description": ".lead: its weight."
+      }
+    },
+    "body": {
+      "size": {
+        "$type": "dimension",
+        "$value": {
+          "value": 18,
+          "unit": "px"
+        },
+        "$description": ".body: its size, the largest on a fluid style."
+      },
+      "weight": {
+        "$type": "number",
+        "$value": 400,
+        "$description": ".body: its weight."
+      }
+    },
+    "caption": {
+      "size": {
+        "$type": "dimension",
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        },
+        "$description": ".caption: its size, the largest on a fluid style."
+      },
+      "weight": {
+        "$type": "number",
+        "$value": 400,
+        "$description": ".caption: its weight."
+      }
+    },
+    "tick": {
+      "size": {
+        "$type": "dimension",
+        "$value": {
+          "value": 13,
+          "unit": "px"
+        },
+        "$description": ".tick: its size, the largest on a fluid style."
+      },
+      "weight": {
+        "$type": "number",
+        "$value": 400,
+        "$description": ".tick: its weight."
+      }
+    },
+    "action": {
+      "size": {
+        "$type": "dimension",
+        "$value": {
+          "value": 19,
+          "unit": "px"
+        },
+        "$description": ".action: its size, the largest on a fluid style."
+      },
+      "weight": {
+        "$type": "number",
+        "$value": 600,
+        "$description": ".action: its weight."
+      }
+    },
+    "control": {
+      "size": {
+        "$type": "dimension",
+        "$value": {
+          "value": 17,
+          "unit": "px"
+        },
+        "$description": ".control: its size, the largest on a fluid style."
+      },
+      "weight": {
+        "$type": "number",
+        "$value": 600,
+        "$description": ".control: its weight."
+      }
+    },
+    "nav": {
+      "size": {
+        "$type": "dimension",
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        },
+        "$description": ".nav: its size, the largest on a fluid style."
+      },
+      "weight": {
+        "$type": "number",
+        "$value": 500,
+        "$description": ".nav: its weight."
+      }
+    },
+    "label": {
+      "size": {
+        "$type": "dimension",
+        "$value": {
+          "value": 15,
+          "unit": "px"
+        },
+        "$description": ".label: its size, the largest on a fluid style."
+      },
+      "weight": {
+        "$type": "number",
+        "$value": 500,
+        "$description": ".label: its weight."
+      }
+    },
+    "code": {
+      "size": {
+        "$type": "dimension",
+        "$value": {
+          "value": 15,
+          "unit": "px"
+        },
+        "$description": ".code: its size, the largest on a fluid style."
+      },
+      "weight": {
+        "$type": "number",
+        "$value": 400,
+        "$description": ".code: its weight."
+      }
+    },
+    "kbd": {
+      "size": {
+        "$type": "dimension",
+        "$value": {
+          "value": 13,
+          "unit": "px"
+        },
+        "$description": ".kbd: its size, the largest on a fluid style."
+      },
+      "weight": {
+        "$type": "number",
+        "$value": 500,
+        "$description": ".kbd: its weight."
+      }
+    }
+  },
+  "font": {
+    "sans": {
+      "$type": "fontFamily",
+      "$value": "Onest",
+      "$description": "--font-sans: Onest, \"Helvetica Neue\", Arial, sans-serif"
+    },
+    "mono": {
+      "$type": "fontFamily",
+      "$value": "SF Mono",
+      "$description": "--font-mono: ui-monospace, \"SF Mono\", Menlo, Consolas, monospace"
+    }
+  },
+  "duration": {
+    "press": {
+      "$type": "duration",
+      "$value": {
+        "value": 0.15,
+        "unit": "s"
+      },
+      "$description": "--duration-press. Hover darkening and the press scale of a button."
+    },
+    "fill": {
+      "$type": "duration",
+      "$value": {
+        "value": 0.18,
+        "unit": "s"
+      },
+      "$description": "--duration-fill. A change of fill on state: segment, tab, checkbox, card hover."
+    },
+    "move": {
+      "$type": "duration",
+      "$value": {
+        "value": 0.2,
+        "unit": "s"
+      },
+      "$description": "--duration-move. Something that travels: the switch knob, the pill of a segment or a tab, a toast."
+    },
+    "in": {
+      "$type": "duration",
+      "$value": {
+        "value": 0.22,
+        "unit": "s"
+      },
+      "$description": "--duration-in. Something appearing: a menu or popover opening from its trigger, a dialog, sheet or drawer coming in, a tooltip, a toast."
+    },
+    "out": {
+      "$type": "duration",
+      "$value": {
+        "value": 0.14,
+        "unit": "s"
+      },
+      "$description": "--duration-out. The same things going away: always quicker than they came, so a closed thing is out of the way at once."
+    }
+  },
+  "layer": {
+    "sticky": {
+      "$type": "number",
+      "$value": 20,
+      "$description": "--z-sticky."
+    },
+    "float": {
+      "$type": "number",
+      "$value": 40,
+      "$description": "--z-float."
+    },
+    "overlay": {
+      "$type": "number",
+      "$value": 60,
+      "$description": "--z-overlay."
+    },
+    "toast": {
+      "$type": "number",
+      "$value": 80,
+      "$description": "--z-toast."
+    }
+  },
+  "opacity": {
+    "disabled": {
+      "$type": "number",
+      "$value": 0.45,
+      "$description": "--opacity-disabled."
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "lead": "Point at the button or move to it with Tab to see its tooltip. Held open keeps it up while you edit, and adds data-open to the markup.",
+  "controls": [
+    { "name": "icon", "label": "Icon", "options": [["copy", "Copy"], ["download", "Download"], ["search", "Search"], ["truck", "Truck"]] },
+    { "name": "tip", "label": "Tip", "type": "text", "default": "Copy the link", "max": 40 },
+    { "name": "keys", "label": "Shortcut", "type": "text", "default": "Ctrl C", "max": 20 },
+    { "name": "side", "label": "Side", "options": [["", "Above"], ["bottom", "Below"]] },
+    { "name": "open", "label": "Held open", "type": "switch" }
+  ],
+  "template": "<span class=\"tray-anchor\" data-tray=\"tooltip\" data-tip=\"{{tip}}\"{{#keys}} data-keys=\"{{keys}}\"{{/keys}}{{#side}} data-side=\"{{side}}\"{{/side}}{{#open}} data-open{{/open}}><button class=\"tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon\" type=\"button\" aria-label=\"{{tip}}\"><svg class=\"tray-icon\" aria-hidden=\"true\"><use href=\"#tray-i-{{icon}}\"/></svg></button></span>"
+}

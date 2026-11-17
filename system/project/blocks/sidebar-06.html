@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sidebar that collapses to icons</title>
+<meta name="description" content="A sidebar that collapses to a rail of icons.">
+<meta name="tray-category" content="Sidebar">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app">
+  <div class="tray-app__side">
+    <nav class="tray-sidebar tray-sidebar--flyout" id="nav" aria-label="Main">
+      <div class="tray-anchor tray-anchor--block" data-tray="menu">
+        <button class="tray-switcher" type="button" aria-label="Workspace: Perly Farm">
+          <span class="tray-avatar tray-avatar--sm tray-avatar--ink" aria-hidden="true">PF</span>
+          <span class="tray-person__text"><b>Perly Farm</b><small>Shop plan</small></span>
+          <svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chevrons-up-down"/></svg>
+        </button>
+        <div class="tray-pop">
+          <div class="tray-list">
+            <p class="tray-list__label">Workspaces</p>
+            <button type="button" class="tray-option" role="menuitemradio" data-group="workspace" aria-checked="true"><span class="tray-avatar tray-avatar--xs tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-option__text">Perly Farm</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+            <button type="button" class="tray-option" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">MB</span><span class="tray-option__text">Meadow Bakery</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+            <button type="button" class="tray-option" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">HC</span><span class="tray-option__text">Hill Cheese</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+            <hr class="tray-list__rule">
+            <button type="button" class="tray-option" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New workspace</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="tray-sidebar__scroll">
+        <div class="tray-sidebar__group">
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Home"><a class="tray-sidebar__item" href="#" aria-label="Home"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a></span>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Orders"><a class="tray-sidebar__item" href="#" aria-label="Orders, 12 to pack" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg><span>Orders</span><span class="tray-badge tray-badge--count">12</span></a></span>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Customers"><a class="tray-sidebar__item" href="#" aria-label="Customers"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-users"/></svg><span>Customers</span></a></span>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Batches"><a class="tray-sidebar__item" href="#" aria-label="Batches"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span>Batches</span></a></span>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Reports"><a class="tray-sidebar__item" href="#" aria-label="Reports"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chart-column"/></svg><span>Reports</span></a></span>
+        </div>
+        <div class="tray-sidebar__group">
+          <p class="tray-sidebar__label">Shop</p>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Products"><a class="tray-sidebar__item" href="#" aria-label="Products"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-tag"/></svg><span>Products</span></a></span>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Delivery"><a class="tray-sidebar__item" href="#" aria-label="Delivery"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg><span>Delivery</span></a></span>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Discounts"><a class="tray-sidebar__item" href="#" aria-label="Discounts"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-percent"/></svg><span>Discounts</span></a></span>
+        </div>
+        <div class="tray-sidebar__group">
+          <p class="tray-sidebar__label">Workspace</p>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Team"><a class="tray-sidebar__item" href="#" aria-label="Team"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user-plus"/></svg><span>Team</span></a></span>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Billing"><a class="tray-sidebar__item" href="#" aria-label="Billing"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg><span>Billing</span></a></span>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Settings"><a class="tray-sidebar__item" href="#" aria-label="Settings"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-settings"/></svg><span>Settings</span></a></span>
+        </div>
+      </div>
+      <div class="tray-usage tray-usage--sm">
+        <div class="tray-progress">
+          <span class="tray-progress__name">Orders</span>
+          <span class="tray-progress__value">842 of 1,000</span>
+          <span class="tray-progress__bar" role="meter" aria-label="Orders this month" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="842" style="--tray-v: 84"></span>
+        </div>
+      </div>
+      <div class="tray-anchor tray-anchor--block" data-tray="menu">
+        <button class="tray-switcher" type="button" aria-label="Account: Oksana Franko">
+          <span class="tray-avatar tray-avatar--sm" aria-hidden="true">OF</span>
+          <span class="tray-person__text"><b>Oksana Franko</b><small>Owner</small></span>
+          <svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chevrons-up-down"/></svg>
+        </button>
+        <div class="tray-pop tray-pop--top">
+          <div class="tray-pop__head">
+            <span class="tray-avatar" aria-hidden="true">OF</span>
+            <span class="tray-person__text"><b>Oksana Franko</b><small>oksana@perly.example</small></span>
+          </div>
+          <div class="tray-list">
+            <hr class="tray-list__rule">
+            <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user"/></svg><span class="tray-option__text">Profile</span></a>
+            <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg><span class="tray-option__text">Notifications</span></a>
+            <hr class="tray-list__rule">
+            <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-life-buoy"/></svg><span class="tray-option__text">Help</span></a>
+            <button type="button" class="tray-option" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-log-out"/></svg><span class="tray-option__text">Sign out</span></button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <header class="tray-topbar">
+      <div class="tray-topbar__start">
+        <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon tray-app__collapse" type="button" data-tray="sidebar-toggle" aria-controls="nav" aria-label="Collapse the sidebar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-panel-left"/></svg></button>
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the navigation"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+        <nav aria-label="Breadcrumb"><ol class="tray-crumbs"><li><a href="#">Perly Farm</a></li><li><span aria-current="page">Orders</span></li></ol></nav>
+      </div>
+    </header>
+    <main class="tray-app__content">
+      <h1 class="tray-vh">Orders</h1>
+      <div class="tray-slots">
+        <div class="tray-slot tray-slot--video"></div>
+        <div class="tray-slot tray-slot--video"></div>
+        <div class="tray-slot tray-slot--video"></div>
+      </div>
+      <div class="tray-slot tray-slot--tall"></div>
+    </main>
+  </div>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

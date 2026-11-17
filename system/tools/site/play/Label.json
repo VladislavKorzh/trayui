@@ -1,0 +1,9 @@
+{
+  "lead": "A label in plain words over its control: marked when the field may stay empty, quieter when the field is off.",
+  "controls": [
+    { "name": "label", "label": "Text", "type": "text", "default": "Apartment", "max": 40 },
+    { "name": "optional", "label": "Optional", "type": "switch", "default": true },
+    { "name": "disabled", "label": "Field disabled", "type": "switch" }
+  ],
+  "template": "<div class=\"tray-field\"{{#disabled}} data-disabled{{/disabled}}><label class=\"tray-label\" for=\"pg-flat\">{{label}}{{#optional}} <span class=\"tray-label__opt\">(optional)</span>{{/optional}}</label><input class=\"tray-input\" id=\"pg-flat\" autocomplete=\"address-line2\" placeholder=\"Flat, floor, door code\"{{#disabled}} disabled{{/disabled}}></div>"
+}

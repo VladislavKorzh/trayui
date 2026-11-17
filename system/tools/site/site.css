@@ -1,0 +1,281 @@
+/* The site's own layout. Every colour, size and radius is a token; everything else is the system. */
+
+/* The header stays in place, so what scrolls into view stops below it. */
+html { scroll-padding-block-start: calc(var(--size-lg) + var(--space-8)); }
+
+.site-skip { position: absolute; inset-block-start: var(--space-2); inset-inline-start: var(--space-2); z-index: var(--z-toast); transform: translateY(-300%); }
+.site-skip:focus-visible { transform: none; }
+.site-noscript { padding: var(--space-6); }
+
+/* ---------- The logo: the mark of the system before its name ---------- */
+
+.site-logo { display: inline-flex; align-items: center; gap: 10px; }
+.site-mark { flex: none; display: block; inline-size: 1.25em; block-size: 1.25em; overflow: visible; }
+/* The tile takes the accent of the theme, so a page keeps one loud colour; the bar is the ink that goes on it. */
+.site-mark__tile { fill: var(--accent); }
+.site-mark__bar { fill: var(--on-accent); transform-box: fill-box; transform-origin: 50% 100%; transition: transform var(--duration-move) var(--ease); }
+/* When the page opens the counter is set down, once. Under the pointer it lifts; pressed, it gives. */
+@keyframes site-mark-set { from { transform: translateY(-9px) scaleX(.55); opacity: 0; } 55% { opacity: 1; } }
+.site-top .site-mark__bar, .tray-screen__bar .site-mark__bar { animation: site-mark-set .6s var(--ease) .15s backwards; }
+a.site-logo:hover .site-mark__bar, a.site-logo:focus-visible .site-mark__bar { transform: translateY(-3px) scaleX(1.1); }
+a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
+@media (prefers-reduced-motion: reduce) {
+  .site-mark__bar { animation: none !important; transition: none; }
+  a.site-logo:hover .site-mark__bar, a.site-logo:focus-visible .site-mark__bar, a.site-logo:active .site-mark__bar { transform: none; }
+}
+
+/* ---------- The header across the site, the sidebar of a section ---------- */
+
+.site-top .tray-topbar__start { gap: var(--space-5); }
+.site-top .tray-wordmark { font-size: 1.375rem; white-space: nowrap; }
+.site-top .tray-topbar__search { flex: 0 1 15rem; }
+.site-nav .tray-sidebar__item { min-block-size: 36px; }
+.site-nav .tray-sidebar__label { padding-block-start: var(--space-3); }
+.site-nav--sheet { display: grid; gap: var(--space-4); padding-block-start: var(--space-5); }
+.site-nav--sheet .tray-sidebar__item:hover { background: var(--tray-fill); }
+.site-sections--sheet { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-block-start: var(--space-5); }
+
+/* The home page has no sidebar and takes the width of the container. */
+:root[data-home] .site { grid-template-columns: minmax(0, 1fr); }
+:root[data-home] .site > .tray-app__side { display: none; }
+:root[data-home] .site .tray-app__content { inline-size: min(100%, var(--container)); }
+/* The home page is drawn in index.html. Opened at another page, it stays out of sight until that page is drawn. */
+:root:not([data-home]) #site-view[data-prerendered] > * { display: none; }
+/* A block or a template may use more of a wide window than a page of text does. */
+#site-view[data-wide] { inline-size: min(100%, 92rem); }
+:root[data-home] .site #site-view[data-wide] { inline-size: min(100%, var(--container)); }
+/* The title takes focus after a page change so a screen reader starts there; it is not a control and draws no ring. */
+#site-view h1:focus { outline: none; }
+.site-wait { block-size: 20rem; border-radius: var(--radius-panel); }
+
+/* ---------- Search: the command list in a dialog near the top of the window ---------- */
+
+.site-search { inline-size: min(100% - 2rem, 38rem); max-block-size: none; margin: 12vh auto auto; padding: 0; border: 0; background: none; color: var(--ink); overflow: visible; }
+.site-search::backdrop { background: var(--scrim); }
+.site-search .tray-command { inline-size: 100%; }
+.site-search .tray-command__list { max-block-size: min(26rem, 54vh); }
+
+/* ---------- The home page ---------- */
+
+.site-home { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--section-gap); padding-block-start: var(--space-2); }
+.site-section { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; }
+.site-section > .tray-bento, .site-section > .site-show, .site-section > .site-iconwall, .site-section > .site-charts { justify-self: stretch; }
+.site-section > .tray-section__head { margin-block-end: var(--space-8); }
+.site-section > p:last-child { margin-block-start: var(--space-6); }
+.site-section .lead a { color: var(--ink); }
+/* A card of the mosaic that keeps its last part at its foot. */
+.site-spread { align-content: space-between; }
+.site-fill { display: grid; align-content: end; }
+/* A rule, shown with the thing itself: the words at one end, the components at the other. */
+.site-rule { display: grid; align-content: space-between; gap: var(--space-8); min-inline-size: 0; }
+.site-rule__text { display: grid; gap: var(--space-2); max-inline-size: 30rem; }
+.site-rule__text p { color: var(--ink-soft); font: 400 1.0625rem/1.45 var(--font-sans); }
+.site-themes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--grid-gap); }
+.site-themes__one { padding: var(--space-4); border-radius: var(--radius-card); background: var(--page); }
+.site-themes__one > .tray-card { padding: var(--space-7); border-radius: calc(var(--radius-card) - var(--space-4)); }
+.site-iconwall { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); justify-items: center; gap: var(--space-5) var(--space-2); }
+.site-result { display: grid; align-content: center; }
+.site-show { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+
+/* ---------- A page of words: guidelines, docs, the foundations ---------- */
+
+.site-prose { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); min-inline-size: 0; }
+.site-prose > h2 { margin-block-start: var(--space-6); }
+.site-prose > h2:first-child { margin-block-start: 0; }
+.site-h3 { margin-block-start: var(--space-3); font: 600 1.1875rem/1.3 var(--font-sans); }
+.site-prose > p, .site-prose > ul, .site-prose > ol { max-inline-size: 46rem; color: var(--ink-soft); font: 400 1.0625rem/1.5 var(--font-sans); }
+.site-prose > p b, .site-prose li b { color: var(--ink); font-weight: 600; }
+.site-prose > p a, .site-prose li a, .site-prose td a { color: var(--ink); }
+.site-prose .tray-table td, .site-prose .tray-table th { vertical-align: top; }
+.site-prose .tray-table td { color: var(--ink-soft); }
+.site-prose .tray-table td:first-child { color: var(--ink); }
+.site-prose .tray-code-inline { color: var(--ink); overflow-wrap: anywhere; }
+.site-prose pre, #site-src pre { overflow-x: auto; }
+
+/* The live example of a component: a hairline frame as tall as the preview needs for its floating parts. */
+.site-stage { position: relative; border-radius: var(--radius-panel); box-shadow: inset 0 0 0 1px var(--hairline); }
+#site-live { min-inline-size: 0; }
+
+/* Every group with its components. */
+.site-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr)); gap: var(--grid-gap); }
+.site-group { padding: var(--space-6); border-radius: var(--radius-panel); }
+.site-group h2 { margin-block-end: var(--space-2); color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
+.site-group ul { display: grid; justify-items: start; margin: 0; padding: 0; list-style: none; }
+.site-group a { display: inline-flex; align-items: center; min-block-size: 36px; border-radius: var(--radius-mark); color: var(--ink); font: 500 1rem/1.3 var(--font-sans); text-decoration: none; }
+.site-group a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .2em; }
+
+/* Before and next */
+.site-pager { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--grid-gap); margin-block-start: var(--space-4); }
+.site-pager__next { justify-content: space-between; text-align: end; }
+
+/* ---------- Foundations: tokens drawn as what they are ---------- */
+
+.site-tokens td, .site-tokens th { vertical-align: middle; }
+.site-swatches { display: inline-flex; gap: var(--space-1); }
+.site-swatch { display: block; inline-size: 40px; block-size: 40px; border-radius: var(--radius-chip); box-shadow: inset 0 0 0 1px var(--hairline); }
+.site-values { color: var(--ink-soft); font: 400 .875rem/1.6 var(--font-mono); white-space: nowrap; }
+.site-scale { inline-size: 6rem; }
+.site-bar { display: block; block-size: 12px; min-inline-size: 2px; max-inline-size: 5rem; border-radius: var(--radius-mark); background: var(--ink); }
+.site-bar--tall { inline-size: 12px; min-block-size: 2px; }
+.site-corner { display: block; inline-size: 44px; block-size: 44px; background: var(--ink); }
+.site-float { display: block; inline-size: 56px; block-size: 36px; border-radius: var(--radius-chip); background: var(--raised); }
+.site-types { display: grid; grid-template-columns: minmax(0, 1fr); border-block-start: 1px solid var(--hairline); }
+.site-type { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); padding-block: var(--space-5); border-block-end: 1px solid var(--hairline); }
+.site-type__meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-4); color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
+.site-type__sample { overflow-wrap: anywhere; }
+.site-icons__find { max-inline-size: 24rem; }
+.site-icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); gap: var(--space-2); }
+.site-icon { display: grid; justify-items: center; align-content: start; gap: var(--space-3); min-inline-size: 0; padding: var(--space-5) var(--space-2) var(--space-4); border: 0; border-radius: var(--radius-input); background: var(--surface); color: var(--ink); cursor: pointer; transition: filter var(--duration-fill) var(--ease); }
+.site-icon:hover { filter: brightness(.96); }
+.site-icon:active { transform: scale(.97); }
+.site-icon span { color: var(--ink-soft); font: 400 .8125rem/1.3 var(--font-sans); text-align: center; overflow-wrap: anywhere; }
+
+/* ---------- The viewer of a block or a template: tabs and tools on one line, then the frame on a tray ---------- */
+
+.site-viewer { display: grid; grid-template-columns: minmax(0, 1fr); min-inline-size: 0; }
+.site-viewer__bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.site-viewer__tools { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.site-viewer:has(#site-t2[aria-selected="true"]) .site-viewer__sizes, .site-viewer:has(#site-t2[aria-selected="true"]) [data-full] { display: none; }
+.site-frame { display: grid; justify-items: center; padding: var(--space-3); border-radius: var(--radius-panel); background: var(--surface); overflow: hidden; }
+.site-frame__box { position: relative; border-radius: var(--radius-button); background: var(--page); overflow: hidden; }
+.site-frame__box iframe { display: block; border: 0; transform-origin: 0 0; }
+[dir="rtl"] .site-frame__box iframe { transform-origin: 100% 0; }
+.site-viewer pre { max-block-size: 44rem; overflow: auto; }
+
+/* The same frame over the whole window. */
+.site-full { --tray-ground: var(--surface); --tray-fill: var(--page); --tray-ground-up: var(--surface); --tray-fill-up: var(--page); position: fixed; inset: 0; inline-size: 100%; block-size: 100%; max-inline-size: none; max-block-size: none; margin: 0; padding: 0; border: 0; background: var(--surface); color: var(--ink); }
+.site-full[open] { display: flex; flex-direction: column; }
+.site-full__bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-4); padding: var(--space-3) var(--space-4); }
+.site-full__title { flex: 1; min-inline-size: 0; font: 600 1.0625rem/1.3 var(--font-sans); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.site-full__stage { flex: 1; display: grid; justify-items: center; align-content: start; min-block-size: 0; padding: 0 var(--space-3) var(--space-3); overflow: hidden; }
+
+/* The first page of a section: every block or template as a small live picture. */
+.site-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr)); gap: var(--space-7) var(--grid-gap); }
+.site-thumb { display: grid; align-content: start; gap: var(--space-3); border-radius: var(--radius-panel); color: var(--ink); text-decoration: none; }
+/* The tray has the shape of the frame it will hold (1280 by 800) before the frame arrives, so nothing moves when it does. */
+.site-thumb__view { box-sizing: content-box; display: block; aspect-ratio: 1280 / 800; padding: var(--space-2); border-radius: var(--radius-panel); background: var(--surface); transition: filter var(--duration-fill) var(--ease); }
+.site-thumb:hover .site-thumb__view { filter: brightness(.96); }
+.site-thumb__view iframe { pointer-events: none; }
+.site-thumb__text { display: grid; gap: 2px; padding-inline: var(--space-2); }
+.site-thumb__text b { font: 600 1.0625rem/1.3 var(--font-sans); }
+.site-thumb__text small { color: var(--ink-muted); font: 400 .9375rem/1.4 var(--font-sans); }
+
+/* ---------- Themes: the mark of a theme, the menu, the list, the maker ---------- */
+
+/* A theme in one mark: its accent, ringed in its ink. */
+.site-dot { flex: none; display: block; inline-size: 20px; block-size: 20px; border: 2.4px solid var(--ink); border-radius: 50%; background: var(--accent); }
+.site-thememenu { min-inline-size: 15rem; max-block-size: min(42rem, calc(100vh - 6rem)); overflow-y: auto; }
+.site-thememenu .site-dot { border-color: var(--ink); box-shadow: 0 0 0 3px var(--page); margin: 3px; }
+
+.site-themelist { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 10.5rem), 1fr)); gap: var(--space-5) var(--grid-gap); }
+.site-themecard { display: grid; align-content: start; gap: var(--space-2); cursor: pointer; }
+/* The tray that holds a theme's picture turns ink when the theme is the one chosen. */
+.site-themecard__frame { display: block; padding: var(--space-2); border-radius: var(--radius-panel); background: var(--surface); transition: background-color var(--duration-fill) var(--ease); }
+.site-themecard:hover .site-themecard__frame { background: var(--track); }
+.site-themecard input:checked + .site-themecard__frame { background: var(--ink); }
+.site-themecard input:focus-visible + .site-themecard__frame { outline: 3px solid var(--ink); outline-offset: 3px; }
+.site-themecard__view { display: block; padding: var(--space-4); border-radius: calc(var(--radius-panel) - var(--space-2)); background: var(--page); color: var(--ink); }
+.site-themecard__text { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); padding-inline: var(--space-2); }
+.site-themecard__text b { font: 600 1.0625rem/1.3 var(--font-sans); }
+.site-themecard__text small { color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
+/* The picture: a word, two lines of text, a tray with a control in it, the accent and the ink. */
+.site-mini { display: grid; gap: var(--space-3); }
+.site-mini__text { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 6px var(--space-3); }
+.site-mini__text b { grid-row: span 2; font: 700 1.625rem/1 var(--font-sans); letter-spacing: -.03em; }
+.site-mini__text i, .site-mini__tray i { display: block; border-radius: var(--radius-mark); }
+.site-mini__text i { block-size: 6px; background: var(--ink-soft); }
+.site-mini__text i + i { inline-size: 62%; background: var(--ink-hint); }
+.site-mini__tray { display: flex; gap: 6px; padding: var(--space-2); border-radius: var(--radius-chip); background: var(--surface); }
+.site-mini__tray i { flex: 2; block-size: 16px; background: var(--page); }
+.site-mini__tray i + i { flex: 1; background: var(--track); }
+.site-mini__row { display: flex; gap: 6px; }
+.site-mini__accent, .site-mini__ink { display: block; block-size: 26px; border-radius: var(--radius-chip); }
+.site-mini__accent { flex: 1; background: var(--accent); }
+.site-mini__ink { inline-size: 26px; background: var(--ink); }
+
+.site-prose > .site-themelist, .site-prose > .site-maker { max-inline-size: none; }
+.site-maker { display: grid; grid-template-columns: minmax(0, 25rem) minmax(0, 1fr); align-items: start; gap: var(--grid-gap); }
+.site-maker__controls { padding: var(--space-7); }
+/* The stage is a tray of the site; the theme in the making stands on it as its own page. */
+.site-maker__stage { position: sticky; inset-block-start: calc(var(--size-lg) + var(--space-6)); padding: var(--space-3); border-radius: var(--radius-card); background: var(--surface); }
+.site-maker__preview { padding: var(--space-7); border-radius: calc(var(--radius-card) - var(--space-3)); background: var(--page); color: var(--ink); }
+.site-sampler { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+.site-sampler__card { padding: var(--space-6); }
+.site-sampler__pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--grid-gap); }
+/* A colour: its well, which opens the browser's picker, and its value to type or paste. */
+.site-colour__row { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-2); }
+.site-colour input[type="color"], .site-token input[type="color"] { -webkit-appearance: none; appearance: none; inline-size: var(--size-md); block-size: var(--size-md); padding: 6px; border: 0; border-radius: var(--radius-input); background: var(--tray-fill); cursor: pointer; }
+.site-token input[type="color"] { inline-size: var(--size-hit); block-size: var(--size-hit); padding: 5px; border-radius: var(--radius-control); }
+.site-colour input[type="color"]::-webkit-color-swatch-wrapper, .site-token input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.site-colour input[type="color"]::-webkit-color-swatch, .site-token input[type="color"]::-webkit-color-swatch { border: 0; border-radius: var(--radius-chip); }
+.site-colour input[type="color"]::-moz-color-swatch, .site-token input[type="color"]::-moz-color-swatch { border: 0; border-radius: var(--radius-chip); }
+.site-colour .tray-input { font-family: var(--font-mono); }
+.site-tokens-edit { display: grid; gap: var(--space-2); margin-block-start: var(--space-3); }
+.site-token { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); }
+.site-token__text { display: grid; gap: 2px; min-inline-size: 0; }
+.site-token__text b { font: 500 .9375rem/1.3 var(--font-mono); }
+.site-token__text small { color: var(--ink-muted); font: 400 .875rem/1.35 var(--font-sans); }
+
+/* ---------- Charts: each example under its name, with a way to its code ---------- */
+
+.site-charts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr)); align-items: start; gap: var(--space-8) var(--grid-gap); }
+/* The overview shows two of each form: a pair side by side, never a third alone on a line. */
+.site-charts--pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.site-chart { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); min-inline-size: 0; }
+.site-chart--wide { grid-column: 1 / -1; }
+.site-chart__bar { display: flex; align-items: end; justify-content: space-between; gap: var(--space-4); padding-inline: var(--space-2); }
+.site-chart__name { font: 600 1.0625rem/1.3 var(--font-sans); }
+.site-chart__bar p { color: var(--ink-muted); font: 400 .9375rem/1.4 var(--font-sans); }
+/* Until its chart is drawn, the place it will take. */
+.site-chart__view:empty { min-block-size: 22rem; border-radius: var(--radius-card); background: var(--surface); }
+.site-chart--wide .site-chart__view:empty { min-block-size: 26rem; }
+.site-chartrow { margin-block-start: var(--space-8); }
+.site-chartrow__head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: var(--space-3) var(--space-6); max-inline-size: none; }
+.site-chartrow__head > div { display: grid; gap: var(--space-2); max-inline-size: 46rem; }
+.site-chartrow__head p { color: var(--ink-soft); font: 400 1.0625rem/1.5 var(--font-sans); }
+.site-code { inline-size: min(100%, 50rem); }
+.site-code .tray-code { margin-block-start: var(--space-5); }
+
+@media (max-width: 64rem) {
+  .site-maker { grid-template-columns: minmax(0, 1fr); }
+  .site-maker__stage { position: static; }
+}
+@media (max-width: 56rem) {
+  .site-charts--pair { grid-template-columns: minmax(0, 1fr); }
+  .site-top .site-sections { display: none; }
+  .site { padding-inline: var(--space-3); }
+  /* An example wider than a small screen scrolls inside its frame, not the page. */
+  .site-stage { overflow-x: auto; }
+  .site .tray-app__content { padding-inline: 0; }
+}
+@media (max-width: 40rem) {
+  /* On a phone the frame is the phone: there is no other width to choose. */
+  .site-viewer__sizes, .site-full__sizes { display: none; }
+  .site-frame { padding: var(--space-2); }
+  .site-show .tray-seg { inline-size: 100%; overflow-x: auto; scrollbar-width: none; }
+  /* A phone has no arrow keys to explain. */
+  .site-search { margin-block-start: var(--space-4); }
+  .site-search .tray-command__foot { display: none; }
+}
+@media (max-width: 34rem) {
+  .site-pager { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------- The playground of a component: the stage, the controls beside it, the markup under both ---------- */
+.site-play { display: grid; gap: var(--space-4); min-inline-size: 0; margin-block-start: var(--space-10); }
+.site-play__head { display: grid; gap: var(--space-2); }
+.site-play__head p { max-inline-size: 46rem; color: var(--ink-soft); font: 400 1.0625rem/1.5 var(--font-sans); }
+.site-play__box { display: grid; grid-template-columns: minmax(0, 1fr) 18rem; gap: var(--space-4); align-items: stretch; }
+@media (max-width: 64rem) { .site-play__box { grid-template-columns: minmax(0, 1fr); } }
+.site-play__stage { display: grid; place-items: center; min-block-size: 20rem; padding: var(--space-6); border-radius: var(--radius-panel); box-shadow: inset 0 0 0 1px var(--hairline); overflow-x: auto; }
+.site-play__ground { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-4); inline-size: min(100%, var(--play-w, 30rem)); }
+.site-play__ground:not(.tray-card) { padding: var(--space-6); }
+:where(.site-play__ground > *) { min-inline-size: 0; }
+.site-play__ground > :is(div, form, section, article, figure, fieldset, dl, ul, ol, table, nav) { flex: 1 1 100%; }
+/* a segmented control or a button group keeps its own width, unless it is made to fill */
+.site-play__ground > :is(.tray-seg, .tray-btn-group) { flex: 0 1 auto; }
+.site-play__ground > .tray-seg--fill { flex: 1 1 100%; }
+.site-play__controls { align-self: start; padding: var(--space-6); border-radius: var(--radius-panel); }
+.site-play__controls > .tray-stack { gap: var(--space-4); }
+.site-play__controls .tray-field { margin: 0; }
+.site-play__controls [data-play-reset] { justify-self: start; }

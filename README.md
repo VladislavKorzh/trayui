@@ -1,0 +1,128 @@
+# <img src="system/project/assets/Logos/trayui.svg" width="32" height="32" alt=""> Tray UI
+
+A design system for products and the pages around them, in plain HTML and CSS, with one small script for behaviour.
+
+![The home page of the Tray UI site: 108 components in plain HTML and CSS, three files to link, in grey and yellow trays](.github/assets/home.png)
+
+It is a white page, ink type in Onest, and goods set out in soft grey trays with very round corners. One yellow marks the thing to do. Nothing is outlined or shadowed: surfaces are told apart by flat fills alone.
+
+- **108 components**, from a button to a data table: forms, navigation, overlays, data, conversation, and media (a lightbox, a video player). They also cover the frame of a product: app shell, billing, account, onboarding and public pages.
+- **64 blocks**: whole screens to copy, from a dashboard and settings to a shop, a checkout, articles, a blog and a wiki, plus fifteen sidebars and sign-in pages.
+- **10 themes**, six light and four dark, each measured against the system's 66 contrast rules. A theme maker derives your own from four colours.
+- **Accessibility built in.** Keyboard support and accessible names follow [the accessibility guide](system/project/guides/3-accessibility.md), and the system answers more contrast, forced colours, print and reduced motion.
+- **Icons from [Lucide](https://lucide.dev)**: 118 built into the script, and in React any other from `react-icons/lu`.
+- **React**, as `trayui-react`: the same components, typed, over the same stylesheet. Its charts are drawn with [Recharts](https://recharts.github.io), with 58 examples.
+- **Tailwind and Figma**: the tokens as a Tailwind 4 theme, a Tailwind 3 preset and Figma variables with a mode for each theme.
+- **Three files**, about 70 KB compressed. No framework, no build step.
+
+## Install
+
+Link the three files, in this order:
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/VladislavKorzh/trayui@v0.1.0/system/dist/tokens.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/VladislavKorzh/trayui@v0.1.0/system/dist/components/bundle.css">
+  <script src="https://cdn.jsdelivr.net/gh/VladislavKorzh/trayui@v0.1.0/system/dist/components/bundle.js" defer></script>
+</head>
+```
+
+You can also copy the [`system/dist`](system/dist) folder into your project and link the same files from there. The folder also holds the font, the blocks and the tokens for Tailwind and Figma. Each release on the [releases page](https://github.com/VladislavKorzh/trayui/releases) carries the same folder as a zip.
+
+## Write a first screen
+
+```html
+<main class="tray-container tray-section">
+  <div class="tray-card tray-stack">
+    <h1 class="title">Order a jar</h1>
+    <div class="tray-field">
+      <label class="tray-label" for="address">Delivery address</label>
+      <input class="tray-input" id="address" autocomplete="street-address">
+    </div>
+    <button class="tray-btn" type="submit">Order a jar</button>
+  </div>
+</main>
+```
+
+That is a grey tray on the white page, a white field in it, and the one yellow button. Components that need a script take `data-tray`, as in `<div data-tray="tabs">`, and wire themselves. If you add markup after the page has loaded, call `TrayUI.init(root)` on it.
+
+The files in `system/dist/blocks/` open as they are: start a screen from the nearest one.
+
+## React
+
+```tsx
+import { Button, Card, Field, Input } from 'trayui-react';
+import 'trayui-react/styles.css';
+
+export function OrderForm() {
+  return (
+    <Card title="Order a jar">
+      <Field label="Delivery address">
+        <Input autoComplete="street-address" />
+      </Field>
+      <Button type="submit">Order a jar</Button>
+    </Card>
+  );
+}
+```
+
+The package is not on npm yet: build it from [`system/react`](system/react), whose README says how.
+
+## Themes
+
+Set `data-theme` on `<html>`, or on any element to theme only what is inside it:
+
+```html
+<html lang="en" data-theme="mint">
+```
+
+The themes are `light`, `dark`, `linen`, `mint`, `sky`, `rose`, `lilac`, `midnight`, `forest` and `espresso`.
+
+## Browsers
+
+The current versions of Chrome, Edge, Safari and Firefox. The stylesheet uses logical properties, `:has()`, dynamic viewport units and the native `<dialog>` and `<details>`, with no fallbacks for browsers that lack them. Motion uses `@starting-style` where the browser has it, and does without where it does not.
+
+## Documentation
+
+The rules of the system live in the repository:
+
+- [the brand book](system/project/README.md);
+- [the guides](system/project/guides): grounds, behaviour, accessibility, page layouts, and the lists of components and blocks;
+- the guidelines and the markup of each component, in `system/project/components/<Name>/README.md`.
+
+The documentation site, with a live example of every component and block and a playground for most, is built from this repository and is not public yet. Anyone can build and run it locally; [CONTRIBUTING.md](CONTRIBUTING.md) says how.
+
+For an AI agent, the build writes `llms.txt`: the rules, the guides and the markup of every component in one plain file.
+
+## What is where
+
+| Path | What |
+| --- | --- |
+| `system/dist/` | What you link: `tokens.css`, `components/bundle.css`, `components/bundle.js`, the font and the blocks; `tailwind/` and `figma/`, the tokens for those tools. It is built output, kept in the repository so the files can be linked and downloaded. |
+| `system/src/` | What the bundle is built from: the stylesheets (`css/`), the behaviours (`js/`), the icons. |
+| `system/project/` | The system as it is written: the brand book, `tokens.json`, the guides, a guide and a preview for every component, and the blocks. |
+| `system/react/` | `trayui-react`: the components for React, and the charts (`trayui-react/charts`). |
+| `system/tools/` | The build, the documentation site and the checks. |
+
+## Contributing
+
+Issues and pull requests are welcome. [CONTRIBUTING.md](CONTRIBUTING.md) explains how to build, check and change the system, and [SECURITY.md](SECURITY.md) how to report a vulnerability.
+
+## The names in the examples
+
+Counter, an order desk, and Perly Farm, a snail-caviar farm that uses it, are invented. So is every person, figure, address and quote in the examples. Replace them, and never ship them.
+
+## Licence and credits
+
+Tray UI is released under the [MIT licence](LICENSE).
+
+The name "Tray UI" and its logo are not covered by that licence. Use them only to refer to this project, not as the name or the mark of your own product or fork.
+
+The system ships work by others, each under its own licence:
+
+- **Onest**, the typeface, is by the Onest Project Authors, under the SIL Open Font License 1.1 (`system/dist/fonts/OFL.txt`).
+- **The icons** are [Lucide](https://lucide.dev)'s, under the ISC licence, some of them from Feather under the MIT licence (`system/dist/components/LUCIDE-LICENSE.txt`).
+- **The photographs** in the Lightbox and Video Player previews come from Wikimedia Commons, each in the public domain or under CC0 (`system/project/assets/Media/CREDITS.md`).
+- **The documentation site** bundles React, Recharts and highlight.js with what they depend on, each under its own licence. The build writes their licences beside the bundles (`charts.licenses.txt`, `code.licenses.txt`).

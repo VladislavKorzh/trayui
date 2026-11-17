@@ -1,0 +1,13 @@
+{
+  "lead": "One button: its look, its size, an icon and its state. The markup under it is what you copy.",
+  "controls": [
+    { "name": "variant", "label": "Variant", "options": [["", "Primary"], [" tray-btn--dark", "Dark"], [" tray-btn--quiet", "Quiet"], [" tray-btn--ghost", "Ghost"], [" tray-btn--danger", "Danger"], [" tray-btn--link", "Link"]] },
+    { "name": "size", "label": "Size", "options": [["", "64px"], [" tray-btn--md", "56px"], [" tray-btn--sm", "48px"], [" tray-btn--xs", "40px"]], "default": " tray-btn--md" },
+    { "name": "icon", "label": "Icon", "options": [["", "None"], ["start", "Before"], ["end", "After"], ["only", "Only"]] },
+    { "name": "label", "label": "Label", "type": "text", "default": "Order a jar", "max": 40 },
+    { "name": "disabled", "label": "Disabled", "type": "switch" },
+    { "name": "busy", "label": "Busy", "type": "switch" },
+    { "name": "block", "label": "Full width", "type": "switch" }
+  ],
+  "template": "<button class=\"tray-btn{{variant}}{{size}}{{#icon=only}} tray-btn--icon{{/icon=only}}{{#block}} tray-btn--block{{/block}}\" type=\"button\"{{#disabled}} disabled{{/disabled}}{{#busy}} aria-busy=\"true\"{{/busy}}{{#icon=only}} aria-label=\"{{label}}\"{{/icon=only}}>{{#busy}}<span class=\"tray-spinner\" aria-hidden=\"true\"></span>{{/busy}}{{^busy}}{{#icon=start}}{{icon:shopping-bag}}{{/icon=start}}{{#icon=only}}{{icon:shopping-bag}}{{/icon=only}}{{/busy}}{{^icon=only}}{{label}}{{/icon=only}}{{#icon=end}}<svg class=\"tray-icon tray-icon--flip\" aria-hidden=\"true\"><use href=\"#tray-i-arrow-right\"/></svg>{{/icon=end}}</button>"
+}

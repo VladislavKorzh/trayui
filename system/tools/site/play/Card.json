@@ -1,0 +1,13 @@
+{
+  "lead": "A card is a ground of its own: pick its fill, write its head, and see what a panel and a foot of buttons look like on it.",
+  "width": "34rem",
+  "grounds": false,
+  "controls": [
+    { "name": "tone", "label": "Fill", "options": [["", "Tray"], [" tray-card--accent", "Yellow"], [" tray-card--inverse", "Ink"], [" tray-card--leaf", "Leaf"]] },
+    { "name": "title", "label": "Title", "type": "text", "default": "Your order", "max": 40 },
+    { "name": "text", "label": "Sentence", "type": "text", "default": "Two jars of 50 g, delivered chilled.", "max": 90 },
+    { "name": "panel", "label": "Panel", "type": "switch", "default": true },
+    { "name": "foot", "label": "Buttons", "type": "switch", "default": true }
+  ],
+  "template": "<section class=\"tray-card{{tone}}\"><div class=\"tray-card__head\"><div><h3 class=\"title\">{{title}}</h3><p class=\"tray-soft\">{{text}}</p></div></div>{{#panel}}<div class=\"tray-panel tray-stack\"><div class=\"tray-row tray-row--between\"><span class=\"tray-soft\">Jars</span><b>$118</b></div><div class=\"tray-row tray-row--between\"><span class=\"tray-soft\">Courier</span><b>$9</b></div></div>{{/panel}}{{#foot}}<div class=\"tray-card__foot\"><button class=\"tray-btn{{#tone= tray-card--accent}} tray-btn--dark{{/tone= tray-card--accent}} tray-btn--md\" type=\"button\">Pay $127</button><button class=\"tray-btn tray-btn--quiet tray-btn--md\" type=\"button\">Edit</button></div>{{/foot}}</section>"
+}

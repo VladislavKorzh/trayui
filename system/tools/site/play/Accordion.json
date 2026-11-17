@@ -1,0 +1,12 @@
+{
+  "lead": "Three questions on the browser's own details: the first one is yours to write, open or closed, one at a time or several.",
+  "width": "34rem",
+  "controls": [
+    { "name": "size", "label": "Size", "options": [["", "Default"], [" tray-accordion--sm", "Small"]] },
+    { "name": "question", "label": "Question", "type": "text", "default": "What does it taste like?", "max": 60 },
+    { "name": "answer", "label": "Answer", "type": "text", "default": "Mild and earthy, with mushroom and herbal notes, and less salty than sturgeon caviar.", "max": 160 },
+    { "name": "open", "label": "First open", "type": "switch", "default": true },
+    { "name": "one", "label": "One at a time", "type": "switch", "default": true }
+  ],
+  "template": "<div class=\"tray-accordion{{size}}\"><details{{#one}} name=\"faq\"{{/one}}{{#open}} open{{/open}}><summary>{{question}}<span class=\"tray-tile\" aria-hidden=\"true\">{{icon:plus}}</span></summary><p class=\"tray-accordion__body\">{{answer}}</p></details><details{{#one}} name=\"faq\"{{/one}}><summary>How long does a jar keep?<span class=\"tray-tile\" aria-hidden=\"true\">{{icon:plus}}</span></summary><p class=\"tray-accordion__body\">Unopened, up to three months in the fridge. Once opened, eat it within three days.</p></details><details{{#one}} name=\"faq\"{{/one}}><summary>How is it delivered?<span class=\"tray-tile\" aria-hidden=\"true\">{{icon:plus}}</span></summary><p class=\"tray-accordion__body\">By courier in a chilled box, the same day in the city, or you collect it at the farm shop.</p></details></div>"
+}

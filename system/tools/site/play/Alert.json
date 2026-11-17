@@ -1,0 +1,11 @@
+{
+  "lead": "An alert that stays in the page: its tone, its words and whether it offers a way out.",
+  "width": "36rem",
+  "controls": [
+    { "name": "tone", "label": "Tone", "options": [["", "Neutral"], [" tray-alert--danger", "Danger"], [" tray-alert--success", "Success"], [" tray-alert--accent", "Accent"]] },
+    { "name": "title", "label": "Title", "type": "text", "default": "The card was declined", "max": 60 },
+    { "name": "text", "label": "Sentence", "type": "text", "default": "Try another card, or pay on delivery.", "max": 120 },
+    { "name": "actions", "label": "Actions", "type": "switch" }
+  ],
+  "template": "<div class=\"tray-alert{{tone}}\" role=\"{{#tone= tray-alert--danger}}alert{{/tone= tray-alert--danger}}{{^tone= tray-alert--danger}}status{{/tone= tray-alert--danger}}\"><span class=\"tray-alert__icon\">{{#tone=}}{{icon:info}}{{/tone=}}{{#tone= tray-alert--danger}}{{icon:circle-alert}}{{/tone= tray-alert--danger}}{{#tone= tray-alert--success}}{{icon:circle-check}}{{/tone= tray-alert--success}}{{#tone= tray-alert--accent}}{{icon:clock}}{{/tone= tray-alert--accent}}</span><div class=\"tray-alert__body\"><p class=\"tray-alert__title\">{{title}}</p><p class=\"tray-alert__text\">{{text}}</p>{{#actions}}<div class=\"tray-alert__actions\"><button class=\"tray-btn tray-btn--dark tray-btn--xs\" type=\"button\">Try another card</button><button class=\"tray-btn tray-btn--ghost tray-btn--xs\" type=\"button\">Pay on delivery</button></div>{{/actions}}</div></div>"
+}

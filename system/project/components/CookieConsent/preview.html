@@ -1,0 +1,21 @@
+<!-- @dsCard group="Onboarding" height=524 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>CookieConsent — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--col">
+<div class="tray-stage tray-stage--end" style="place-items: end start; min-block-size: 24rem">
+<section class="tray-consent tray-raised" data-tray="consent" aria-labelledby="cc-t">
+<h2 class="nav" id="cc-t" style="font-weight: 600; font-size: 1.0625rem">Cookies</h2>
+<p class="tray-consent__text">We keep you signed in with one cookie. With your leave, two more tell us which pages help.</p>
+<details class="tray-collapsible" open><summary><span class="tray-tile"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg></span>Choose which</summary>
+<div class="tray-collapsible__body tray-stack tray-stack--sm">
+<label class="tray-switch tray-switch--row"><span class="tray-switch__text"><b>Necessary</b><small>Signing in and the cart. Always on.</small></span><input type="checkbox" role="switch" name="necessary" checked disabled><span class="tray-switch__track"></span></label>
+<label class="tray-switch tray-switch--row"><span class="tray-switch__text"><b>Statistics</b><small>Which pages are opened, without your name.</small></span><input type="checkbox" role="switch" name="statistics"><span class="tray-switch__track"></span></label>
+</div></details>
+<div class="tray-consent__actions"><button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" data-consent="necessary">Only necessary</button><button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" data-consent="all">Accept all</button><button class="tray-btn tray-btn--link" type="button" data-consent="save">Save my choice</button></div>
+</section>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<div class="site-home">
+
+<section class="tray-hero">
+  <div class="tray-card tray-hero__text">
+    <div class="tray-hero__copy">
+      <h1 class="display" tabindex="-1">{{components}} components in plain HTML and CSS</h1>
+      <p>Tray UI is a design system for products and the pages around them: a white page, ink type, grey trays and one yellow. Three files, no framework, no build step.</p>
+    </div>
+    <div class="tray-stack tray-stack--sm">
+      <div class="tray-hero__actions">
+        <a class="tray-btn" href="#d-installation">Get started</a>
+        <a class="tray-btn tray-btn--quiet" href="#components">Browse the components</a>
+      </div>
+      <p class="tray-hero__note">{{kb}} KB when compressed. No framework, no build step. {{themes}} themes, or one of your own.</p>
+    </div>
+  </div>
+  <div class="tray-card tray-card--accent tray-hero__media">
+    <div class="tray-row tray-row--between">
+      <h2 class="title">Three files</h2>
+      <span class="tray-badge tray-badge--ink">Version {{version}}</span>
+    </div>
+    <div class="tray-stack">
+      <ul class="tray-items">
+        <li class="tray-item tray-item--sm"><span class="tray-item__body"><span class="tray-item__title">tokens.css</span><span class="tray-item__text">Every colour, size and type style</span></span><span class="tray-item__end tray-num">1 KB</span></li>
+        <li class="tray-item tray-item--sm"><span class="tray-item__body"><span class="tray-item__title">components/bundle.css</span><span class="tray-item__text">The classes of every component</span></span><span class="tray-item__end tray-num">{{css_kb}} KB</span></li>
+        <li class="tray-item tray-item--sm"><span class="tray-item__body"><span class="tray-item__title">components/bundle.js</span><span class="tray-item__text">Behaviour and the icons</span></span><span class="tray-item__end tray-num">{{js_kb}} KB</span></li>
+      </ul>
+      <p>Link them and write HTML. A button is one class; a menu, a calendar or a chart is one attribute more.</p>
+    </div>
+  </div>
+</section>
+
+<section class="site-section" aria-labelledby="home-parts">
+  <div class="tray-section__head">
+    <h2 class="headline" id="home-parts">From a button to a data table</h2>
+    <p class="lead tray-soft">Forms, navigation, overlays, data and conversation: {{components}} components that keep one set of rules. Everything on this page is the real thing, so try it.</p>
+  </div>
+  <div class="tray-bento">
+    <form class="tray-card tray-span-7 tray-stack tray-stack--lg" aria-labelledby="home-order">
+      <h3 class="subtitle" id="home-order">Order a jar</h3>
+      <div class="tray-fields">
+        <div class="tray-field">
+          <span class="tray-label" id="home-size">Jar size</span>
+          <div class="tray-seg tray-seg--fill" role="radiogroup" aria-labelledby="home-size">
+            <label class="tray-seg__item"><input type="radio" name="home-jar"><span>30 g</span></label>
+            <label class="tray-seg__item"><input type="radio" name="home-jar" checked><span>50 g</span></label>
+            <label class="tray-seg__item"><input type="radio" name="home-jar"><span>100 g</span></label>
+          </div>
+        </div>
+        <div class="tray-field">
+          <span class="tray-label" id="home-count">Jars</span>
+          <div class="tray-btn-group" role="group" aria-labelledby="home-count" data-tray="stepper" data-min="1" data-max="9">
+            <button class="tray-btn-group__item tray-btn-group__item--icon" type="button" data-step="-1" aria-label="One fewer"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg></button>
+            <output class="tray-btn-group__value">2</output>
+            <button class="tray-btn-group__item tray-btn-group__item--icon" type="button" data-step="1" aria-label="One more"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg></button>
+          </div>
+        </div>
+        <div class="tray-field tray-field--full">
+          <label class="tray-label" for="home-address">Delivery address</label>
+          <input class="tray-input" id="home-address" autocomplete="street-address" placeholder="Street, building, flat">
+        </div>
+      </div>
+      <label class="tray-switch tray-switch--row"><span class="tray-switch__text"><b>Gift box</b><small>A card box with a note, $12</small></span><input type="checkbox" role="switch" checked><span class="tray-switch__track"></span></label>
+      <div class="tray-row tray-row--between">
+        <p class="tray-soft">The courier calls ten minutes before arriving.</p>
+        <button class="tray-btn" type="submit">Order a jar</button>
+      </div>
+    </form>
+    <article class="tray-card tray-card--inverse tray-span-5 site-fill">
+      <figure class="tray-chart" data-tray="chart" data-chart='{"type":"bar","unit":" kg","labels":["Mar","Apr","May","Jun","Jul","Aug","Sep","Oct"],"series":[{"name":"Collected","values":[6,14,22,19,17,21,16,9]}],"height":260,"summary":"Bar chart of caviar collected by month, from March to October. The most, 22 kg, came in May."}'>
+        <figcaption class="tray-chart__title">Caviar collected by month</figcaption>
+      </figure>
+    </article>
+    <article class="tray-card tray-span-4 tray-stack tray-stack--lg site-spread" aria-label="A conversation">
+      <div class="tray-thread">
+        <div class="tray-message"><div class="tray-message__content"><div class="tray-bubble">Is the autumn batch still open?</div></div></div>
+        <div class="tray-message tray-message--end"><div class="tray-message__content"><div class="tray-bubble tray-bubble--own">Yes, 132 jars are left. Choose the day and we pack it that morning.</div></div></div>
+      </div>
+      <form class="tray-input-group"><input class="tray-input" placeholder="Write a reply" aria-label="Reply"><button class="tray-input-group__btn" type="submit" aria-label="Send the reply"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-send"/></svg></button></form>
+    </article>
+    <article class="tray-card tray-span-4" aria-label="A calendar">
+      <div class="tray-cal tray-cal--fluid" data-tray="calendar" data-today="2026-11-15" data-value="2026-11-19" data-min="2026-11-15"></div>
+    </article>
+    <article class="tray-card tray-span-4 tray-stack" aria-labelledby="home-pack">
+      <h3 class="subtitle" id="home-pack">To pack today</h3>
+      <ul class="tray-items">
+        <li class="tray-item tray-item--sm"><span class="tray-item__body"><span class="tray-item__title">PL-20431</span><span class="tray-item__text">Dana Kovalenko, four jars</span></span><span class="tray-item__end"><span class="tray-badge">To pack</span></span></li>
+        <li class="tray-item tray-item--sm"><span class="tray-item__body"><span class="tray-item__title">PL-20418</span><span class="tray-item__text">Ivan Petrenko, three jars</span></span><span class="tray-item__end"><span class="tray-badge tray-badge--ink">With the courier</span></span></li>
+        <li class="tray-item tray-item--sm"><span class="tray-item__body"><span class="tray-item__title">PL-20362</span><span class="tray-item__text">Viktor Marchenko, one jar</span></span><span class="tray-item__end"><span class="tray-badge tray-badge--success"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg>Delivered</span></span></li>
+      </ul>
+    </article>
+  </div>
+  <p><a class="tray-btn tray-btn--quiet tray-btn--md" href="#components">Browse all {{components}} components<svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-arrow-right"/></svg></a></p>
+</section>
+
+<section class="site-section" aria-labelledby="home-pages">
+  <div class="tray-section__head">
+    <h2 class="headline" id="home-pages">{{blocks}} blocks</h2>
+    <p class="lead tray-soft">Whole screens built only from the components: a dashboard, a shop, an article, a wiki, fifteen sidebars, sign-in pages. Copy one and replace its content.</p>
+  </div>
+  <div class="site-show" data-show>
+    <div class="site-viewer__bar">
+      <div class="tray-seg tray-seg--sm" role="radiogroup" aria-label="Page shown">
+        <label class="tray-seg__item"><input type="radio" name="home-show" value="b-dashboard-01" checked><span>Dashboard</span></label>
+        <label class="tray-seg__item"><input type="radio" name="home-show" value="b-shop-01"><span>Shop</span></label>
+        <label class="tray-seg__item"><input type="radio" name="home-show" value="b-article-01"><span>Article</span></label>
+        <label class="tray-seg__item"><input type="radio" name="home-show" value="b-wiki-01"><span>Wiki</span></label>
+        <label class="tray-seg__item"><input type="radio" name="home-show" value="b-login-02"><span>Sign in</span></label>
+      </div>
+      <div class="site-viewer__tools">
+        <a class="tray-btn tray-btn--quiet tray-btn--sm" href="#blocks">All blocks</a>
+      </div>
+    </div>
+    <div class="site-frame" data-frame="b-dashboard-01"></div>
+  </div>
+</section>
+
+<section class="site-section" aria-labelledby="home-charts">
+  <div class="tray-section__head">
+    <h2 class="headline" id="home-charts">{{charts}} charts, drawn with Recharts</h2>
+    <p class="lead tray-soft">In React, a chart is a Recharts chart in the frame of this system: thin marks, ink for one series, the data colours for several, and the same figures as a table. Copy one and replace its data.</p>
+  </div>
+  <div class="site-charts">
+    <div class="site-chart__view" data-rechart="area-stacked"></div>
+    <div class="site-chart__view" data-rechart="bar-peak"></div>
+    <div class="site-chart__view" data-rechart="pie-donut"></div>
+  </div>
+  <p><a class="tray-btn tray-btn--quiet tray-btn--md" href="#charts">Browse all {{charts}} charts<svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-arrow-right"/></svg></a></p>
+</section>
+
+<section class="site-section" aria-labelledby="home-rules">
+  <div class="tray-section__head">
+    <h2 class="headline" id="home-rules">Four rules do most of the work</h2>
+    <p class="lead tray-soft">The components look alike because they obey the same few rules, not because they share decoration. <a href="#g-brand">The brand book</a> has the rest.</p>
+  </div>
+  <div class="tray-bento">
+    <article class="tray-span-7 site-rule" aria-labelledby="home-rule-1">
+      <div class="site-rule__text">
+        <h3 class="subtitle" id="home-rule-1">Depth is fill</h3>
+        <p>White page, grey tray, white field. A surface tells its children what they sit on, so nothing needs an outline or a shadow.</p>
+      </div>
+      <div class="tray-card tray-stack">
+        <input class="tray-input" value="A field on a tray is white" aria-label="A field on a tray">
+        <div class="tray-panel tray-stack">
+          <input class="tray-input" value="On a panel inside it, grey again" aria-label="A field on a panel">
+        </div>
+      </div>
+    </article>
+    <article class="tray-card tray-span-5 site-rule" aria-labelledby="home-rule-2">
+      <div class="site-rule__text">
+        <h3 class="subtitle" id="home-rule-2">One yellow</h3>
+        <p>Yellow marks the single most important thing to do in view. Everything else is quiet, ghost or a link.</p>
+      </div>
+      <div class="tray-row">
+        <button class="tray-btn tray-btn--md" type="button">Save the day</button>
+        <button class="tray-btn tray-btn--quiet tray-btn--md" type="button">Not now</button>
+        <button class="tray-btn tray-btn--link" type="button">Ask a question</button>
+      </div>
+    </article>
+    <article class="tray-card tray-span-5 site-rule" aria-labelledby="home-rule-3">
+      <div class="site-rule__text">
+        <h3 class="subtitle" id="home-rule-3">Selected is solid ink</h3>
+        <p>The current tab, the chosen segment, a checked box, a switch that is on. Yellow never means selected.</p>
+      </div>
+      <div class="tray-stack">
+        <div class="tray-tabs" role="tablist" aria-label="Order">
+          <button class="tray-tab" role="tab" aria-selected="false" type="button" tabindex="-1">Items</button>
+          <button class="tray-tab" role="tab" aria-selected="true" type="button">Delivery</button>
+          <button class="tray-tab" role="tab" aria-selected="false" type="button" tabindex="-1">Messages</button>
+        </div>
+        <div class="tray-row">
+          <label class="tray-check"><input type="checkbox" checked><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span><span>Gift box</span></label>
+          <label class="tray-switch"><input type="checkbox" role="switch" checked aria-label="Call before arriving"><span class="tray-switch__track"></span></label>
+        </div>
+      </div>
+    </article>
+    <article class="tray-span-7 site-rule" aria-labelledby="home-rule-4">
+      <div class="site-rule__text">
+        <h3 class="subtitle" id="home-rule-4">{{themes}} themes, each chosen</h3>
+        <p>Every theme has its own values, picked against its own page, and an accent of its own. Try them in the menu at the top, or <a href="#d-themes">make one of your own</a>.</p>
+      </div>
+      <div class="site-themes">
+        <div class="site-themes__one" data-theme="mint">
+          <div class="tray-card tray-stack">
+            <p class="tray-figure">38<small>orders</small></p>
+            <div class="tray-row tray-row--between"><span class="tray-badge">To pack</span><button class="tray-btn tray-btn--sm" type="button">Pack</button></div>
+          </div>
+        </div>
+        <div class="site-themes__one" data-theme="midnight">
+          <div class="tray-card tray-stack">
+            <p class="tray-figure">38<small>orders</small></p>
+            <div class="tray-row tray-row--between"><span class="tray-badge">To pack</span><button class="tray-btn tray-btn--sm" type="button">Pack</button></div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="site-section" aria-labelledby="home-icons">
+  <div class="tray-section__head">
+    <h2 class="headline" id="home-icons">{{icons}} icons built in, 1,500 more beside them</h2>
+    <p class="lead tray-soft">The icons are Lucide's: a round stroke in the colour of the text beside them. These come with the script; any other Lucide icon fits, and in React it comes from react-icons.</p>
+  </div>
+  <div class="tray-card site-iconwall" aria-hidden="true">{{icon_wall}}</div>
+  <p><a class="tray-btn tray-btn--quiet tray-btn--md" href="#f-icons">See every icon<svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-arrow-right"/></svg></a></p>
+</section>
+
+<section class="site-section" aria-labelledby="home-code">
+  <div class="tray-section__head">
+    <h2 class="headline" id="home-code">It reads like HTML because it is</h2>
+    <p class="lead tray-soft">Classes on the elements the browser already has. The same components come typed for React.</p>
+  </div>
+  <div class="tray-bento">
+    <div class="tray-span-7" data-tray="tabs">
+      <div class="tray-tabs" role="tablist" aria-label="The same form, two ways">
+        <button class="tray-tab" role="tab" aria-selected="true" aria-controls="home-html" id="home-tab-html" type="button">HTML</button>
+        <button class="tray-tab" role="tab" aria-controls="home-react" id="home-tab-react" type="button">React</button>
+      </div>
+      <div class="tray-tabpanel" role="tabpanel" id="home-html" aria-labelledby="home-tab-html">
+        <div class="tray-code" dir="ltr"><pre tabindex="0"><code>&lt;div class="tray-card tray-stack"&gt;
+  &lt;h1 class="title"&gt;Order a jar&lt;/h1&gt;
+  &lt;div class="tray-field"&gt;
+    &lt;label class="tray-label" for="address"&gt;Delivery address&lt;/label&gt;
+    &lt;input class="tray-input" id="address"&gt;
+  &lt;/div&gt;
+  &lt;button class="tray-btn" type="submit"&gt;Order a jar&lt;/button&gt;
+&lt;/div&gt;</code></pre></div>
+      </div>
+      <div class="tray-tabpanel" role="tabpanel" id="home-react" aria-labelledby="home-tab-react" hidden>
+        <div class="tray-code" dir="ltr"><pre tabindex="0"><code>&lt;Card title="Order a jar"&gt;
+  &lt;Field label="Delivery address"&gt;
+    &lt;Input /&gt;
+  &lt;/Field&gt;
+  &lt;Button type="submit"&gt;Order a jar&lt;/Button&gt;
+&lt;/Card&gt;</code></pre></div>
+      </div>
+    </div>
+    <div class="tray-span-5 site-result">
+      <div class="tray-card tray-stack">
+        <p class="title">Order a jar</p>
+        <div class="tray-field">
+          <label class="tray-label" for="home-result-address">Delivery address</label>
+          <input class="tray-input" id="home-result-address">
+        </div>
+        <button class="tray-btn" type="button">Order a jar</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tray-card tray-card--accent tray-cta">
+  <div class="tray-cta__text">
+    <h2 class="headline">Start with three files</h2>
+    <p>Download them, link them, and copy your first screen from a block.</p>
+  </div>
+  <div class="tray-cta__actions">
+    <a class="tray-btn tray-btn--dark" href="#d-installation">Get started</a>
+    <a class="tray-btn tray-btn--quiet" href="#blocks">See the blocks</a>
+  </div>
+</section>
+
+<footer class="tray-footer">
+  <div class="tray-footer__top">
+    <div class="tray-footer__brand">
+      <a class="tray-wordmark site-logo" href="#home">{{mark}}<span>Tray UI</span></a>
+      <p>A design system in plain HTML and CSS.</p>
+    </div>
+    <nav class="tray-footer__col" aria-label="Start">
+      <h3>Start</h3>
+      <a href="#d-introduction">Introduction</a>
+      <a href="#d-installation">Installation</a>
+      <a href="#d-theming">Theming</a>
+      <a href="#d-react">React</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="Build">
+      <h3>Build</h3>
+      <a href="#components">Components</a>
+      <a href="#blocks">Blocks</a>
+      <a href="#charts">Charts</a>
+      <a href="#f-icons">Icons</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="Read">
+      <h3>Read</h3>
+      <a href="#g-brand">The brand book</a>
+      <a href="#g-accessibility">Accessibility</a>
+      <a href="#d-agents">For AI agents</a>
+      <a href="#d-changelog">Changelog</a>
+    </nav>
+  </div>
+  <div class="tray-footer__bottom">
+    <p>Version {{version}}. Counter and Perly Farm, in the examples, are invented, and so is every figure.</p>
+    <ul class="tray-footer__legal">
+      <li><a href="llms.txt">llms.txt</a></li>{{#repo}}
+      <li><a href="{{repo}}">GitHub</a></li>{{/repo}}
+    </ul>
+  </div>
+</footer>
+
+</div>

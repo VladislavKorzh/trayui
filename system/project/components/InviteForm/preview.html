@@ -1,0 +1,25 @@
+<!-- @dsCard group="Account" height=367 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>InviteForm — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--col">
+<form class="tray-card tray-stack" style="padding: var(--space-8)" onsubmit="return false">
+<div><h2 class="subtitle">Invite people</h2><p class="tray-soft" style="font-size: 1rem">They get an email with a link that works for 7 days.</p></div>
+<div class="tray-invite">
+<div class="tray-field"><label class="tray-label" for="iv-emails">Emails</label>
+<div class="tray-tags" data-tray="taginput" data-pattern="email" data-max="5" aria-invalid="true">
+<span class="tray-chip" data-value="andriy@perly.example">andriy@perly.example<button type="button" class="tray-chip__x" aria-label="Remove andriy@perly.example"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-x"/></svg></button></span>
+<span class="tray-chip" data-value="marta@perly" data-invalid>marta@perly<button type="button" class="tray-chip__x" aria-label="Remove marta@perly"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-x"/></svg></button></span>
+<input id="iv-emails" type="email" placeholder="Add another" aria-describedby="iv-err">
+<input type="hidden" name="emails">
+</div>
+<p class="tray-field__error" id="iv-err">&ldquo;marta@perly&rdquo; is not a full email address.</p></div>
+<div class="tray-field"><label class="tray-label" for="iv-role">Role</label><span class="tray-select"><select id="iv-role"><option>Packer</option><option>Manager</option><option>Viewer</option></select></span></div>
+<button class="tray-btn tray-btn--md" type="submit" style="margin-block-start: 27px">Send invitations</button>
+</div>
+<p class="tray-field__hint" style="margin: 0">A packer sees today's orders and marks them packed. One seat is free; more people need <a href="#">extra seats</a>.</p>
+</form>
+</div>
+</body>
+</html>

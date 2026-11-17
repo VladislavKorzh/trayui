@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search the articles</title>
+<meta name="description" content="A search of the journal: the query typed, topics and a year to narrow it, the number of results, rows with the words marked, and Load more.">
+<meta name="tray-category" content="Articles">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-screen">
+  <header class="tray-nav tray-container">
+    <a class="tray-wordmark" href="#">Perly Farm</a>
+    <nav class="tray-nav__strip" aria-label="Main">
+      <ul class="tray-nav__links tray-tabs" data-tray="strip">
+        <li><a class="tray-tab" href="#">Caviar</a></li>
+        <li><a class="tray-tab" href="#">The farm</a></li>
+        <li><a class="tray-tab" href="articles-01.html" aria-current="true">Journal</a></li>
+        <li><a class="tray-tab" href="#">Visit us</a></li>
+      </ul>
+    </nav>
+    <div class="tray-nav__actions">
+      <a class="tray-btn tray-btn--sm" href="#">Order a jar</a>
+    </div>
+  </header>
+
+  <main class="tray-screen__body tray-screen__body--narrow">
+    <div class="tray-stack tray-stack--lg">
+      <div class="tray-stack tray-stack--sm">
+        <a class="tray-back" href="articles-01.html"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-arrow-left"/></svg>Journal</a>
+        <h1 class="title">Search the journal</h1>
+      </div>
+      <form class="tray-stack" id="search" role="search" aria-label="The journal" action="/journal/search" method="get">
+        <div class="tray-input-group">
+          <span class="tray-input-group__addon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg></span>
+          <input class="tray-input" id="q" name="q" type="search" value="opened jar fridge" aria-label="Words to find" autocomplete="off">
+          <button class="tray-input-group__btn" type="submit">Search</button>
+        </div>
+        <div class="tray-row tray-row--between">
+          <div class="tray-seg tray-seg--sm" role="group" aria-label="Topics">
+            <label class="tray-seg__item"><input type="checkbox" name="topic" value="farming"><span>Farming</span></label>
+            <label class="tray-seg__item"><input type="checkbox" name="topic" value="kitchen" checked><span>Kitchen</span></label>
+            <label class="tray-seg__item"><input type="checkbox" name="topic" value="news" checked><span>News</span></label>
+          </div>
+          <div class="tray-row tray-row--sm">
+            <label class="tray-label tray-label--inline" for="year">Year</label>
+            <span class="tray-select tray-select--sm">
+              <select id="year" name="year">
+                <option value="all" selected>All years</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+              </select>
+            </span>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <section class="tray-stack" aria-labelledby="count">
+      <p class="subtitle" id="count" role="status">7 articles match &ldquo;opened jar fridge&rdquo;</p>
+      <ol class="tray-items tray-items--ruled" id="results">
+        <li class="tray-item" data-topic="kitchen" data-year="2026">
+          <div class="tray-stack tray-stack--sm">
+            <div class="tray-row tray-row--sm"><span class="tray-badge">Kitchen</span><span class="caption tray-muted"><time datetime="2026-09-03">3 September 2026</time>, updated 14 November</span></div>
+            <h2 class="action"><a href="article-02.html">How long a <mark>jar</mark> of caviar keeps</a></h2>
+            <p class="tray-soft">An unopened <mark>jar</mark> keeps six weeks at the back of the <mark>fridge</mark>; once <mark>opened</mark>, finish it within three days.</p>
+          </div>
+        </li>
+        <li class="tray-item" data-topic="kitchen" data-year="2026">
+          <div class="tray-stack tray-stack--sm">
+            <div class="tray-row tray-row--sm"><span class="tray-badge">Kitchen</span><span class="caption tray-muted"><time datetime="2026-11-05">5 November 2026</time></span></div>
+            <h2 class="action"><a href="article-03.html">Six ways to serve a 30&nbsp;g <mark>jar</mark></a></h2>
+            <p class="tray-soft">Take the <mark>jar</mark> out of the <mark>fridge</mark> ten minutes before you sit down, and open it only when the plates are on the table.</p>
+          </div>
+        </li>
+        <li class="tray-item" data-topic="news" data-year="2026">
+          <div class="tray-stack tray-stack--sm">
+            <div class="tray-row tray-row--sm"><span class="tray-badge">News</span><span class="caption tray-muted"><time datetime="2026-10-15">15 October 2026</time></span></div>
+            <h2 class="action"><a href="#">Batch 14 is in the <mark>jars</mark></a></h2>
+            <p class="tray-soft">Every <mark>jar</mark> went straight to the cold room at 2&nbsp;&deg;C. The date on the lid counts from the day it was sealed, not the day it is <mark>opened</mark>.</p>
+          </div>
+        </li>
+        <li class="tray-item" data-topic="farming" data-year="2026" hidden>
+          <div class="tray-stack tray-stack--sm">
+            <div class="tray-row tray-row--sm"><span class="tray-badge">Farming</span><span class="caption tray-muted"><time datetime="2026-11-12">12 November 2026</time></span></div>
+            <h2 class="action"><a href="#">How a batch is graded, one pearl at a time</a></h2>
+            <p class="tray-soft">The pearls wait in the <mark>fridge</mark> between sieves, so no spoonful is out of the cold for more than four minutes before it goes into a <mark>jar</mark>.</p>
+          </div>
+        </li>
+        <li class="tray-item" data-topic="news" data-year="2025">
+          <div class="tray-stack tray-stack--sm">
+            <div class="tray-row tray-row--sm"><span class="tray-badge">News</span><span class="caption tray-muted"><time datetime="2025-07-10">10 July 2025</time></span></div>
+            <h2 class="action"><a href="#">Chilled boxes for the courier</a></h2>
+            <p class="tray-soft">The box keeps a <mark>jar</mark> below 6&nbsp;&deg;C for 30 hours, which is long enough to reach a <mark>fridge</mark> anywhere in the country.</p>
+          </div>
+        </li>
+        <li class="tray-item" data-topic="kitchen" data-year="2025">
+          <div class="tray-stack tray-stack--sm">
+            <div class="tray-row tray-row--sm"><span class="tray-badge">Kitchen</span><span class="caption tray-muted"><time datetime="2025-11-13">13 November 2025</time></span></div>
+            <h2 class="action"><a href="#">A tasting of three batches side by side</a></h2>
+            <p class="tray-soft">We <mark>opened</mark> one <mark>jar</mark> from each of batches 9, 10 and 11 and tasted them in the order they were salted.</p>
+          </div>
+        </li>
+        <li class="tray-item" data-topic="kitchen" data-year="2025" hidden>
+          <div class="tray-stack tray-stack--sm">
+            <div class="tray-row tray-row--sm"><span class="tray-badge">Kitchen</span><span class="caption tray-muted"><time datetime="2025-05-22">22 May 2025</time></span></div>
+            <h2 class="action"><a href="#">Three questions we hear at every market</a></h2>
+            <p class="tray-soft">Yes, it keeps in the <mark>fridge</mark>; no, it does not freeze well; and an <mark>opened</mark> <mark>jar</mark> is best finished in three days.</p>
+          </div>
+        </li>
+        <li class="tray-item" data-topic="kitchen" data-year="2026" hidden>
+          <div class="tray-stack tray-stack--sm">
+            <div class="tray-row tray-row--sm"><span class="tray-badge">Kitchen</span><span class="caption tray-muted"><time datetime="2026-05-14">14 May 2026</time></span></div>
+            <h2 class="action"><a href="#">Blini for twelve with one 50&nbsp;g <mark>jar</mark></a></h2>
+            <p class="tray-soft">One <mark>jar</mark> is enough if you spread it at the last minute. Keep it in the <mark>fridge</mark> until the first blin is off the pan.</p>
+          </div>
+        </li>
+        <li class="tray-item" data-topic="farming" data-year="2025" hidden>
+          <div class="tray-stack tray-stack--sm">
+            <div class="tray-row tray-row--sm"><span class="tray-badge">Farming</span><span class="caption tray-muted"><time datetime="2025-09-18">18 September 2025</time></span></div>
+            <h2 class="action"><a href="#">Why we salt at 3 per cent</a></h2>
+            <p class="tray-soft">With less salt an <mark>opened</mark> <mark>jar</mark> turns in two days; with more, you taste the salt before the pearl.</p>
+          </div>
+        </li>
+      </ol>
+      <div class="tray-row tray-row--between">
+        <p class="caption tray-muted" id="shown">Showing 5 of 7</p>
+        <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" id="more">Load more</button>
+      </div>
+    </section>
+
+    <a class="tray-item" href="mailto:kitchen@perly.example">
+      <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-mail"/></svg></span>
+      <span class="tray-item__body"><span class="tray-item__title">Did not find it? Ask the kitchen</span><span class="tray-item__text">Iryna Bondar answers questions about serving and storing on weekdays.</span></span>
+      <span class="tray-item__end"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></span>
+    </a>
+  </main>
+
+  <footer class="tray-footer tray-container">
+    <div class="tray-footer__top">
+      <div class="tray-footer__brand">
+        <a class="tray-wordmark" href="#">Perly Farm</a>
+        <p>Snail caviar from a small farm near Kyiv. The farm shop at Farm road 4 opens Thursday to Sunday, 10:00 to 18:00.</p>
+      </div>
+      <nav class="tray-footer__col" aria-label="Caviar">
+        <h3>Caviar</h3>
+        <a href="#">Jars and prices</a>
+        <a href="#">Gift boxes</a>
+        <a href="#">Delivery</a>
+      </nav>
+      <nav class="tray-footer__col" aria-label="Journal">
+        <h3>Journal</h3>
+        <a href="#">Farming</a>
+        <a href="#">Kitchen</a>
+        <a href="#">News</a>
+        <a href="articles-03.html">Archive</a>
+      </nav>
+      <nav class="tray-footer__col" aria-label="The farm">
+        <h3>The farm</h3>
+        <a href="#">Our story</a>
+        <a href="#">Visit us</a>
+        <a href="#">Work with us</a>
+      </nav>
+      <nav class="tray-footer__col" aria-label="Help">
+        <h3>Help</h3>
+        <a href="article-02.html">Storing a jar</a>
+        <a href="#">Returns</a>
+        <a href="#">Contact</a>
+      </nav>
+    </div>
+    <div class="tray-footer__bottom">
+      <p>&copy; 2026 Perly Farm. Every name, date and figure on this page is demo data.</p>
+      <ul class="tray-footer__legal">
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
+      </ul>
+    </div>
+  </footer>
+</div>
+<script>
+/* Narrows the results by topic and year, and shows five at a time. No topic ticked means every topic. */
+(function () {
+  var form = document.getElementById('search'), list = document.getElementById('results');
+  var count = document.getElementById('count'), shown = document.getElementById('shown'), more = document.getElementById('more');
+  var rows = [].slice.call(list.children), limit = 5, query = '“' + form.elements.q.defaultValue + '”';
+  function work() {
+    var topics = [].map.call(form.querySelectorAll('input[name="topic"]:checked'), function (i) { return i.value; });
+    var year = form.elements.year.value;
+    var hits = rows.filter(function (r) { return (!topics.length || topics.indexOf(r.dataset.topic) > -1) && (year === 'all' || r.dataset.year === year); });
+    rows.forEach(function (r) { var at = hits.indexOf(r); r.hidden = at < 0 || at >= limit; });
+    count.textContent = hits.length ? hits.length + (hits.length === 1 ? ' article matches ' : ' articles match ') + query : 'No article matches ' + query + ' in these topics';
+    shown.textContent = 'Showing ' + Math.min(limit, hits.length) + ' of ' + hits.length;
+    more.hidden = hits.length <= limit;
+    return hits;
+  }
+  form.addEventListener('change', function () { limit = 5; work(); });
+  more.addEventListener('click', function () {
+    var before = limit;
+    limit = rows.length;
+    var next = work()[before];
+    if (next) next.querySelector('a').focus();
+  });
+})();
+</script>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

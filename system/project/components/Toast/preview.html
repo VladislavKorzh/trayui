@@ -1,0 +1,21 @@
+<!-- @dsCard group="Feedback" height=397 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Toast — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--col">
+<div class="tray-row tray-row--sm"><button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" id="ts-a">Archive an order</button><button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" id="ts-b">Send a receipt</button><button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" id="ts-c">Fail an export</button></div>
+<div class="tray-stage" style="min-block-size: 0; place-items: stretch"><div class="tray-stack tray-stack--sm" style="max-inline-size: 24rem; margin-inline-start: auto">
+<div class="tray-toast" role="status"><div class="tray-toast__body"><p class="tray-toast__title">Order archived</p></div><div class="tray-toast__actions"><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button">Undo</button><button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Dismiss"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button></div></div>
+<div class="tray-toast tray-toast--success" role="status"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-circle-check"/></svg><div class="tray-toast__body"><p class="tray-toast__title">Receipt sent</p><p class="tray-toast__text">To dana@example.com</p></div><div class="tray-toast__actions"><button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Dismiss"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button></div></div>
+<div class="tray-toast tray-toast--danger" role="alert"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-circle-alert"/></svg><div class="tray-toast__body"><p class="tray-toast__title">The export failed</p><p class="tray-toast__text">Check the connection and try again.</p></div><div class="tray-toast__actions"><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button">Retry</button><button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Dismiss"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button></div></div>
+</div></div>
+</div>
+<script>
+var toast = TrayUI.toast;
+document.getElementById('ts-a').addEventListener('click', function () { toast({ title: 'Order archived', action: { label: 'Undo', onClick: function () { toast({ title: 'Order restored' }); } } }); });
+document.getElementById('ts-b').addEventListener('click', function () { toast({ tone: 'success', title: 'Receipt sent', text: 'To dana@example.com' }); });
+document.getElementById('ts-c').addEventListener('click', function () { toast({ tone: 'danger', title: 'The export failed', text: 'Check the connection and try again.' }); });
+</script>
+</body>
+</html>

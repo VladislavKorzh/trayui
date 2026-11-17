@@ -1,0 +1,28 @@
+<!-- @dsCard group="Billing" height=446 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>PaymentMethod — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--start">
+<div class="tray-stack tray-demo-fill" style="min-inline-size: 22rem">
+<fieldset><legend class="tray-label">Pay with</legend>
+<div class="tray-choices">
+<label class="tray-choice"><input type="radio" name="pm-card" checked><span class="tray-radio__ring"></span><span class="tray-choice__text"><b>Card ending 4242</b><span>Expires 08/27</span></span><span class="tray-choice__end"><span class="tray-badge">Default</span></span></label>
+<label class="tray-choice"><input type="radio" name="pm-card"><span class="tray-radio__ring"></span><span class="tray-choice__text"><b>Card ending 0005</b><span>Expires 01/28</span></span></label>
+<label class="tray-choice"><input type="radio" name="pm-card" disabled><span class="tray-radio__ring"></span><span class="tray-choice__text"><b>Card ending 1881</b><span class="tray-danger">Expired in 03/26</span></span></label>
+</div></fieldset>
+<div class="tray-row tray-row--sm"><button class="tray-btn tray-btn--quiet tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg>Add a card</button><button class="tray-btn tray-btn--ghost tray-btn--sm" type="button">Remove the expired card</button></div>
+</div>
+<form class="tray-card tray-demo-fill" style="min-inline-size: 22rem; padding: var(--space-8)" onsubmit="return false">
+<h3 class="subtitle" style="margin-block-end: var(--space-5)">New card</h3>
+<div class="tray-fields">
+<div class="tray-field tray-field--full"><label class="tray-label" for="pm-number">Card number</label><div class="tray-input-group"><span class="tray-input-group__addon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg></span><input class="tray-input" id="pm-number" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" data-tray="mask" data-mask="card" value="4242 4242 4242"></div></div>
+<div class="tray-field"><label class="tray-label" for="pm-exp">Expires</label><input class="tray-input" id="pm-exp" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" data-tray="mask" data-mask="expiry"></div>
+<div class="tray-field"><label class="tray-label" for="pm-cvc">Security code</label><input class="tray-input" id="pm-cvc" inputmode="numeric" autocomplete="cc-csc" placeholder="3 digits" aria-describedby="pm-cvc-h"></div>
+</div>
+<p class="tray-field__hint" id="pm-cvc-h">The three digits on the back of the card.</p>
+<div class="tray-card__foot"><button class="tray-btn tray-btn--md" type="submit">Save the card</button><button class="tray-btn tray-btn--ghost tray-btn--md" type="button">Cancel</button></div>
+</form>
+</div>
+</body>
+</html>

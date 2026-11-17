@@ -1,0 +1,18 @@
+/* ---------- Preview helpers: only for the component previews, never for product pages ---------- */
+
+.tray-demo { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); padding: var(--space-6); }
+/* No wrapping in a column: a wrapping column measures its children before it knows their width. */
+.tray-demo--col { flex-flow: column nowrap; align-items: stretch; }
+.tray-demo--col > * { min-inline-size: 0; }
+.tray-demo--start { align-items: flex-start; }
+.tray-demo--center { justify-content: center; }
+.tray-demo--grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); align-items: start; }
+.tray-demo--narrow > * { max-inline-size: 26rem; }
+.tray-demo-note { flex-basis: 100%; color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
+.tray-demo-fill { flex: 1 1 14rem; min-inline-size: 0; }
+/* A framed area that stands in for a viewport, so an overlay can be shown open inside a card. */
+.tray-stage { position: relative; flex: 1 1 100%; display: grid; place-items: center; min-block-size: 20rem; padding: var(--space-6); border-radius: var(--radius-panel); background: var(--surface); overflow: hidden; }
+.tray-stage--scrim { background: var(--scrim); }
+.tray-stage--start { place-items: start; }
+.tray-stage--end { place-items: end; }
+.tray-stage--page { background: var(--page); }

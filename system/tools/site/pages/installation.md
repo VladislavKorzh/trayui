@@ -1,0 +1,93 @@
+# Installation
+
+Three files and a font. Copy them into your project, link them, and write HTML.
+
+## Get the files
+
+Download [trayui-{{version}}.zip]({{zip}}) and unpack it beside your pages.{{#repo}} The same files are in the `system/dist` folder of [the repository]({{repo}}).{{/repo}}
+
+```text
+trayui/
+  tokens.css                 every token as a custom property, the type classes, the font
+  components/bundle.css      the tray- classes
+  components/bundle.js       behaviours and the icons
+  fonts/                     the typeface (Onest-Variable.ttf and .woff2), with its licence (OFL.txt)
+  blocks/                    {{blocks}} screens to copy
+  tailwind/                  the tokens as a Tailwind theme (version 4) and a preset (version 3)
+  figma/                     the tokens as Figma variables, a mode for each theme
+```
+
+The last two folders are for [Tailwind and Figma](#d-tailwind-figma); a page in plain HTML needs neither.
+
+## Link them
+
+In this order, in every page:
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="trayui/tokens.css">
+  <link rel="stylesheet" href="trayui/components/bundle.css">
+</head>
+<body>
+  …your page…
+  <script src="trayui/components/bundle.js"></script>
+</body>
+</html>
+```
+
+The script is one classic file. It assigns `window.TrayUI`, adds the icon sprite to the page and wires up every element that carries a `data-tray` attribute. It loads nothing from the network. If you add markup after the page has loaded, call `TrayUI.init(root)` on it.
+{{#cdn}}
+
+## Or link them from a CDN
+
+jsDelivr serves the files of every release of the repository, so a page can link them without copying anything. The address names the release, so a page keeps the version it was built with. For production, copy the files into your project or pin the release you tested.
+
+```html
+<link rel="stylesheet" href="{{cdn}}/tokens.css">
+<link rel="stylesheet" href="{{cdn}}/components/bundle.css">
+<script src="{{cdn}}/components/bundle.js"></script>
+```
+{{/cdn}}
+
+## Write a first screen
+
+```html
+<main class="tray-container tray-section">
+  <div class="tray-card tray-stack">
+    <h1 class="title">Order a jar</h1>
+    <div class="tray-field">
+      <label class="tray-label" for="address">Delivery address</label>
+      <input class="tray-input" id="address" autocomplete="street-address">
+    </div>
+    <button class="tray-btn" type="submit">Order a jar</button>
+  </div>
+</main>
+```
+
+That is a grey tray on the white page, a white field in it, and the one yellow button. From here, copy a [block](#blocks) (the files in `blocks/` open as they are) or look up a [component](#components).
+
+## Sizes
+
+| File | Compressed |
+| --- | --- |
+| `tokens.css` | 1 KB |
+| `components/bundle.css` | {{css_kb}} KB |
+| `components/bundle.js` | {{js_kb}} KB |
+
+## Browsers
+
+The current versions of Chrome, Edge, Safari and Firefox. The stylesheet uses logical properties, `:has()`, dynamic viewport units and the native `<dialog>` and `<details>` elements; it has no fallbacks for browsers without them.
+
+## The font
+
+Onest is a variable font by the Onest Project Authors, under the SIL Open Font License 1.1; the licence text is in `fonts/OFL.txt`. To use another typeface, see [Theming](#d-theming).
+{{#license}}
+
+## Licence
+
+Tray UI is released under the {{license}} licence.
+{{/license}}

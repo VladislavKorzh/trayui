@@ -1,0 +1,123 @@
+/* ---------- Chart ---------- */
+
+.tray-chart {
+  --tray-s1: var(--data-1); --tray-s2: var(--data-2); --tray-s3: var(--data-3); --tray-s4: var(--data-4); --tray-s5: var(--ink-hint);
+  display: grid; gap: var(--space-4); min-inline-size: 0; margin: 0;
+}
+/* The Entity Colour Rule: one series is ink, or yellow on the ink card. */
+.tray-chart--single { --tray-s1: var(--ink); }
+.tray-card--inverse .tray-chart--single { --tray-s1: var(--accent); }
+.tray-chart__title { font: 700 var(--subtitle-size)/1.15 var(--font-sans); letter-spacing: -.02em; }
+.tray-chart__caption { color: var(--ink-soft); font: 400 1rem/1.45 var(--font-sans); }
+.tray-chart__frame { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-2) var(--space-3); }
+.tray-chart__axis { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; margin-block: -.5em; color: var(--ink-hint); font: 400 .8125rem/1 var(--font-sans); font-variant-numeric: tabular-nums; }
+.tray-chart__plot { position: relative; block-size: var(--tray-h, 12rem); border-block-end: 1px solid var(--rule-strong); border-radius: var(--radius-mark); touch-action: pan-y; }
+.tray-chart__plot:focus-visible { outline-offset: 6px; }
+.tray-chart__grid span { position: absolute; inset-inline: 0; block-size: 1px; background: var(--hairline); }
+.tray-chart__cols { position: absolute; inset: 0; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
+.tray-chart__col { position: relative; display: flex; align-items: flex-end; justify-content: center; gap: 2px; min-inline-size: 0; padding-inline: 14%; }
+/* The column under the pointer: a quiet band with round corners. It only has to say where the tooltip belongs. */
+.tray-chart__col[data-active]::before { content: ""; position: absolute; inset: 0 2px; border-radius: var(--radius-chip); background: var(--tray-fill); opacity: var(--tray-band, .6); }
+.tray-chart__bar { position: relative; flex: 1 1 0; max-inline-size: 24px; border-radius: var(--radius-mark) var(--radius-mark) 0 0; background: var(--tray-c); }
+.tray-chart__col--stack { flex-direction: column-reverse; align-items: center; justify-content: flex-start; }
+.tray-chart__col--stack .tray-chart__bar { flex: none; inline-size: 100%; border-radius: var(--radius-mark); }
+.tray-chart__peak { position: absolute; inset-block-end: calc(100% + 6px); inset-inline-start: 50%; transform: translateX(-50%); color: var(--ink); font: 600 .875rem/1 var(--font-sans); white-space: nowrap; pointer-events: none; }
+.tray-chart__plot > svg, .tray-chart__round > svg { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; }
+.tray-chart__line { fill: none; stroke: var(--tray-c); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.tray-chart__area { fill: var(--tray-c); fill-opacity: .14; stroke: none; }
+.tray-chart__dot { position: absolute; inline-size: 10px; block-size: 10px; margin: -5px; border-radius: 50%; background: var(--tray-c); box-shadow: 0 0 0 2px var(--tray-ground); pointer-events: none; }
+.tray-chart__cross { position: absolute; inset-block: 0; inline-size: 1px; background: var(--ink); pointer-events: none; }
+.tray-chart__x { grid-column: 2; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); color: var(--ink-hint); font: 400 .8125rem/1 var(--font-sans); text-align: center; }
+.tray-chart__x span { overflow: hidden; text-overflow: clip; white-space: nowrap; }
+.tray-chart__legend { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); margin: 0; padding: 0; list-style: none; color: var(--ink-soft); font: 400 .875rem/1.4 var(--font-sans); }
+.tray-chart__legend li { display: inline-flex; align-items: center; gap: var(--space-2); }
+.tray-swatch { flex: none; inline-size: 12px; block-size: 12px; border-radius: var(--radius-mark); background: var(--tray-c); }
+
+/* The tooltip: the one floating thing every chart has. */
+.tray-tip { position: absolute; z-index: 2; display: grid; gap: 6px; padding: var(--space-2) var(--space-3); border-radius: var(--radius-chip); background: var(--ink); color: var(--tray-on-ink); box-shadow: var(--shadow-float); font: 600 .9375rem/1.2 var(--font-sans); white-space: nowrap; pointer-events: none; }
+.tray-tip__row { display: flex; align-items: center; gap: var(--space-2); font-weight: 400; }
+.tray-tip__row b { margin-inline-start: auto; padding-inline-start: var(--space-4); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* Horizontal bars: a ranked list. */
+.tray-chart__rows { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--space-3) var(--space-4); align-items: center; font: 500 1rem/1.3 var(--font-sans); }
+.tray-chart__rows .tray-chart__track { block-size: 16px; border-radius: var(--radius-mark); background: none; }
+.tray-chart__rows .tray-chart__track span { display: block; block-size: 100%; min-inline-size: 2px; border-radius: var(--radius-mark); background: var(--tray-c); }
+.tray-chart__rows .tray-num { color: var(--ink-soft); font-weight: 400; }
+
+/* Round charts: donut, radial, radar. */
+.tray-chart__round { position: relative; inline-size: min(100%, var(--tray-d, 14rem)); aspect-ratio: 1; margin-inline: auto; }
+.tray-chart__seg { fill: none; stroke: var(--tray-c); stroke-width: 9; transition: opacity var(--duration-fill) var(--ease); }
+.tray-chart__round[data-hover] .tray-chart__seg:not([data-active]) { opacity: .3; }
+.tray-chart__ring { fill: none; stroke: var(--track); stroke-width: 7; }
+.tray-chart__value { fill: none; stroke: var(--tray-c); stroke-width: 7; stroke-linecap: round; }
+.tray-chart__center { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 2px; text-align: center; pointer-events: none; }
+.tray-chart__center b { font: 700 var(--title-size)/1 var(--font-sans); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.tray-chart__center span { color: var(--ink-muted); font: 400 .875rem/1.3 var(--font-sans); }
+.tray-chart__web { fill: none; stroke: var(--hairline); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.tray-chart__shape { fill: var(--tray-c); fill-opacity: .14; stroke: var(--tray-c); stroke-width: 2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.tray-chart__spoke { position: absolute; transform: translate(-50%, -50%); color: var(--ink-hint); font: 400 .8125rem/1 var(--font-sans); white-space: nowrap; }
+.tray-chart__key { inline-size: 100%; border-collapse: collapse; font: 400 .9375rem/1.3 var(--font-sans); font-variant-numeric: tabular-nums; }
+.tray-chart__key th, .tray-chart__key td { padding-block: 10px; border-block-end: 1px solid var(--hairline); font-weight: 400; text-align: start; }
+.tray-chart__key th { display: flex; align-items: center; gap: var(--space-2); }
+.tray-chart__key td { padding-inline-start: var(--space-4); text-align: end; white-space: nowrap; }
+.tray-chart__key td:last-child:not(:nth-child(2)) { inline-size: 3.5rem; color: var(--ink-soft); }
+/* Beside its key when the card has room for both, above it when it has not: the key wraps under the ring by itself. */
+.tray-chart--side { display: flex; flex-wrap: wrap; align-items: center; column-gap: var(--space-8); }
+.tray-chart--side > * { flex: 0 0 100%; }
+.tray-chart--side > .tray-chart__round, .tray-chart--side > .tray-chart__canvas--round { flex: 0 0 auto; inline-size: min(100%, var(--tray-d, 14rem)); }
+.tray-chart--side > .tray-chart__key { flex: 1 1 0; inline-size: auto; }
+
+/* Charts drawn by Recharts (the React package, `trayui-react/charts`): the same frame, with the library's marks restyled here.
+   A rule in a stylesheet wins over the attribute Recharts writes on a mark, so the look does not depend on the props of each chart. */
+.tray-chart__canvas { position: relative; block-size: var(--tray-h, 12rem); min-inline-size: 0; font: 400 .8125rem/1 var(--font-sans); }
+.tray-chart__canvas--round { inline-size: min(100%, var(--tray-d, 14rem)); block-size: auto; aspect-ratio: 1; margin-inline: auto; }
+/* The library sizes itself to this box, whatever lays the box out. */
+.tray-chart__canvas > .recharts-responsive-container { position: absolute; inset: 0; }
+.tray-chart__canvas .recharts-surface { overflow: visible; }
+.tray-chart__canvas .recharts-surface:focus-visible { outline-offset: 6px; border-radius: var(--radius-mark); }
+.tray-chart__canvas .recharts-cartesian-axis-tick-value, .tray-chart__canvas .recharts-polar-angle-axis-tick-value, .tray-chart__canvas .recharts-polar-radius-axis-tick-value { fill: var(--ink-hint); font-variant-numeric: tabular-nums; }
+/* The names of a ranking, set as text and not as ticks: <YAxis tick={{ className: 'tray-chart__name' }} />. */
+.tray-chart__canvas .tray-chart__name { fill: var(--ink); font: 500 1rem/1 var(--font-sans); }
+.tray-chart__canvas .recharts-cartesian-axis-tick-line, .tray-chart__canvas .recharts-polar-angle-axis-tick-line { stroke: none; }
+.tray-chart__canvas .recharts-cartesian-axis-line { stroke: var(--rule-strong); }
+.tray-chart__canvas .recharts-yAxis .recharts-cartesian-axis-line, .tray-chart__canvas .recharts-polar-angle-axis .recharts-polar-angle-axis-line, .tray-chart__canvas .recharts-polar-radius-axis-line { stroke: none; }
+.tray-chart__canvas .recharts-cartesian-grid line, .tray-chart__canvas .recharts-polar-grid line, .tray-chart__canvas .recharts-polar-grid path, .tray-chart__canvas .recharts-polar-grid circle { stroke: var(--hairline); }
+.tray-chart__canvas .recharts-line-curve, .tray-chart__canvas .recharts-area-curve { stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.tray-chart__canvas .recharts-area-area { fill-opacity: .14; }
+.tray-chart__canvas .recharts-radar-polygon { fill-opacity: .14; stroke-width: 2; stroke-linejoin: round; }
+.tray-chart__canvas .recharts-dot { stroke: var(--tray-ground); stroke-width: 2; }
+.tray-chart__canvas .recharts-pie-sector .recharts-sector, .tray-chart__canvas .recharts-radial-bar-sector { stroke: var(--tray-ground); stroke-width: 2; }
+.tray-chart__canvas .recharts-radial-bar-background-sector { fill: var(--track); }
+.tray-chart__canvas .recharts-pie-sector { transition: opacity var(--duration-fill) var(--ease); }
+.tray-chart__canvas .recharts-pie:has(.recharts-pie-sector:hover) .recharts-pie-sector:not(:hover) { opacity: .3; }
+.tray-chart__canvas .recharts-pie-label-text { fill: var(--ink); font: 600 .875rem/1 var(--font-sans); font-variant-numeric: tabular-nums; }
+.tray-chart__canvas .recharts-pie-label-line { stroke: var(--rule-strong); }
+.tray-chart__canvas .recharts-curve.recharts-tooltip-cursor { stroke: var(--ink); stroke-width: 1; }
+/* The column under the pointer: a quiet band with round corners, not a slab. It only has to say where the tooltip belongs. */
+.tray-chart__canvas .recharts-rectangle.recharts-tooltip-cursor { fill: var(--tray-fill); fill-opacity: var(--tray-band, .6); stroke: none; clip-path: inset(0 round var(--radius-chip)); }
+.tray-chart__canvas .recharts-sector.recharts-tooltip-cursor { fill: var(--tray-fill); fill-opacity: var(--tray-band, .6); stroke: none; }
+.tray-chart__canvas .recharts-reference-line-line { stroke: var(--rule-strong); }
+.tray-chart__canvas .recharts-label, .tray-chart__canvas .recharts-label-list text { fill: var(--ink); font: 600 .875rem/1 var(--font-sans); font-variant-numeric: tabular-nums; }
+.tray-chart__canvas .recharts-tooltip-wrapper { z-index: 2; }
+.tray-chart__canvas .tray-tip { position: static; }
+.tray-chart__canvas .recharts-legend-wrapper .tray-chart__legend { padding-block-start: var(--space-3); }
+.tray-chart__middle-value { fill: var(--ink); font: 700 var(--title-size)/1 var(--font-sans); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.tray-chart__middle-label { fill: var(--ink-muted); font: 400 .875rem/1.3 var(--font-sans); }
+.tray-tip__row--total { padding-block-start: 6px; border-block-start: 1px solid color-mix(in srgb, currentColor 24%, transparent); }
+.tray-swatch--line { inline-size: 3px; block-size: 14px; }
+.tray-swatch--dashed { inline-size: 12px; block-size: 0; border-radius: 0; background: none; border-block-start: 2px dashed var(--tray-c); }
+
+/* ---------- Data table ---------- */
+
+.tray-datatable { display: grid; gap: var(--space-4); min-inline-size: 0; }
+.tray-datatable__bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.tray-datatable__bar > .tray-input-group { flex: 1 1 14rem; max-inline-size: 22rem; }
+.tray-datatable__bar > :last-child:not(:first-child) { margin-inline-start: auto; }
+.tray-datatable__foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); color: var(--ink-soft); font: 400 .9375rem/1.3 var(--font-sans); font-variant-numeric: tabular-nums; }
+.tray-sort { display: inline-flex; align-items: center; gap: 6px; padding: 0; border: 0; border-radius: var(--radius-mark); background: none; color: inherit; font: inherit; cursor: pointer; }
+.tray-sort .tray-icon { color: var(--ink-hint); }
+th[aria-sort="ascending"] .tray-sort, th[aria-sort="descending"] .tray-sort { color: var(--ink); }
+th[aria-sort="ascending"] .tray-sort .tray-icon, th[aria-sort="descending"] .tray-sort .tray-icon { color: var(--ink); }
+.tray-table .tray-check { min-block-size: 0; padding-block: 0; }
+.tray-table td.tray-table__check, .tray-table th.tray-table__check { inline-size: 1%; padding-inline-end: var(--space-3); }
+.tray-table td.tray-table__act { inline-size: 1%; padding-block: 4px; }

@@ -1,0 +1,34 @@
+---
+category: Onboarding
+keywords: [tour, product tour, walkthrough, coach marks, onboarding, guide, hints, spotlight]
+---
+# Tour
+
+A tour points at parts of a screen one at a time: a small raised panel beside the part, with a count, a sentence or two, and "Next".
+
+## Use
+```tsx
+<Tour
+  steps={[
+    { target: '#orders-tabs', title: 'Orders move left to right', text: 'Everything new lands in "To pack".' },
+    { target: '#orders-export', title: 'Take the list with you', text: 'Export what you see as a spreadsheet.' },
+    { target: '#orders-new', title: 'Orders by phone go here', text: 'Add an order when a customer calls.' },
+  ]}
+  onComplete={(finished) => markTourSeen()}   // finished is false when it was skipped
+>
+  <OrdersScreen />                             {/* the parts carry the ids the steps name */}
+</Tour>
+```
+
+## How it works
+Wrap the screen in the Tour. Each step names its target with a CSS selector inside that area, usually an id. The current target gets a 3px ink ring and the panel is placed under it, or over it when there is no room below. The count, "1 of 3", is written for you.
+
+The first step has "Skip the tour" and "Next"; later steps have "Back" and "Next"; the last step's forward button says "Done" and ends the tour. `onStepChange` reports the index of the step shown; `onComplete` reports whether the tour was finished or skipped.
+
+The tour runs once from the moment it mounts, starting at `defaultStep`. For someone who has seen it, pass `steps={[]}`: the screen stays as it is. To run it again later, give the Tour a new `key`.
+
+## Do and don't
+- Do keep a tour to three or four steps.
+- Do point at things the person will use today.
+- Don't start a tour over a screen that is still empty: show the Empty state or the Onboarding Checklist first.
+- Don't dim the page behind it. The ring is enough, and the screen stays usable.

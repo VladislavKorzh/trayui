@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign-in with social accounts</title>
+<meta name="description" content="A sign-in card with six sign-in providers and a way to the email form.">
+<meta name="tray-category" content="Login">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-screen">
+  <main class="tray-screen__body tray-screen__body--center">
+    <section class="tray-card tray-auth" aria-labelledby="auth-title">
+      <a class="tray-wordmark" href="/">Counter</a>
+      <div class="tray-auth__head">
+        <h1 class="title" id="auth-title">Sign in</h1>
+        <p>Use an account you already have.</p>
+      </div>
+      <div class="tray-providers tray-providers--list" role="group" aria-label="Sign in with another account">
+        <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/google">Continue with Google</a>
+        <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/apple">Continue with Apple</a>
+        <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/facebook">Continue with Facebook</a>
+        <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/telegram">Continue with Telegram</a>
+        <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/linkedin">Continue with LinkedIn</a>
+        <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/microsoft">Continue with Microsoft</a>
+      </div>
+      <p class="tray-rule tray-rule--label">or</p>
+      <a class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--block" href="/signin/email"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-mail"/></svg>Use your email</a>
+      <p class="tray-auth__foot">New here? <a href="/signup">Create an account</a></p>
+    </section>
+  </main>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

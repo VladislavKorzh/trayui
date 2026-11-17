@@ -1,0 +1,22 @@
+<!-- @dsCard group="Forms" height=224 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Checkbox — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--start">
+<div class="tray-stack tray-stack--sm" style="gap: 0">
+<label class="tray-check"><input type="checkbox"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span><span>Gift box</span></label>
+<label class="tray-check"><input type="checkbox" checked><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span><span>Chilled delivery</span></label>
+<label class="tray-check"><input type="checkbox" id="k-ind"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span><span>All extras</span></label>
+<label class="tray-check"><input type="checkbox" disabled checked><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span><span>Farm sticker, always included</span></label>
+</div>
+<div class="tray-stack tray-stack--sm" style="gap: 0; max-inline-size: 22rem">
+<label class="tray-check"><input type="checkbox" checked><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span><span class="tray-check__text">Remind me before the season ends<small>One email in November, nothing else.</small></span></label>
+<label class="tray-check"><input type="checkbox" aria-invalid="true" aria-describedby="k-e"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span><span class="tray-check__text">I agree to the terms of the order<small class="tray-danger" id="k-e">Agree to the terms to place the order.</small></span></label>
+</div>
+</div>
+<script>
+document.getElementById('k-ind').indeterminate = true;
+</script>
+</body>
+</html>

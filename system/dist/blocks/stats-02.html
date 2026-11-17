@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stat cards over a season chart</title>
+<meta name="description" content="Stat cards and one large chart of the season on the ink card, with the harvest by bed and the goals of the season beneath.">
+<meta name="tray-category" content="Stats">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app">
+  <div class="tray-app__side">
+    <nav class="tray-sidebar" id="nav" aria-label="Main">
+      <div class="tray-sidebar__head" style="padding-inline: 0">
+        <div class="tray-anchor tray-anchor--block" data-tray="menu">
+          <button class="tray-switcher" type="button" aria-label="Workspace: Perly Farm"><span class="tray-avatar tray-avatar--sm tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-person__text"><b>Perly Farm</b><small>Shop plan</small></span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chevrons-up-down"/></svg></button>
+          <div class="tray-pop">
+            <div class="tray-list">
+              <p class="tray-list__label">Workspaces</p>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="true"><span class="tray-avatar tray-avatar--xs tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-option__text">Perly Farm</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">MB</span><span class="tray-option__text">Meadow Bakery</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">HC</span><span class="tray-option__text">Hill Cheese</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <hr class="tray-list__rule">
+              <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New workspace</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tray-sidebar__scroll">
+        <div class="tray-sidebar__group">
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg><span>Orders</span><span class="tray-badge tray-badge--count">12</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg><span>Deliveries</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-users"/></svg><span>Customers</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span>Batches</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chart-column"/></svg><span>Reports</span></a>
+          <ul class="tray-sidebar__sub">
+            <li><a class="tray-sidebar__item" href="#">Overview</a></li>
+            <li><a class="tray-sidebar__item" href="#" aria-current="page">Season</a></li>
+            <li><a class="tray-sidebar__item" href="#">Channels</a></li>
+          </ul>
+        </div>
+        <div class="tray-sidebar__group">
+          <p class="tray-sidebar__label">Workspace</p>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user-plus"/></svg><span>Team</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg><span>Billing</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-settings"/></svg><span>Settings</span></a>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <header class="tray-topbar">
+      <div class="tray-topbar__start">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the navigation"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+        <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon tray-app__collapse" type="button" data-tray="sidebar-toggle" aria-controls="nav" aria-label="Collapse the sidebar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-panel-left"/></svg></button>
+        <nav aria-label="Breadcrumb"><ol class="tray-crumbs tray-crumbs--fold"><li><a href="#">Perly Farm</a></li><li><a href="#">Reports</a></li><li><span aria-current="page">Season</span></li></ol></nav>
+      </div>
+      <div class="tray-topbar__end">
+        <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders" aria-keyshortcuts="/"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
+        <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 2 unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip">2</span></span>
+        <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko">OF</button>
+      </div>
+    </header>
+    <main class="tray-app__content">
+      <div class="tray-pagehead">
+        <div class="tray-pagehead__row">
+          <div class="tray-pagehead__text">
+            <h1 class="title">Season 2026</h1>
+            <p>From the first caviar on 9 March to the last. Demo data.</p>
+          </div>
+          <div class="tray-pagehead__actions">
+            <span class="tray-select tray-select--sm"><select aria-label="Compare with"><option>Against 2025</option><option>Against 2024</option></select></span>
+            <button class="tray-btn tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg>Close the season</button>
+          </div>
+        </div>
+        <p class="tray-pagehead__meta"><span><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-calendar"/></svg>36 weeks of collection</span><span><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-map-pin"/></svg>Beds A to F</span><span><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-package"/></svg>46 batches</span></p>
+      </div>
+      <section class="tray-card tray-card--inverse" aria-labelledby="season-title">
+        <div class="tray-card__head">
+          <div>
+            <h2 class="subtitle" id="season-title">Caviar collected by month</h2>
+            <p class="tray-chart__caption">9 March to 14 November, in kilograms</p>
+          </div>
+          <a class="tray-btn tray-btn--quiet tray-btn--xs" href="#">See the batches</a>
+        </div>
+        <div class="tray-stack tray-stack--lg">
+          <div class="tray-stats tray-stats--four" style="margin-inline: calc(-1 * var(--space-6))">
+            <div class="tray-stat tray-inverse">
+              <p class="tray-stat__label">Collected</p>
+              <p class="tray-stat__value">104<small>kg</small></p>
+              <p class="tray-stat__foot"><span class="tray-trend" data-tone="good"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-trending-up"/></svg>+9%</span>than in 2025</p>
+            </div>
+            <div class="tray-stat tray-inverse">
+              <p class="tray-stat__label">Jars filled</p>
+              <p class="tray-stat__value">2,086</p>
+              <p class="tray-stat__foot"><span class="tray-trend" data-tone="good"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-trending-up"/></svg>+7%</span>than in 2025</p>
+            </div>
+            <div class="tray-stat tray-inverse">
+              <p class="tray-stat__label">Jars sold</p>
+              <p class="tray-stat__value">1,954</p>
+              <p class="tray-stat__foot">94% of the jars filled</p>
+            </div>
+            <div class="tray-stat tray-inverse">
+              <p class="tray-stat__label">Best month</p>
+              <p class="tray-stat__value">22<small>kg</small></p>
+              <p class="tray-stat__foot">May, as in 2025</p>
+            </div>
+          </div>
+          <figure class="tray-chart" data-tray="chart" data-chart='{"type": "bar", "unit": " kg", "max": 25, "height": 260, "labelHead": "Month", "labels": ["Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov"], "series": [{"name": "Collected", "values": [6, 14, 22, 19, 9, 7, 15, 10, 2]}], "summary": "Bar chart of caviar collected each month of the 2026 season, March to November: 104 kilograms in all. Collection climbs through the spring, slows in the summer heat and rises again in September. The most, 22 kilograms, came in May. Demo data."}'></figure>
+        </div>
+      </section>
+      <div class="tray-bento">
+        <section class="tray-card tray-span-7" aria-labelledby="beds-title">
+          <div class="tray-card__head">
+            <div>
+              <h2 class="subtitle" id="beds-title">Collected by bed</h2>
+              <p class="tray-chart__caption">Beds A and B, the oldest, gave the most.</p>
+            </div>
+          </div>
+          <figure class="tray-chart" data-tray="chart" data-chart='{"type": "bar", "horizontal": true, "unit": " kg", "labelHead": "Bed", "table": false, "labels": ["Bed A", "Bed B", "Bed C", "Bed D", "Bed E", "Bed F"], "series": [{"name": "Collected", "values": [22, 20, 18, 17, 15, 12]}], "summary": "Ranked bars of caviar collected in the 2026 season by bed: A 22 kilograms, B 20, C 18, D 17, E 15 and F 12. Demo data."}'></figure>
+        </section>
+        <section class="tray-card tray-span-5" aria-labelledby="goals-title">
+          <div class="tray-card__head">
+            <div>
+              <h2 class="subtitle" id="goals-title">Goals for the season</h2>
+              <p class="tray-chart__caption">Set on 2 March</p>
+            </div>
+          </div>
+          <div class="tray-usage">
+            <div class="tray-progress">
+              <span class="tray-progress__name">Caviar collected</span>
+              <span class="tray-progress__value">104 of 110 kg</span>
+              <span class="tray-progress__bar" role="meter" aria-label="Caviar collected" aria-valuemin="0" aria-valuemax="110" aria-valuenow="104" style="--tray-v: 95"></span>
+            </div>
+            <div class="tray-progress">
+              <span class="tray-progress__name">Jars sold</span>
+              <span class="tray-progress__value">1,954 of 2,000</span>
+              <span class="tray-progress__bar" role="meter" aria-label="Jars sold" aria-valuemin="0" aria-valuemax="2000" aria-valuenow="1954" style="--tray-v: 98"></span>
+            </div>
+            <div class="tray-progress">
+              <span class="tray-progress__name">Restaurants supplied</span>
+              <span class="tray-progress__value">24 of 30</span>
+              <span class="tray-progress__bar" role="meter" aria-label="Restaurants supplied" aria-valuemin="0" aria-valuemax="30" aria-valuenow="24" style="--tray-v: 80"></span>
+            </div>
+          </div>
+          <div class="tray-card__foot"><a class="tray-btn tray-btn--quiet tray-btn--xs" href="#">Set the goals for 2027</a></div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

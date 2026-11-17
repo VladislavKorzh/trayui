@@ -1,0 +1,8 @@
+{
+  "lead": "The one rule: across a surface between two blocks, upright inside a row, or with a few words in the middle.",
+  "controls": [
+    { "name": "kind", "label": "Kind", "options": [["", "Line"], ["v", "Vertical"], ["label", "Labelled"]] },
+    { "name": "label", "label": "Words (labelled)", "type": "text", "default": "or", "max": 30 }
+  ],
+  "template": "{{#kind=}}<div class=\"tray-stack\"><p>Two jars of 50 g</p><hr class=\"tray-rule\"><p class=\"tray-soft\">Delivered chilled, today between 14:00 and 18:00.</p></div>{{/kind=}}{{#kind=v}}<div class=\"tray-row\" style=\"gap: var(--space-3)\"><span class=\"nav\">Orders</span><span class=\"tray-rule tray-rule--v\" role=\"separator\" aria-orientation=\"vertical\"></span><span class=\"nav\">Batches</span><span class=\"tray-rule tray-rule--v\" role=\"separator\" aria-orientation=\"vertical\"></span><span class=\"nav\">Couriers</span></div>{{/kind=v}}{{#kind=label}}<div class=\"tray-stack\"><button class=\"tray-btn tray-btn--quiet tray-btn--md tray-btn--block\" type=\"button\">Continue with a phone number</button><div class=\"tray-rule tray-rule--label\" role=\"separator\">{{label}}</div><button class=\"tray-btn tray-btn--quiet tray-btn--md tray-btn--block\" type=\"button\">Continue with email</button></div>{{/kind=label}}"
+}

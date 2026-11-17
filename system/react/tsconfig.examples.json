@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "trayui-react": ["./src/index.ts"],
+      "trayui-react/charts": ["./src/charts/index.ts"]
+    }
+  },
+  "include": ["src", "examples", "previews"]
+}

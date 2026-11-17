@@ -1,0 +1,9 @@
+{
+  "lead": "A spinner always comes with words: in a line that is announced, in a busy button or in a badge.",
+  "controls": [
+    { "name": "size", "label": "Size", "options": [[" tray-spinner--sm", "16px"], ["", "20px"], [" tray-spinner--lg", "32px"]], "default": "" },
+    { "name": "place", "label": "Place", "options": [["line", "Line"], ["button", "Button"], ["badge", "Badge"]] },
+    { "name": "text", "label": "Text", "type": "text", "default": "Sending the order", "max": 40 }
+  ],
+  "template": "{{#place=line}}<span class=\"tray-loading\" role=\"status\"><span class=\"tray-spinner{{size}}\" aria-hidden=\"true\"></span>{{text}}</span>{{/place=line}}{{#place=button}}<button class=\"tray-btn tray-btn--md\" type=\"button\" aria-busy=\"true\"><span class=\"tray-spinner{{size}}\" aria-hidden=\"true\"></span>{{text}}</button>{{/place=button}}{{#place=badge}}<span class=\"tray-badge\"><span class=\"tray-spinner tray-spinner--sm\" aria-hidden=\"true\"></span>{{text}}</span>{{/place=badge}}"
+}

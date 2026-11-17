@@ -1,0 +1,12 @@
+{
+  "lead": "A customer’s own sentence, set large: on a tray or the one ink card of the page, large or small for a row of three. The people and their words here are invented; quote only real ones.",
+  "width": "36rem",
+  "grounds": false,
+  "controls": [
+    {"name": "card", "label": "Card", "options": [["tray-card", "Tray"], ["tray-card tray-card--inverse", "Ink"]]},
+    {"name": "size", "label": "Size", "options": [["", "Large"], [" tray-testimonial--sm", "Small"]]},
+    {"name": "person", "label": "Person", "options": [["oksana", "Oksana"], ["marko", "Marko"]]},
+    {"name": "quote", "label": "Quote", "type": "text", "default": "We stopped losing orders the week we started. Friday is quiet now.", "max": 160}
+  ],
+  "template": "<figure class=\"{{card}} tray-testimonial{{size}}\"><blockquote>&ldquo;{{quote}}&rdquo;</blockquote><figcaption class=\"tray-person\">{{#person=oksana}}<span class=\"tray-avatar\" aria-hidden=\"true\">OF</span><span class=\"tray-person__text\"><b>Oksana Franko</b><small>Perly Farm, Kyiv region</small></span>{{/person=oksana}}{{#person=marko}}<span class=\"tray-avatar\" aria-hidden=\"true\">MB</span><span class=\"tray-person__text\"><b>Marko Bilyk</b><small>Meadow Bakery</small></span>{{/person=marko}}</figcaption></figure>"
+}

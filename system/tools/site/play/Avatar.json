@@ -1,0 +1,11 @@
+{
+  "lead": "An avatar at each of its sizes and for each kind of person, alone, beside a name or in a group.",
+  "controls": [
+    { "name": "size", "label": "Size", "options": [[" tray-avatar--xs", "32px"], [" tray-avatar--sm", "40px"], ["", "48px"], [" tray-avatar--lg", "64px"]], "default": "" },
+    { "name": "who", "label": "Who", "options": [["", "Person"], ["you", "You"], ["none", "No photo"], ["assistant", "Assistant"]] },
+    { "name": "initials", "label": "Initials", "type": "text", "default": "OF", "max": 2 },
+    { "name": "layout", "label": "Layout", "options": [["", "Alone"], ["name", "With name"], ["group", "In group"]] },
+    { "name": "name", "label": "Name", "type": "text", "default": "Oksana Franko", "max": 40 }
+  ],
+  "template": "{{#layout=name}}<div class=\"tray-row tray-row--sm\" style=\"gap: var(--space-3)\">{{/layout=name}}{{#layout=group}}<span class=\"tray-avatar-group\" role=\"group\" aria-label=\"Packing team, 6 people\"><span class=\"tray-avatar{{size}}\">AM</span><span class=\"tray-avatar{{size}}\">BS</span>{{/layout=group}}<span class=\"tray-avatar{{size}}{{#who=you}} tray-avatar--ink{{/who=you}}{{#who=assistant}} tray-avatar--accent{{/who=assistant}}\"{{#who=none}} role=\"img\" aria-label=\"No photo\"{{/who=none}}{{#who=assistant}} role=\"img\" aria-label=\"Assistant\"{{/who=assistant}}>{{#who=}}{{initials}}{{/who=}}{{#who=you}}{{initials}}{{/who=you}}{{#who=none}}{{icon:user}}{{/who=none}}{{#who=assistant}}{{icon:sparkle}}{{/who=assistant}}</span>{{#layout=group}}<span class=\"tray-avatar{{size}} tray-avatar--ink\">+3</span></span>{{/layout=group}}{{#layout=name}}<div><p class=\"control\">{{name}}</p><p class=\"caption tray-muted\">Farm manager</p></div></div>{{/layout=name}}"
+}

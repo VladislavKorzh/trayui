@@ -1,0 +1,33 @@
+<!-- @dsCard group="Conversation" height=530 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Questionnaire — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--center">
+<form class="tray-card tray-questionnaire" data-tray="questionnaire">
+<div class="tray-questionnaire__head"><span data-progress></span><div class="tray-steps" aria-hidden="true"><span></span><span></span><span></span></div></div>
+<fieldset class="tray-questionnaire__step"><legend class="subtitle">When should it arrive?</legend>
+<div class="tray-choices">
+<label class="tray-choice"><input type="radio" name="q1" value="Today, 14:00 to 18:00" checked><span class="tray-radio__ring"></span><span class="tray-choice__text"><b>Today</b><span>Between 14:00 and 18:00</span></span></label>
+<label class="tray-choice"><input type="radio" name="q1" value="Tomorrow morning"><span class="tray-radio__ring"></span><span class="tray-choice__text"><b>Tomorrow morning</b><span>Between 10:00 and 14:00</span></span></label>
+<label class="tray-choice"><input type="radio" name="q1" value="Another day" data-other><span class="tray-radio__ring"></span><span class="tray-choice__text"><b>Another day</b><span>Tell us which</span></span></label>
+</div>
+<input class="tray-input" data-other-text placeholder="For example, Friday after six" aria-label="Which day" hidden>
+</fieldset>
+<fieldset class="tray-questionnaire__step" hidden><legend class="subtitle">What should go in the box?</legend>
+<div class="tray-stack" style="gap: 0">
+<label class="tray-check"><input type="checkbox" name="q2" value="A gift box"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span><span>A gift box</span></label>
+<label class="tray-check"><input type="checkbox" name="q2" value="A handwritten note"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span><span>A handwritten note</span></label>
+<label class="tray-check"><input type="checkbox" name="q2" value="A serving card"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span><span>A card on how to serve it</span></label>
+</div>
+</fieldset>
+<fieldset class="tray-questionnaire__step" data-optional hidden><legend class="subtitle">Anything the courier should know?</legend>
+<textarea class="tray-textarea" rows="3" aria-label="Note for the courier" placeholder="Door codes, landmarks, a safe place"></textarea>
+<p class="tray-questionnaire__hint">You can leave this empty.</p>
+</fieldset>
+<div class="tray-questionnaire__foot"><button class="tray-btn tray-btn--ghost tray-btn--md" type="button" data-back>Back</button><button class="tray-btn tray-btn--md" type="button" data-next>Next</button></div>
+<div class="tray-stack" data-done hidden><p class="subtitle">Thank you. Here is what we have</p><dl class="tray-questionnaire__answers"></dl><div><button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" data-restart>Change the answers</button></div></div>
+</form>
+</div>
+</body>
+</html>

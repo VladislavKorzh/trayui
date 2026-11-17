@@ -1,0 +1,32 @@
+<!-- @dsCard group="Actions" height=268 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>ToggleGroup — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--start">
+<div class="tray-seg" role="radiogroup" aria-label="Jar size">
+<label class="tray-seg__item"><input type="radio" name="jar"><span>30 g</span></label>
+<label class="tray-seg__item"><input type="radio" name="jar" checked><span>50 g</span></label>
+<label class="tray-seg__item"><input type="radio" name="jar"><span>100 g</span></label>
+</div>
+<div class="tray-seg tray-seg--sm" role="radiogroup" aria-label="View">
+<label class="tray-seg__item"><input type="radio" name="view" checked><span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-list"/></svg>List</span></label>
+<label class="tray-seg__item"><input type="radio" name="view"><span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-layout-grid"/></svg>Grid</span></label>
+</div>
+<div class="tray-seg tray-seg--sm tray-seg--icon" role="group" aria-label="Text style">
+<label class="tray-seg__item"><input type="checkbox" aria-label="Bold" checked><span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bold"/></svg></span></label>
+<label class="tray-seg__item"><input type="checkbox" aria-label="Italic"><span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-italic"/></svg></span></label>
+<label class="tray-seg__item"><input type="checkbox" aria-label="Underline" checked><span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-underline"/></svg></span></label>
+</div>
+<p class="tray-demo-note">Full width, with a disabled segment, on a tray</p>
+<div class="tray-card" style="flex: 1 1 100%; padding: var(--space-6)">
+<div class="tray-seg tray-seg--fill" role="radiogroup" aria-label="Period">
+<label class="tray-seg__item"><input type="radio" name="period"><span>Day</span></label>
+<label class="tray-seg__item"><input type="radio" name="period" checked><span>Week</span></label>
+<label class="tray-seg__item"><input type="radio" name="period"><span>Month</span></label>
+<label class="tray-seg__item"><input type="radio" name="period" disabled><span>Year</span></label>
+</div>
+</div>
+</div>
+</body>
+</html>

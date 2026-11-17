@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product page</title>
+<meta name="description" content="One product: a large picture with thumbnails, the rating, the price, a choice of size, the quantity, Add to cart and Save, the delivery, tabs with the details, a few reviews and four more products.">
+<meta name="tray-category" content="Shop">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<header class="tray-nav tray-container">
+  <a class="tray-wordmark" href="/">Perly Farm</a>
+  <nav class="tray-nav__strip" aria-label="Main">
+    <ul class="tray-nav__links tray-tabs" data-tray="strip">
+      <li><a class="tray-tab" href="/shop" aria-current="page">Shop</a></li>
+      <li><a class="tray-tab" href="/gifts">Gifts</a></li>
+      <li><a class="tray-tab" href="/farm">The farm</a></li>
+      <li><a class="tray-tab" href="/delivery">Delivery</a></li>
+    </ul>
+  </nav>
+  <div class="tray-nav__actions">
+    <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search the shop" aria-keyshortcuts="/"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search the shop</span><kbd class="tray-kbd">/</kbd></button>
+    <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/cart" aria-label="Cart, 2 items"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-shopping-bag"/></svg>Cart<span class="tray-badge tray-badge--count tray-badge--ink">2</span></a>
+  </div>
+</header>
+
+<main class="tray-container">
+  <nav aria-label="Breadcrumb">
+    <ol class="tray-crumbs">
+      <li><a href="/shop">Shop</a></li>
+      <li><a href="/shop/caviar">Caviar</a></li>
+      <li><span aria-current="page">Snail caviar</span></li>
+    </ol>
+  </nav>
+
+  <div class="tray-bento" style="padding-block: var(--space-4) var(--space-12)">
+    <div class="tray-span-7 tray-stack tray-stack--sm">
+      <div class="tray-slot tray-ratio tray-ratio--square"></div>
+      <div role="radiogroup" aria-label="Pictures of the jar" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-2)">
+        <label class="tray-choice tray-ratio tray-ratio--square"><input type="radio" name="picture" value="The 50 g jar, closed, on crushed ice" aria-label="Picture 1: the jar, closed" checked></label>
+        <label class="tray-choice tray-ratio tray-ratio--square"><input type="radio" name="picture" value="The jar open, the pearls close up" aria-label="Picture 2: the jar, open"></label>
+        <label class="tray-choice tray-ratio tray-ratio--square"><input type="radio" name="picture" value="A spoonful on a blin with sour cream" aria-label="Picture 3: served on a blin"></label>
+        <label class="tray-choice tray-ratio tray-ratio--square"><input type="radio" name="picture" value="The chilled box the courier brings" aria-label="Picture 4: the chilled box"></label>
+      </div>
+      <p class="caption tray-muted" id="picture-caption" aria-live="polite">The 50&nbsp;g jar, closed, on crushed ice</p>
+    </div>
+
+    <form class="tray-span-5 tray-stack tray-stack--lg" id="buy" action="/cart" method="post">
+      <div class="tray-stack tray-stack--sm">
+        <p class="tray-row tray-row--sm"><span class="tray-badge tray-badge--accent">Batch 14</span><span class="caption tray-muted">Collected on 2 November</span></p>
+        <h1 class="title">Snail caviar</h1>
+        <p class="tray-row tray-row--sm"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-star"/></svg><span class="nav">Rated 4.8 out of 5</span><a class="nav tray-soft" href="#reviews">from 126 reviews</a></p>
+      </div>
+      <div class="tray-stack tray-stack--sm">
+        <p class="tray-row tray-row--sm"><span class="title tray-num" id="price">$59</span><span class="tray-soft" id="per">$11.80 for 10&nbsp;g</span></p>
+        <p class="tray-soft">The pearl-white eggs of our land snails, salted by hand on the day they are collected. Mild and clean, with a taste of the forest after rain.</p>
+      </div>
+      <fieldset>
+        <legend class="tray-label">Size</legend>
+        <div class="tray-choices">
+          <label class="tray-choice">
+            <input type="radio" name="size" value="30" data-price="3800">
+            <span class="tray-radio__ring"></span>
+            <span class="tray-choice__text"><b>30&nbsp;g jar</b><span>About six servings</span></span>
+            <span class="tray-choice__end">$38</span>
+          </label>
+          <label class="tray-choice">
+            <input type="radio" name="size" value="50" data-price="5900" checked>
+            <span class="tray-radio__ring"></span>
+            <span class="tray-choice__text"><b>50&nbsp;g jar</b><span>About ten servings</span></span>
+            <span class="tray-choice__end">$59</span>
+          </label>
+          <label class="tray-choice">
+            <input type="radio" name="size" value="100" data-price="11200">
+            <span class="tray-radio__ring"></span>
+            <span class="tray-choice__text"><b>100&nbsp;g jar</b><span>About twenty servings. 18 left in batch 14</span></span>
+            <span class="tray-choice__end">$112</span>
+          </label>
+        </div>
+      </fieldset>
+      <div class="tray-stack tray-stack--sm">
+        <div class="tray-row tray-row--between">
+          <div class="tray-row tray-row--sm">
+            <span class="tray-label tray-label--inline" id="qty-label">Jars</span>
+            <span class="tray-btn-group" role="group" aria-labelledby="qty-label" aria-describedby="qty-hint" data-tray="stepper" data-min="1" data-max="6">
+              <button class="tray-btn-group__item tray-btn-group__item--icon" type="button" data-step="-1" aria-label="One jar fewer"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg></button>
+              <output class="tray-btn-group__value" id="qty">1</output>
+              <button class="tray-btn-group__item tray-btn-group__item--icon" type="button" data-step="1" aria-label="One jar more"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg></button>
+            </span>
+          </div>
+          <button class="tray-toggle" type="button" data-tray="toggle" aria-pressed="false"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-heart"/></svg>Save</button>
+        </div>
+        <p class="caption tray-muted" id="qty-hint">Up to six jars an order, so the batch lasts the month.</p>
+      </div>
+      <button class="tray-btn tray-btn--block tray-btn--split" type="submit"><span>Add to cart</span><span class="tray-num" id="sum">$59.00</span></button>
+      <ul class="tray-items" aria-label="Delivery">
+        <li class="tray-item">
+          <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg></span>
+          <span class="tray-item__body"><span class="tray-item__title">Courier in Kyiv, today</span><span class="tray-item__text">Order by 12:00. $9, free from $150.</span></span>
+        </li>
+        <li class="tray-item">
+          <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-map-pin"/></svg></span>
+          <span class="tray-item__body"><span class="tray-item__title">Farm shop pickup, free</span><span class="tray-item__text">Farm road 4, Tuesday to Sunday from 10:00</span></span>
+        </li>
+        <li class="tray-item">
+          <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg></span>
+          <span class="tray-item__body"><span class="tray-item__title">In a chilled box</span><span class="tray-item__text">It keeps the jar at 2 &deg;C for a day</span></span>
+        </li>
+      </ul>
+    </form>
+  </div>
+
+  <div class="tray-bento">
+    <div class="tray-span-7" data-tray="tabs">
+      <div class="tray-tabs" role="tablist" aria-label="About the caviar" data-tray="strip">
+        <button class="tray-tab" role="tab" aria-selected="true" aria-controls="p-about" id="t-about" type="button">Description</button>
+        <button class="tray-tab" role="tab" aria-controls="p-serve" id="t-serve" type="button">Serving</button>
+        <button class="tray-tab" role="tab" aria-controls="p-keep" id="t-keep" type="button">Delivery and storage</button>
+      </div>
+      <div class="tray-tabpanel tray-stack" role="tabpanel" id="p-about" aria-labelledby="t-about">
+        <p>Land snails lay their eggs in the soil of the beds, about a hundred at a time. We lift them by hand, rinse them in spring water and salt them the same day, so the pearls stay firm and white.</p>
+        <ul class="tray-ticks">
+          <li><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg>Eggs, sea salt and nothing else</li>
+          <li><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg>Pearls of 3 to 4&nbsp;mm, about 1,500 in a 50&nbsp;g jar</li>
+          <li><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg>Every jar carries its batch number and the day it was packed</li>
+        </ul>
+      </div>
+      <div class="tray-tabpanel tray-stack" role="tabpanel" id="p-serve" aria-labelledby="t-serve" hidden>
+        <p>Take the jar from the fridge ten minutes before you open it. Serve it with a spoon of shell, bone or wood: metal leaves a taste of tin.</p>
+        <p>A heaped teaspoon, about 5&nbsp;g, is one serving. Put it on a warm blin with sour cream, on half a boiled egg, or eat it from the spoon with a glass of cold dry white.</p>
+      </div>
+      <div class="tray-tabpanel tray-stack" role="tabpanel" id="p-keep" aria-labelledby="t-keep" hidden>
+        <p>The courier brings the jar in a chilled box the same day if you order by 12:00, and calls ten minutes before arriving. At the farm shop on Farm road 4 the jar waits for you in the cold room.</p>
+        <p>Unopened, the jar keeps three months at 0 to 4 &deg;C. Once it is open, close it again and eat it within three days. Do not freeze it: the pearls burst.</p>
+      </div>
+    </div>
+    <aside class="tray-card tray-card--leaf tray-span-5 tray-stack" aria-labelledby="origin-title">
+      <h2 class="subtitle" id="origin-title">From our beds near Kyiv</h2>
+      <p>About 4,000 snails live in open-air beds behind the farm shop. We collect the eggs by hand from March to October and give every collection a number.</p>
+      <dl class="tray-dl tray-dl--plain">
+        <div><dt>Batch</dt><dd>14</dd></div>
+        <div><dt>Collected</dt><dd>2 November 2026</dd></div>
+        <div><dt>Jars in the batch</dt><dd>412, of which 132 are left</dd></div>
+        <div><dt>Best before</dt><dd>3 February 2027, unopened</dd></div>
+      </dl>
+    </aside>
+  </div>
+
+  <section class="tray-section" id="reviews" aria-labelledby="reviews-title">
+    <div class="tray-section__head">
+      <h2 class="headline" id="reviews-title">Reviews</h2>
+      <p class="lead tray-soft">Only people who bought a jar can write one. We publish every review, the low ones too.</p>
+    </div>
+    <div class="tray-bento">
+      <div class="tray-card tray-span-4 tray-stack tray-stack--lg">
+        <div class="tray-stack tray-stack--sm">
+          <p class="tray-figure">4.8<small>of 5</small></p>
+          <p class="tray-soft">From 126 reviews since March 2025</p>
+        </div>
+        <div class="tray-usage">
+          <div class="tray-progress">
+            <span class="tray-progress__name">5 of 5</span>
+            <span class="tray-progress__value">104 reviews</span>
+            <span class="tray-progress__bar" role="meter" aria-label="Reviews that give 5 of 5" aria-valuemin="0" aria-valuemax="126" aria-valuenow="104" style="--tray-v: 83"></span>
+          </div>
+          <div class="tray-progress">
+            <span class="tray-progress__name">4 of 5</span>
+            <span class="tray-progress__value">16 reviews</span>
+            <span class="tray-progress__bar" role="meter" aria-label="Reviews that give 4 of 5" aria-valuemin="0" aria-valuemax="126" aria-valuenow="16" style="--tray-v: 13"></span>
+          </div>
+          <div class="tray-progress">
+            <span class="tray-progress__name">3 of 5</span>
+            <span class="tray-progress__value">4 reviews</span>
+            <span class="tray-progress__bar" role="meter" aria-label="Reviews that give 3 of 5" aria-valuemin="0" aria-valuemax="126" aria-valuenow="4" style="--tray-v: 3"></span>
+          </div>
+          <div class="tray-progress">
+            <span class="tray-progress__name">2 or 1 of 5</span>
+            <span class="tray-progress__value">2 reviews</span>
+            <span class="tray-progress__bar" role="meter" aria-label="Reviews that give 2 or 1 of 5" aria-valuemin="0" aria-valuemax="126" aria-valuenow="2" style="--tray-v: 2"></span>
+          </div>
+        </div>
+        <div><a class="tray-btn tray-btn--quiet tray-btn--sm" href="/reviews/new?product=caviar">Write a review</a></div>
+      </div>
+      <div class="tray-card tray-span-8 tray-stack tray-stack--lg">
+        <article class="tray-stack tray-stack--sm">
+          <div class="tray-row tray-row--between">
+            <div class="tray-person"><span class="tray-avatar tray-avatar--sm" aria-hidden="true">DK</span><span class="tray-person__text"><b>Dana Kovalenko</b><small>Kyiv, bought the 50&nbsp;g jar</small></span></div>
+            <span class="tray-badge">5 of 5</span>
+          </div>
+          <h3 class="control">Cold on arrival, gone by nine</h3>
+          <p>We opened it for my mother's birthday. The courier called from the gate and the box was still cold inside. Small, firm pearls that taste of a wet forest, not of fish.</p>
+          <p class="caption tray-muted"><time datetime="2026-11-09">9 November 2026</time></p>
+        </article>
+        <hr class="tray-rule">
+        <article class="tray-stack tray-stack--sm">
+          <div class="tray-row tray-row--between">
+            <div class="tray-person"><span class="tray-avatar tray-avatar--sm" aria-hidden="true">OM</span><span class="tray-person__text"><b>Oleh Marchenko</b><small>Brovary, bought the 100&nbsp;g jar</small></span></div>
+            <span class="tray-badge">5 of 5</span>
+          </div>
+          <h3 class="control">Better than the batch in spring</h3>
+          <p>I have ordered four times. Batch 14 has the cleanest taste so far, and the label told me the day it was packed, which no shop in town does.</p>
+          <p class="caption tray-muted"><time datetime="2026-11-06">6 November 2026</time></p>
+        </article>
+        <hr class="tray-rule">
+        <article class="tray-stack tray-stack--sm">
+          <div class="tray-row tray-row--between">
+            <div class="tray-person"><span class="tray-avatar tray-avatar--sm" aria-hidden="true">IB</span><span class="tray-person__text"><b>Iryna Bondar</b><small>Irpin, bought the 30&nbsp;g jar</small></span></div>
+            <span class="tray-badge">4 of 5</span>
+          </div>
+          <h3 class="control">Get the spoon too</h3>
+          <p>Lovely on blini. I first ate it with a steel teaspoon and it tasted of metal; with the shell spoon it was a different thing. The jar is small for the price.</p>
+          <p class="caption tray-muted"><time datetime="2026-11-04">4 November 2026</time></p>
+        </article>
+        <div><a class="tray-btn tray-btn--link" href="/shop/caviar/reviews">Read all 126 reviews</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tray-section" aria-labelledby="more-title">
+    <div class="tray-section__head">
+      <h2 class="headline" id="more-title">You may also like</h2>
+    </div>
+    <div class="tray-integrations" style="--card-pad: var(--space-6)">
+      <article class="tray-card tray-feature">
+        <div class="tray-slot tray-ratio tray-ratio--photo"></div>
+        <div class="tray-stack tray-stack--sm">
+          <h3 class="subtitle"><a href="/shop/spoon">Mother&#8209;of&#8209;pearl spoon</a></h3>
+          <p class="tray-soft">12&nbsp;cm, carved by hand</p>
+        </div>
+        <div class="tray-feature__end tray-row tray-row--between">
+          <p class="subtitle tray-num">$14</p>
+          <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" aria-label="Add to cart: mother-of-pearl spoon">Add to cart</button>
+        </div>
+      </article>
+      <article class="tray-card tray-feature">
+        <div class="tray-slot tray-ratio tray-ratio--photo"></div>
+        <div class="tray-stack tray-stack--sm">
+          <h3 class="subtitle"><a href="/shop/tasting-set">Tasting set</a></h3>
+          <p class="tray-soft">Three 30&nbsp;g jars, each opened fresh</p>
+        </div>
+        <div class="tray-feature__end tray-row tray-row--between">
+          <p class="subtitle tray-num">$105</p>
+          <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" aria-label="Add to cart: tasting set">Add to cart</button>
+        </div>
+      </article>
+      <article class="tray-card tray-feature">
+        <div class="tray-slot tray-ratio tray-ratio--photo"></div>
+        <div class="tray-stack tray-stack--sm">
+          <h3 class="subtitle"><a href="/shop/gift-box">Gift box</a></h3>
+          <p class="tray-row tray-row--sm"><span class="tray-soft">A 50&nbsp;g jar, two spoons and a card</span><span class="tray-badge">New</span></p>
+        </div>
+        <div class="tray-feature__end tray-row tray-row--between">
+          <p class="subtitle tray-num">$96</p>
+          <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" aria-label="Add to cart: gift box">Add to cart</button>
+        </div>
+      </article>
+      <article class="tray-card tray-feature">
+        <div class="tray-slot tray-ratio tray-ratio--photo"></div>
+        <div class="tray-stack tray-stack--sm">
+          <h3 class="subtitle"><a href="/shop/travel-bag">Chilled travel bag</a></h3>
+          <p class="tray-soft">Keeps four jars cold for a day</p>
+        </div>
+        <div class="tray-feature__end tray-row tray-row--between">
+          <p class="subtitle tray-num">$12</p>
+          <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" aria-label="Add to cart: chilled travel bag">Add to cart</button>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer class="tray-footer tray-container">
+  <div class="tray-footer__top">
+    <div class="tray-footer__brand">
+      <a class="tray-wordmark" href="/">Perly Farm</a>
+      <p>Snail caviar from a small farm near Kyiv, collected by hand and sold by the numbered batch.</p>
+    </div>
+    <nav class="tray-footer__col" aria-label="Shop">
+      <h3>Shop</h3>
+      <a href="/shop/caviar">Caviar</a>
+      <a href="/shop/gifts">Gift sets</a>
+      <a href="/shop/tasting">Tasting sets</a>
+      <a href="/shop/tools">Spoons and tools</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="Help">
+      <h3>Help</h3>
+      <a href="/delivery">Delivery and pickup</a>
+      <a href="/serving">Storage and serving</a>
+      <a href="/returns">Returns</a>
+      <a href="/contact">Contact us</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="The farm">
+      <h3>The farm</h3>
+      <a href="/farm">How we keep the snails</a>
+      <a href="/batches">Batches</a>
+      <a href="/visit">Visit the farm shop</a>
+    </nav>
+  </div>
+  <div class="tray-footer__bottom">
+    <p>&copy; 2026 Perly Farm, Farm road 4, Kyiv region. Prices include VAT. The farm, its products, the reviews and every figure on this page are demo data.</p>
+    <ul class="tray-footer__legal">
+      <li><a href="/privacy">Privacy</a></li>
+      <li><a href="/terms">Terms of sale</a></li>
+    </ul>
+  </div>
+</footer>
+<script>
+/* Keeps the buy box in step: the size sets the price and the price of 10 g, the quantity multiplies the sum on the button,
+   and a thumbnail names the picture it stands for. Amounts are in cents; the stepper reports with tray:change. */
+(function () {
+  var form = document.getElementById('buy'), $ = function (id) { return document.getElementById(id); };
+  var money = function (c) { return '$' + (c / 100).toFixed(2); };
+  function work() {
+    var size = form.querySelector('input[name="size"]:checked'), each = +size.dataset.price, qty = +$('qty').textContent;
+    $('price').textContent = '$' + each / 100;
+    $('per').textContent = money(Math.round(each / (+size.value / 10))) + ' for 10 g';
+    $('sum').textContent = money(each * qty);
+  }
+  form.addEventListener('change', work);
+  form.addEventListener('tray:change', work);
+  document.addEventListener('change', function (e) { if (e.target.name === 'picture') $('picture-caption').textContent = e.target.value; });
+})();
+</script>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

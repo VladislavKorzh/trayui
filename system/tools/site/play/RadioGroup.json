@@ -1,0 +1,11 @@
+{
+  "lead": "One choice of a few, all shown: as plain radios or as cards that explain each option, in a column or across.",
+  "width": "36rem",
+  "controls": [
+    { "name": "form", "label": "Form", "options": [["radios", "Radios"], ["cards", "Cards"]] },
+    { "name": "row", "label": "Layout", "options": [["", "Column"], ["on", "Across"]] },
+    { "name": "off", "label": "Disabled option", "type": "switch" },
+    { "name": "legend", "label": "Legend", "type": "text", "default": "Delivery", "max": 40 }
+  ],
+  "template": "<fieldset><legend class=\"tray-label\">{{legend}}</legend>{{#form=radios}}<div class=\"tray-radio-group{{#row}} tray-radio-group--row{{/row}}\"><label class=\"tray-radio\"><input type=\"radio\" name=\"pg-delivery\" checked><span class=\"tray-radio__ring\"></span><span>Courier, $9</span></label><label class=\"tray-radio\"><input type=\"radio\" name=\"pg-delivery\"><span class=\"tray-radio__ring\"></span><span>Pickup at the farm, free</span></label><label class=\"tray-radio\"><input type=\"radio\" name=\"pg-delivery\"{{#off}} disabled{{/off}}><span class=\"tray-radio__ring\"></span><span>{{#off}}Post locker, not in your city yet{{/off}}{{^off}}Post locker, $4{{/off}}</span></label></div>{{/form=radios}}{{#form=cards}}<div class=\"tray-choices{{#row}} tray-choices--two{{/row}}\"><label class=\"tray-choice\"><input type=\"radio\" name=\"pg-delivery\" checked><span class=\"tray-radio__ring\"></span><span class=\"tray-choice__text\"><b>Courier</b><span>Chilled, the same day</span></span><span class=\"tray-choice__end\">$9</span></label><label class=\"tray-choice\"><input type=\"radio\" name=\"pg-delivery\"><span class=\"tray-radio__ring\"></span><span class=\"tray-choice__text\"><b>Pickup</b><span>Farm shop, tomorrow</span></span><span class=\"tray-choice__end\">Free</span></label><label class=\"tray-choice\"><input type=\"radio\" name=\"pg-delivery\"{{#off}} disabled{{/off}}><span class=\"tray-radio__ring\"></span><span class=\"tray-choice__text\"><b>Post locker</b><span>{{#off}}Not in your city yet{{/off}}{{^off}}In two days, near you{{/off}}</span></span><span class=\"tray-choice__end\">$4</span></label></div>{{/form=cards}}</fieldset>"
+}

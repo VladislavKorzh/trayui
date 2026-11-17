@@ -1,0 +1,25 @@
+<!-- @dsCard group="Navigation" height=393 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Tabs — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--col">
+<div data-tray="tabs">
+<div class="tray-tabs" role="tablist" aria-label="Order PL-20418">
+<button class="tray-tab" role="tab" aria-selected="true" aria-controls="tp1" id="tt1" type="button">Items</button>
+<button class="tray-tab" role="tab" aria-controls="tp2" id="tt2" type="button">Delivery</button>
+<button class="tray-tab" role="tab" aria-controls="tp3" id="tt3" type="button">Messages<span class="tray-badge tray-badge--count">3</span></button>
+<button class="tray-tab" role="tab" aria-controls="tp4" id="tt4" type="button" disabled>Refunds</button>
+</div>
+<div class="tray-tabpanel" role="tabpanel" id="tp1" aria-labelledby="tt1" tabindex="0"><p class="tray-soft">Two jars of 50 g and a gift box.</p></div>
+<div class="tray-tabpanel" role="tabpanel" id="tp2" aria-labelledby="tt2" tabindex="0" hidden><p class="tray-soft">Courier, chilled box, today between 14:00 and 18:00.</p></div>
+<div class="tray-tabpanel" role="tabpanel" id="tp3" aria-labelledby="tt3" tabindex="0" hidden><p class="tray-soft">Three messages from the courier.</p></div>
+<div class="tray-tabpanel" role="tabpanel" id="tp4" aria-labelledby="tt4" tabindex="0" hidden></div>
+</div>
+<p class="tray-demo-note">Navigation, on a tray, across the full width</p>
+<div class="tray-card" style="padding: var(--space-5)"><nav class="tray-tabs tray-tabs--fill" aria-label="Sections"><a class="tray-tab" href="#">The guide</a><a class="tray-tab" href="#" aria-current="page">Field notes</a><a class="tray-tab" href="#">Orders</a></nav></div>
+<p class="tray-demo-note">A strip that does not fit scrolls and fades at its end</p>
+<div style="max-inline-size: 24rem"><nav class="tray-tabs" data-tray="strip" aria-label="Sections of the guide"><a class="tray-tab" href="#" aria-current="true">Identify</a><a class="tray-tab" href="#">Marks</a><a class="tray-tab" href="#">Serve</a><a class="tray-tab" href="#">Habitat</a><a class="tray-tab" href="#">Season</a><a class="tray-tab" href="#">Order</a><a class="tray-tab" href="#">Questions</a></nav></div>
+</div>
+</body>
+</html>

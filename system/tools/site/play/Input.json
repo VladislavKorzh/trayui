@@ -1,0 +1,11 @@
+{
+  "lead": "One line of text in its field: the size, the state, the words around it. Empty the value to see the placeholder.",
+  "controls": [
+    { "name": "size", "label": "Size", "options": [["", "56px"], [" tray-input--sm", "48px"]] },
+    { "name": "state", "label": "State", "options": [["", "Normal"], ["invalid", "Invalid"], ["disabled", "Disabled"], ["readonly", "Read-only"]] },
+    { "name": "label", "label": "Label", "type": "text", "default": "Delivery address", "max": 40 },
+    { "name": "value", "label": "Value", "type": "text", "default": "12 Orchard Row", "max": 60 },
+    { "name": "hint", "label": "Hint", "type": "text", "default": "The courier calls ten minutes before arriving.", "max": 90 }
+  ],
+  "template": "<div class=\"tray-field\"{{#state=disabled}} data-disabled{{/state=disabled}}><label class=\"tray-label\" for=\"pg-address\">{{label}}</label><input class=\"tray-input{{size}}\" id=\"pg-address\" autocomplete=\"address-line1\" placeholder=\"Street and house number\"{{#value}} value=\"{{value}}\"{{/value}}{{#state=invalid}} aria-invalid=\"true\" aria-describedby=\"pg-address-error\"{{/state=invalid}}{{^state=invalid}}{{#hint}} aria-describedby=\"pg-address-hint\"{{/hint}}{{/state=invalid}}{{#state=disabled}} disabled{{/state=disabled}}{{#state=readonly}} readonly{{/state=readonly}}>{{#state=invalid}}<p class=\"tray-field__error\" id=\"pg-address-error\">{{#value}}We could not find this address. Check the street and the house number.{{/value}}{{^value}}Enter the street and house number.{{/value}}</p>{{/state=invalid}}{{^state=invalid}}{{#hint}}<p class=\"tray-field__hint\" id=\"pg-address-hint\">{{hint}}</p>{{/hint}}{{/state=invalid}}</div>"
+}

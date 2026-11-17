@@ -1,0 +1,842 @@
+{
+  "page": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0353,
+        0.0588,
+        0.1098
+      ],
+      "alpha": 1,
+      "hex": "#090f1c"
+    },
+    "$description": "--page. Page White / Night Page."
+  },
+  "surface": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0784,
+        0.1137,
+        0.1804
+      ],
+      "alpha": 1,
+      "hex": "#141d2e"
+    },
+    "$description": "--surface. Tray Grey / Night Tray."
+  },
+  "raised": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.1098,
+        0.149,
+        0.2118
+      ],
+      "alpha": 1,
+      "hex": "#1c2636"
+    },
+    "$description": "--raised. Ground of floating panels: popover, menu, dialog, sheet, toast."
+  },
+  "inverse": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.1255,
+        0.1608,
+        0.2275
+      ],
+      "alpha": 1,
+      "hex": "#20293a"
+    },
+    "$description": "--inverse. The one ink card that may anchor a group."
+  },
+  "accent": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.5294,
+        0.8353,
+        1.0
+      ],
+      "alpha": 1,
+      "hex": "#87d5ff"
+    },
+    "$description": "--accent. The one loud colour: the primary action, and at most one large surface per screen."
+  },
+  "leaf": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.1647,
+        0.251,
+        0.1961
+      ],
+      "alpha": 1,
+      "hex": "#2a4032"
+    },
+    "$description": "--leaf. The single surface about where a product comes from."
+  },
+  "scrim": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "alpha": 0.6,
+      "hex": "#000000"
+    },
+    "$description": "--scrim. The veil behind a dialog, drawer or sheet."
+  },
+  "ink": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.949,
+        0.9686,
+        0.9922
+      ],
+      "alpha": 1,
+      "hex": "#f2f7fd"
+    },
+    "$description": "--ink. Primary text on page, surface, raised and leaf; selected states; the focus ring."
+  },
+  "ink-soft": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.7569,
+        0.7843,
+        0.8157
+      ],
+      "alpha": 1,
+      "hex": "#c1c8d0"
+    },
+    "$description": "--ink-soft. Secondary text on page, surface, raised and leaf."
+  },
+  "ink-muted": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.6196,
+        0.651,
+        0.6941
+      ],
+      "alpha": 1,
+      "hex": "#9ea6b1"
+    },
+    "$description": "--ink-muted. Captions and hints on page, surface, raised and leaf."
+  },
+  "ink-hint": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.5216,
+        0.5529,
+        0.6
+      ],
+      "alpha": 1,
+      "hex": "#858d99"
+    },
+    "$description": "--ink-hint. The lightest text: axis ticks and placeholders on page, surface and raised (4.5:1 or more)."
+  },
+  "on-accent": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0784,
+        0.0784,
+        0.0784
+      ],
+      "alpha": 1,
+      "hex": "#141414"
+    },
+    "$description": "--on-accent. All text and icons on accent (12.9:1)."
+  },
+  "on-inverse": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "alpha": 1,
+      "hex": "#ffffff"
+    },
+    "$description": "--on-inverse. Primary text on inverse (14:1 or more)."
+  },
+  "on-dark-soft": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.7882,
+        0.7804,
+        0.7529
+      ],
+      "alpha": 1,
+      "hex": "#c9c7c0"
+    },
+    "$description": "--on-dark-soft. Secondary text on inverse (8.5:1 or more)."
+  },
+  "on-dark-muted": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.6588,
+        0.651,
+        0.6235
+      ],
+      "alpha": 1,
+      "hex": "#a8a69f"
+    },
+    "$description": "--on-dark-muted. Axis ticks and captions on inverse (5.9:1 or more)."
+  },
+  "on-dark-danger": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        1.0,
+        0.5569,
+        0.5176
+      ],
+      "alpha": 1,
+      "hex": "#ff8e84"
+    },
+    "$description": "--on-dark-danger. Error text and the danger fill on the ink card, where danger is too dark to read."
+  },
+  "on-dark-success": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.4353,
+        0.8118,
+        0.5412
+      ],
+      "alpha": 1,
+      "hex": "#6fcf8a"
+    },
+    "$description": "--on-dark-success. Success text on the ink card, where success is too dark to read."
+  },
+  "on-dark-code-comment": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.6275,
+        0.6549,
+        0.6824
+      ],
+      "alpha": 1,
+      "hex": "#a0a7ae"
+    },
+    "$description": "--on-dark-code-comment. Comments, in a code block on the ink card."
+  },
+  "on-dark-code-keyword": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        1.0,
+        0.5059,
+        0.4667
+      ],
+      "alpha": 1,
+      "hex": "#ff8177"
+    },
+    "$description": "--on-dark-code-keyword. Keywords and types (const, return, <!DOCTYPE>), in a code block on the ink card."
+  },
+  "on-dark-code-string": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.6471,
+        0.8392,
+        1.0
+      ],
+      "alpha": 1,
+      "hex": "#a5d6ff"
+    },
+    "$description": "--on-dark-code-string. Strings, and the values of HTML attributes, in a code block on the ink card."
+  },
+  "on-dark-code-function": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.8235,
+        0.6588,
+        1.0
+      ],
+      "alpha": 1,
+      "hex": "#d2a8ff"
+    },
+    "$description": "--on-dark-code-function. The names of functions and classes, in a code block on the ink card."
+  },
+  "on-dark-code-tag": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.4941,
+        0.9059,
+        0.5294
+      ],
+      "alpha": 1,
+      "hex": "#7ee787"
+    },
+    "$description": "--on-dark-code-tag. HTML tag names and CSS element selectors, in a code block on the ink card."
+  },
+  "on-dark-code-constant": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.4745,
+        0.7529,
+        1.0
+      ],
+      "alpha": 1,
+      "hex": "#79c0ff"
+    },
+    "$description": "--on-dark-code-constant. Attribute names, CSS properties and classes, numbers and literals, in a code block on the ink card."
+  },
+  "on-dark-code-variable": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        1.0,
+        0.651,
+        0.3412
+      ],
+      "alpha": 1,
+      "hex": "#ffa657"
+    },
+    "$description": "--on-dark-code-variable. Built-in names (document, console), in a code block on the ink card."
+  },
+  "on-danger": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0784,
+        0.0784,
+        0.0784
+      ],
+      "alpha": 1,
+      "hex": "#141414"
+    },
+    "$description": "--on-danger. Text on a danger fill, such as the destructive button (6.5:1 light, 8.3:1 dark)."
+  },
+  "hairline": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.1412,
+        0.1804,
+        0.2431
+      ],
+      "alpha": 1,
+      "hex": "#242e3e"
+    },
+    "$description": "--hairline. The one rule colour: list dividers, table rows, form sections, chart gridlines."
+  },
+  "rule-strong": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.298,
+        0.3333,
+        0.3922
+      ],
+      "alpha": 1,
+      "hex": "#4c5564"
+    },
+    "$description": "--rule-strong. A chart baseline, and the grip of a resizable split or a drawer."
+  },
+  "track": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.1882,
+        0.2235,
+        0.2902
+      ],
+      "alpha": 1,
+      "hex": "#30394a"
+    },
+    "$description": "--track. The empty part of a meter, slider or progress bar; an inactive status chip; a skeleton."
+  },
+  "control-off": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.3882,
+        0.4235,
+        0.4784
+      ],
+      "alpha": 1,
+      "hex": "#636c7a"
+    },
+    "$description": "--control-off. An unselected radio ring or checkbox edge, and an off switch, on page and surface (3.1:1 or more)."
+  },
+  "dark-rule": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.2039,
+        0.2392,
+        0.302
+      ],
+      "alpha": 1,
+      "hex": "#343d4d"
+    },
+    "$description": "--dark-rule. Gridlines and dividers on inverse."
+  },
+  "inverse-off": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.2235,
+        0.2235,
+        0.2118
+      ],
+      "alpha": 1,
+      "hex": "#393936"
+    },
+    "$description": "--inverse-off. An inactive mark or chip on inverse, with on-inverse text."
+  },
+  "danger": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        1.0,
+        0.5569,
+        0.5176
+      ],
+      "alpha": 1,
+      "hex": "#ff8e84"
+    },
+    "$description": "--danger. Error text, the 2px ring of an invalid field, the destructive button."
+  },
+  "success": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.4353,
+        0.8118,
+        0.5412
+      ],
+      "alpha": 1,
+      "hex": "#6fcf8a"
+    },
+    "$description": "--success. A positive change or a finished step, always with words or an icon."
+  },
+  "data-1": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.2235,
+        0.5294,
+        0.898
+      ],
+      "alpha": 1,
+      "hex": "#3987e5"
+    },
+    "$description": "--data-1. First chart series."
+  },
+  "data-2": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.851,
+        0.3529,
+        0.1686
+      ],
+      "alpha": 1,
+      "hex": "#d95a2b"
+    },
+    "$description": "--data-2. Second chart series."
+  },
+  "data-3": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0902,
+        0.651,
+        0.451
+      ],
+      "alpha": 1,
+      "hex": "#17a673"
+    },
+    "$description": "--data-3. Third chart series."
+  },
+  "data-4": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.7608,
+        0.5333,
+        0.0
+      ],
+      "alpha": 1,
+      "hex": "#c28800"
+    },
+    "$description": "--data-4. Fourth and last chart series."
+  },
+  "code-comment": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.6275,
+        0.6549,
+        0.6824
+      ],
+      "alpha": 1,
+      "hex": "#a0a7ae"
+    },
+    "$description": "--code-comment. Comments, in a code block on page and surface."
+  },
+  "code-keyword": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        1.0,
+        0.5059,
+        0.4667
+      ],
+      "alpha": 1,
+      "hex": "#ff8177"
+    },
+    "$description": "--code-keyword. Keywords and types (const, return, <!DOCTYPE>), in a code block on page and surface."
+  },
+  "code-string": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.6471,
+        0.8392,
+        1.0
+      ],
+      "alpha": 1,
+      "hex": "#a5d6ff"
+    },
+    "$description": "--code-string. Strings, and the values of HTML attributes, in a code block on page and surface."
+  },
+  "code-function": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.8235,
+        0.6588,
+        1.0
+      ],
+      "alpha": 1,
+      "hex": "#d2a8ff"
+    },
+    "$description": "--code-function. The names of functions and classes, in a code block on page and surface."
+  },
+  "code-tag": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.4941,
+        0.9059,
+        0.5294
+      ],
+      "alpha": 1,
+      "hex": "#7ee787"
+    },
+    "$description": "--code-tag. HTML tag names and CSS element selectors, in a code block on page and surface."
+  },
+  "code-constant": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.4745,
+        0.7529,
+        1.0
+      ],
+      "alpha": 1,
+      "hex": "#79c0ff"
+    },
+    "$description": "--code-constant. Attribute names, CSS properties and classes, numbers and literals, in a code block on page and surface."
+  },
+  "code-variable": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        1.0,
+        0.651,
+        0.3412
+      ],
+      "alpha": 1,
+      "hex": "#ffa657"
+    },
+    "$description": "--code-variable. Built-in names (document, console), in a code block on page and surface."
+  },
+  "paper": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "alpha": 1,
+      "hex": "#ffffff"
+    },
+    "$description": "--paper. The light page under a fixed name: controls on accent surfaces and the fills of drawings."
+  },
+  "paper-ink": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0784,
+        0.0784,
+        0.0784
+      ],
+      "alpha": 1,
+      "hex": "#141414"
+    },
+    "$description": "--paper-ink. The light ink under a fixed name: text and strokes on accent surfaces and in drawings."
+  },
+  "paper-tray": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.9569,
+        0.9529,
+        0.9412
+      ],
+      "alpha": 1,
+      "hex": "#f4f3f0"
+    },
+    "$description": "--paper-tray. The light surface under a fixed name, on accent surfaces."
+  },
+  "paper-soft": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.2902,
+        0.2902,
+        0.2745
+      ],
+      "alpha": 1,
+      "hex": "#4a4a46"
+    },
+    "$description": "--paper-soft. The light ink-soft under a fixed name."
+  },
+  "paper-muted": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.3608,
+        0.3608,
+        0.3412
+      ],
+      "alpha": 1,
+      "hex": "#5c5c57"
+    },
+    "$description": "--paper-muted. The light ink-muted under a fixed name."
+  },
+  "paper-hairline": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.8706,
+        0.8627,
+        0.8392
+      ],
+      "alpha": 1,
+      "hex": "#dedcd6"
+    },
+    "$description": "--paper-hairline. The light hairline under a fixed name."
+  },
+  "paper-track": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.851,
+        0.8431,
+        0.8157
+      ],
+      "alpha": 1,
+      "hex": "#d9d7d0"
+    },
+    "$description": "--paper-track. The light track under a fixed name; the shaded side of a drawn object."
+  },
+  "paper-danger": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.5608,
+        0.1137,
+        0.0902
+      ],
+      "alpha": 1,
+      "hex": "#8f1d17"
+    },
+    "$description": "--paper-danger. Error text and the danger fill on the yellow card, in every theme."
+  },
+  "paper-success": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0,
+        0.3216,
+        0.0
+      ],
+      "alpha": 1,
+      "hex": "#005200"
+    },
+    "$description": "--paper-success. Success text on the yellow card, in every theme."
+  },
+  "paper-code-comment": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.349,
+        0.3882,
+        0.4314
+      ],
+      "alpha": 1,
+      "hex": "#59636e"
+    },
+    "$description": "--paper-code-comment. Comments, in a code block on the yellow card, in every theme."
+  },
+  "paper-code-keyword": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.7961,
+        0.1294,
+        0.1765
+      ],
+      "alpha": 1,
+      "hex": "#cb212d"
+    },
+    "$description": "--paper-code-keyword. Keywords and types (const, return, <!DOCTYPE>), in a code block on the yellow card, in every theme."
+  },
+  "paper-code-string": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0392,
+        0.1882,
+        0.4118
+      ],
+      "alpha": 1,
+      "hex": "#0a3069"
+    },
+    "$description": "--paper-code-string. Strings, and the values of HTML attributes, in a code block on the yellow card, in every theme."
+  },
+  "paper-code-function": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.4824,
+        0.2941,
+        0.8314
+      ],
+      "alpha": 1,
+      "hex": "#7b4bd4"
+    },
+    "$description": "--paper-code-function. The names of functions and classes, in a code block on the yellow card, in every theme."
+  },
+  "paper-code-tag": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0667,
+        0.3882,
+        0.1608
+      ],
+      "alpha": 1,
+      "hex": "#116329"
+    },
+    "$description": "--paper-code-tag. HTML tag names and CSS element selectors, in a code block on the yellow card, in every theme."
+  },
+  "paper-code-constant": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0196,
+        0.3137,
+        0.6824
+      ],
+      "alpha": 1,
+      "hex": "#0550ae"
+    },
+    "$description": "--paper-code-constant. Attribute names, CSS properties and classes, numbers and literals, in a code block on the yellow card, in every theme."
+  },
+  "paper-code-variable": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.5843,
+        0.2196,
+        0.0
+      ],
+      "alpha": 1,
+      "hex": "#953800"
+    },
+    "$description": "--paper-code-variable. Built-in names (document, console), in a code block on the yellow card, in every theme."
+  }
+}

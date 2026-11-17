@@ -1,0 +1,10 @@
+{
+  "lead": "A line in a conversation that nobody wrote: an event, work in progress, a label between rules or a row with weight.",
+  "width": "34rem",
+  "controls": [
+    { "name": "kind", "label": "Kind", "options": [["", "Event"], ["busy", "Running"], ["separator", "Separator"], ["row", "Row"]] },
+    { "name": "text", "label": "Text", "type": "text", "default": "The courier picked up order PL-20418", "max": 60 },
+    { "name": "icon", "label": "Icon", "options": [["truck", "Truck"], ["circle-check", "Check"], ["search", "Search"], ["package", "Package"]] }
+  ],
+  "template": "{{#kind=}}<div class=\"tray-marker\"><span class=\"tray-marker__icon\"><svg class=\"tray-icon\" aria-hidden=\"true\"><use href=\"#tray-i-{{icon}}\"/></svg></span><span class=\"tray-marker__text\">{{text}}</span></div>{{/kind=}}{{#kind=busy}}<div class=\"tray-marker\" role=\"status\" aria-busy=\"true\"><span class=\"tray-marker__icon\"><span class=\"tray-spinner tray-spinner--sm\" aria-hidden=\"true\"></span></span><span class=\"tray-marker__text\">{{text}}</span></div>{{/kind=busy}}{{#kind=separator}}<div class=\"tray-marker tray-marker--separator\">{{text}}</div>{{/kind=separator}}{{#kind=row}}<div class=\"tray-marker tray-marker--row\"><span class=\"tray-marker__icon\"><svg class=\"tray-icon\" aria-hidden=\"true\"><use href=\"#tray-i-{{icon}}\"/></svg></span><span class=\"tray-marker__text\">{{text}}</span><span class=\"tray-marker__end caption tray-muted\">14:10</span></div>{{/kind=row}}"
+}

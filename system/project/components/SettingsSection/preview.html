@@ -1,0 +1,42 @@
+<!-- @dsCard group="Account" height=1000 width=1040 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>SettingsSection — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--col">
+<form onsubmit="return false">
+<section class="tray-settings" aria-labelledby="st-a">
+<div class="tray-settings__intro"><h2 class="subtitle" id="st-a">Workspace</h2><p>The name and address printed on labels and invoices.</p></div>
+<div class="tray-settings__body">
+<div class="tray-card" style="padding: var(--space-6)"><div class="tray-fields">
+<div class="tray-field"><label class="tray-label" for="st-name">Name</label><input class="tray-input" id="st-name" value="Perly Farm"></div>
+<div class="tray-field"><label class="tray-label" for="st-url">Address of the shop</label><div class="tray-input-group"><input class="tray-input" id="st-url" value="perly"><span class="tray-input-group__addon">.counter.example</span></div></div>
+<div class="tray-field tray-field--full"><label class="tray-label" for="st-addr">Return address</label><input class="tray-input" id="st-addr" value="Farm road 4, Kyiv region"></div>
+</div></div>
+<div class="tray-settings__foot"><span class="tray-settings__note">Unsaved changes</span><button class="tray-btn tray-btn--ghost tray-btn--sm" type="reset">Discard</button><button class="tray-btn tray-btn--sm" type="submit">Save</button></div>
+</div>
+</section>
+<section class="tray-settings" aria-labelledby="st-b">
+<div class="tray-settings__intro"><h2 class="subtitle" id="st-b">Orders</h2><p>How new orders reach the packing table. These save as you change them.</p></div>
+<div class="tray-settings__body">
+<div class="tray-card" style="padding: var(--space-6)">
+<div class="tray-setting"><div class="tray-setting__text"><b id="st-1">Print a label for every order</b><small>On the printer by the packing table.</small></div><div class="tray-setting__control"><label class="tray-switch"><input type="checkbox" role="switch" aria-labelledby="st-1" checked><span class="tray-switch__track"></span></label></div></div>
+<div class="tray-setting"><div class="tray-setting__text"><b id="st-2">Hold orders placed after</b><small>Later orders go to the next courier day.</small></div><div class="tray-setting__control"><span class="tray-select tray-select--sm"><select aria-labelledby="st-2"><option>12:00</option><option selected>14:00</option><option>16:00</option></select></span></div></div>
+<div class="tray-setting"><div class="tray-setting__text"><b id="st-3">Ask before refunding over $100</b><small>The owner gets a notification to approve.</small></div><div class="tray-setting__control"><label class="tray-switch"><input type="checkbox" role="switch" aria-labelledby="st-3"><span class="tray-switch__track"></span></label></div></div>
+<div class="tray-setting"><div class="tray-setting__text"><b>Courier days</b><small>Tuesday, Thursday and Saturday.</small></div><div class="tray-setting__control"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button">Change</button></div></div>
+</div>
+</div>
+</section>
+<section class="tray-settings" aria-labelledby="st-c">
+<div class="tray-settings__intro"><h2 class="subtitle" id="st-c">Delete the workspace</h2><p>Orders, customers and invoices are removed for everyone, for good.</p></div>
+<div class="tray-settings__body">
+<div class="tray-card" style="padding: var(--space-6)">
+<div class="tray-setting"><div class="tray-setting__text"><b>Export everything first</b><small>A spreadsheet of orders and customers, sent to the owner.</small></div><div class="tray-setting__control"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-download"/></svg>Export</button></div></div>
+<div class="tray-setting"><div class="tray-setting__text"><b>Delete Perly Farm</b><small>You will be asked to type the workspace name.</small></div><div class="tray-setting__control"><button class="tray-btn tray-btn--danger tray-btn--xs" type="button">Delete the workspace</button></div></div>
+</div>
+</div>
+</section>
+</form>
+</div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "lead": "The three kinds of empty: nothing made yet, nothing that matches, and nothing left to do.",
+  "grounds": ["page", "tray", "ink"],
+  "controls": [
+    { "name": "kind", "label": "Kind", "options": [["first", "First use"], ["none", "No match"], ["done", "All done"]] },
+    { "name": "title", "label": "Title", "type": "text", "default": "No orders yet", "max": 40 },
+    { "name": "text", "label": "Sentence", "type": "text", "default": "When someone orders a jar it shows up here.", "max": 90 }
+  ],
+  "template": "<div class=\"tray-empty\"><span class=\"tray-empty__icon\">{{#kind=first}}{{icon:inbox}}{{/kind=first}}{{#kind=none}}{{icon:search}}{{/kind=none}}{{#kind=done}}{{icon:circle-check}}{{/kind=done}}</span><div class=\"tray-empty__text\"><h3 class=\"subtitle\">{{title}}</h3><p>{{text}}</p></div>{{#kind=first}}<div class=\"tray-empty__actions\"><button class=\"tray-btn tray-btn--sm\" type=\"button\">Create an order</button></div>{{/kind=first}}{{#kind=none}}<div class=\"tray-empty__actions\"><button class=\"tray-btn tray-btn--quiet tray-btn--sm\" type=\"button\">Clear the search</button></div>{{/kind=none}}</div>"
+}

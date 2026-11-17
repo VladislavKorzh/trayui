@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wiki home</title>
+<meta name="description" content="The front page of a team handbook: a search at the top, the sections as tiles with how many pages each holds, the pages changed lately and by whom, the most read pages, and a button to start a page.">
+<meta name="tray-category" content="Wiki">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app tray-app--header">
+  <header class="tray-topbar tray-app__header">
+    <div class="tray-topbar__start">
+      <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the pages"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+      <a class="tray-wordmark" href="wiki-02.html">Handbook</a>
+    </div>
+    <div class="tray-topbar__end">
+      <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search the handbook" aria-keyshortcuts="/"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search the handbook</span><kbd class="tray-kbd">/</kbd></button>
+      <button class="tray-avatar" type="button" aria-label="Account: Iryna Bondar">IB</button>
+    </div>
+  </header>
+  <div class="tray-app__side">
+    <nav class="tray-sidebar" id="nav" aria-label="Handbook pages">
+      <div class="tray-sidebar__scroll">
+        <div class="tray-sidebar__group">
+          <a class="tray-sidebar__item" href="wiki-02.html" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-clock"/></svg><span>Recent changes</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bookmark"/></svg><span>Saved pages</span><span class="tray-badge tray-badge--count">4</span></a>
+        </div>
+        <div class="tray-sidebar__group">
+          <p class="tray-sidebar__label">Sections</p>
+          <ul class="tray-tree">
+            <li>
+              <details>
+                <summary class="tray-sidebar__item"><svg class="tray-icon tray-icon--sm tray-sidebar__caret" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-sun"/></svg><span>Snails</span></summary>
+                <ul>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Beds and soil</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Feeding</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Winter rest</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Health checks</span></a></li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary class="tray-sidebar__item"><svg class="tray-icon tray-icon--sm tray-sidebar__caret" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-sparkle"/></svg><span>Caviar</span></summary>
+                <ul>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Collecting eggs</span></a></li>
+                  <li><a class="tray-sidebar__item" href="wiki-01.html"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Grading a batch</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Salting the eggs</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Batch numbers</span></a></li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary class="tray-sidebar__item"><svg class="tray-icon tray-icon--sm tray-sidebar__caret" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg><span>Cold chain</span></summary>
+                <ul>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>The cold room</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Packing a box</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Courier handover</span></a></li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary class="tray-sidebar__item"><svg class="tray-icon tray-icon--sm tray-sidebar__caret" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-shopping-bag"/></svg><span>Farm shop</span></summary>
+                <ul>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Opening hours</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Tastings</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Payments</span></a></li>
+                </ul>
+              </details>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <main class="tray-app__content">
+      <section class="tray-card tray-card--inverse" aria-labelledby="home-title">
+        <div class="tray-card__head">
+          <div>
+            <h1 class="title" id="home-title">Farm handbook</h1>
+            <p class="tray-soft">How we look after the snails, the eggs, the cold chain and the shop. 46 pages, written by the team for the team.</p>
+          </div>
+          <a class="tray-btn tray-btn--sm" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg>Start a page</a>
+        </div>
+        <form class="tray-stack" role="search" action="/handbook/search" method="get">
+          <label class="tray-vh" for="find">Search the handbook</label>
+          <div class="tray-input-group">
+            <span class="tray-input-group__addon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg></span>
+            <input class="tray-input" id="find" name="q" type="search" placeholder="A page, a word, a batch number" autocomplete="off">
+            <button class="tray-input-group__btn" type="submit">Search</button>
+          </div>
+          <p class="caption tray-soft">Often searched: <a href="#">grading</a>, <a href="#">cold room</a>, <a href="#">winter hours</a>, <a href="#">chilled box</a></p>
+        </form>
+      </section>
+
+      <section class="tray-stack" aria-labelledby="sections-title">
+        <h2 class="subtitle" id="sections-title">Sections</h2>
+        <div class="tray-bento">
+          <a class="tray-card tray-feature tray-span-7" href="#">
+            <span class="tray-feature__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-sun"/></svg></span>
+            <h3 class="subtitle">Snails</h3>
+            <p>The beds and the soil, what to feed and when, the winter rest and the weekly health check.</p>
+            <div class="tray-feature__end tray-row tray-row--sm"><span class="tray-badge">14 pages</span><span class="caption tray-muted">changed on 13 November</span></div>
+          </a>
+          <a class="tray-card tray-feature tray-span-5" href="#">
+            <span class="tray-feature__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-sparkle"/></svg></span>
+            <h3 class="subtitle">Caviar</h3>
+            <p>Collecting the eggs, grading a batch, salting and the batch numbers.</p>
+            <div class="tray-feature__end tray-row tray-row--sm"><span class="tray-badge">12 pages</span><span class="caption tray-muted">changed on 14 November</span></div>
+          </a>
+          <a class="tray-card tray-feature tray-span-5" href="#">
+            <span class="tray-feature__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg></span>
+            <h3 class="subtitle">Cold chain</h3>
+            <p>Keeping jars at 0 to 4&nbsp;&deg;C from the cold room to the door.</p>
+            <div class="tray-feature__end tray-row tray-row--sm"><span class="tray-badge">9 pages</span><span class="caption tray-muted">changed yesterday</span></div>
+          </a>
+          <a class="tray-card tray-feature tray-span-7" href="#">
+            <span class="tray-feature__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-shopping-bag"/></svg></span>
+            <h3 class="subtitle">Farm shop</h3>
+            <p>The counter at Farm road 4: opening hours, tastings, payments and what to say about the 30&nbsp;g, 50&nbsp;g and 100&nbsp;g jars.</p>
+            <div class="tray-feature__end tray-row tray-row--sm"><span class="tray-badge">11 pages</span><span class="caption tray-muted">changed today</span></div>
+          </a>
+        </div>
+      </section>
+
+      <div class="tray-bento">
+        <section class="tray-card tray-span-7" aria-labelledby="changes-title">
+          <div class="tray-card__head">
+            <div><h2 class="subtitle" id="changes-title">Recently changed</h2></div>
+            <a class="tray-btn tray-btn--link" href="#">All changes</a>
+          </div>
+          <ol class="tray-feed">
+            <li class="tray-feed__day">Today</li>
+            <li>
+              <span class="tray-avatar tray-avatar--xs" aria-hidden="true">IB</span>
+              <div class="tray-feed__body">
+                <p><b>Iryna Bondar</b> edited <a href="#">Opening hours</a> in Farm shop.</p>
+                <p class="tray-feed__meta"><time datetime="2026-11-16T10:12">10:12</time></p>
+                <p class="tray-feed__detail">Winter hours from 1 December: Thursday to Sunday, 10:00 to 16:00.</p>
+              </div>
+            </li>
+            <li class="tray-feed__day">Yesterday</li>
+            <li>
+              <span class="tray-avatar tray-avatar--xs" aria-hidden="true">TL</span>
+              <div class="tray-feed__body">
+                <p><b>Taras Lysenko</b> edited <a href="#">Packing a box</a> in Cold chain.</p>
+                <p class="tray-feed__meta"><time datetime="2026-11-15T17:40">17:40</time></p>
+                <p class="tray-feed__detail">The new chilled box takes six jars. The old box is gone from the list.</p>
+              </div>
+            </li>
+            <li class="tray-feed__day">14 November</li>
+            <li>
+              <span class="tray-avatar tray-avatar--xs" aria-hidden="true">OM</span>
+              <div class="tray-feed__body">
+                <p><b>Oleh Marchenko</b> edited <a href="wiki-01.html">Grading a batch</a> in Caviar.</p>
+                <p class="tray-feed__meta"><time datetime="2026-11-14T16:20">16:20</time></p>
+                <p class="tray-feed__detail">Added the 20-minute rule for eggs above 4&nbsp;&deg;C.</p>
+              </div>
+            </li>
+            <li class="tray-feed__day">13 November</li>
+            <li>
+              <span class="tray-avatar tray-avatar--xs" aria-hidden="true">DK</span>
+              <div class="tray-feed__body">
+                <p><b>Dana Kovalenko</b> started <a href="#">Winter rest</a> in Snails.</p>
+                <p class="tray-feed__meta"><time datetime="2026-11-13T09:05">09:05</time></p>
+                <p class="tray-feed__detail">A new page: moving the beds into the barn below 8&nbsp;&deg;C.</p>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <div class="tray-stack tray-span-5">
+          <section class="tray-card" aria-labelledby="read-title">
+            <div class="tray-card__head">
+              <div>
+                <h2 class="subtitle" id="read-title">Most read</h2>
+                <p class="caption tray-muted">In November, by the team</p>
+              </div>
+            </div>
+            <ol class="tray-items">
+              <li><a class="tray-item tray-item--sm" href="wiki-01.html"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-sparkle"/></svg></span><span class="tray-item__body"><span class="tray-item__title">Grading a batch</span><span class="tray-item__text">Caviar</span></span><span class="tray-item__end">212 reads</span></a></li>
+              <li><a class="tray-item tray-item--sm" href="#"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg></span><span class="tray-item__body"><span class="tray-item__title">The cold room</span><span class="tray-item__text">Cold chain</span></span><span class="tray-item__end">188 reads</span></a></li>
+              <li><a class="tray-item tray-item--sm" href="#"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-shopping-bag"/></svg></span><span class="tray-item__body"><span class="tray-item__title">Opening hours</span><span class="tray-item__text">Farm shop</span></span><span class="tray-item__end">164 reads</span></a></li>
+              <li><a class="tray-item tray-item--sm" href="#"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-sun"/></svg></span><span class="tray-item__body"><span class="tray-item__title">Feeding</span><span class="tray-item__text">Snails</span></span><span class="tray-item__end">131 reads</span></a></li>
+              <li><a class="tray-item tray-item--sm" href="#"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg></span><span class="tray-item__body"><span class="tray-item__title">Packing a box</span><span class="tray-item__text">Cold chain</span></span><span class="tray-item__end">97 reads</span></a></li>
+            </ol>
+          </section>
+          <section class="tray-card" aria-labelledby="review-title">
+            <div class="tray-card__head">
+              <div>
+                <h2 class="subtitle" id="review-title">Due for a review</h2>
+                <p class="caption tray-muted">Not checked since the spring</p>
+              </div>
+            </div>
+            <ul class="tray-items">
+              <li><a class="tray-item tray-item--sm" href="#"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-sun"/></svg></span><span class="tray-item__body"><span class="tray-item__title">Health checks</span><span class="tray-item__text">Snails, checked in March</span></span><span class="tray-item__end"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></span></a></li>
+              <li><a class="tray-item tray-item--sm" href="#"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-shopping-bag"/></svg></span><span class="tray-item__body"><span class="tray-item__title">Payments</span><span class="tray-item__text">Farm shop, checked in April</span></span><span class="tray-item__end"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></span></a></li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </main>
+    <footer class="tray-screen__foot">
+      <p>The Perly Farm handbook, written by the farm team. Every name and figure here is demo data.</p>
+    </footer>
+  </div>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

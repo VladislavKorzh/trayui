@@ -1,0 +1,9 @@
+{
+  "lead": "A key or a combination of keys, alone, as a hint beside a label, in a button or in a search field.",
+  "controls": [
+    { "name": "keys", "label": "Keys", "options": [["<kbd class=\"tray-kbd\">K</kbd>", "K"], ["<kbd class=\"tray-kbd\">Esc</kbd>", "Esc"], ["<kbd class=\"tray-kbd\">/</kbd>", "/"], ["<span class=\"tray-keys\"><kbd class=\"tray-kbd\">Ctrl</kbd><kbd class=\"tray-kbd\">K</kbd></span>", "Ctrl K"], ["<span class=\"tray-keys\"><kbd class=\"tray-kbd\">Shift</kbd><kbd class=\"tray-kbd\">Enter</kbd></span>", "Shift Enter"], ["<span class=\"tray-keys\"><kbd class=\"tray-kbd\">Ctrl</kbd><kbd class=\"tray-kbd\">Shift</kbd><kbd class=\"tray-kbd\">F</kbd></span>", "Ctrl Shift F"]], "default": "<span class=\"tray-keys\"><kbd class=\"tray-kbd\">Ctrl</kbd><kbd class=\"tray-kbd\">K</kbd></span>" },
+    { "name": "place", "label": "Place", "options": [["", "Alone"], ["hint", "Hint"], ["button", "Button"], ["field", "Field"]], "default": "button" },
+    { "name": "label", "label": "Label", "type": "text", "default": "Search orders", "max": 28 }
+  ],
+  "template": "{{#place=}}{{keys}}{{/place=}}{{#place=hint}}<p class=\"nav\">{{label}} {{keys}}</p>{{/place=hint}}{{#place=button}}<button class=\"tray-btn tray-btn--quiet tray-btn--sm\" type=\"button\">{{icon:search}}{{label}}{{keys}}</button>{{/place=button}}{{#place=field}}<div class=\"tray-input-group\"><span class=\"tray-input-group__addon\">{{icon:search}}</span><input class=\"tray-input\" type=\"search\" placeholder=\"{{label}}\" aria-label=\"{{label}}\"><span class=\"tray-input-group__addon\">{{keys}}</span></div>{{/place=field}}"
+}

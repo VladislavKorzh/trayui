@@ -1,0 +1,34 @@
+<!-- @dsCard group="Conversation" height=481 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>MessageScroller — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--col">
+<div class="tray-scroller" data-tray="scroller" style="--tray-scroller: 22rem">
+<div class="tray-scroller__viewport" aria-label="Conversation with the farm"><div class="tray-thread" id="ms-thread">
+<div class="tray-marker tray-marker--separator">Yesterday</div>
+<div class="tray-message"><span class="tray-avatar tray-avatar--sm">OF</span><div class="tray-message__content"><div class="tray-message__head"><b>Oksana</b> 18:40</div><div class="tray-bubble">Your order is packed and in the cold room.</div></div></div>
+<div class="tray-message tray-message--end"><div class="tray-message__content"><div class="tray-bubble tray-bubble--own">Great. What time does the courier leave?</div></div></div>
+<div class="tray-marker tray-marker--separator">Today</div>
+<div class="tray-message"><span class="tray-avatar tray-avatar--sm">OF</span><div class="tray-message__content"><div class="tray-message__head"><b>Oksana</b> 13:55</div><div class="tray-bubble">He sets off at two and reaches you between three and four.</div></div></div>
+<div class="tray-marker"><svg class="tray-icon tray-marker__icon" aria-hidden="true"><use href="#tray-i-truck"/></svg><span class="tray-marker__text">The courier picked up order PL-20418</span></div>
+<div class="tray-message"><span class="tray-avatar tray-avatar--sm">OF</span><div class="tray-message__content"><div class="tray-message__head"><b>Oksana</b> 14:02</div><div class="tray-bubble">The courier has the box. He will call from the gate.</div></div></div>
+</div></div>
+<button class="tray-btn tray-btn--quiet tray-btn--xs tray-scroller__jump" type="button"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-arrow-down"/></svg>Latest<span class="tray-badge tray-badge--count tray-badge--ink" data-count hidden></span></button>
+</div>
+<form class="tray-composer" id="ms-form"><textarea rows="1" placeholder="Write a message" aria-label="Message"></textarea><button class="tray-btn tray-btn--sm tray-btn--icon" type="submit" aria-label="Send"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-arrow-up"/></svg></button></form>
+</div>
+<script>
+document.getElementById('ms-form').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var area = this.querySelector('textarea'), text = area.value.trim() || 'Thank you.';
+  var row = document.createElement('div');
+  row.className = 'tray-message tray-message--end';
+  row.innerHTML = '<div class="tray-message__content"><div class="tray-bubble tray-bubble--own"></div></div>';
+  row.querySelector('.tray-bubble').textContent = text;
+  document.getElementById('ms-thread').appendChild(row);
+  area.value = '';
+});
+</script>
+</body>
+</html>

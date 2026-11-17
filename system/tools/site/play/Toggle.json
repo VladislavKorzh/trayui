@@ -1,0 +1,11 @@
+{
+  "lead": "One button that stays pressed: with words, an icon or both, in two sizes. Press the one in the stage too.",
+  "controls": [
+    { "name": "content", "label": "Content", "options": [["both", "With icon"], ["text", "Text"], ["icon", "Icon only"]] },
+    { "name": "size", "label": "Size", "options": [["", "48px"], [" tray-toggle--xs", "40px"]] },
+    { "name": "pressed", "label": "Pressed", "type": "switch" },
+    { "name": "disabled", "label": "Disabled", "type": "switch" },
+    { "name": "label", "label": "Label", "type": "text", "default": "Pin", "max": 30 }
+  ],
+  "template": "<button class=\"tray-toggle{{size}}{{#content=icon}} tray-toggle--icon{{/content=icon}}\" type=\"button\" data-tray=\"toggle\" aria-pressed=\"{{#pressed}}true{{/pressed}}{{^pressed}}false{{/pressed}}\"{{#content=icon}} aria-label=\"{{label}}\"{{/content=icon}}{{#disabled}} disabled{{/disabled}}>{{^content=text}}{{#size= tray-toggle--xs}}{{icon:bookmark:sm}}{{/size= tray-toggle--xs}}{{^size= tray-toggle--xs}}{{icon:bookmark}}{{/size= tray-toggle--xs}}{{/content=text}}{{^content=icon}}{{label}}{{/content=icon}}</button>"
+}

@@ -1,0 +1,83 @@
+{
+  "note": "The originals of the demo pictures: real photographs from Wikimedia Commons, each in the public domain or under CC0, so they may be used, changed and passed on freely. Each was scaled down to at most 2400px on its long side and saved as JPEG (quality 85) without its metadata. tools/media.py builds project/assets/Media from them and writes CREDITS.md from this file.",
+  "photos": [
+    {
+      "scene": "beds",
+      "file": "beds.jpg",
+      "shows": "An open-air snail farm on a hillside: rows of leafy beds, each fenced with black net",
+      "title": "Panorama allevamento aperto.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Panorama_allevamento_aperto.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Panorama_allevamento_aperto.jpg",
+      "author": "Leonardo.dicorato",
+      "source": "Wikimedia Commons",
+      "licence": "Public domain (released by its author, PD-self)",
+      "licence_url": "https://commons.wikimedia.org/wiki/Template:PD-self",
+      "size": [800, 519]
+    },
+    {
+      "scene": "snail",
+      "file": "snail.jpg",
+      "shows": "A garden snail (Helix aspersa) on a wet Strelitzia leaf, Potchefstroom, South Africa",
+      "title": "01a-garden-snail.JPG",
+      "page": "https://commons.wikimedia.org/wiki/File:01a-garden-snail.JPG",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/f/f3/01a-garden-snail.JPG",
+      "author": "Fdb",
+      "source": "Wikimedia Commons",
+      "licence": "Public domain (released by its author, PD-self)",
+      "licence_url": "https://commons.wikimedia.org/wiki/Template:PD-self",
+      "size": [2816, 2112]
+    },
+    {
+      "scene": "sieve",
+      "file": "sieve.jpg",
+      "shows": "A tray of brown trout eggs hardening in water, Saratoga National Fish Hatchery, Wyoming",
+      "title": "Brown Trout Eggs (50585094992).jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Brown_Trout_Eggs_(50585094992).jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Brown_Trout_Eggs_%2850585094992%29.jpg",
+      "author": "Dana Shellhorn, U.S. Fish and Wildlife Service, Mountain-Prairie Region",
+      "source": "Wikimedia Commons",
+      "licence": "Public domain (a work of the U.S. Fish and Wildlife Service, PD-USGov-FWS)",
+      "licence_url": "https://commons.wikimedia.org/wiki/Template:PD-USGov-FWS",
+      "size": [3024, 4032]
+    },
+    {
+      "scene": "jar",
+      "file": "jar.jpg",
+      "shows": "A small jar of black caviar on crushed ice, with crackers, brie and pâté on a plate",
+      "title": "Thanksgiving brie caviar duck pate.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Thanksgiving_brie_caviar_duck_pate.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/2/21/Thanksgiving_brie_caviar_duck_pate.jpg",
+      "author": "Jon Sullivan",
+      "source": "Wikimedia Commons",
+      "licence": "Public domain (released by its author, PD-author)",
+      "licence_url": "https://commons.wikimedia.org/wiki/Template:PD-author",
+      "size": [1000, 750]
+    },
+    {
+      "scene": "spoon",
+      "file": "spoon.jpg",
+      "shows": "Salmon roe (ikura) in a bowl with a spoon in it, Rishiri Island, Hokkaido",
+      "title": "Ikura salmon roe Hokkaido 01.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Ikura_salmon_roe_Hokkaido_01.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Ikura_salmon_roe_Hokkaido_01.jpg",
+      "author": "KQuhen",
+      "source": "Wikimedia Commons",
+      "licence": "CC0 1.0",
+      "licence_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "size": [2048, 1536]
+    },
+    {
+      "scene": "shop",
+      "file": "shop.jpg",
+      "shows": "The counter of the Asa Knight Store, a 19th-century country store kept at Old Sturbridge Village, Massachusetts",
+      "title": "Interior of the Asa Knight Store, Old Sturbridge Village, Sturbridge, 2007.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Interior_of_the_Asa_Knight_Store,_Old_Sturbridge_Village,_Sturbridge,_2007.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Interior_of_the_Asa_Knight_Store%2C_Old_Sturbridge_Village%2C_Sturbridge%2C_2007.jpg",
+      "author": "DimiTalen",
+      "source": "Wikimedia Commons",
+      "licence": "CC0 1.0",
+      "licence_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "size": [3008, 2000]
+    }
+  ]
+}

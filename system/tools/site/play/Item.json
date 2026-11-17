@@ -1,0 +1,13 @@
+{
+  "lead": "One row of a list: what leads it, what ends it, its size, and filled rows or ruled ones.",
+  "width": "34rem",
+  "controls": [
+    { "name": "media", "label": "Media", "options": [["icon", "Icon"], ["avatar", "Avatar"], ["", "None"]] },
+    { "name": "end", "label": "End", "options": [["value", "Value"], ["badge", "Badge"], ["switch", "Switch"], ["link", "Chevron (link)"], ["more", "More button"]] },
+    { "name": "size", "label": "Size", "options": [["", "Default"], [" tray-item--sm", "Compact"]] },
+    { "name": "list", "label": "List", "options": [["", "Filled"], [" tray-items--ruled", "Ruled"]] },
+    { "name": "title", "label": "Title", "type": "text", "default": "Courier", "max": 40 },
+    { "name": "text", "label": "Detail", "type": "text", "default": "Chilled box, the same day", "max": 60 }
+  ],
+  "template": "<ul class=\"tray-items{{list}}\">{{#end=link}}<li><a class=\"tray-item{{size}}\" href=\"#\">{{/end=link}}{{^end=link}}<li class=\"tray-item{{size}}\">{{/end=link}}{{#media=icon}}<span class=\"tray-item__media\">{{icon:truck}}</span>{{/media=icon}}{{#media=avatar}}<span class=\"tray-avatar{{#size= tray-item--sm}} tray-avatar--sm{{/size= tray-item--sm}}\">BS</span>{{/media=avatar}}<span class=\"tray-item__body\"><span class=\"tray-item__title\">{{title}}</span>{{#text}}<span class=\"tray-item__text\">{{text}}</span>{{/text}}</span><span class=\"tray-item__end{{#end=value}} tray-num{{/end=value}}\">{{#end=value}}$9{{/end=value}}{{#end=badge}}<span class=\"tray-badge\">Same day</span>{{/end=badge}}{{#end=switch}}<label class=\"tray-switch\"><input type=\"checkbox\" role=\"switch\" checked aria-label=\"{{title}}\"><span class=\"tray-switch__track\"></span></label>{{/end=switch}}{{#end=link}}<svg class=\"tray-icon tray-icon--flip\" aria-hidden=\"true\"><use href=\"#tray-i-chevron-right\"/></svg>{{/end=link}}{{#end=more}}<button class=\"tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon\" type=\"button\" aria-label=\"More for {{title}}\">{{icon:ellipsis}}</button>{{/end=more}}</span>{{#end=link}}</a></li>{{/end=link}}{{^end=link}}</li>{{/end=link}}</ul>"
+}

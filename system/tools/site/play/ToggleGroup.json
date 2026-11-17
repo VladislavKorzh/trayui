@@ -1,0 +1,10 @@
+{
+  "lead": "The segmented control: one choice of a few short ones, or several on at once, in two sizes, at its own width or across.",
+  "controls": [
+    { "name": "kind", "label": "Example", "options": [["jar", "Jar size"], ["view", "View"], ["format", "Format"]] },
+    { "name": "size", "label": "Size", "options": [["", "52px"], [" tray-seg--sm", "44px"]] },
+    { "name": "fill", "label": "Full width", "type": "switch" },
+    { "name": "off", "label": "Disabled segment", "type": "switch" }
+  ],
+  "template": "{{#kind=jar}}<div class=\"tray-seg{{size}}{{#fill}} tray-seg--fill{{/fill}}\" role=\"radiogroup\" aria-label=\"Jar size\"><label class=\"tray-seg__item\"><input type=\"radio\" name=\"pg-jar\"><span>30 g</span></label><label class=\"tray-seg__item\"><input type=\"radio\" name=\"pg-jar\" checked><span>50 g</span></label><label class=\"tray-seg__item\"><input type=\"radio\" name=\"pg-jar\"{{#off}} disabled{{/off}}><span>100 g</span></label></div>{{/kind=jar}}{{#kind=view}}<div class=\"tray-seg{{size}}{{#fill}} tray-seg--fill{{/fill}}\" role=\"radiogroup\" aria-label=\"View\"><label class=\"tray-seg__item\"><input type=\"radio\" name=\"pg-view\" checked><span>{{icon:list}}List</span></label><label class=\"tray-seg__item\"><input type=\"radio\" name=\"pg-view\"{{#off}} disabled{{/off}}><span>{{icon:layout-grid}}Grid</span></label></div>{{/kind=view}}{{#kind=format}}<div class=\"tray-seg{{size}} tray-seg--icon{{#fill}} tray-seg--fill{{/fill}}\" role=\"group\" aria-label=\"Text style\"><label class=\"tray-seg__item\"><input type=\"checkbox\" aria-label=\"Bold\" checked><span>{{icon:bold}}</span></label><label class=\"tray-seg__item\"><input type=\"checkbox\" aria-label=\"Italic\"{{#off}} disabled{{/off}}><span>{{icon:italic}}</span></label><label class=\"tray-seg__item\"><input type=\"checkbox\" aria-label=\"Underline\" checked><span>{{icon:underline}}</span></label></div>{{/kind=format}}"
+}

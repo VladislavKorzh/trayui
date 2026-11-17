@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>First run</title>
+<meta name="description" content="The orders page of a workspace on its first day: the first steps to take, a way to bring old orders, and the empty table where new ones will land.">
+<meta name="tray-category" content="Empty states">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app">
+  <div class="tray-app__side">
+    <nav class="tray-sidebar" id="nav" aria-label="Main">
+      <div class="tray-sidebar__head" style="padding-inline: 0">
+        <div class="tray-anchor tray-anchor--block" data-tray="menu">
+          <button class="tray-switcher" type="button" aria-label="Workspace: Perly Farm"><span class="tray-avatar tray-avatar--sm tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-person__text"><b>Perly Farm</b><small>Trial, 14 days left</small></span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chevrons-up-down"/></svg></button>
+          <div class="tray-pop">
+            <div class="tray-list">
+              <p class="tray-list__label">Workspaces</p>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="true"><span class="tray-avatar tray-avatar--xs tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-option__text">Perly Farm</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <hr class="tray-list__rule">
+              <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New workspace</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tray-sidebar__group">
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a>
+        <a class="tray-sidebar__item" href="#" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg><span>Orders</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-users"/></svg><span>Customers</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span>Batches</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chart-column"/></svg><span>Reports</span></a>
+      </div>
+      <div class="tray-sidebar__group">
+        <p class="tray-sidebar__label">Workspace</p>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user-plus"/></svg><span>Team</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg><span>Billing</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-settings"/></svg><span>Settings</span></a>
+      </div>
+      <div class="tray-sidebar__foot">
+        <div class="tray-usage tray-usage--sm" style="flex: 1">
+          <div class="tray-progress">
+            <span class="tray-progress__name">Orders</span>
+            <span class="tray-progress__value">0 of 50</span>
+            <span class="tray-progress__bar" role="meter" aria-label="Orders this month" aria-valuemin="0" aria-valuemax="50" aria-valuenow="0" style="--tray-v: 0"></span>
+          </div>
+          <a class="label" href="#">Choose a plan</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <header class="tray-topbar">
+      <div class="tray-topbar__start">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the navigation"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+        <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon tray-app__collapse" type="button" data-tray="sidebar-toggle" aria-controls="nav" aria-label="Collapse the sidebar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-panel-left"/></svg></button>
+        <nav aria-label="Breadcrumb"><ol class="tray-crumbs tray-crumbs--fold"><li><a href="#">Perly Farm</a></li><li><span aria-current="page">Orders</span></li></ol></nav>
+      </div>
+      <div class="tray-topbar__end">
+        <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders" aria-keyshortcuts="/"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
+        <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, none unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip"></span></span>
+        <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko">OF</button>
+      </div>
+    </header>
+    <main class="tray-app__content">
+      <div class="tray-pagehead">
+        <div class="tray-pagehead__row">
+          <div class="tray-pagehead__text">
+            <h1 class="title">Orders</h1>
+            <p>Orders from the shop, the phone and the market stall all land here.</p>
+          </div>
+          <div class="tray-pagehead__actions">
+            <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg>New order</button>
+          </div>
+        </div>
+      </div>
+      <div class="tray-bento">
+        <section class="tray-card tray-checklist tray-span-7" id="setup" data-tray="checklist" aria-labelledby="setup-title">
+          <div class="tray-checklist__head">
+            <div class="tray-stack tray-stack--sm">
+              <h2 class="subtitle" id="setup-title">Get ready for the first order</h2>
+              <p class="tray-soft">Five short steps, about ten minutes in all.</p>
+            </div>
+            <div class="tray-progress">
+              <span class="tray-progress__name">Done</span><span class="tray-progress__value">2 of 5</span>
+              <span class="tray-progress__bar" role="progressbar" aria-label="Setup" aria-valuemin="0" aria-valuemax="5" aria-valuenow="2" style="--tray-v: 40"></span>
+            </div>
+          </div>
+          <ol class="tray-tasks">
+            <li class="tray-task" data-done>
+              <span class="tray-task__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span>
+              <div class="tray-task__body"><b>Create the workspace<span class="tray-vh">, done</span></b></div>
+            </li>
+            <li class="tray-task" data-done>
+              <span class="tray-task__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span>
+              <div class="tray-task__body"><b>Add the jars and their prices<span class="tray-vh">, done</span></b></div>
+            </li>
+            <li class="tray-task">
+              <span class="tray-task__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span>
+              <div class="tray-task__body">
+                <b>Choose the courier days</b>
+                <p>Orders paid after the 14:00 pick-up wait for the next courier day.</p>
+                <button class="tray-btn tray-btn--sm" type="button" data-task-done>Choose the days</button>
+              </div>
+            </li>
+            <li class="tray-task">
+              <span class="tray-task__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span>
+              <div class="tray-task__body">
+                <b>Open the shop</b>
+                <p>Customers can order at perly.counter.example from the moment it opens.</p>
+                <button class="tray-btn tray-btn--sm" type="button" data-task-done>Open the shop</button>
+              </div>
+            </li>
+            <li class="tray-task">
+              <span class="tray-task__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span>
+              <div class="tray-task__body">
+                <b>Invite the people who pack</b>
+                <p>They see today's orders on their phones and mark them packed.</p>
+                <button class="tray-btn tray-btn--sm" type="button" data-task-done>Invite people</button>
+              </div>
+            </li>
+          </ol>
+          <p class="tray-soft" data-checklist-done hidden>Everything is set. The first order will appear in the table below.</p>
+        </section>
+        <section class="tray-card tray-span-5 tray-stack tray-stack--lg" aria-labelledby="import-title">
+          <div class="tray-stack tray-stack--sm">
+            <h2 class="subtitle" id="import-title">Moving from a spreadsheet?</h2>
+            <p class="tray-soft">Bring last season's orders, so returning customers are known from the first day.</p>
+          </div>
+          <div class="tray-field">
+            <span class="tray-label" id="import-label">Past orders</span>
+            <div class="tray-drop tray-drop--row" data-tray="dropzone" data-list="#import-list" data-max-mb="20">
+              <span class="tray-drop__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg></span>
+              <p class="tray-drop__text"><b><u>Choose a file</u> or drop it</b><small>CSV or XLSX, one order per row</small></p>
+              <input type="file" accept=".csv, .xlsx" aria-labelledby="import-label">
+            </div>
+            <div class="tray-attachments" id="import-list"></div>
+          </div>
+          <dl class="tray-dl tray-dl--plain tray-dl--stack">
+            <div><dt>Counter reads</dt><dd>Date, customer, phone, address, jars and total</dd></div>
+            <div><dt>Returning customers</dt><dd>Found by phone number, so nobody is added twice</dd></div>
+          </dl>
+          <a class="tray-btn tray-btn--link" href="#" style="justify-self: start"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-download"/></svg>Download the template</a>
+        </section>
+      </div>
+      <section class="tray-stack" aria-labelledby="orders-title">
+        <div class="tray-row tray-row--between">
+          <h2 class="subtitle" id="orders-title">All orders</h2>
+          <span class="caption tray-muted">0 orders</span>
+        </div>
+        <div class="tray-table-wrap">
+          <table class="tray-table" aria-labelledby="orders-title">
+            <thead>
+              <tr>
+                <th scope="col">Order</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Status</th>
+                <th scope="col" data-num>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="4">
+                  <div class="tray-empty">
+                    <span class="tray-empty__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg></span>
+                    <div class="tray-empty__text">
+                      <h3 class="subtitle">No orders yet</h3>
+                      <p>When a customer orders a jar, it lands here with the address and the courier slot.</p>
+                    </div>
+                    <div class="tray-empty__actions">
+                      <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-play"/></svg>Place a test order</button>
+                    </div>
+                    <p class="caption tray-muted">A test order goes through packing and labels, and is never charged.</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

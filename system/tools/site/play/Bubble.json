@@ -1,0 +1,11 @@
+{
+  "lead": "The surface of a message: someone else's, yours or plain prose, alone or in a group, with reactions under it.",
+  "width": "34rem",
+  "controls": [
+    { "name": "who", "label": "Whose", "options": [["", "Theirs"], ["own", "Yours"], ["plain", "Plain"]] },
+    { "name": "text", "label": "Text", "type": "text", "default": "Is the autumn batch still open?", "max": 160 },
+    { "name": "group", "label": "Two in a row", "type": "switch" },
+    { "name": "reactions", "label": "Reactions", "type": "switch" }
+  ],
+  "template": "<div class=\"tray-message{{#who=own}} tray-message--end{{/who=own}}\"><div class=\"tray-message__content\">{{#group}}<div class=\"tray-bubble-group\">{{/group}}<div class=\"tray-bubble{{#who=own}} tray-bubble--own{{/who=own}}{{#who=plain}} tray-bubble--plain{{/who=plain}}\">{{#who=plain}}<p>{{text}}</p>{{/who=plain}}{{^who=plain}}{{text}}{{/who=plain}}</div>{{#group}}<div class=\"tray-bubble{{#who=own}} tray-bubble--own{{/who=own}}{{#who=plain}} tray-bubble--plain{{/who=plain}}\">{{#who=plain}}<p>I would like two jars before the season ends.</p>{{/who=plain}}{{^who=plain}}I would like two jars before the season ends.{{/who=plain}}</div></div>{{/group}}{{#reactions}}<div class=\"tray-reactions\"><button class=\"tray-reaction\" type=\"button\" data-tray=\"reaction\" aria-pressed=\"true\" aria-label=\"Thumbs up\">{{icon:thumbs-up:sm}}<span data-count>2</span></button><button class=\"tray-reaction\" type=\"button\" data-tray=\"reaction\" aria-pressed=\"false\" aria-label=\"Heart\">{{icon:heart:sm}}<span data-count>1</span></button></div>{{/reactions}}</div></div>"
+}

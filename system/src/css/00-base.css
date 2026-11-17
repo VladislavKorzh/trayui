@@ -1,0 +1,130 @@
+/* ---------- Base: the page, the grounds, focus, type helpers ---------- */
+
+:root {
+  /* What a component needs to know about the ground it sits on. */
+  --tray-ground: var(--page);        /* the colour behind the component */
+  --tray-fill: var(--surface);       /* the resting fill of a control on that ground */
+  --tray-off: var(--control-off);    /* an unselected ring, an off switch */
+  --tray-on-ink: var(--page);        /* text on a solid-ink (selected) fill */
+  --tray-outer-ink: var(--ink);      /* the theme's ink, for a ring drawn outside a surface that keeps its own colours */
+  /* The same two colours again, for a filled component to hand to its children the other way round. */
+  --tray-ground-up: var(--page);
+  --tray-fill-up: var(--surface);
+}
+/* A part of a page in another theme: data-theme on any element declares the grounds again for what is inside it.
+   Whether the theme is light or dark comes with its tokens. */
+[data-theme]:not(:root) { --tray-ground: var(--page); --tray-fill: var(--surface); --tray-off: var(--control-off); --tray-on-ink: var(--page); --tray-outer-ink: var(--ink); --tray-ground-up: var(--page); --tray-fill-up: var(--surface); color: var(--ink); }
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font: 400 1.125rem/1.45 var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4, h5, h6, p, figure, dl, dd { margin: 0; }
+h1, h2, h3, h4, h5, h6 { font: inherit; text-wrap: balance; }
+a { color: inherit; text-decoration-thickness: 2px; text-underline-offset: .2em; }
+button, input, select, textarea { font: inherit; color: inherit; }
+fieldset { min-inline-size: 0; margin: 0; padding: 0; border: 0; }
+[hidden] { display: none !important; }
+::selection { background: var(--accent); color: var(--on-accent); }
+/* A marked word, such as a match in search results: the accent, as a selection is. On the yellow card it takes the paper. */
+mark { padding-inline: .12em; border-radius: var(--radius-mark); background: var(--accent); color: var(--on-accent); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+:is(.tray-card--accent, .tray-island) mark { background: var(--paper); }
+
+/* Keyboard focus: 3px ink, 3px out. Fields draw theirs at 2px on the edge instead. */
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+/* The fluid sizes of the five heading styles (tokens.css sets their largest size). */
+.display { font-size: var(--display-size); }
+.headline { font-size: var(--headline-size); }
+.title { font-size: var(--title-size); }
+.subtitle { font-size: var(--subtitle-size); }
+.figure { font-size: var(--figure-size); }
+
+.tray-soft { color: var(--ink-soft); }
+.tray-muted { color: var(--ink-muted); }
+.tray-hint { color: var(--ink-hint); }
+.tray-danger { color: var(--danger); }
+.tray-success { color: var(--success); }
+.tray-num { font-variant-numeric: tabular-nums; }
+/* One line of text, cut with an ellipsis where its column ends: the excerpt of a message in a list. */
+.tray-clip { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tray-vh { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Icons: a 20px box, drawn with a 2.2px round stroke in the text colour. */
+.tray-icon { flex: none; display: block; inline-size: var(--size-icon); block-size: var(--size-icon); fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.tray-icon--sm { inline-size: 16px; block-size: 16px; }
+.tray-icon--lg { inline-size: 28px; block-size: 28px; }
+[dir="rtl"] .tray-icon--flip { transform: scaleX(-1); }
+
+/* ---------- Grounds: a surface tells its children what they sit on ---------- */
+
+.tray-card, .tray-panel, .tray-raised { color: var(--ink); }
+.tray-card { --tray-ground: var(--surface); --tray-fill: var(--page); --tray-ground-up: var(--surface); --tray-fill-up: var(--page); padding: var(--card-pad); border-radius: var(--radius-card); background: var(--surface); }
+.tray-panel { --tray-ground: var(--page); --tray-fill: var(--surface); --tray-ground-up: var(--page); --tray-fill-up: var(--surface); padding: var(--space-7); border-radius: var(--radius-panel); background: var(--page); }
+.tray-raised { --tray-ground: var(--raised); --tray-fill: var(--surface); --tray-ground-up: var(--raised); --tray-fill-up: var(--surface); --tray-off: var(--ink-hint); background: var(--raised); box-shadow: var(--shadow-float); }
+
+/* Yellow is an island: it, and everything on it, keeps the light palette in every theme. */
+.tray-card--accent, .tray-island {
+  color-scheme: light;
+  --page: var(--paper); --ink: var(--paper-ink); --surface: var(--paper-tray); --ink-soft: var(--paper-ink); --ink-muted: var(--paper-ink);
+  --ink-hint: var(--paper-soft); --hairline: var(--paper-hairline); --track: var(--paper-track); --rule-strong: var(--paper-soft); --control-off: var(--paper-soft);
+  --tray-ground: var(--accent); --tray-fill: var(--paper); --tray-ground-up: var(--accent); --tray-fill-up: var(--paper); --tray-on-ink: var(--paper); --tray-off: var(--paper-soft);
+  --danger: var(--paper-danger); --success: var(--paper-success); --on-danger: var(--paper);
+  --code-comment: var(--paper-code-comment); --code-keyword: var(--paper-code-keyword); --code-string: var(--paper-code-string); --code-function: var(--paper-code-function); --code-tag: var(--paper-code-tag); --code-constant: var(--paper-code-constant); --code-variable: var(--paper-code-variable);
+  background: var(--accent); color: var(--paper-ink);
+}
+.tray-card--accent:focus-visible { outline-color: var(--tray-outer-ink); }
+/* The ink card: text and rules take their on-dark steps. tray-inverse does the same for any other block; the lightbox and a
+   player in full screen are on it too. */
+.tray-card--inverse, .tray-inverse, .tray-lightbox, .tray-player:fullscreen {
+  --ink: var(--on-inverse); --ink-soft: var(--on-dark-soft); --ink-muted: var(--on-dark-muted); --ink-hint: var(--on-dark-muted);
+  --hairline: var(--dark-rule); --track: var(--inverse-off); --rule-strong: var(--on-dark-muted);
+  --tray-ground: var(--inverse); --tray-fill: var(--inverse-off); --tray-ground-up: var(--inverse); --tray-fill-up: var(--inverse-off); --tray-on-ink: var(--inverse); --tray-off: var(--on-dark-muted);
+  --danger: var(--on-dark-danger); --success: var(--on-dark-success); --on-danger: var(--paper-ink);
+  --code-comment: var(--on-dark-code-comment); --code-keyword: var(--on-dark-code-keyword); --code-string: var(--on-dark-code-string); --code-function: var(--on-dark-code-function); --code-tag: var(--on-dark-code-tag); --code-constant: var(--on-dark-code-constant); --code-variable: var(--on-dark-code-variable);
+  background: var(--inverse); color: var(--on-inverse);
+}
+.tray-card--inverse:focus-visible, .tray-inverse:focus-visible { outline-color: var(--tray-outer-ink); }
+.tray-card--leaf { --tray-ground: var(--leaf); --tray-ground-up: var(--leaf); background: var(--leaf); }
+
+/* A filled row is a ground of its own: what sits on it takes the colour behind the row. */
+.tray-item > *, .tray-alert > *, .tray-choice > *, .tray-switch--row > * { --tray-ground: var(--tray-fill-up); --tray-fill: var(--tray-ground-up); }
+.tray-items--ruled .tray-item > * { --tray-ground: var(--tray-ground-up); --tray-fill: var(--tray-fill-up); }
+/* A panel is the page inside a tray; inside the ink card it is a lighter ink, the fill of a control there. */
+:is(.tray-card--inverse, .tray-inverse) .tray-panel { --tray-ground: var(--inverse-off); --tray-fill: var(--inverse); --tray-ground-up: var(--inverse-off); --tray-fill-up: var(--inverse); background: var(--inverse-off); }
+/* On the yellow card a yellow mark would vanish: it takes the white of the paper. */
+:is(.tray-card--accent, .tray-island) :is(.tray-badge--accent, .tray-avatar--accent) { background: var(--paper); }
+.tray-card--flush { padding: 0; overflow: hidden; }
+
+/* ---------- Layout ---------- */
+
+.tray-container { inline-size: min(100% - 2 * var(--page-pad), var(--container)); margin-inline: auto; }
+.tray-section { padding-block: calc(var(--section-gap) / 2); }
+.tray-bento { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--grid-gap); }
+.tray-bento > * { grid-column: 1 / -1; }
+@media (min-width: 56rem) {
+  .tray-bento > .tray-span-4 { grid-column: span 4; }
+  .tray-bento > .tray-span-5 { grid-column: span 5; }
+  .tray-bento > .tray-span-6 { grid-column: span 6; }
+  .tray-bento > .tray-span-7 { grid-column: span 7; }
+  .tray-bento > .tray-span-8 { grid-column: span 8; }
+}
+/* The head of a section on a public page: its headline and one sentence, over what the section holds. Centred over a pricing table. */
+.tray-section__head { display: grid; align-content: start; gap: var(--space-4); max-inline-size: 46rem; margin-block-end: var(--space-10); }
+.tray-section__head--center { justify-items: center; margin-inline: auto; text-align: center; }
+/* One column that may be narrower than what it holds, so a wide table or a strip of tabs scrolls inside it, not the page. */
+.tray-stack { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: var(--space-4); }
+.tray-stack--sm { gap: var(--space-2); }
+.tray-stack--lg { gap: var(--space-6); }
+.tray-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
+.tray-row--sm { gap: var(--space-2); }
+.tray-row--between { justify-content: space-between; }
+.tray-prose { max-inline-size: var(--measure); }
+.tray-prose > * + * { margin-block-start: 1.15em; }
+.tray-prose h2, .tray-prose h3 { margin-block-start: 2em; }
+.tray-prose h2 + *, .tray-prose h3 + * { margin-block-start: .6em; }

@@ -1,0 +1,10 @@
+{
+  "lead": "A one-time code, one character to a cell: how many cells, where they split, how much is typed, and a code that does not match.",
+  "controls": [
+    { "name": "cells", "label": "Cells", "options": [["4", "4"], ["6", "6"]], "default": "6" },
+    { "name": "sep", "label": "Separator", "type": "switch", "default": true },
+    { "name": "fill", "label": "Typed", "options": [["none", "Nothing"], ["some", "Partly"], ["all", "All"]], "default": "some" },
+    { "name": "invalid", "label": "Invalid", "type": "switch" }
+  ],
+  "template": "<div class=\"tray-field\"><span class=\"tray-label\" id=\"pg-code-label\">Code from the message</span><div class=\"tray-otp\" data-tray=\"otp\" role=\"group\" aria-labelledby=\"pg-code-label\"{{#invalid}} aria-invalid=\"true\" aria-describedby=\"pg-code-error\"{{/invalid}}{{^invalid}} aria-describedby=\"pg-code-hint\"{{/invalid}}><input autocomplete=\"one-time-code\"{{^fill=none}} value=\"4\"{{/fill=none}}><input{{^fill=none}} value=\"0\"{{/fill=none}}>{{#sep}}{{#cells=4}}<span class=\"tray-otp__sep\"></span>{{/cells=4}}{{/sep}}<input{{^fill=none}} value=\"9\"{{/fill=none}}>{{#sep}}{{#cells=6}}<span class=\"tray-otp__sep\"></span>{{/cells=6}}{{/sep}}<input{{#fill=all}} value=\"1\"{{/fill=all}}>{{#cells=6}}<input{{#fill=all}} value=\"2\"{{/fill=all}}><input{{#fill=all}} value=\"7\"{{/fill=all}}>{{/cells=6}}</div>{{#invalid}}<p class=\"tray-field__error\" id=\"pg-code-error\">That code does not match. Try again, or send a new one.</p>{{/invalid}}{{^invalid}}<p class=\"tray-field__hint\" id=\"pg-code-hint\">Sent to the number ending in 27.</p>{{/invalid}}</div>"
+}

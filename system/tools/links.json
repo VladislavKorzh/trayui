@@ -1,0 +1,8 @@
+{
+  "version": "0.1.0",
+  "repo": "https://github.com/VladislavKorzh/trayui",
+  "public": true,
+  "site": "https://trayui.vladislav-korzh95.workers.dev",
+  "cdn": "https://cdn.jsdelivr.net/gh/VladislavKorzh/trayui@v0.1.0/system/dist",
+  "license": "MIT"
+}

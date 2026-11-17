@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cart</title>
+<meta name="description" content="A cart: lines with a quantity each, a meter to free delivery, a gift box, a promo code and the summary.">
+<meta name="tray-category" content="Checkout">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-screen">
+  <header class="tray-screen__bar">
+    <a class="tray-wordmark" href="/">Perly Farm</a>
+    <a class="tray-back" href="/shop"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-arrow-left"/></svg>Keep shopping</a>
+  </header>
+  <main class="tray-screen__body">
+    <ol class="tray-stepper tray-stepper--fold" aria-label="Checkout">
+      <li aria-current="step"><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Cart</span></span></li>
+      <li><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Delivery and payment</span></span></li>
+      <li><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Confirmation</span></span></li>
+    </ol>
+    <div class="tray-with-aside">
+      <div class="tray-stack tray-stack--lg" id="cart">
+        <div class="tray-stack tray-stack--sm">
+          <h1 class="title">Your cart</h1>
+          <p class="tray-soft">Jars from batch 14, collected on 2 November. We pack them in one chilled box.</p>
+        </div>
+        <ul class="tray-items" aria-label="Jars in the cart">
+          <li class="tray-item" data-price="3800">
+            <span class="tray-item__body">
+              <span class="tray-item__title">Snail caviar, 30 g</span>
+              <span class="tray-item__text" data-line>$38.00 each</span>
+            </span>
+            <span class="tray-item__end">
+              <span class="tray-btn-group tray-btn-group--sm" role="group" aria-label="Quantity of 30 g jars" data-tray="stepper" data-min="0" data-max="12">
+                <button class="tray-btn-group__item tray-btn-group__item--icon" type="button" data-step="-1" aria-label="One fewer 30 g jar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg></button>
+                <output class="tray-btn-group__value">1</output>
+                <button class="tray-btn-group__item tray-btn-group__item--icon" type="button" data-step="1" aria-label="One more 30 g jar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg></button>
+              </span>
+            </span>
+          </li>
+          <li class="tray-item" data-price="5900">
+            <span class="tray-item__body">
+              <span class="tray-item__title">Snail caviar, 50 g</span>
+              <span class="tray-item__text" data-line>$59.00 each, $118.00 for two</span>
+            </span>
+            <span class="tray-item__end">
+              <span class="tray-btn-group tray-btn-group--sm" role="group" aria-label="Quantity of 50 g jars" data-tray="stepper" data-min="0" data-max="12">
+                <button class="tray-btn-group__item tray-btn-group__item--icon" type="button" data-step="-1" aria-label="One fewer 50 g jar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg></button>
+                <output class="tray-btn-group__value">2</output>
+                <button class="tray-btn-group__item tray-btn-group__item--icon" type="button" data-step="1" aria-label="One more 50 g jar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg></button>
+              </span>
+            </span>
+          </li>
+          <li class="tray-item" data-price="11200" data-note="Only 6 left in batch 14.">
+            <span class="tray-item__body">
+              <span class="tray-item__title">Snail caviar, 100 g</span>
+              <span class="tray-item__text" data-line>$112.00 each. Only 6 left in batch 14.</span>
+            </span>
+            <span class="tray-item__end">
+              <span class="tray-btn-group tray-btn-group--sm" role="group" aria-label="Quantity of 100 g jars" data-tray="stepper" data-min="0" data-max="6">
+                <button class="tray-btn-group__item tray-btn-group__item--icon" type="button" data-step="-1" aria-label="One fewer 100 g jar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg></button>
+                <output class="tray-btn-group__value">1</output>
+                <button class="tray-btn-group__item tray-btn-group__item--icon" type="button" data-step="1" aria-label="One more 100 g jar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg></button>
+              </span>
+            </span>
+          </li>
+        </ul>
+        <div class="tray-progress">
+          <span class="tray-progress__name">Free courier from $300</span>
+          <span class="tray-progress__value" id="free-value">$268 of $300</span>
+          <span class="tray-progress__bar" id="free-bar" role="meter" aria-label="Towards free delivery" aria-valuemin="0" aria-valuemax="300" aria-valuenow="268" style="--tray-v: 89"></span>
+          <span class="tray-progress__note" id="free-note"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-truck"/></svg>Add $32.00 more and the courier is free.</span>
+        </div>
+        <div class="tray-stack tray-stack--sm">
+          <label class="tray-switch tray-switch--row">
+            <span class="tray-switch__text"><b>Gift box</b><small>A card box with a ribbon and a note, $6</small></span>
+            <input type="checkbox" role="switch" id="gift">
+            <span class="tray-switch__track"></span>
+          </label>
+          <div class="tray-field" id="gift-note" hidden>
+            <label class="tray-label" for="gift-text">Note on the card <span class="tray-label__opt">(optional)</span></label>
+            <textarea class="tray-textarea" id="gift-text" name="gift_note" rows="2" maxlength="140" data-tray="count"></textarea>
+            <div class="tray-field__foot"><span class="tray-field__count"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="tray-with-aside__aside" aria-label="Summary">
+        <form class="tray-card tray-summary" action="/checkout" method="get" style="padding: var(--space-7)">
+          <h2 class="subtitle">Summary</h2>
+          <ul class="tray-summary__lines">
+            <li class="tray-summary__line"><span id="jars-name">Four jars</span><span id="jars-sum">$268.00</span></li>
+            <li class="tray-summary__line" id="gift-line" hidden><span>Gift box</span><span>$6.00</span></li>
+            <li class="tray-summary__line" id="promo-line" hidden><span>Promo code AUTUMN10<small>10% off the jars</small></span><span id="promo-sum">&minus;$26.80</span></li>
+            <li class="tray-summary__line"><span>Courier, chilled box<small>Or pick up at the farm shop for free</small></span><span id="courier-sum">$9.00</span></li>
+          </ul>
+          <div class="tray-field">
+            <div class="tray-input-group tray-input-group--sm">
+              <input class="tray-input" id="promo" name="promo" placeholder="Promo code" aria-label="Promo code" autocomplete="off" aria-describedby="promo-message">
+              <button class="tray-input-group__btn" type="button" id="promo-apply">Apply</button>
+            </div>
+            <p class="tray-field__hint" id="promo-message">The code is on the card in your last box.</p>
+          </div>
+          <p class="tray-summary__total" aria-live="polite"><span>Total</span><span id="total">$277.00</span></p>
+          <button class="tray-btn tray-btn--block" type="submit">Choose the delivery</button>
+          <p class="tray-summary__note"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-clock"/></svg>Order by 12:00 for delivery today.</p>
+        </form>
+      </aside>
+    </div>
+  </main>
+  <footer class="tray-screen__foot">
+    <p>Prices include VAT. The farm, the jars and every figure on this page are demo data.</p>
+  </footer>
+</div>
+<script>
+/* Keeps the cart in step: a quantity, the gift box or a promo code changes the lines, the meter to free delivery and the total.
+   Amounts are in cents. The quantity steppers report with tray:change, which bubbles to the document. */
+(function () {
+  var FREE_FROM = 30000, COURIER = 900, GIFT = 600, CODE = 'AUTUMN10';
+  var NUMBERS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
+  var cart = document.getElementById('cart'), gift = document.getElementById('gift'), promo = document.getElementById('promo');
+  var message = document.getElementById('promo-message'), off = 0;
+  var $ = function (id) { return document.getElementById(id); };
+  var money = function (c) { return '$' + (c / 100).toFixed(2); };
+  var word = function (n) { return (NUMBERS[n] || String(n)).toLowerCase(); };
+  function work() {
+    var jars = 0, sum = 0;
+    [].forEach.call(cart.querySelectorAll('[data-price]'), function (line) {
+      var q = +line.querySelector('output').textContent, each = +line.getAttribute('data-price'), note = line.getAttribute('data-note');
+      jars += q; sum += q * each;
+      line.querySelector('[data-line]').textContent = q === 0 ? 'Taken out. Press plus to put it back.'
+        : money(each) + ' each' + (q > 1 ? ', ' + money(q * each) + ' for ' + word(q) : '') + (note ? '. ' + note : '');
+    });
+    var discount = Math.round(sum * off / 100), courier = sum >= FREE_FROM ? 0 : COURIER;
+    var name = jars < NUMBERS.length ? NUMBERS[jars] : String(jars);
+    $('jars-name').textContent = name + (jars === 1 ? ' jar' : ' jars');
+    $('jars-sum').textContent = money(sum);
+    $('gift-line').hidden = !gift.checked;
+    $('gift-note').hidden = !gift.checked;
+    $('promo-line').hidden = !off;
+    $('promo-sum').textContent = '−' + money(discount);
+    $('courier-sum').textContent = courier ? money(courier) : 'Free';
+    $('total').textContent = money(sum - discount + (gift.checked ? GIFT : 0) + courier);
+    var bar = $('free-bar'), dollars = Math.round(sum / 100);
+    bar.style.setProperty('--tray-v', Math.min(100, Math.round(sum / FREE_FROM * 100)));
+    bar.setAttribute('aria-valuenow', Math.min(300, dollars));
+    $('free-value').textContent = sum >= FREE_FROM ? 'Reached' : '$' + dollars + ' of $300';
+    $('free-note').lastChild.textContent = sum >= FREE_FROM ? 'The courier is free for this order.' : 'Add ' + money(FREE_FROM - sum) + ' more and the courier is free.';
+  }
+  document.addEventListener('tray:change', function (e) { if (cart.contains(e.target)) work(); });
+  gift.addEventListener('change', work);
+  $('promo-apply').addEventListener('click', function () {
+    var code = promo.value.trim().toUpperCase(), ok = code === CODE;
+    off = ok ? 10 : 0;
+    promo.setAttribute('aria-invalid', String(!ok));
+    message.className = ok ? 'tray-field__hint' : 'tray-field__error';
+    message.textContent = ok ? 'AUTUMN10 takes 10% off the jars.' : code ? 'We do not know this code. Check the spelling on the card.' : 'Enter the code from the card in your last box.';
+    work();
+  });
+})();
+</script>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

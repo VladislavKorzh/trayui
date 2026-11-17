@@ -1,0 +1,140 @@
+import { Card } from 'trayui-react';
+import { Chart } from 'trayui-react/charts';
+
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+export function BarAndArea() {
+  return (
+    <div className="tray-bento">
+      <Card className="tray-span-7">
+        <Chart
+          type="bar"
+          title="Caviar collected by month"
+          unit=" kg"
+          max={30}
+          labelHead="Month"
+          labels={months}
+          series={[{ name: 'Collected', values: [0, 0, 6, 14, 22, 19, 9, 7, 15, 10, 2, 0] }]}
+          summary="Bar chart of caviar collected by month in 2026. Nothing in January, February and December; the most, 22 kilograms, in May. Demo data."
+        />
+      </Card>
+      <Card tone="inverse" className="tray-span-5">
+        <Chart
+          type="area"
+          title="Snails active through the day"
+          unit="%"
+          max={100}
+          labelHead="Time"
+          labels={['00', '02', '04', '06', '08', '10', '12', '14', '16', '18', '20', '22']}
+          series={[{ name: 'Active', values: [82, 88, 74, 41, 18, 9, 6, 5, 8, 24, 55, 73] }]}
+          summary="Area chart of the share of snails active through the day. It peaks at 88 percent at two in the morning and falls to 5 percent at two in the afternoon. Demo data."
+        />
+      </Card>
+    </div>
+  );
+}
+
+export function LineAndStacked() {
+  return (
+    <div className="tray-bento">
+      <Card className="tray-span-6">
+        <Chart
+          type="line"
+          title="This season against the last"
+          unit=" kg"
+          max={30}
+          labelHead="Month"
+          labels={months.slice(2, 11)}
+          series={[
+            { name: '2026', values: [6, 14, 22, 19, 9, 7, 15, 10, 2] },
+            { name: '2025', values: [5, 12, 17, 18, 11, 6, 16, 8, 2] },
+          ]}
+          summary="Line chart comparing caviar collected each month in 2026 and 2025, March to November. Both peak in late spring; 2026 is higher in May. Demo data."
+        />
+      </Card>
+      <Card className="tray-span-6">
+        <Chart
+          type="bar"
+          stacked
+          title="Where each quarter's harvest went"
+          unit=" kg"
+          labelHead="Quarter"
+          labels={['Q1', 'Q2', 'Q3', 'Q4']}
+          series={[
+            { name: 'Jars', values: [3, 30, 17, 7] },
+            { name: 'Restaurants', values: [2, 14, 8, 3] },
+            { name: 'Farm shop', values: [1, 8, 4, 1] },
+            { name: 'Reserve', values: [0, 3, 2, 1] },
+          ]}
+          summary="Stacked bar chart of where each quarter of the 2026 harvest went: jars, restaurants, the farm shop and the reserve. Jars are the largest part in every quarter. Demo data."
+        />
+      </Card>
+    </div>
+  );
+}
+
+export function DonutAndRadial() {
+  return (
+    <div className="tray-bento">
+      <Card className="tray-span-8">
+        <Chart
+          type="donut"
+          side
+          title="Where the harvest goes"
+          unit=" kg"
+          totalLabel="Season so far"
+          labelHead="Goes to"
+          labels={['Jars', 'Restaurants', 'Farm shop', 'Reserve']}
+          series={[{ name: 'Weight', values: [57, 27, 14, 6] }]}
+          table={false}
+          summary="Donut chart of where the 104 kilograms of the 2026 season went: jars 57, restaurants 27, the farm shop 14, the reserve 6. Demo data."
+        />
+      </Card>
+      <Card className="tray-span-4">
+        <Chart
+          type="radial"
+          title="Autumn batch reserved"
+          unit="%"
+          labels={['280 of 412 jars']}
+          series={[{ name: 'Reserved', values: [68] }]}
+          table={false}
+          summary="Radial chart: 68 percent of the autumn batch is reserved, 280 of 412 jars. Demo data."
+        />
+      </Card>
+    </div>
+  );
+}
+
+export function RankingAndRadar() {
+  return (
+    <div className="tray-bento">
+      <Card className="tray-span-6">
+        <Chart
+          type="bar"
+          horizontal
+          title="Orders by city, November"
+          caption="Delivered orders only."
+          labelHead="City"
+          labels={['Kyiv', 'Lviv', 'Odesa', 'Dnipro', 'Kharkiv']}
+          series={[{ name: 'Orders', values: [86, 61, 44, 27, 19] }]}
+          table={false}
+          summary="Ranked bars of orders by city in November: Kyiv 86, Lviv 61, Odesa 44, Dnipro 27, Kharkiv 19. Demo data."
+        />
+      </Card>
+      <Card className="tray-span-6">
+        <Chart
+          type="radar"
+          title="Two beds compared"
+          max={10}
+          labelHead="Measure"
+          labels={['Moisture', 'Greens', 'Activity', 'Clutches', 'Shade']}
+          series={[
+            { name: 'Bed A', values: [8, 6, 9, 7, 5] },
+            { name: 'Bed B', values: [6, 8, 6, 5, 8] },
+          ]}
+          summary="Radar chart comparing two beds on five measures scored out of ten. Bed A leads on activity and moisture, bed B on greens and shade. Demo data."
+        />
+      </Card>
+    </div>
+  );
+}

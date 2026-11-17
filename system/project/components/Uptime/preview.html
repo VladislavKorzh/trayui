@@ -1,0 +1,24 @@
+<!-- @dsCard group="Metrics" height=503 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Uptime — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--col" style="gap: var(--space-8)">
+<div class="tray-uptime">
+<div class="tray-uptime__head"><span>Order API</span><span class="tray-uptime__state tray-success"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-circle-check"/></svg>Working</span></div>
+<div class="tray-uptime__bars" data-tray="uptime" data-days="90" data-incidents='{"12":"degraded","47":"down","48":"degraded"}'></div>
+<div class="tray-uptime__foot"><span>90 days ago</span><span>99.94% up</span><span>Today</span></div>
+</div>
+<div class="tray-uptime">
+<div class="tray-uptime__head"><span>Courier tracking</span><span class="tray-uptime__state"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-circle-alert"/></svg>Slow since 09:40</span></div>
+<div class="tray-uptime__bars" data-tray="uptime" data-days="90" data-incidents='{"0":"degraded","31":"degraded"}'></div>
+<div class="tray-uptime__foot"><span>90 days ago</span><span>99.71% up</span><span>Today</span></div>
+</div>
+<ul class="tray-uptime__key"><li><i></i>A normal day</li><li><i data-s="degraded"></i>Slow for part of the day</li><li><i data-s="down"></i>Down for part of the day</li></ul>
+<ul class="tray-items tray-items--ruled">
+<li class="tray-item tray-item--sm"><span class="tray-item__body"><span class="tray-item__title">Order API was down for 18 minutes</span><span class="tray-item__text">29 September, 03:10 to 03:28. A database update ran long.</span></span></li>
+<li class="tray-item tray-item--sm"><span class="tray-item__body"><span class="tray-item__title">Courier tracking was slow for 2 hours</span><span class="tray-item__text">15 October. The courier's own service answered late.</span></span></li>
+</ul>
+</div>
+</body>
+</html>

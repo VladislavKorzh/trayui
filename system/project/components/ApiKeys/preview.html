@@ -1,0 +1,30 @@
+<!-- @dsCard group="Account" height=840 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>ApiKeys — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--col">
+<div class="tray-row tray-row--between"><div><h2 class="subtitle">API keys</h2><p class="tray-soft" style="font-size: 1rem">A key gives a program the same access as its role.</p></div><button class="tray-btn tray-btn--sm" type="button" data-tray="open" data-target="#ak-new"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg>New key</button></div>
+<div class="tray-table-wrap"><table class="tray-table">
+<thead><tr><th scope="col">Name</th><th scope="col">Key</th><th scope="col">Access</th><th scope="col">Last used</th><th scope="col"><span class="tray-vh">Revoke</span></th></tr></thead>
+<tbody>
+<tr><th scope="row">Storefront</th><td><span class="tray-secret" data-tray="secret" data-value="ck_live_9f2c41d87ab04f2a"><code>ck_live_&bull;&bull;&bull;&bull;4f2a</code><button type="button" data-secret="show" aria-label="Show the key"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></button><button type="button" data-secret="copy" aria-label="Copy the key"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-copy"/></svg></button></span></td><td><span class="tray-badge">Read and write</span></td><td class="tray-soft">2 minutes ago</td><td data-num><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button">Revoke</button></td></tr>
+<tr><th scope="row">Accounting export</th><td><span class="tray-secret"><code>ck_live_&bull;&bull;&bull;&bull;c81e</code></span></td><td><span class="tray-badge">Read only</span></td><td class="tray-soft">1 November</td><td data-num><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button">Revoke</button></td></tr>
+<tr><th scope="row">Old label printer</th><td><span class="tray-secret"><code>ck_live_&bull;&bull;&bull;&bull;07bd</code></span></td><td><span class="tray-badge">Read only</span></td><td class="tray-muted">Never</td><td data-num><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button">Revoke</button></td></tr>
+</tbody></table></div>
+<div class="tray-stage tray-stage--scrim">
+<dialog class="tray-dialog" open data-tray="dialog" aria-labelledby="ak-t">
+<div class="tray-dialog__head"><div><h2 class="title" id="ak-t">Copy the new key</h2><p class="tray-dialog__text">This is the only time &ldquo;Courier labels&rdquo; is shown in full.</p></div></div>
+<div class="tray-dialog__body tray-stack"><span class="tray-secret tray-secret--block" data-tray="secret" data-value="ck_live_51b7e09c3d6a48f1"><code>ck_live_51b7e09c3d6a48f1</code><button type="button" data-secret="copy" aria-label="Copy the key"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-copy"/></svg></button></span>
+<div class="tray-alert"><span class="tray-alert__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-shield"/></svg></span><div class="tray-alert__body"><p class="tray-alert__text">Keep it out of the browser and out of your repository. Anyone who has it can read and change orders.</p></div></div></div>
+<div class="tray-dialog__foot"><button class="tray-btn tray-btn--md" type="button" data-close>I have copied it</button></div>
+</dialog>
+</div>
+<dialog class="tray-dialog tray-dialog--sm" id="ak-new" data-tray="dialog" aria-labelledby="ak-nt">
+<div class="tray-dialog__head"><div><h2 class="title" id="ak-nt">New key</h2></div><button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-close aria-label="Close"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button></div>
+<div class="tray-dialog__body tray-stack"><div class="tray-field"><label class="tray-label" for="ak-name">Name</label><input class="tray-input" id="ak-name" placeholder="What will use it?"></div><div class="tray-field"><label class="tray-label" for="ak-scope">Access</label><span class="tray-select"><select id="ak-scope"><option>Read only</option><option>Read and write</option></select></span></div></div>
+<div class="tray-dialog__foot"><button class="tray-btn tray-btn--ghost tray-btn--md" type="button" data-close>Cancel</button><button class="tray-btn tray-btn--md" type="button" data-close>Create the key</button></div>
+</dialog>
+</div>
+</body>
+</html>

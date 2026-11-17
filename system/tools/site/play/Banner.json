@@ -1,0 +1,14 @@
+{
+  "lead": "A banner about the whole account: its fill, the fact and what to do, one small action and a way to dismiss it.",
+  "width": "36rem",
+  "grounds": ["page", "tray"],
+  "controls": [
+    { "name": "tone", "label": "Tone", "options": [["plain", "Plain"], ["yellow", "Yellow"], ["ink", "Ink"], ["problem", "Problem"]], "default": "yellow" },
+    { "name": "fact", "label": "Fact", "type": "text", "default": "The trial ends in 5 days.", "max": 60 },
+    { "name": "text", "label": "Sentence", "type": "text", "default": "Choose a plan to keep your orders.", "max": 90 },
+    { "name": "action", "label": "Action", "type": "switch", "default": true },
+    { "name": "dismiss", "label": "Dismiss", "type": "switch", "default": true },
+    { "name": "edge", "label": "Across the top", "type": "switch" }
+  ],
+  "template": "<div class=\"tray-banner{{#edge}} tray-banner--edge{{/edge}}{{#tone=yellow}} tray-island{{/tone=yellow}}{{#tone=ink}} tray-inverse{{/tone=ink}}\" role=\"{{#tone=problem}}alert{{/tone=problem}}{{^tone=problem}}status{{/tone=problem}}\"{{#dismiss}} data-dismissable{{/dismiss}}>{{^edge}}{{#tone=plain}}{{icon:megaphone}}{{/tone=plain}}{{#tone=yellow}}{{icon:clock}}{{/tone=yellow}}{{#tone=ink}}{{icon:settings}}{{/tone=ink}}{{#tone=problem}}<svg class=\"tray-icon tray-danger\" aria-hidden=\"true\"><use href=\"#tray-i-circle-alert\"/></svg>{{/tone=problem}}{{/edge}}<p class=\"tray-banner__text\"><b{{#tone=problem}} class=\"tray-danger\"{{/tone=problem}}>{{fact}}</b> {{text}}</p>{{#action}}<div class=\"tray-banner__actions\"><a class=\"tray-btn{{#tone=yellow}} tray-btn--dark{{/tone=yellow}}{{#tone=plain}} tray-btn--quiet{{/tone=plain}}{{#tone=problem}} tray-btn--quiet{{/tone=problem}} tray-btn--xs\" href=\"#\">Choose a plan</a>{{#dismiss}}<button class=\"tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon\" type=\"button\" data-tray=\"dismiss\" aria-label=\"Dismiss\">{{icon:x}}</button>{{/dismiss}}</div>{{/action}}{{^action}}{{#dismiss}}<div class=\"tray-banner__actions\"><button class=\"tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon\" type=\"button\" data-tray=\"dismiss\" aria-label=\"Dismiss\">{{icon:x}}</button></div>{{/dismiss}}{{/action}}</div>"
+}

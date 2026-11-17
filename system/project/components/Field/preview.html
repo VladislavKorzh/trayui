@@ -1,0 +1,20 @@
+<!-- @dsCard group="Forms" height=441 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Field — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--col">
+<form class="tray-form" onsubmit="return false">
+<fieldset>
+<legend class="tray-legend subtitle">Where to deliver</legend>
+<div class="tray-fields">
+<div class="tray-field"><label class="tray-label" for="f1">Name</label><input class="tray-input" id="f1" value="Dana Kovalenko" autocomplete="name"></div>
+<div class="tray-field"><label class="tray-label" for="f2">Phone</label><input class="tray-input" id="f2" type="tel" aria-invalid="true" aria-describedby="f2e" value="555"><p class="tray-field__error" id="f2e">Enter the phone number with its area code.</p></div>
+<div class="tray-field tray-field--full"><label class="tray-label" for="f3">Address</label><input class="tray-input" id="f3" placeholder="Street, house, apartment" aria-describedby="f3h"><p class="tray-field__hint" id="f3h">The courier calls ten minutes before arriving.</p></div>
+</div>
+</fieldset>
+<div class="tray-field tray-field--row"><label class="tray-label" for="f4">Display name</label><div><input class="tray-input" id="f4" value="Dana"><p class="tray-field__hint">Shown on your orders and reviews.</p></div></div>
+</form>
+</div>
+</body>
+</html>

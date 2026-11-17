@@ -1,0 +1,34 @@
+# Plan Comparison
+
+The plan comparison is the full table under the pricing cards: every feature as a row, every plan as a column, a check, a dash or a number in each cell.
+
+## Markup
+```html
+<div class="tray-table-wrap">
+  <table class="tray-compare">
+    <thead><tr>
+      <th scope="col"><span class="tray-vh">Feature</span></th>
+      <th scope="col">Stall<small>$0</small></th>
+      <th scope="col" data-featured>Shop<small>$29 a month</small></th>
+      <th scope="col">Market<small>$79 a month</small></th>
+    </tr></thead>
+    <tbody>
+      <tr class="tray-compare__group"><th scope="rowgroup">Orders</th><td></td><td data-featured></td><td></td></tr>
+      <tr><th scope="row">Orders a month</th><td>50</td><td data-featured>1,000</td><td>Unlimited</td></tr>
+      <tr><th scope="row">Courier tracking</th>
+        <td data-off><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg><span class="tray-vh">Not included</span></td>
+        <td data-featured><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg><span class="tray-vh">Included</span></td>
+        <td>…</td></tr>
+    </tbody>
+  </table>
+</div>
+```
+`data-featured` on every cell of one column lays a tray behind it, rounded at the head and the foot: the plan you recommend, or the one the person is on. A cell holds a check, a dash (`data-off`), or the limit as text. Each icon needs its hidden word: "Included", "Not included".
+
+Group the rows with a `tray-compare__group` row: its heading in the first cell and an empty cell under each plan, so the tray of the featured column runs through. Wrap the table in `tray-table-wrap` so it scrolls sideways on a phone.
+
+## Do and don't
+- Do keep the plan names and prices in the head, in the order of the pricing cards.
+- Do write the limit rather than a check where there is one: "Five people".
+- Don't use a red cross for a missing feature. A dash in hint ink is enough.
+- Don't list features every plan has in the same amount: say them once above the table.

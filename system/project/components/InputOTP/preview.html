@@ -1,0 +1,23 @@
+<!-- @dsCard group="Forms" height=165 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>InputOTP — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--start">
+<div class="tray-field">
+<span class="tray-label" id="o1">Code from the message</span>
+<div class="tray-otp" data-tray="otp" role="group" aria-labelledby="o1">
+<input value="4" autocomplete="one-time-code"><input value="0"><input value="9"><span class="tray-otp__sep"></span><input><input><input>
+</div>
+<p class="tray-field__hint">Sent to the number ending in 27.</p>
+</div>
+<div class="tray-field">
+<span class="tray-label" id="o2">Wrong code</span>
+<div class="tray-otp" data-tray="otp" role="group" aria-labelledby="o2" aria-invalid="true" aria-describedby="o2e">
+<input value="1"><input value="2"><input value="3"><input value="4">
+</div>
+<p class="tray-field__error" id="o2e">That code does not match. Try again.</p>
+</div>
+</div>
+</body>
+</html>

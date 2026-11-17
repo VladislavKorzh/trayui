@@ -1,0 +1,10 @@
+{
+  "lead": "One block of optional detail under a short trigger: the table behind a chart, or the names behind \"3 more\".",
+  "width": "30rem",
+  "controls": [
+    { "name": "trigger", "label": "Trigger", "type": "text", "default": "Show the figures", "max": 40 },
+    { "name": "holds", "label": "Holds", "options": [["table", "Table"], ["names", "Names"]] },
+    { "name": "open", "label": "Open", "type": "switch", "default": true }
+  ],
+  "template": "<details class=\"tray-collapsible\"{{#open}} open{{/open}}><summary><span>{{trigger}}</span><span class=\"tray-tile\" aria-hidden=\"true\">{{icon:plus}}</span></summary>{{#holds=table}}<div class=\"tray-collapsible__body\"><table class=\"tray-table tray-table--compact\"><thead><tr><th scope=\"col\">Month</th><th scope=\"col\" data-num>Collected</th></tr></thead><tbody><tr><th scope=\"row\">April</th><td data-num>14 kg</td></tr><tr><th scope=\"row\">May</th><td data-num>22 kg</td></tr><tr><th scope=\"row\">June</th><td data-num>19 kg</td></tr></tbody></table></div>{{/holds=table}}{{#holds=names}}<div class=\"tray-collapsible__body tray-soft\">Anna Melnyk, Bohdan Shevchuk, Oksana Franko</div>{{/holds=names}}</details>"
+}

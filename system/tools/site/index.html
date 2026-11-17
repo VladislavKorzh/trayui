@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light"{{#home}} data-home{{/home}} data-route="{{route}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{page_title}}</title>
+{{#home}}<meta name="description" content="Tray UI is a design system in plain HTML and CSS: {{components}} components, {{blocks}} blocks and {{icons}} icons, in {{themes}} themes. Three files, no framework, no build step.">
+<meta property="og:title" content="Tray UI">
+<meta property="og:description" content="A design system in plain HTML and CSS: {{components}} components and {{blocks}} blocks. Three files, no framework, no build step.">{{/home}}{{^home}}<meta name="description" content="{{page_description}}">
+<meta property="og:title" content="{{page_name}}">
+<meta property="og:description" content="{{page_description}}">{{/home}}
+<meta property="og:site_name" content="Tray UI">
+<meta property="og:type" content="website">{{#site}}
+<meta property="og:url" content="{{page_url}}">
+<link rel="canonical" href="{{page_url}}">{{/site}}
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='10' fill='%23ffd426'/%3E%3Crect x='8' y='14' width='16' height='10' rx='4' fill='%23141414'/%3E%3C/svg%3E">
+<script>
+/* The theme a visitor chose last, else Light or Dark as their system asks. */
+(function () {
+  var t = null;
+  try { t = localStorage.getItem('tray-site-theme'); } catch (e) { t = null; }
+  if (!t || !/^[a-z0-9-]+$/.test(t)) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', t);{{#home}}
+  /* This file is the home page, drawn. A page may be asked for after a # instead: a link of the old kind (/#c-button), or
+     any link inside another page, which passes only the hash. Then the home page is not the one shown, and that page
+     starts loading now, beside the stylesheets, not after the scripts that would ask for it. */
+  var page = location.hash.slice(1).split('?')[0];
+  var own = {{own_pages}}, file = own.indexOf(page) >= 0 ? 'pages/' + page + '.js' : /^ch-[a-z]+$/.test(page) || page === 'charts' ? 'data-charts.js' : '';
+  if (file || /^(components|blocks)$/.test(page)) document.documentElement.removeAttribute('data-home');
+  if (file) { var l = document.createElement('link'); l.rel = 'preload'; l.as = 'script'; l.href = file; document.head.appendChild(l); }{{/home}}
+})();
+</script>{{#preload}}
+<link rel="preload" href="{{root}}{{preload}}" as="script">{{/preload}}
+<link rel="preload" href="{{root}}fonts/Onest-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{root}}tokens.css">
+<link rel="stylesheet" href="{{root}}components/bundle.css">
+<link rel="stylesheet" href="{{root}}site.css">
+<style id="site-own-theme"></style>
+<script>
+/* A theme the visitor made here is kept in this browser as one rule of CSS. It goes after the stylesheets, where it wins
+   over the themes of the system, and before the page is drawn. */
+(function () {
+  try {
+    var own = JSON.parse(localStorage.getItem('tray-site-own-theme') || 'null');
+    if (own && typeof own.css === 'string' && /^[a-z0-9-]+$/.test(own.id || '')) document.getElementById('site-own-theme').textContent = own.css;
+  } catch (e) { /* no theme of their own */ }
+})();
+</script>
+</head>
+<body>
+<button class="tray-btn tray-btn--dark tray-btn--xs site-skip" type="button" id="site-skip">Skip to the page</button>
+<div class="tray-app tray-app--header site" id="site">
+  <header class="tray-topbar tray-app__header site-top">
+    <div class="tray-topbar__start">
+      <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="open" data-target="#site-sheet" aria-label="Menu"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+      <a class="tray-wordmark site-logo" href="#home">{{mark}}<span>Tray UI</span></a>
+      <nav class="tray-tabs site-sections" id="site-sections" aria-label="Sections" data-section="{{section}}">{{sections_tabs}}</nav>
+    </div>
+    <div class="tray-topbar__end">
+      <button class="tray-topbar__search tray-topbar__search--fold" type="button" id="site-find" aria-label="Search the site" aria-haspopup="dialog"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search</span><kbd class="tray-kbd">/</kbd></button>{{#repo}}
+      <a class="tray-btn tray-btn--quiet tray-btn--sm tray-topbar__wide" href="{{repo}}">GitHub</a>{{/repo}}
+      <span class="tray-anchor" data-tray="menu" id="site-theme"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" id="site-theme-btn" aria-label="Theme"><span class="site-dot" aria-hidden="true"></span></button><div class="tray-pop tray-pop--end site-thememenu"><div class="tray-list" id="site-theme-list">{{theme_menu}}</div></div></span>
+    </div>
+  </header>
+  <div class="tray-app__side">
+    <nav class="tray-sidebar site-nav" id="site-nav" aria-label="Pages" data-section="{{section}}">{{nav_html}}</nav>
+  </div>
+  <div class="tray-app__main">
+    <main class="tray-app__content" id="site-view" tabindex="-1"{{#wide}} data-wide{{/wide}} data-page="{{page_id}}" data-prerendered="{{page_id}}">{{view_html}}</main>
+  </div>
+</div>
+<dialog class="tray-sheet tray-sheet--start" id="site-sheet" data-tray="dialog" aria-labelledby="site-sheet-title">
+  <div class="tray-dialog__head"><div><h2 class="subtitle site-logo" id="site-sheet-title">{{mark}}<span>Tray UI</span></h2></div><button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-close aria-label="Close"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button></div>
+  <nav class="tray-tabs site-sections site-sections--sheet" id="site-sections-sheet" aria-label="Sections" data-section="{{section}}">{{sections_tabs}}</nav>
+  <nav class="site-nav site-nav--sheet" id="site-nav-sheet" aria-label="Pages" data-section="{{section}}">{{nav_html}}</nav>
+</dialog>
+<dialog class="site-search" id="site-search" data-tray="dialog" aria-label="Search the site">
+  <div class="tray-command" data-tray="command" id="site-command">
+    <label class="tray-command__search"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><input placeholder="Search components, blocks, charts and docs" aria-label="Search the site"></label>
+    <div class="tray-command__list" id="site-command-list">
+      <div class="tray-list__empty" hidden>Nothing has that name. Try another word.</div>
+    </div>
+    <div class="tray-command__foot"><span><kbd class="tray-kbd">↑</kbd><kbd class="tray-kbd">↓</kbd> to move</span><span><kbd class="tray-kbd">Enter</kbd> to open</span><span><kbd class="tray-kbd">Esc</kbd> to close</span></div>
+  </div>
+</dialog>
+<dialog class="site-full" id="site-full" data-tray="dialog" data-static aria-labelledby="site-full-title">
+  <div class="site-full__bar">
+    <h2 class="site-full__title" id="site-full-title"></h2>
+    <div class="tray-seg tray-seg--sm site-full__sizes" role="radiogroup" aria-label="Width of the preview">
+      <label class="tray-seg__item"><input type="radio" name="site-full-size" value="desktop" checked><span>Desktop</span></label>
+      <label class="tray-seg__item"><input type="radio" name="site-full-size" value="tablet"><span>Tablet</span></label>
+      <label class="tray-seg__item"><input type="radio" name="site-full-size" value="phone"><span>Phone</span></label>
+    </div>
+    <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" data-close><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg>Close</button>
+  </div>
+  <div class="site-full__stage" id="site-full-stage"></div>
+</dialog>
+<dialog class="tray-sheet site-code" id="site-code" data-tray="dialog" aria-labelledby="site-code-title">
+  <div class="tray-dialog__head"><div><h2 class="subtitle" id="site-code-title"></h2><p class="tray-soft">One React file. It needs <code class="tray-code-inline">recharts</code> and <code class="tray-code-inline">trayui-react</code>.</p></div><button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-close aria-label="Close"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button></div>
+  <div class="tray-code" dir="ltr"><div class="tray-code__head"><span>React</span><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button" data-tray="copy" data-target="#site-code-text"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-copy"/></svg><span data-label>Copy</span></button></div><pre tabindex="0"><code id="site-code-text"></code></pre></div>
+</dialog>
+<noscript><p class="site-noscript">Without JavaScript the pages can be read, but the examples do not respond and the search, the previews and the charts stay empty. The files of the system need none of it: see llms.txt for the whole system as plain text.</p></noscript>
+<script src="{{root}}components/bundle.js" defer></script>
+<script src="{{root}}data.js" defer></script>
+<script src="{{root}}site.js" defer></script>
+</body>
+</html>

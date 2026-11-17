@@ -1,0 +1,12 @@
+{
+  "lead": "Several lines in one field: how many rows it opens with, a limit with its count, and its state.",
+  "controls": [
+    { "name": "rows", "label": "Rows", "options": [["4", "4"], ["6", "6"], ["8", "8"]], "default": "4" },
+    { "name": "limit", "label": "Limit", "type": "switch", "default": true },
+    { "name": "state", "label": "State", "options": [["", "Normal"], ["invalid", "Invalid"], ["disabled", "Disabled"]] },
+    { "name": "label", "label": "Label", "type": "text", "default": "What went wrong", "max": 40 },
+    { "name": "text", "label": "Text", "type": "text", "default": "The jar came warm and the seal on the lid was loose.", "max": 200 },
+    { "name": "hint", "label": "Hint", "type": "text", "default": "The farm reads every one and replies within a day.", "max": 90 }
+  ],
+  "template": "<div class=\"tray-field\"{{#state=disabled}} data-disabled{{/state=disabled}}><label class=\"tray-label\" for=\"pg-note\">{{label}}</label><textarea class=\"tray-textarea\" id=\"pg-note\" rows=\"{{rows}}\"{{#limit}} maxlength=\"280\" data-tray=\"count\"{{/limit}}{{#state=invalid}} aria-invalid=\"true\" aria-describedby=\"pg-note-error\"{{/state=invalid}}{{^state=invalid}}{{#hint}} aria-describedby=\"pg-note-hint\"{{/hint}}{{/state=invalid}}{{#state=disabled}} disabled{{/state=disabled}}>{{text}}</textarea>{{#limit}}<div class=\"tray-field__foot\">{{/limit}}{{#state=invalid}}<p class=\"tray-field__error\" id=\"pg-note-error\">{{#text}}Add the batch number printed on the lid.{{/text}}{{^text}}Tell us what happened, in a sentence or two.{{/text}}</p>{{/state=invalid}}{{^state=invalid}}{{#hint}}<p class=\"tray-field__hint\" id=\"pg-note-hint\">{{hint}}</p>{{/hint}}{{/state=invalid}}{{#limit}}<span class=\"tray-field__count\"></span></div>{{/limit}}</div>"
+}

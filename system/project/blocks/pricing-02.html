@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plans compared feature by feature</title>
+<meta name="description" content="Every plan in one table, feature by feature in groups, with the price and a button at the head of each column.">
+<meta name="tray-category" content="Pricing">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-screen">
+  <header class="tray-screen__bar">
+    <a class="tray-wordmark" href="/">Counter</a>
+    <a class="tray-btn tray-btn--link" href="/signin">Sign in</a>
+  </header>
+  <main class="tray-screen__body" data-tray="pricing">
+    <div class="tray-stack tray-stack--lg">
+      <div class="tray-row tray-row--between" style="align-items: flex-end; row-gap: var(--space-6)">
+        <div class="tray-stack" style="max-inline-size: 46rem">
+          <h1 class="headline">Every plan, line by&nbsp;line</h1>
+          <p class="lead tray-soft">Start on Stall for free and move up when the orders do. Here is what changes from one plan to the next.</p>
+        </div>
+        <div class="tray-row tray-row--sm">
+          <div class="tray-seg" role="radiogroup" aria-label="Billing period">
+            <label class="tray-seg__item"><input type="radio" name="period" value="monthly" checked><span>Monthly</span></label>
+            <label class="tray-seg__item"><input type="radio" name="period" value="yearly"><span>Yearly</span></label>
+          </div>
+          <span class="tray-badge">Yearly saves 17%</span>
+        </div>
+      </div>
+      <div class="tray-stack tray-stack--sm">
+        <p class="label tray-soft" id="every-title">In every plan</p>
+        <div class="tray-row tray-row--sm" role="list" aria-labelledby="every-title">
+          <span class="tray-chip" role="listitem"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-inbox"/></svg>The order list</span>
+          <span class="tray-chip" role="listitem"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-tag"/></svg>Printable labels</span>
+          <span class="tray-chip" role="listitem"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-package"/></svg>The packing screen</span>
+          <span class="tray-chip" role="listitem"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-users"/></svg>Customer records</span>
+          <span class="tray-chip" role="listitem"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-link"/></svg>An order page to share</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="tray-card" aria-label="The plans compared">
+      <div class="tray-table-wrap" role="region" aria-label="Plan comparison, scrolls sideways" tabindex="0">
+        <table class="tray-compare" style="min-inline-size: 40rem">
+          <caption class="tray-vh">Stall, Shop and Market compared</caption>
+          <colgroup>
+            <col style="inline-size: 28%">
+            <col style="inline-size: 24%">
+            <col style="inline-size: 24%">
+            <col style="inline-size: 24%">
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col"><span class="tray-vh">Feature</span></th>
+              <th scope="col">Stall<small>$0, for good</small>
+                <a class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--block" href="/signup?plan=stall" style="margin-block-start: var(--space-4)">Start on Stall</a></th>
+              <th scope="col" data-featured>Shop<small data-monthly="$29 a month" data-yearly="$24 a month, billed yearly">$29 a month</small>
+                <a class="tray-btn tray-btn--sm tray-btn--block" href="/signup?plan=shop" style="margin-block-start: var(--space-4)">Try Shop free</a></th>
+              <th scope="col">Market<small data-monthly="$79 a month" data-yearly="$66 a month, billed yearly">$79 a month</small>
+                <a class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--block" href="/signup?plan=market" style="margin-block-start: var(--space-4)">Try Market free</a></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="tray-compare__group">
+              <th scope="rowgroup">Orders</th>
+              <td></td>
+              <td data-featured></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th scope="row">Orders a month</th>
+              <td class="tray-num">50</td>
+              <td class="tray-num" data-featured>1,000</td>
+              <td>Unlimited</td>
+            </tr>
+            <tr>
+              <th scope="row">Shops connected</th>
+              <td>One</td>
+              <td data-featured>Three</td>
+              <td>Unlimited</td>
+            </tr>
+            <tr>
+              <th scope="row">Repeat orders, every week or two</th>
+              <td data-off><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg><span class="tray-vh">Not included</span></td>
+              <td data-featured><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg><span class="tray-vh">Included</span></td>
+              <td><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg><span class="tray-vh">Included</span></td>
+            </tr>
+            <tr class="tray-compare__group">
+              <th scope="rowgroup">Delivery</th>
+              <td></td>
+              <td data-featured></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th scope="row">Label prints a month</th>
+              <td class="tray-num">150</td>
+              <td class="tray-num" data-featured>3,000</td>
+              <td>Unlimited</td>
+            </tr>
+            <tr>
+              <th scope="row">Delivery slots to pick</th>
+              <td data-off><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg><span class="tray-vh">Not included</span></td>
+              <td data-featured><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg><span class="tray-vh">Included</span></td>
+              <td><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg><span class="tray-vh">Included</span></td>
+            </tr>
+            <tr>
+              <th scope="row">Courier tracking</th>
+              <td data-off><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg><span class="tray-vh">Not included</span></td>
+              <td data-featured><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg><span class="tray-vh">Included</span></td>
+              <td><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg><span class="tray-vh">Included</span></td>
+            </tr>
+            <tr>
+              <th scope="row">Pickups booked for you</th>
+              <td data-off><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg><span class="tray-vh">Not included</span></td>
+              <td data-featured><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg><span class="tray-vh">Included</span></td>
+              <td><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg><span class="tray-vh">Included</span></td>
+            </tr>
+            <tr>
+              <th scope="row">Pickup from several farms</th>
+              <td data-off><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg><span class="tray-vh">Not included</span></td>
+              <td data-off data-featured><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg><span class="tray-vh">Not included</span></td>
+              <td><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg><span class="tray-vh">Included</span></td>
+            </tr>
+            <tr class="tray-compare__group">
+              <th scope="rowgroup">Team</th>
+              <td></td>
+              <td data-featured></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th scope="row">People</th>
+              <td>One</td>
+              <td data-featured>Five</td>
+              <td>Twenty</td>
+            </tr>
+            <tr>
+              <th scope="row">Each extra person</th>
+              <td data-off><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg><span class="tray-vh">Not included</span></td>
+              <td data-featured data-monthly="$5 a month" data-yearly="$4 a month">$5 a month</td>
+              <td data-monthly="$5 a month" data-yearly="$4 a month">$5 a month</td>
+            </tr>
+            <tr>
+              <th scope="row">Roles: packer, driver, owner</th>
+              <td data-off><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg><span class="tray-vh">Not included</span></td>
+              <td data-off data-featured><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg><span class="tray-vh">Not included</span></td>
+              <td><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg><span class="tray-vh">Included</span></td>
+            </tr>
+            <tr class="tray-compare__group">
+              <th scope="rowgroup">Data</th>
+              <td></td>
+              <td data-featured></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th scope="row">History kept</th>
+              <td>90 days</td>
+              <td data-featured>Two years</td>
+              <td>For good</td>
+            </tr>
+            <tr>
+              <th scope="row">Exports</th>
+              <td data-off><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg><span class="tray-vh">Not included</span></td>
+              <td data-featured>Spreadsheet</td>
+              <td>Spreadsheet and API</td>
+            </tr>
+            <tr>
+              <th scope="row">Workspaces</th>
+              <td>One</td>
+              <td data-featured>One</td>
+              <td>Several</td>
+            </tr>
+            <tr class="tray-compare__group">
+              <th scope="rowgroup">Help</th>
+              <td></td>
+              <td data-featured></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th scope="row">Answers by email</th>
+              <td>In two working days</td>
+              <td data-featured>In one working day</td>
+              <td>The same day</td>
+            </tr>
+            <tr>
+              <th scope="row">A call to set it all up</th>
+              <td data-off><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg><span class="tray-vh">Not included</span></td>
+              <td data-off data-featured><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg><span class="tray-vh">Not included</span></td>
+              <td><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg><span class="tray-vh">Included</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="tray-card tray-card--inverse" aria-labelledby="move-title">
+      <div class="tray-row tray-row--between" style="row-gap: var(--space-6)">
+        <div class="tray-stack tray-stack--sm" style="max-inline-size: 40rem">
+          <h2 class="title" id="move-title">Your spreadsheet moves over for free</h2>
+          <p class="tray-soft">Send us the file and we bring your customers and their past orders into Counter before the trial starts. On every plan.</p>
+        </div>
+        <a class="tray-btn tray-btn--quiet tray-btn--md" href="/move">Send the spreadsheet</a>
+      </div>
+    </section>
+  </main>
+  <footer class="tray-screen__foot">
+    <p>Prices are in US dollars, before tax. Shop and Market are free for 14 days, with no card needed. Figures are demo data.</p>
+  </footer>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

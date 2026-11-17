@@ -1,0 +1,29 @@
+{
+  // The site of the design system on Cloudflare Workers: the static files of system/site behind a small script.
+  // Deploy with `npx wrangler deploy`: it builds the system and the site first, then uploads them.
+  "name": "trayui",
+  "compatibility_date": "2026-11-16",
+
+  // The door: while the site is private every request passes this script, which asks for a password
+  // (the secret SITE_PASSWORD; set it with `npx wrangler secret put SITE_PASSWORD`).
+  // To open the site to everyone, delete "main" and, under "assets", "binding" and "run_worker_first", then deploy.
+  "main": "system/tools/site/worker.js",
+
+  // The address is open, behind the door. The addresses of single versions stay off.
+  "workers_dev": true,
+  "preview_urls": false,
+
+  "build": {
+    "command": "python3 system/tools/build.py && python3 system/tools/site.py"
+  },
+  "assets": {
+    "directory": "./system/site",
+    "binding": "ASSETS",
+    "run_worker_first": true,
+    // Every page is a file: components/lightbox.html is served at /components/lightbox, and /components/lightbox.html
+    // or /components/lightbox/ redirect there. index.html is /.
+    "html_handling": "auto-trailing-slash",
+    // An address with no page is a mistake, and gets 404.html with the status 404.
+    "not_found_handling": "404-page"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "lead": "A coarse number picked by dragging, with its value always written beside the label. Drag the one in the stage too.",
+  "controls": [
+    { "name": "value", "label": "Value", "type": "range", "min": 0, "max": 50, "step": 5, "default": 20, "unit": " km" },
+    { "name": "scale", "label": "Scale", "options": [["ends", "Ends"], ["steps", "Every 10"], ["", "None"]] },
+    { "name": "disabled", "label": "Disabled", "type": "switch" },
+    { "name": "label", "label": "Label", "type": "text", "default": "Delivery radius", "max": 40 }
+  ],
+  "template": "<div class=\"tray-slider-field\"><div class=\"tray-slider-field__head\"><label class=\"tray-label tray-label--inline\" for=\"pg-radius\">{{label}}</label><output for=\"pg-radius\"></output></div><input class=\"tray-slider\" id=\"pg-radius\" type=\"range\" min=\"0\" max=\"50\" step=\"5\" value=\"{{value}}\" data-unit=\" km\" data-tray=\"slider\"{{#disabled}} disabled{{/disabled}}>{{#scale=ends}}<div class=\"tray-slider-field__scale\"><span>0</span><span>50</span></div>{{/scale=ends}}{{#scale=steps}}<div class=\"tray-slider-field__scale\"><span>0</span><span>10</span><span>20</span><span>30</span><span>40</span><span>50</span></div>{{/scale=steps}}</div>"
+}

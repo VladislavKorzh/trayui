@@ -1,0 +1,24 @@
+# built or downloaded
+node_modules/
+system/site/
+system/.preview/
+system/react/dist/
+system/react/.try/
+.wrangler/
+__pycache__/
+*.pyc
+
+# secrets: the site's password and any other local setting (wrangler reads .dev.vars)
+.dev.vars
+.env
+.env.*
+
+# editors, operating systems and local tools
+.DS_Store
+.vscode/
+.idea/
+.codex/
+.cursor/
+.gemini/
+.grok/
+.serena/

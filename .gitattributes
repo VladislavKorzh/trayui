@@ -1,0 +1,19 @@
+* text=auto eol=lf
+
+# Pictures, the film and the font
+*.jpg binary
+*.png binary
+*.webp binary
+*.mp4 binary
+*.ttf binary
+*.woff2 binary
+
+# Written by system/tools/build.py and system/react/scripts/build.mjs: kept in the repository, never edited by hand
+system/dist/** linguist-generated
+system/project/guides/0-components.md linguist-generated
+system/project/guides/5-blocks.md linguist-generated
+system/project/assets/Icons/** linguist-generated
+system/react/styles/** linguist-generated
+system/react/src/runtime.ts linguist-generated
+system/react/src/icons.ts linguist-generated
+system/react/src/index.ts linguist-generated

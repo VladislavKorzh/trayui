@@ -1,0 +1,9 @@
+{
+  "lead": "Where a page sits, one link per level: how deep it is (a long trail folds its middle levels into a menu), and the back link that replaces it on a phone.",
+  "controls": [
+    {"name": "form", "label": "Form", "options": [["trail", "Trail"], ["back", "Back link"]]},
+    {"name": "levels", "label": "Levels", "options": [["2", "Two"], ["3", "Three"], ["5", "Five"]], "default": "3"},
+    {"name": "page", "label": "Current page", "type": "text", "default": "PL-20418", "max": 40}
+  ],
+  "template": "{{#form=trail}}<nav aria-label=\"Breadcrumb\"><ol class=\"tray-crumbs\">{{#levels=2}}<li><a href=\"/orders\">Orders</a></li>{{/levels=2}}{{#levels=3}}<li><a href=\"/orders\">Orders</a></li><li><a href=\"/orders/november\">November</a></li>{{/levels=3}}{{#levels=5}}<li><a href=\"/\">Perly Farm</a></li><li><span class=\"tray-anchor\" data-tray=\"menu\"><button class=\"tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon\" type=\"button\" aria-label=\"Show the levels between\"><svg class=\"tray-icon\" aria-hidden=\"true\"><use href=\"#tray-i-ellipsis\"/></svg></button><div class=\"tray-pop\"><div class=\"tray-list\"><a class=\"tray-option\" role=\"menuitem\" href=\"/orders\"><span class=\"tray-option__text\">Orders</span></a><a class=\"tray-option\" role=\"menuitem\" href=\"/orders/2026\"><span class=\"tray-option__text\">2026</span></a></div></div></span></li><li><a href=\"/orders/2026/november\">November</a></li>{{/levels=5}}<li><span aria-current=\"page\">{{page}}</span></li></ol></nav>{{/form=trail}}{{#form=back}}<a class=\"tray-back\" href=\"{{#levels=2}}/orders{{/levels=2}}{{#levels=3}}/orders/november{{/levels=3}}{{#levels=5}}/orders/2026/november{{/levels=5}}\"><svg class=\"tray-icon tray-icon--flip\" aria-hidden=\"true\"><use href=\"#tray-i-chevron-left\"/></svg>{{#levels=2}}Orders{{/levels=2}}{{^levels=2}}November{{/levels=2}}</a>{{/form=back}}"
+}

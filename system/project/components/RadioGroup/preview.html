@@ -1,0 +1,30 @@
+<!-- @dsCard group="Forms" height=347 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>RadioGroup — preview</title></head>
+<body>
+<div class="tray-demo tray-demo--start">
+<fieldset>
+<legend class="tray-label">Payment</legend>
+<div class="tray-radio-group">
+<label class="tray-radio"><input type="radio" name="pay" checked><span class="tray-radio__ring"></span><span>Card, on delivery</span></label>
+<label class="tray-radio"><input type="radio" name="pay"><span class="tray-radio__ring"></span><span>Card, online now</span></label>
+<label class="tray-radio"><input type="radio" name="pay" disabled><span class="tray-radio__ring"></span><span>Cash, not for chilled orders</span></label>
+</div>
+</fieldset>
+<fieldset class="tray-demo-fill" style="min-inline-size: 24rem">
+<legend class="tray-label">Delivery</legend>
+<div class="tray-choices tray-choices--two">
+<label class="tray-choice"><input type="radio" name="del" checked><span class="tray-radio__ring"></span><span class="tray-choice__text"><b>Courier</b><span>Chilled box, the same day</span></span><span class="tray-choice__end">$9</span></label>
+<label class="tray-choice"><input type="radio" name="del"><span class="tray-radio__ring"></span><span class="tray-choice__text"><b>Pickup</b><span>Farm shop, from tomorrow</span></span><span class="tray-choice__end">Free</span></label>
+</div>
+</fieldset>
+<div class="tray-card" style="flex: 1 1 100%; padding: var(--space-6)">
+<div class="tray-choices tray-choices--two" role="radiogroup" aria-label="Gift wrapping">
+<label class="tray-choice"><input type="radio" name="wrap" checked><span class="tray-radio__ring"></span><span class="tray-choice__text"><b>No wrapping</b><span>The jar in its chilled sleeve</span></span></label>
+<label class="tray-choice"><input type="radio" name="wrap"><span class="tray-radio__ring"></span><span class="tray-choice__text"><b>Gift box</b><span>A card box with a note from you</span></span><span class="tray-choice__end">$12</span></label>
+</div>
+</div>
+</div>
+</body>
+</html>

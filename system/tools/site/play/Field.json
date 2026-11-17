@@ -1,0 +1,12 @@
+{
+  "lead": "One question of a form: its label above the control or beside it, and one line under it, a hint or an error, never both.",
+  "width": "36rem",
+  "controls": [
+    { "name": "row", "label": "Layout", "options": [["", "Above"], ["on", "Beside"]] },
+    { "name": "msg", "label": "Under it", "options": [["", "Nothing"], ["hint", "Hint"], ["error", "Error"]], "default": "hint" },
+    { "name": "optional", "label": "Optional", "type": "switch" },
+    { "name": "label", "label": "Label", "type": "text", "default": "Phone", "max": 40 },
+    { "name": "hint", "label": "Hint", "type": "text", "default": "The courier calls ten minutes before arriving.", "max": 90 }
+  ],
+  "template": "<div class=\"tray-field{{#row}} tray-field--row{{/row}}\"><label class=\"tray-label\" for=\"pg-phone\">{{label}}{{#optional}} <span class=\"tray-label__opt\">(optional)</span>{{/optional}}</label>{{#row}}<div>{{/row}}<input class=\"tray-input\" id=\"pg-phone\" type=\"tel\" autocomplete=\"tel\" value=\"555 0142\"{{#msg=error}} aria-invalid=\"true\" aria-describedby=\"pg-phone-error\"{{/msg=error}}{{#msg=hint}}{{#hint}} aria-describedby=\"pg-phone-hint\"{{/hint}}{{/msg=hint}}>{{#msg=hint}}{{#hint}}<p class=\"tray-field__hint\" id=\"pg-phone-hint\">{{hint}}</p>{{/hint}}{{/msg=hint}}{{#msg=error}}<p class=\"tray-field__error\" id=\"pg-phone-error\">Enter the phone number with its area code.</p>{{/msg=error}}{{#row}}</div>{{/row}}</div>"
+}

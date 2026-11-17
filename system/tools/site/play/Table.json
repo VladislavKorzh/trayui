@@ -1,0 +1,11 @@
+{
+  "lead": "Figures in rows and columns, the caviar collected each month since July: how tight the rows are, the change on last year as a third column, a total row, the tint under the pointer, and the caption that names it.",
+  "controls": [
+    {"name": "density", "label": "Rows", "options": [["", "Regular"], [" tray-table--compact", "Compact"]]},
+    {"name": "cols", "label": "Columns", "options": [["2", "Two"], ["3", "Three"]], "default": "3"},
+    {"name": "foot", "label": "Total row", "type": "switch", "default": true},
+    {"name": "hover", "label": "Tint on hover", "type": "switch"},
+    {"name": "caption", "label": "Caption", "type": "text", "default": "Caviar collected, July to November", "max": 60}
+  ],
+  "template": "<div class=\"tray-table-wrap\"><table class=\"tray-table{{density}}{{#hover}} tray-table--hover tray-table--pad{{/hover}}\"><caption>{{caption}}</caption><thead><tr><th scope=\"col\">Month</th><th scope=\"col\" data-num>Collected, kg</th>{{#cols=3}}<th scope=\"col\" data-num>Against 2025, kg</th>{{/cols=3}}</tr></thead><tbody><tr><th scope=\"row\">July</th><td data-num>9</td>{{#cols=3}}<td data-num class=\"tray-danger\">−1</td>{{/cols=3}}</tr><tr><th scope=\"row\">August</th><td data-num>7</td>{{#cols=3}}<td data-num class=\"tray-success\">+1</td>{{/cols=3}}</tr><tr><th scope=\"row\">September</th><td data-num>15</td>{{#cols=3}}<td data-num class=\"tray-danger\">−1</td>{{/cols=3}}</tr><tr><th scope=\"row\">October</th><td data-num>10</td>{{#cols=3}}<td data-num class=\"tray-success\">+2</td>{{/cols=3}}</tr><tr><th scope=\"row\">November</th><td data-num>2</td>{{#cols=3}}<td data-num>0</td>{{/cols=3}}</tr></tbody>{{#foot}}<tfoot><tr><th scope=\"row\">Total</th><td data-num>43</td>{{#cols=3}}<td data-num class=\"tray-success\">+1</td>{{/cols=3}}</tr></tfoot>{{/foot}}</table></div>"
+}

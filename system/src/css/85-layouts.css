@@ -1,0 +1,209 @@
+/* ---------- Layouts: variants of the sidebar and the app shell, and the frame of a screen outside the shell.
+   Blocks are built from these and the components. They add no tokens. ---------- */
+
+/* ---------- Sidebar: groups that fold, items that open a second level, a tree ---------- */
+
+/* A group that folds: <details class="tray-sidebar__group" open><summary class="tray-sidebar__label">Shop …chevron-right…</summary> items </details> */
+details.tray-sidebar__group { display: block; }
+details.tray-sidebar__group > :not(summary) { margin-block-start: 2px; }
+summary.tray-sidebar__label { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); min-block-size: 36px; padding-block: 0; border-radius: var(--radius-chip); list-style: none; cursor: pointer; transition: color var(--duration-fill) var(--ease); }
+summary.tray-sidebar__label::-webkit-details-marker, summary.tray-sidebar__item::-webkit-details-marker { display: none; }
+summary.tray-sidebar__label:hover { color: var(--ink); }
+summary.tray-sidebar__label:focus-visible { outline-offset: -3px; }
+summary.tray-sidebar__label > .tray-icon, .tray-sidebar__caret { transition: transform var(--duration-move) var(--ease); }
+details[open] > summary.tray-sidebar__label > .tray-icon, details[open] > summary > .tray-sidebar__caret { transform: rotate(90deg); }
+[dir="rtl"] summary.tray-sidebar__label > .tray-icon, [dir="rtl"] .tray-sidebar__caret { transform: scaleX(-1); }
+[dir="rtl"] details[open] > summary.tray-sidebar__label > .tray-icon, [dir="rtl"] details[open] > summary > .tray-sidebar__caret { transform: rotate(90deg); }
+
+/* An item that opens a second level under it: <details class="tray-sidebar__more"><summary class="tray-sidebar__item">…icon, label, tray-sidebar__caret…</summary><ul class="tray-sidebar__sub">…</ul></details> */
+.tray-sidebar__more { display: block; }
+summary.tray-sidebar__item { list-style: none; }
+.tray-sidebar__caret { color: var(--ink-muted); }
+.tray-sidebar__item[aria-current] > .tray-sidebar__caret { color: inherit; }
+.tray-sidebar[data-collapsed] .tray-sidebar__caret { display: none; }
+
+/* An item that opens its second level as a menu beside it: the item is the trigger of a Dropdown Menu whose panel is tray-pop--side. */
+.tray-sidebar .tray-anchor--block > .tray-sidebar__item { inline-size: 100%; }
+.tray-sidebar__item[aria-expanded="true"]:not([aria-current]) { background: var(--page); }
+.tray-app__side > .tray-sidebar--flyout { overflow: visible; }
+
+/* A tree: nested lists of 36px rows; a folder is <details> whose summary starts with the caret. */
+.tray-tree, .tray-tree ul { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.tray-tree ul { margin-block-start: 2px; padding-inline-start: var(--space-5); }
+.tray-tree .tray-sidebar__item { gap: var(--space-2); min-block-size: 36px; padding-inline: var(--space-2); font-weight: 400; }
+.tray-tree summary.tray-sidebar__item { font-weight: 500; }
+.tray-tree a.tray-sidebar__item { padding-inline-start: calc(var(--space-2) + 16px + var(--space-2)); }
+.tray-tree .tray-sidebar__item[aria-current] { background: var(--page); color: var(--ink); font-weight: 600; }
+.tray-tree .tray-sidebar__item > .tray-icon:not(.tray-sidebar__caret) { color: var(--ink-muted); }
+
+/* The part of a sidebar that scrolls when its navigation is taller than the window, so the head and the foot stay in view:
+   <nav class="tray-sidebar"> head, <div class="tray-sidebar__scroll"> groups </div>, foot </nav>. Its scrollbar sits in the tray's padding. */
+.tray-sidebar__scroll { flex: 1; display: flex; flex-direction: column; gap: var(--space-4); min-block-size: 0; margin-inline-end: calc(-1 * var(--space-3)); padding-inline-end: var(--space-3); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--control-off) transparent; }
+.tray-sidebar[data-collapsed] .tray-sidebar__scroll { overflow: visible; }
+/* What a group holds when it is not rows of navigation (checkboxes, a description list): in step with the group's label. */
+.tray-sidebar__body { display: grid; padding-inline: var(--space-3); }
+/* A second level under items that carry no icon, as in a table of contents: it steps in by one space, not by the icon's width. */
+.tray-sidebar__sub--text { padding-inline: var(--space-4) 0; }
+/* A tooltip on a sidebar item names it in the rail, where the label is hidden, and stands beside the icon; while the label is in view it stays away. */
+.tray-sidebar:not([data-collapsed]) .tray-sidebar__item + .tray-tooltip { display: none; }
+.tray-sidebar[data-collapsed] .tray-sidebar__item + .tray-tooltip { inset-block: 50% auto; inset-inline-start: calc(100% + var(--space-2)); transform: translateY(-50%); }
+
+/* Wider, for a list of messages or files; plain, for navigation inside a popover or a dialog that is already a surface. */
+.tray-sidebar--wide { inline-size: 21rem; }
+.tray-sidebar--plain { --tray-ground: inherit; --tray-fill: inherit; --tray-ground-up: inherit; --tray-fill-up: inherit; inline-size: auto; min-block-size: 0; padding: 0; border-radius: 0; background: none; }
+.tray-sidebar--plain .tray-sidebar__item:hover { background: var(--tray-fill); }
+.tray-sidebar--plain .tray-sidebar__item[aria-current]:hover { background: var(--ink); }
+/* The current row of a tree or of a second level is page-white, which shows only on a tray: in a plain sidebar and in the phone sheet it takes the fill of that ground. */
+.tray-sheet--nav > .tray-sidebar .tray-tree .tray-sidebar__item[aria-current], .tray-sheet--nav > .tray-sidebar .tray-tree .tray-sidebar__item[aria-current]:hover,
+.tray-sheet--nav > .tray-sidebar .tray-sidebar__sub .tray-sidebar__item[aria-current], .tray-sheet--nav > .tray-sidebar .tray-sidebar__sub .tray-sidebar__item[aria-current]:hover,
+.tray-sidebar--plain .tray-tree .tray-sidebar__item[aria-current], .tray-sidebar--plain .tray-tree .tray-sidebar__item[aria-current]:hover,
+.tray-sidebar--plain .tray-sidebar__sub .tray-sidebar__item[aria-current], .tray-sidebar--plain .tray-sidebar__sub .tray-sidebar__item[aria-current]:hover { background: var(--tray-fill); }
+
+/* The sidebar on a small screen: data-tray="sidebar-sheet" on the tray-app__menu button moves it into this sheet. */
+.tray-sheet--nav[open] { display: flex; flex-direction: column; gap: var(--space-2); inline-size: min(100% - 3rem, 20rem); padding: var(--space-3); }
+.tray-sheet__close { align-self: flex-end; }
+.tray-sheet--nav > .tray-sidebar { --tray-ground: inherit; --tray-fill: inherit; --tray-ground-up: inherit; --tray-fill-up: inherit; flex: 1; inline-size: auto; min-block-size: 0; padding: 0; border-radius: 0; background: none; }
+.tray-sheet--nav > .tray-sidebar .tray-sidebar__item:hover { background: var(--tray-fill); }
+.tray-sheet--nav > .tray-sidebar .tray-sidebar__item[aria-current]:hover { background: var(--ink); }
+/* A menu beside a sidebar item (tray-pop--side) has no room there in the sheet: it opens under its item, and the item's caret turns down while it is open. */
+.tray-sheet--nav .tray-pop--side { inset-block-start: calc(100% + var(--space-2)); inset-inline-start: 0; }
+.tray-sheet--nav .tray-sidebar__item[aria-expanded="true"] > .tray-sidebar__caret { transform: rotate(90deg); }
+/* The button that collapses the sidebar has nothing to collapse below 56rem, where tray-app__menu takes its place. */
+@media (max-width: 56rem) { .tray-app__collapse { display: none; } }
+
+/* ---------- App shell: variants ---------- */
+
+/* Inset: the page is a tray, the sidebar sits straight on it, and the content is one white panel. */
+.tray-app--inset { --tray-ground: var(--surface); --tray-fill: var(--page); --tray-ground-up: var(--surface); --tray-fill-up: var(--page); gap: var(--space-2); padding: var(--space-2); background: var(--surface); }
+.tray-app--inset > .tray-app__side > .tray-sidebar { padding: var(--space-3); background: none; }
+.tray-app--inset:not(.tray-app--contained) > .tray-app__side { inset-block-start: var(--space-2); block-size: calc(100dvh - 2 * var(--space-2)); }
+.tray-app--inset > .tray-app__main { --tray-ground: var(--page); --tray-fill: var(--surface); --tray-ground-up: var(--page); --tray-fill-up: var(--surface); padding: var(--space-2) var(--space-6) 0; border-radius: var(--radius-panel); background: var(--page); }
+/* On a phone the panel gives its side room back to what it holds. */
+@media (max-width: 34rem) { .tray-app--inset > .tray-app__main { padding-inline: var(--space-3); } }
+
+/* A header across the whole product, over the sidebar and the content: <header class="tray-topbar tray-app__header">. */
+/* The header row keeps its own height; what the window has left goes to the content, however short the content is. */
+.tray-app--header { grid-template-rows: auto 1fr; row-gap: 0; padding-block-start: 0; }
+.tray-app__header { grid-column: 1 / -1; position: sticky; inset-block-start: 0; z-index: var(--z-sticky); padding-block: var(--space-2); background: var(--tray-ground); }
+/* The content starts level with the sidebar, one space under the header. */
+.tray-app--header > .tray-app__main { padding-block-start: var(--space-4); }
+.tray-app--header:not(.tray-app--contained) > .tray-app__side { inset-block-start: calc(var(--size-lg) + var(--space-4)); block-size: calc(100dvh - var(--size-lg) - 2 * var(--space-4)); }
+
+/* Two sidebars side by side: a rail of sections and the list of the chosen one. */
+.tray-app__side--double > .tray-sidebar { flex: none; }
+
+/* A shell as tall as the window, for a page that scrolls inside itself (a conversation): the content column takes the height
+   the top bar leaves, and the Message Scroller in it takes what its head and its reply box leave. */
+.tray-app--fill { block-size: 100dvh; }
+.tray-app--fill > .tray-app__main { min-block-size: 0; }
+.tray-app--fill .tray-app__content { flex: 1; display: flex; flex-direction: column; gap: var(--space-4); min-block-size: 0; padding-block-end: 0; }
+.tray-app--fill .tray-scroller { flex: 1; block-size: auto; min-block-size: 12rem; }
+
+@media (min-width: 56.0625rem) {
+  /* The sidebar at the end: put tray-app__side after tray-app__main. Both: one before and one after. */
+  .tray-app__side--double { display: flex; gap: var(--space-1); }
+  .tray-app--end { grid-template-columns: minmax(0, 1fr) auto; }
+  .tray-app--both { grid-template-columns: auto minmax(0, 1fr) auto; }
+}
+
+/* With a sidebar on each side the end one may wait for room: tray-app__side--late shows from 80rem, and until then
+   the button that opens it in a sheet (tray-app__menu--late) stays in the top bar. */
+@media (min-width: 56.0625rem) and (max-width: 79.99rem) {
+  .tray-app--both:has(> .tray-app__side--late) { grid-template-columns: auto minmax(0, 1fr); }
+  .tray-app__side--late { display: none; }
+  .tray-app__menu--late { display: inline-flex; }
+}
+
+/* ---------- Dialog with its own navigation: settings in a dialog ---------- */
+
+.tray-dialog--split { inline-size: min(100% - 2rem, 60rem); padding: var(--space-4); }
+.tray-dialog__split { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+.tray-dialog__split > .tray-sidebar { inline-size: auto; min-block-size: 0; }
+.tray-dialog__pane { display: grid; align-content: start; gap: var(--space-6); min-inline-size: 0; padding: var(--space-4) var(--space-4) var(--space-4) var(--space-2); }
+.tray-dialog__pane > .tray-dialog__head { margin-block-end: 0; }
+.tray-dialog__pane > .tray-dialog__foot { margin-block-start: 0; }
+@media (min-width: 48rem) {
+  .tray-dialog__split { grid-template-columns: 15rem minmax(0, 1fr); min-block-size: 34rem; }
+}
+@media (max-width: 47.99rem) {
+  .tray-dialog__split > .tray-sidebar { flex-direction: row; gap: var(--space-1); padding: var(--space-1); border-radius: var(--radius-button); overflow-x: auto; scrollbar-width: none; }
+  .tray-dialog__split > .tray-sidebar > .tray-sidebar__group { display: flex; gap: var(--space-1); }
+  .tray-dialog__split > .tray-sidebar .tray-sidebar__label { display: none; }
+  .tray-dialog__pane { padding: var(--space-2); }
+}
+
+/* ---------- Screen: the frame of a page outside the app shell (sign in, a wizard, a public page) ---------- */
+
+.tray-screen { display: flex; flex-direction: column; min-block-size: 100dvh; background: var(--page); color: var(--ink); }
+/* On a tray screen the page is grey: fields turn white by themselves, and a card on it is a tray-panel. */
+.tray-screen--tray { --tray-ground: var(--surface); --tray-fill: var(--page); --tray-ground-up: var(--surface); --tray-fill-up: var(--page); background: var(--surface); }
+.tray-screen__bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); min-block-size: var(--size-lg); padding: var(--space-2) var(--page-pad); }
+.tray-screen__body { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: var(--space-8); inline-size: min(100% - 2 * var(--page-pad), var(--container)); margin-inline: auto; padding-block: var(--space-6) var(--space-12); }
+.tray-screen__body--narrow { inline-size: min(100% - 2 * var(--page-pad), 42rem); }
+/* Centred in the height, with the same room above and below. */
+.tray-screen__body--center { align-content: center; padding-block: var(--space-6); }
+/* Centred only from 40rem up: on a phone a form under a bar follows the bar, where the keyboard leaves it in view. */
+@media (min-width: 40rem) {
+  .tray-screen__body--center-wide { align-content: center; padding-block: var(--space-6); }
+}
+.tray-screen__foot { padding: var(--space-4) var(--page-pad) var(--space-6); color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); text-align: center; }
+.tray-screen__foot a { color: inherit; }
+.tray-screen__foot, .tray-auth__foot { text-wrap: balance; }
+/* Two halves from 56rem: a form beside a cover. tray-screen__half--wide is shown only when there is room for both. */
+.tray-screen--split { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--grid-gap); padding: var(--space-4); }
+.tray-screen__half { display: flex; flex-direction: column; min-inline-size: 0; }
+.tray-screen__half > .tray-screen__bar { padding-inline: var(--space-2); }
+.tray-screen__half > .tray-screen__body { inline-size: 100%; padding-inline: var(--space-2); }
+/* The cover: a yellow, ink or leaf card that fills its half, with a statement at one end and a proof at the other. */
+.tray-screen__cover { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: var(--space-8); min-block-size: 22rem; }
+@media (min-width: 56.0625rem) {
+  .tray-screen--split { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 56rem) {
+  .tray-screen__half--wide { display: none; }
+}
+
+/* The auth card keeps its padding in step with its own width, and the link beside a label sits on the label's line. */
+.tray-auth.tray-card, .tray-auth.tray-panel { padding: min(var(--card-pad), var(--space-8)); }
+/* One column that a long button cannot widen. */
+.tray-auth { grid-template-columns: minmax(0, 1fr); }
+.tray-auth__row > a { margin-block-end: var(--space-2); font: 400 .9375rem/1.4 var(--font-sans); }
+
+/* Sign-in providers: a group of quiet buttons, each with the provider's name, two or three across as the card allows.
+   tray-providers--list puts one on a line, for a page that offers them before anything else; tray-providers--row keeps to one row, with a Dropdown Menu as its last cell for the rest. A provider's own mark, when you
+   have the right to use it, goes before its name as <img class="tray-icon" alt="">; until then the name stands alone. */
+.tray-providers { display: grid; grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); gap: var(--space-2); }
+.tray-providers > .tray-btn, .tray-providers > .tray-anchor > .tray-btn { inline-size: 100%; min-inline-size: 0; padding-inline: var(--space-3); }
+.tray-providers--list { grid-template-columns: minmax(0, 1fr); }
+/* One row of three at every width: two providers and a menu of the rest, which opens from the last cell. */
+.tray-providers--row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* A form beside a picture in one tray: <div class="tray-card tray-auth-wide"><div class="tray-auth-wide__form"><form class="tray-auth">…</form></div><div class="tray-auth-wide__media tray-island">…</div></div> */
+.tray-auth-wide { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); inline-size: min(100%, 62rem); margin-inline: auto; padding: var(--space-2); }
+.tray-auth-wide__form { display: grid; align-content: center; padding: calc(var(--card-pad) - var(--space-2)); }
+.tray-auth-wide__media { display: flex; flex-direction: column; justify-content: space-between; gap: var(--space-8); min-block-size: 16rem; padding: var(--space-8); border-radius: calc(var(--radius-card) - var(--space-2)); }
+@media (min-width: 56.0625rem) {
+  .tray-auth-wide { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Content beside a narrow column that stays in view: an article and its "On this page", an order and its summary. */
+.tray-with-aside { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; gap: var(--space-8) var(--space-10); }
+.tray-with-aside__aside { display: grid; gap: var(--space-4); min-inline-size: 0; }
+@media (min-width: 64rem) {
+  .tray-with-aside { grid-template-columns: minmax(0, 1fr) 20rem; }
+  .tray-with-aside--narrow { grid-template-columns: minmax(0, 1fr) 15rem; }
+  .tray-with-aside__aside { position: sticky; inset-block-start: var(--space-6); }
+}
+/* Inside the app shell the sidebar has already taken its share of the window: tray-with-aside--late waits until 76rem to put the aside beside the content. */
+@media (max-width: 75.99rem) {
+  .tray-with-aside--late { grid-template-columns: minmax(0, 1fr); }
+  .tray-with-aside--late > .tray-with-aside__aside { position: static; }
+}
+
+/* ---------- Slot: a tray that stands in for content in a block. Replace it with yours. ---------- */
+
+.tray-slot { display: block; min-block-size: 7rem; border-radius: var(--radius-panel); background: var(--tray-fill); }
+.tray-slot--video { aspect-ratio: 16 / 9; min-block-size: 0; }
+.tray-slot--tall { min-block-size: 26rem; }
+.tray-slot--line { min-block-size: var(--size-sm); border-radius: var(--radius-control); }
+.tray-slots { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: var(--grid-gap); }

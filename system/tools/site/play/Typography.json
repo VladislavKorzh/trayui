@@ -1,0 +1,11 @@
+{
+  "lead": "Each type style on a line of your own, on the element its meaning asks for and in one of the four inks.",
+  "width": "36rem",
+  "controls": [
+    { "name": "style", "label": "Style", "options": [["display", "Display"], ["headline", "Headline"], ["title", "Title"], ["subtitle", "Subtitle"], ["figure", "Figure"], ["lead", "Lead"], ["body", "Body"], ["caption", "Caption"], ["tick", "Tick"], ["action", "Action"], ["control", "Control"], ["nav", "Nav"], ["label", "Label"], ["code", "Code"]], "default": "title" },
+    { "name": "el", "label": "Element", "options": [["p", "p"], ["h1", "h1"], ["h2", "h2"], ["h3", "h3"]], "default": "h2" },
+    { "name": "ink", "label": "Ink", "options": [["", "Ink"], [" tray-soft", "Soft"], [" tray-muted", "Muted"], [" tray-hint", "Hint"]] },
+    { "name": "text", "label": "Text", "type": "text", "default": "White caviar", "max": 80 }
+  ],
+  "template": "<{{el}} class=\"{{style}}{{ink}}\">{{#text}}{{text}}{{/text}}{{^text}}White caviar{{/text}}</{{el}}>"
+}
