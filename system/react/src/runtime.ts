@@ -87,8 +87,24 @@ if (typeof document !== 'undefined') (function () {
     document.addEventListener('pointerdown', function (e) { if (open && !panel.contains(e.target) && !trigger.contains(e.target)) set(false); });
     /* Escape closes the panel and nothing else: the event stops here, and a dialog around the panel is not asked to close. */
     [trigger, panel].forEach(function (n) { n.addEventListener('keydown', function (e) { if (e.key === 'Escape' && open) { e.preventDefault(); e.stopPropagation(); set(false, true); } }); });
+    /* Tab out of the trigger and the panel closes it: what is open follows the keyboard. A click on plain text inside the
+       panel sends focus nowhere in particular, and leaves it open. */
+    [trigger, panel].forEach(function (n) { n.addEventListener('focusout', function (e) { var to = e.relatedTarget; if (open && to && !panel.contains(to) && !trigger.contains(to)) set(false); }); });
     return { open: function () { set(true); }, close: function (back) { set(false, back); }, toggle: function () { set(!open); }, isOpen: function () { return open; } };
   }
+
+  /* rescue(el, to): el is about to be hidden, removed or disabled. If focus is in it, focus moves to `to` (an element, or a
+     function that gives one) first, so a keyboard user is not dropped to the top of the page. An element that cannot take
+     focus is given tabindex="-1" for it. */
+  function rescue(el, to) {
+    var a = document.activeElement;
+    if (!el || !a || (el !== a && !el.contains(a))) return;
+    var t = typeof to === 'function' ? to() : to;
+    if (!t || !t.focus || !t.isConnected) return;
+    if (!t.matches('a[href], button, input, select, textarea, summary, [tabindex]')) t.setAttribute('tabindex', '-1');
+    t.focus({ preventScroll: true });
+  }
+  UI.rescue = rescue;
 
   /* Run fn now, and again whenever the element's box changes: its first real layout may come after this script has started. */
   function watch(el, fn) {
@@ -186,7 +202,12 @@ if (typeof document !== 'undefined') (function () {
       out.textContent = String(value);
       /* the number bumps when it changes: two names for one animation, so each change starts it again */
       if (value !== was) out.setAttribute('data-bump', out.getAttribute('data-bump') === 'a' ? 'b' : 'a');
-      $$('[data-step]', root).forEach(function (b) { b.disabled = (+b.dataset.step < 0 && value <= min) || (+b.dataset.step > 0 && value >= max); });
+      $$('[data-step]', root).forEach(function (b) {
+        var off = (+b.dataset.step < 0 && value <= min) || (+b.dataset.step > 0 && value >= max);
+        /* the button that reaches the limit has focus: the group takes it, or disabling the button would drop focus to the page */
+        if (off) rescue(b, root);
+        b.disabled = off;
+      });
       fire(root, 'change', { value: value });
     }
     root.addEventListener('click', function (e) { var b = e.target.closest('[data-step]'); if (b) set(value + (+b.dataset.step)); });
@@ -196,15 +217,39 @@ if (typeof document !== 'undefined') (function () {
   /* Input OTP: data-tray="otp" on the row of one-character inputs. */
   UI.register('otp', function (root) {
     var cells = $$('input', root);
+    function done() {
+      var code = cells.map(function (c) { return c.value; }).join('');
+      if (code.length === cells.length) fire(root, 'complete', { value: code });
+    }
+    /* A code that comes in one go fills the cells from cell i on, and focus goes to the cell after its last character. */
+    function spread(i, text) {
+      text.split('').slice(0, cells.length - i).forEach(function (ch, k) { cells[i + k].value = ch; });
+      cells[Math.min(cells.length - 1, i + text.length)].focus();
+      done();
+    }
+    /* aria-invalid is not announced on a group, so the group's aria-invalid and aria-describedby are copied to every cell,
+       now and whenever they change: each cell is then read as invalid, with the error. */
+    function mirror() {
+      cells.forEach(function (c) {
+        ['aria-invalid', 'aria-describedby'].forEach(function (a) { var v = root.getAttribute(a); if (v === null) c.removeAttribute(a); else c.setAttribute(a, v); });
+      });
+    }
+    mirror();
+    if (window.MutationObserver) new MutationObserver(mirror).observe(root, { attributes: true, attributeFilter: ['aria-invalid', 'aria-describedby'] });
     cells.forEach(function (cell, i) {
       cell.setAttribute('inputmode', cell.getAttribute('inputmode') || 'numeric');
-      cell.setAttribute('maxlength', '1');
+      /* No maxlength: a phone that fills in the code from the message (autocomplete="one-time-code") puts the whole code
+         in the first cell, and maxlength would cut it to one character. The input handler keeps one per cell. */
+      cell.removeAttribute('maxlength');
       cell.setAttribute('aria-label', 'Character ' + (i + 1) + ' of ' + cells.length);
-      cell.addEventListener('input', function () {
-        cell.value = cell.value.slice(-1);
-        if (cell.value && cells[i + 1]) cells[i + 1].focus();
-        var code = cells.map(function (c) { return c.value; }).join('');
-        if (code.length === cells.length) fire(root, 'complete', { value: code });
+      cell.addEventListener('input', function (e) {
+        var text = cell.value.replace(/\s/g, '');
+        /* one key pressed in a cell that already held a character: the new one replaces it */
+        if (text.length > 1 && e.data && e.data.length === 1) text = e.data.replace(/\s/g, '');
+        if (text.length > 1) { spread(i, text); return; }
+        cell.value = text;
+        if (text && cells[i + 1]) cells[i + 1].focus();
+        done();
       });
       cell.addEventListener('keydown', function (e) {
         if (e.key === 'Backspace' && !cell.value && cells[i - 1]) { cells[i - 1].focus(); cells[i - 1].value = ''; e.preventDefault(); }
@@ -216,9 +261,7 @@ if (typeof document !== 'undefined') (function () {
         var text = (e.clipboardData.getData('text') || '').replace(/\s/g, '');
         if (!text) return;
         e.preventDefault();
-        text.split('').slice(0, cells.length - i).forEach(function (ch, k) { cells[i + k].value = ch; });
-        cells[Math.min(cells.length - 1, i + text.length)].focus();
-        cell.dispatchEvent(new Event('input'));
+        spread(i, text);
       });
     });
   });
@@ -230,6 +273,8 @@ if (typeof document !== 'undefined') (function () {
       var min = +(input.min || 0), max = +(input.max || 100);
       input.style.setProperty('--tray-v', ((+input.value - min) / (max - min) * 100) + '%');
       if (out) out.textContent = input.value + unit;
+      /* a screen reader reads the bare number of a range input: aria-valuetext gives it the unit as well, "30 km" */
+      if (unit) input.setAttribute('aria-valuetext', (input.value + unit).trim());
     }
     input.addEventListener('input', paint);
     paint();
@@ -246,17 +291,45 @@ if (typeof document !== 'undefined') (function () {
   /* Reveal: data-tray="reveal" on a button inside an input group shows and hides a password. */
   UI.register('reveal', function (btn) {
     var input = $('input', btn.closest('.tray-input-group'));
+    /* The name stays "Show password" and aria-pressed carries the state: a name that changed as well would be read as
+       "Hide password, pressed". */
+    if (!btn.hasAttribute('aria-label')) btn.setAttribute('aria-label', 'Show password');
     btn.setAttribute('aria-pressed', 'false');
     btn.addEventListener('click', function () {
       var show = input.type === 'password';
       input.type = show ? 'text' : 'password';
       btn.setAttribute('aria-pressed', String(show));
-      btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
       btn.innerHTML = icon(show ? 'eye-off' : 'eye');
     });
   });
 
-  /* Select: data-tray="select" on the anchor that holds a .tray-select-trigger and a .tray-pop of [role=option]. */
+  /* What names a control, as ids for aria-labelledby: its own aria-labelledby; else the control itself, when an
+     aria-label names it; else its <label>s, given ids for it. Empty when only its content names it. */
+  function labelIds(el) {
+    var ids = (el.getAttribute('aria-labelledby') || '').split(/\s+/).filter(Boolean);
+    if (ids.length) return ids;
+    if (el.getAttribute('aria-label')) { el.id = el.id || uid('tray-named'); return [el.id]; }
+    return [].slice.call(el.labels || []).map(function (l) { l.id = l.id || uid('tray-label'); return l.id; });
+  }
+  /* A list or a panel that opens from a control is named as the control is ("City"), so a screen reader says which one it
+     has entered. Call it before nameWithValue, so the name is the label alone. */
+  function nameLike(panel, control) {
+    if (panel.hasAttribute('aria-label') || panel.hasAttribute('aria-labelledby')) return;
+    var ids = labelIds(control);
+    if (ids.length) panel.setAttribute('aria-labelledby', ids.join(' '));
+  }
+  /* A trigger that shows its value is named by its label and by that value, "Jar size, 50 g": a label names a button in
+     place of its content, so the value would go unheard. With no label, the content names it, value and all. */
+  function nameWithValue(trigger, valueEl) {
+    var ids = labelIds(trigger);
+    if (!ids.length || !valueEl) return;
+    valueEl.id = valueEl.id || uid('tray-value');
+    if (ids.indexOf(valueEl.id) < 0) ids.push(valueEl.id);
+    trigger.setAttribute('aria-labelledby', ids.join(' '));
+  }
+
+  /* Select: data-tray="select" on the anchor that holds a .tray-select-trigger and a .tray-pop of [role=option]. A group of
+     options is a role="group" named by its .tray-list__label. */
   UI.register('select', function (root) {
     var trigger = $('.tray-select-trigger', root), panel = $('.tray-pop', root);
     var valueEl = $('.tray-select-trigger__value', trigger), hidden = $('input[type="hidden"]', root);
@@ -265,6 +338,8 @@ if (typeof document !== 'undefined') (function () {
     panel.id = panel.id || uid('tray-listbox');
     trigger.setAttribute('aria-haspopup', 'listbox');
     trigger.setAttribute('aria-controls', panel.id);
+    nameLike(panel, trigger);
+    nameWithValue(trigger, valueEl);
     options().forEach(function (o) { o.setAttribute('tabindex', '-1'); if (!o.hasAttribute('aria-selected')) o.setAttribute('aria-selected', 'false'); });
     var pop = popup(trigger, panel, { onOpen: function () { var cur = $('[aria-selected="true"]', panel) || options()[0]; if (cur) cur.focus(); } });
     function choose(opt) {
@@ -297,8 +372,15 @@ if (typeof document !== 'undefined') (function () {
     input.setAttribute('aria-autocomplete', 'list');
     input.setAttribute('aria-controls', panel.id);
     input.setAttribute('autocomplete', 'off');
+    nameLike(panel, input);
     options().forEach(function (o) { o.id = o.id || uid('tray-option'); o.setAttribute('tabindex', '-1'); });
-    var pop = popup(input, panel, { manual: true });
+    /* The no-match sentence sits in the list, where nothing reads it while focus is in the input: a status line beside
+       the list says it as it appears. */
+    var said = document.createElement('span');
+    said.className = 'tray-vh';
+    said.setAttribute('role', 'status');
+    root.appendChild(said);
+    var pop = popup(input, panel, { manual: true, onClose: function () { said.textContent = ''; } });
     function setActive(o) {
       if (active) active.removeAttribute('data-active');
       active = o || null;
@@ -308,7 +390,7 @@ if (typeof document !== 'undefined') (function () {
     function filter() {
       var q = input.value.trim().toLowerCase(), shown = 0;
       options().forEach(function (o) { var hit = !q || o.textContent.toLowerCase().indexOf(q) >= 0; o.hidden = !hit; if (hit) shown += 1; });
-      if (empty) empty.hidden = shown > 0;
+      if (empty) { empty.hidden = shown > 0; said.textContent = shown ? '' : empty.textContent.trim(); }
       setActive(visible()[0]);
     }
     function choose(o) {
@@ -333,7 +415,8 @@ if (typeof document !== 'undefined') (function () {
   });
 
   /* Calendar: TrayUI.calendar(el, options) or data-tray="calendar" with data-mode, data-months, data-value,
-     data-min, data-max, data-month, data-today, data-week-start, data-locale. Dates are YYYY-MM-DD; a range is start/end. */
+     data-min, data-max, data-month, data-today, data-week-start, data-locale, data-prev-label and data-next-label (the
+     names of the month buttons, in the page's language). Dates are YYYY-MM-DD; a range is start/end. */
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   function iso(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
   function parseDate(s) { var p = String(s).split('-'); return new Date(+p[0], +p[1] - 1, +(p[2] || 1)); }
@@ -348,6 +431,7 @@ if (typeof document !== 'undefined') (function () {
     var d = el.dataset;
     function opt(key, attr, fallback) { return opts[key] != null ? opts[key] : (d[attr || key] != null ? d[attr || key] : fallback); }
     var mode = opt('mode', null, 'single'), months = +opt('months', null, 1), weekStart = +opt('weekStart', null, 1), locale = opt('locale', null, 'en-GB');
+    var prevLabel = opt('prevLabel', null, 'Previous month'), nextLabel = opt('nextLabel', null, 'Next month');
     var today = parseDate(opt('today', null, iso(new Date())));
     var min = opt('min') ? parseDate(opt('min')) : null, max = opt('max') ? parseDate(opt('max')) : null;
     var start = null, end = null;
@@ -368,9 +452,9 @@ if (typeof document !== 'undefined') (function () {
       for (var m = 0; m < months; m += 1) {
         var first = new Date(view.getFullYear(), view.getMonth() + m, 1);
         html += '<div class="tray-cal__month"><div class="tray-cal__head">' +
-          '<button type="button" class="tray-cal__nav" data-nav="-1" aria-label="Previous month"' + (m > 0 ? ' data-ghost' : '') + '>' + icon('chevron-left', 'tray-icon--flip') + '</button>' +
+          '<button type="button" class="tray-cal__nav" data-nav="-1" aria-label="' + esc(prevLabel) + '"' + (m > 0 ? ' data-ghost' : '') + '>' + icon('chevron-left', 'tray-icon--flip') + '</button>' +
           '<div class="tray-cal__title">' + esc(monthFmt.format(first)) + '</div>' +
-          '<button type="button" class="tray-cal__nav" data-nav="1" aria-label="Next month"' + (m < months - 1 ? ' data-ghost' : '') + '>' + icon('chevron-right', 'tray-icon--flip') + '</button></div>' +
+          '<button type="button" class="tray-cal__nav" data-nav="1" aria-label="' + esc(nextLabel) + '"' + (m < months - 1 ? ' data-ghost' : '') + '>' + icon('chevron-right', 'tray-icon--flip') + '</button></div>' +
           '<div class="tray-cal__grid">';
         for (var w = 0; w < 7; w += 1) html += '<span class="tray-cal__dow" aria-hidden="true">' + esc(dowFmt.format(new Date(2024, 0, 1 + ((weekStart + w + 6) % 7))).slice(0, 2)) + '</span>';
         var offset = (first.getDay() - weekStart + 7) % 7;
@@ -415,7 +499,9 @@ if (typeof document !== 'undefined') (function () {
     });
     el.addEventListener('keydown', function (e) {
       var day = e.target.closest && e.target.closest('.tray-cal__day');
-      var step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key];
+      /* in a right-to-left page the week runs from right to left, so the left arrow goes on to the next day */
+      var back = getComputedStyle(el).direction === 'rtl' ? 1 : -1;
+      var step = { ArrowLeft: back, ArrowRight: -back, ArrowUp: -7, ArrowDown: 7 }[e.key];
       if (!day || !step) return;
       e.preventDefault();
       var from = parseDate(day.dataset.date), to = new Date(from.getFullYear(), from.getMonth(), from.getDate() + step);
@@ -448,8 +534,19 @@ if (typeof document !== 'undefined') (function () {
     var placeholder = valueEl.textContent, locale = calEl.dataset.locale || 'en-GB';
     UI.init(panel);
     var cal = calEl.__calendar;
+    /* the panel is the dialog that aria-haspopup promises, named as the field is */
+    panel.setAttribute('role', 'dialog');
+    panel.id = panel.id || uid('tray-dialog');
     trigger.setAttribute('aria-haspopup', 'dialog');
-    var pop = popup(trigger, panel, { onOpen: function () { var t = $('.tray-cal__day[tabindex="0"]', calEl); if (t) t.focus(); } });
+    trigger.setAttribute('aria-controls', panel.id);
+    nameLike(panel, trigger);
+    /* a trigger with no label is named by its own words, and its dialog by the trigger */
+    if (!panel.hasAttribute('aria-label') && !panel.hasAttribute('aria-labelledby')) { trigger.id = trigger.id || uid('tray-named'); panel.setAttribute('aria-labelledby', trigger.id); }
+    nameWithValue(trigger, valueEl);
+    function toDay() { var t = $('.tray-cal__day[tabindex="0"]', calEl); if (t) t.focus(); }
+    var pop = popup(trigger, panel, { onOpen: toDay });
+    /* the down arrow opens the panel too, as on a Select, or goes into it when it is open */
+    trigger.addEventListener('keydown', function (e) { if (e.key === 'ArrowDown') { e.preventDefault(); if (pop.isOpen()) toDay(); else pop.open(); } });
     function show(v) {
       var complete = v && (v.indexOf('/') < 0 || v.split('/')[1]);
       valueEl.textContent = complete ? UI.formatDate(v, locale) : (v ? UI.formatDate(v.split('/')[0], locale) + ' – …' : placeholder);
@@ -503,7 +600,9 @@ if (typeof document !== 'undefined') (function () {
       handle.addEventListener('pointerup', up);
     });
     handle.addEventListener('keydown', function (e) {
-      var back = vertical ? 'ArrowUp' : 'ArrowLeft', forth = vertical ? 'ArrowDown' : 'ArrowRight';
+      /* right to left the first pane is on the right: the arrows follow the handle, not the numbers */
+      var rtl = !vertical && getComputedStyle(root).direction === 'rtl';
+      var back = vertical ? 'ArrowUp' : rtl ? 'ArrowRight' : 'ArrowLeft', forth = vertical ? 'ArrowDown' : rtl ? 'ArrowLeft' : 'ArrowRight';
       if (e.key === back) { e.preventDefault(); set(size - 2); }
       else if (e.key === forth) { e.preventDefault(); set(size + 2); }
       else if (e.key === 'Home') { e.preventDefault(); set(min); }
@@ -525,6 +624,9 @@ if (typeof document !== 'undefined') (function () {
     function paint() {
       var i = index(), n = slides().length, end = Math.abs(track.scrollLeft) + track.clientWidth >= track.scrollWidth - 2;
       if (count) count.textContent = (i + 1) + ' / ' + n;
+      /* a button that turns off at an end while it has focus hands it to the other one, or to the track */
+      if (prev && i === 0) rescue(prev, next && !end ? next : track);
+      if (next && end) rescue(next, prev && i > 0 ? prev : track);
       if (prev) prev.disabled = i === 0;
       if (next) next.disabled = end;
     }
@@ -538,8 +640,9 @@ if (typeof document !== 'undefined') (function () {
     track.addEventListener('scroll', paint, { passive: true });
     track.setAttribute('tabindex', '0');
     track.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+      /* right to left the next slide is on the left */
+      var rtl = getComputedStyle(track).direction === 'rtl', step = { ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1 }[e.key];
+      if (step) { e.preventDefault(); go(step); }
     });
     watch(track, paint);
   });
@@ -558,10 +661,11 @@ if (typeof document !== 'undefined') (function () {
     function make() {
       if (made) return;
       made = true;
+      /* the track is a list, so each picture stays a list item; the slide inside it is the group, named "2 of 6" */
       track.innerHTML = links.map(function (a, i) {
         var img = $('img', a), cap = a.dataset.caption || '';
-        return '<li class="tray-lightbox__slide" role="group" aria-roledescription="slide" aria-label="' + (i + 1) + ' ' + esc(of) + ' ' + links.length + '">' +
-          '<figure><img src="' + esc(a.href) + '" alt="' + esc(img ? img.alt : '') + '" decoding="async"' + (i ? ' loading="lazy"' : '') + '>' +
+        return '<li class="tray-lightbox__slide">' +
+          '<figure role="group" aria-roledescription="slide" aria-label="' + (i + 1) + ' ' + esc(of) + ' ' + links.length + '"><img src="' + esc(a.href) + '" alt="' + esc(img ? img.alt : '') + '" decoding="async"' + (i ? ' loading="lazy"' : '') + '>' +
           (cap ? '<figcaption>' + esc(cap) + '</figcaption>' : '') + '</figure></li>';
       }).join('');
       track.setAttribute('tabindex', '0');
@@ -634,6 +738,7 @@ if (typeof document !== 'undefined') (function () {
     if (!v) return;
     var plays = $$('[data-play]', root), seek = $('[data-seek]', root), now = $('[data-now]', root), total = $('[data-total]', root);
     var mute = $('[data-mute]', root), cc = $('[data-captions]', root), full = $('[data-full]', root), of = root.dataset.of || 'of', dragging = false;
+    var big = $('.tray-player__big', root), barPlay = plays.filter(function (b) { return b !== big; })[0];
     function time(s) { s = Math.max(0, Math.floor(s || 0)); var h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, r = s % 60; return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(r).padStart(2, '0'); }
     function label(b, on, offName, onName, offIcon, onIcon) {
       if (!b) return;
@@ -671,7 +776,8 @@ if (typeof document !== 'undefined') (function () {
     root.setAttribute('data-ready', '');
     plays.forEach(function (b) { b.addEventListener('click', toggle); });
     v.addEventListener('click', toggle);
-    v.addEventListener('play', function () { root.setAttribute('data-started', ''); state(); });
+    /* the large button goes once the film starts: focus on it moves to the bar's play button first */
+    v.addEventListener('play', function () { rescue(big, barPlay || seek); root.setAttribute('data-started', ''); state(); });
     v.addEventListener('ended', function () { root.removeAttribute('data-started'); state(); });
     ['pause', 'playing', 'volumechange'].forEach(function (n) { v.addEventListener(n, state); });
     ['timeupdate', 'loadedmetadata', 'durationchange', 'seeked'].forEach(function (n) { v.addEventListener(n, clock); });
@@ -683,6 +789,16 @@ if (typeof document !== 'undefined') (function () {
         clock();
       });
       seek.addEventListener('change', function () { dragging = false; clock(); });
+      /* The range's step is fine for dragging, too fine for a key: an arrow moves five seconds (mirrored right to left),
+         Page Up and Page Down a tenth of the film. Home and End are the range's own. */
+      seek.addEventListener('keydown', function (e) {
+        var d = isFinite(v.duration) ? v.duration : 0, rtl = getComputedStyle(seek).direction === 'rtl';
+        var by = { ArrowRight: rtl ? -5 : 5, ArrowLeft: rtl ? 5 : -5, ArrowUp: 5, ArrowDown: -5, PageUp: d / 10, PageDown: -d / 10 }[e.key];
+        if (!by || !d) return;
+        e.preventDefault();
+        v.currentTime = clamp(v.currentTime + by, 0, d);
+        clock();
+      });
     }
     if (mute) mute.addEventListener('click', function () { v.muted = !v.muted; });
     /* captions: one toggle with a constant name, pressed while they show */
@@ -763,53 +879,120 @@ if (typeof document !== 'undefined') (function () {
     watch(strip, clip);
   });
 
+  /* The items of one menu panel, not those of a submenu inside it. */
+  var OWN_ITEMS = '[role^="menuitem"]:not(.tray-submenu > .tray-pop *)';
+
+  /* A submenu: in a .tray-submenu, an item with aria-haspopup="menu" and the .tray-pop beside it, which becomes a menu of
+     its own. The item opens it with the arrow towards it (ArrowRight, or ArrowLeft right to left), Enter or Space, and
+     reports aria-expanded; the pointer resting on the item opens it too. Up and down stay inside it; the arrow back or
+     Escape closes it and puts focus back on its item. It is shown by data-open, so focus that only passes by does not
+     open it. */
+  function submenu(box) {
+    var item = $(':scope > [aria-haspopup]', box), sub = $(':scope > .tray-pop', box), timer = null;
+    if (!item || !sub) return;
+    item.id = item.id || uid('tray-menuitem');
+    sub.setAttribute('role', 'menu');
+    sub.setAttribute('aria-labelledby', item.id);
+    $$('[role^="menuitem"]', sub).forEach(function (i) { i.setAttribute('tabindex', '-1'); });
+    function arrows() { var rtl = getComputedStyle(box).direction === 'rtl'; return { into: rtl ? 'ArrowLeft' : 'ArrowRight', out: rtl ? 'ArrowRight' : 'ArrowLeft' }; }
+    function set(open, focus) {
+      clearTimeout(timer);
+      if (open && item.getAttribute('aria-disabled') === 'true') return;
+      if (!open) rescue(sub, item);
+      sub.toggleAttribute('data-open', open);
+      item.setAttribute('aria-expanded', String(open));
+      var first = $('[role^="menuitem"]', sub);
+      if (open && focus && first) first.focus();
+    }
+    item.setAttribute('aria-expanded', 'false');
+    set(sub.hasAttribute('data-open'));
+    rove(sub, '[role^="menuitem"]');
+    item.addEventListener('click', function () { set(true, true); });
+    item.addEventListener('keydown', function (e) { if (e.key === arrows().into) { e.preventDefault(); e.stopPropagation(); set(true, true); } });
+    sub.addEventListener('keydown', function (e) {
+      if (e.key === arrows().out || e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); set(false); }
+      /* the menu around it would take these for its own items */
+      else if (/^(ArrowUp|ArrowDown|Home|End)$/.test(e.key)) e.stopPropagation();
+    });
+    box.addEventListener('pointerenter', function () { set(true); });
+    /* the pointer may cross the gap to the panel: it closes a moment after the pointer has left both, unless focus is in it */
+    box.addEventListener('pointerleave', function () { clearTimeout(timer); timer = setTimeout(function () { if (!sub.contains(document.activeElement)) set(false); }, 300); });
+    box.addEventListener('focusout', function (e) { if (!box.contains(e.relatedTarget)) set(false); });
+  }
+
   /* Menu: data-tray="menu" on the anchor that holds a trigger button and a .tray-pop of menu items.
-     Items are role=menuitem, menuitemcheckbox or menuitemradio (with data-group). Fires tray:select with detail.value. */
+     Items are role=menuitem, menuitemcheckbox or menuitemradio (with data-group). An action fires tray:select with
+     detail.value and closes the menu; a check or radio item fires tray:change with detail.value and detail.checked, and
+     the menu stays open. */
   UI.register('menu', function (root) {
     var trigger = root.querySelector(':scope > button, :scope > a'), panel = root.querySelector(':scope > .tray-pop');
     if (!trigger || !panel) return;
-    function items() { return $$('[role^="menuitem"]', panel).filter(function (i) { return i.offsetParent !== null; }); }
+    function items() { return $$(OWN_ITEMS, panel).filter(function (i) { return i.offsetParent !== null; }); }
     panel.setAttribute('role', 'menu');
     trigger.setAttribute('aria-haspopup', 'menu');
     $$('[role^="menuitem"]', panel).forEach(function (i) { i.setAttribute('tabindex', '-1'); });
+    /* The head of a user menu (who is signed in) is not an item, so a screen reader inside the menu never reaches it: the
+       name and the line under it name the menu instead, and are read as it opens. */
+    var head = $(':scope > .tray-pop__head', panel);
+    if (head && !panel.hasAttribute('aria-label') && !panel.hasAttribute('aria-labelledby')) {
+      var who = $('.tray-person__text', head) || head;
+      who.id = who.id || uid('tray-menu-name');
+      panel.setAttribute('aria-labelledby', who.id);
+    }
     var pop = popup(trigger, panel, { onOpen: function () { var first = items()[0]; if (first) first.focus(); } });
-    rove(panel, '[role^="menuitem"]');
+    rove(panel, OWN_ITEMS);
+    $$('.tray-submenu', panel).forEach(submenu);
     panel.addEventListener('click', function (e) {
       var it = e.target.closest('[role^="menuitem"]');
       if (!it || it.getAttribute('aria-disabled') === 'true' || it.hasAttribute('aria-haspopup')) return;
-      var role = it.getAttribute('role');
-      if (role === 'menuitemcheckbox') { it.setAttribute('aria-checked', String(it.getAttribute('aria-checked') !== 'true')); return; }
-      if (role === 'menuitemradio') { $$('[role="menuitemradio"][data-group="' + it.dataset.group + '"]', panel).forEach(function (x) { x.setAttribute('aria-checked', String(x === it)); }); return; }
-      fire(root, 'select', { value: it.dataset.value || it.textContent.trim() });
+      var role = it.getAttribute('role'), value = it.dataset.value || it.textContent.trim();
+      if (role === 'menuitemcheckbox') {
+        var on = it.getAttribute('aria-checked') !== 'true';
+        it.setAttribute('aria-checked', String(on));
+        fire(root, 'change', { value: value, checked: on });
+        return;
+      }
+      if (role === 'menuitemradio') {
+        $$('[role="menuitemradio"][data-group="' + it.dataset.group + '"]', panel).forEach(function (x) { x.setAttribute('aria-checked', String(x === it)); });
+        fire(root, 'change', { value: value, checked: true });
+        return;
+      }
+      fire(root, 'select', { value: value });
       pop.close(true);
-    });
-    panel.addEventListener('keydown', function (e) {
-      var it = document.activeElement;
-      if (e.key === 'ArrowRight' && it.hasAttribute('aria-haspopup')) { var sub = $('.tray-option', it.parentNode.querySelector('.tray-pop')); if (sub) { e.preventDefault(); e.stopPropagation(); sub.focus(); } }
-      if (e.key === 'ArrowLeft' && it.closest('.tray-submenu')) { var back = it.closest('.tray-submenu').querySelector('[aria-haspopup]'); if (back && back !== it) { e.preventDefault(); e.stopPropagation(); back.focus(); } }
     });
     trigger.addEventListener('keydown', function (e) { if (e.key === 'ArrowDown') { e.preventDefault(); pop.open(); } });
     root.__menu = pop;
   });
 
-  /* Menubar: data-tray="menubar" on the strip of menus. With one menu open, pointing at another opens it; left and right move between menus. */
+  /* Menubar: data-tray="menubar" on the strip of menus. Its triggers become the bar's menu items and one stop for Tab:
+     the arrow keys move along the bar (mirrored right to left) and Home and End go to its ends. With one menu open,
+     pointing at another opens it, and the arrows open the next one. */
   UI.register('menubar', function (bar) {
     function menus() { return $$(':scope > [data-tray~="menu"]', bar); }
+    function triggerOf(m) { return m.querySelector(':scope > button, :scope > a'); }
     function openOnly(m) { menus().forEach(function (x) { if (x.__menu) { if (x === m) x.__menu.open(); else x.__menu.close(); } }); }
+    function stop(t) { menus().forEach(function (m) { var x = triggerOf(m); if (x) x.setAttribute('tabindex', x === t ? '0' : '-1'); }); }
     bar.setAttribute('role', 'menubar');
+    menus().forEach(function (m) { var t = triggerOf(m); if (t) t.setAttribute('role', 'menuitem'); });
+    if (menus()[0]) stop(triggerOf(menus()[0]));
+    /* the trigger last used keeps the bar's Tab stop */
+    bar.addEventListener('focusin', function (e) { var m = e.target.closest('[data-tray~="menu"]'); if (m && m.parentNode === bar && triggerOf(m) === e.target) stop(e.target); });
     bar.addEventListener('pointerover', function (e) {
       var m = e.target.closest('[data-tray~="menu"]');
       if (m && m.parentNode === bar && menus().some(function (x) { return x.__menu && x.__menu.isOpen(); }) && !m.__menu.isOpen()) openOnly(m);
     });
     bar.addEventListener('keydown', function (e) {
-      var step = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
-      if (!step) return;
-      var list = menus(), i = list.indexOf(e.target.closest('[data-tray~="menu"]'));
+      var rtl = getComputedStyle(bar).direction === 'rtl', step = { ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1 }[e.key];
+      var list = menus(), i = list.indexOf(e.target.closest('[data-tray~="menu"]')), to = -1;
       if (i < 0) return;
-      var next = list[(i + step + list.length) % list.length], wasOpen = list[i].__menu.isOpen();
+      if (step) to = (i + step + list.length) % list.length;
+      else if (e.target === triggerOf(list[i]) && e.key === 'Home') to = 0;
+      else if (e.target === triggerOf(list[i]) && e.key === 'End') to = list.length - 1;
+      if (to < 0) return;
+      var wasOpen = list[i].__menu.isOpen();
       e.preventDefault();
-      next.querySelector(':scope > button').focus();
-      if (wasOpen) openOnly(next);
+      triggerOf(list[to]).focus();
+      if (wasOpen) openOnly(list[to]);
     });
   });
 
@@ -817,14 +1000,17 @@ if (typeof document !== 'undefined') (function () {
   UI.register('contextmenu', function (region) {
     var panel = $('.tray-pop', region);
     panel.setAttribute('role', 'menu');
+    /* a name on a plain div is not read without a role: the region is a named group */
+    if (!region.hasAttribute('role') && /^(DIV|SPAN)$/.test(region.tagName) && (region.hasAttribute('aria-label') || region.hasAttribute('aria-labelledby'))) region.setAttribute('role', 'group');
     $$('[role^="menuitem"]', panel).forEach(function (i) { i.setAttribute('tabindex', '-1'); });
-    function close() { hide(panel); }
+    /* focus in the menu goes back to the region before the menu goes, not to the top of the page */
+    function close() { rescue(panel, region); hide(panel); }
     function openAt(x, y) {
       var box = region.getBoundingClientRect();
       show(panel);
       panel.style.insetInlineStart = clamp(x - box.left, 8, Math.max(8, box.width - panel.offsetWidth - 8)) + 'px';
       panel.style.insetBlockStart = clamp(y - box.top, 8, Math.max(8, box.height - panel.offsetHeight - 8)) + 'px';
-      var first = $('[role^="menuitem"]', panel);
+      var first = $(OWN_ITEMS, panel);
       if (first) first.focus();
     }
     if (!panel.hasAttribute('data-open')) close();
@@ -833,16 +1019,28 @@ if (typeof document !== 'undefined') (function () {
       if (e.key === 'Escape') { close(); region.focus(); }
       if (e.key === 'ContextMenu' || (e.shiftKey && e.key === 'F10')) { e.preventDefault(); var b = region.getBoundingClientRect(); openAt(b.left + 24, b.top + 24); }
     });
-    rove(panel, '[role^="menuitem"]');
-    panel.addEventListener('click', function (e) { var it = e.target.closest('[role^="menuitem"]'); if (it && it.getAttribute('aria-disabled') !== 'true') { fire(region, 'select', { value: it.dataset.value || it.textContent.trim() }); close(); } });
+    rove(panel, OWN_ITEMS);
+    $$('.tray-submenu', panel).forEach(submenu);
+    panel.addEventListener('click', function (e) { var it = e.target.closest('[role^="menuitem"]'); if (it && it.getAttribute('aria-disabled') !== 'true' && !it.hasAttribute('aria-haspopup')) { fire(region, 'select', { value: it.dataset.value || it.textContent.trim() }); close(); } });
+    /* Tab out of the menu closes it, as it does a dropdown menu */
+    panel.addEventListener('focusout', function (e) { var to = e.relatedTarget; if (!panel.hidden && to && !panel.contains(to)) hide(panel); });
     document.addEventListener('pointerdown', function (e) { if (!panel.hidden && !panel.contains(e.target) && e.button !== 2) close(); });
   });
 
-  /* Sidebar: data-tray="sidebar-toggle" on a button whose aria-controls names the sidebar; it collapses it to icons. */
+  /* Sidebar: data-tray="sidebar-toggle" on a button whose aria-controls names the sidebar; it collapses it to icons. The
+     button's name says what a press will do: data-label-collapse and data-label-expand (by default its aria-label and
+     "Expand the sidebar"), while aria-expanded says how the sidebar is. */
   UI.register('sidebar-toggle', function (btn) {
     var side = document.getElementById(btn.getAttribute('aria-controls'));
     if (!side) return;
-    function paint() { btn.setAttribute('aria-expanded', String(!side.hasAttribute('data-collapsed'))); }
+    var named = btn.getAttribute('aria-label'), rail = side.hasAttribute('data-collapsed');
+    btn.dataset.labelCollapse = btn.dataset.labelCollapse || (!rail && named) || 'Collapse the sidebar';
+    btn.dataset.labelExpand = btn.dataset.labelExpand || (rail && named) || 'Expand the sidebar';
+    function paint() {
+      var open = !side.hasAttribute('data-collapsed');
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? btn.dataset.labelCollapse : btn.dataset.labelExpand);
+    }
     btn.addEventListener('click', function () { side.toggleAttribute('data-collapsed'); paint(); fire(side, 'change', { collapsed: side.hasAttribute('data-collapsed') }); });
     paint();
   });
@@ -898,6 +1096,12 @@ if (typeof document !== 'undefined') (function () {
     input.setAttribute('aria-controls', list.id);
     input.setAttribute('autocomplete', 'off');
     options().forEach(function (o) { o.id = o.id || uid('tray-option'); o.setAttribute('tabindex', '-1'); });
+    /* a group of options is a group of the listbox, named by its label, so the name is read on the way into it */
+    $$('[data-group]', list).forEach(function (g) {
+      var label = $(':scope > .tray-list__label', g);
+      if (!g.hasAttribute('role')) g.setAttribute('role', 'group');
+      if (label && !g.hasAttribute('aria-labelledby') && !g.hasAttribute('aria-label')) { label.id = label.id || uid('tray-group'); g.setAttribute('aria-labelledby', label.id); }
+    });
     function setActive(o) {
       if (active) active.removeAttribute('data-active');
       active = o || null;
@@ -969,7 +1173,24 @@ if (typeof document !== 'undefined') (function () {
     if (!trigger || !panel) return;
     panel.id = panel.id || uid('tray-popover');
     trigger.setAttribute('aria-controls', panel.id);
-    var pop = popup(trigger, panel, { onOpen: function () { var f = panel.querySelector('input, select, textarea, button, a[href], [tabindex="0"]'); if (f) f.focus(); } });
+    /* Focus moves to the first control inside. A panel of text alone has none, so focus would stay on the trigger and
+       nothing would be read: it becomes a dialog named by its title (or by its trigger), described by its text, and
+       takes focus itself. */
+    function opened() {
+      var f = panel.querySelector('input, select, textarea, button, a[href], [tabindex="0"]');
+      if (f) { f.focus(); return; }
+      if (!panel.hasAttribute('role')) panel.setAttribute('role', 'dialog');
+      if (!panel.hasAttribute('aria-label') && !panel.hasAttribute('aria-labelledby')) {
+        var title = $('.tray-pop__title', panel) || trigger;
+        title.id = title.id || uid('tray-popover-title');
+        panel.setAttribute('aria-labelledby', title.id);
+      }
+      var text = $$('.tray-pop__text', panel);
+      if (text.length && !panel.hasAttribute('aria-describedby')) panel.setAttribute('aria-describedby', text.map(function (p) { p.id = p.id || uid('tray-popover-text'); return p.id; }).join(' '));
+      panel.setAttribute('tabindex', '-1');
+      panel.focus();
+    }
+    var pop = popup(trigger, panel, { onOpen: opened });
     panel.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) pop.close(true); });
     root.__popover = pop;
   });
@@ -987,29 +1208,58 @@ if (typeof document !== 'undefined') (function () {
     root.addEventListener('keydown', function (e) { if (e.key === 'Escape') { clearTimeout(timer); hide(panel); } });
   });
 
-  /* Tooltip: data-tray="tooltip" on an anchor around one control, with data-tip="text" (and optional data-side="bottom", data-keys="Ctrl K"). */
+  /* Tooltip: data-tray="tooltip" on an anchor around one control, with data-tip="text" (and optional data-side="bottom",
+     data-keys="Ctrl K"). The bubble follows data-tip, data-keys and data-side when they change ("Copy the link", then
+     "Copied"). */
   UI.register('tooltip', function (root) {
-    var target = root.querySelector('button, a, input, [tabindex]') || root, tip = document.createElement('span');
-    tip.className = 'tray-tooltip' + (root.dataset.side === 'bottom' ? ' tray-tooltip--bottom' : '');
+    var target = root.querySelector('button, a, input, [tabindex]') || root, tip = document.createElement('span'), timer = null;
     tip.setAttribute('role', 'tooltip');
     tip.id = uid('tray-tooltip');
-    tip.textContent = root.dataset.tip || '';
-    (root.dataset.keys || '').split(' ').filter(Boolean).forEach(function (k) { var kbd = document.createElement('kbd'); kbd.className = 'tray-kbd'; kbd.textContent = k; tip.appendChild(kbd); });
+    function paint() {
+      var words = root.dataset.tip || '', name = (target.getAttribute('aria-label') || target.textContent || '').trim();
+      tip.className = 'tray-tooltip' + (root.dataset.side === 'bottom' ? ' tray-tooltip--bottom' : '');
+      tip.textContent = words;
+      /* Words that only say the control's name again are for the eye alone: CSS draws them with no text for a screen
+         reader, so the name is not read a second time as the description, which keeps the keys. (aria-hidden would not
+         do: a description is read from a hidden bubble whole.) */
+      if (words.trim().toLowerCase() === name.toLowerCase()) {
+        var said = document.createElement('span');
+        said.className = 'tray-tooltip__said';
+        said.setAttribute('data-said', words);
+        tip.replaceChildren(said);
+      }
+      (root.dataset.keys || '').split(' ').filter(Boolean).forEach(function (k) { var kbd = document.createElement('kbd'); kbd.className = 'tray-kbd'; kbd.textContent = k; tip.appendChild(kbd); });
+    }
+    paint();
     tip.hidden = !root.hasAttribute('data-open');
     root.appendChild(tip);
     target.setAttribute('aria-describedby', tip.id);
-    function set(open) { if (!root.hasAttribute('data-open')) { if (open) show(tip); else hide(tip); } }
+    if (window.MutationObserver) {
+      new MutationObserver(paint).observe(root, { attributes: true, attributeFilter: ['data-tip', 'data-keys', 'data-side'] });
+      if (target !== root) new MutationObserver(paint).observe(target, { attributes: true, attributeFilter: ['aria-label'] });
+    }
+    function set(open, wait) {
+      clearTimeout(timer);
+      if (root.hasAttribute('data-open')) return;
+      if (open) show(tip);
+      else if (wait) timer = setTimeout(function () { hide(tip); }, 150);
+      else hide(tip);
+    }
+    /* The pointer can move onto the bubble and rest there (WCAG 1.4.13): it goes a moment after the pointer has left the
+       control and the bubble both, and stays while the control has focus. */
     root.addEventListener('pointerenter', function () { set(true); });
-    root.addEventListener('pointerleave', function () { set(false); });
+    root.addEventListener('pointerleave', function () { if (!root.contains(document.activeElement)) set(false, true); });
     root.addEventListener('focusin', function () { set(true); });
-    root.addEventListener('focusout', function () { set(false); });
+    root.addEventListener('focusout', function () { if (!root.matches(':hover')) set(false); });
     root.addEventListener('keydown', function (e) { if (e.key === 'Escape') set(false); });
   });
 
-  /* Toast: TrayUI.toast({ title, text, tone: 'success' | 'danger', action: { label, onClick }, duration }) */
+  /* Toast: TrayUI.toast({ title, text, tone: 'success' | 'danger', action: { label, onClick }, duration })
+     The region is the live one: a toast added to it is read out politely, and a danger toast is an alert, read at once.
+     A toast with an action stays until it is dismissed, so there is time to reach its button. */
   UI.toast = function (opts) {
     opts = opts || {};
-    var region = document.querySelector('.tray-toasts');
+    var region = document.querySelector('.tray-toasts'), fresh = false;
     if (!region) {
       region = document.createElement('div');
       region.className = 'tray-toasts';
@@ -1017,19 +1267,27 @@ if (typeof document !== 'undefined') (function () {
       region.setAttribute('aria-label', 'Notifications');
       document.body.appendChild(region);
     }
-    var t = document.createElement('div'), tone = opts.tone || '';
+    if (region.getAttribute('aria-live') !== 'polite') { region.setAttribute('aria-live', 'polite'); fresh = true; }
+    var t = document.createElement('div'), tone = opts.tone || '', came = null;
     t.className = 'tray-toast' + (tone ? ' tray-toast--' + tone : '');
-    t.setAttribute('role', tone === 'danger' ? 'alert' : 'status');
+    if (tone === 'danger') t.setAttribute('role', 'alert');
     t.setAttribute('data-enter', '');
     t.innerHTML = (tone ? icon(tone === 'danger' ? 'circle-alert' : 'circle-check') : '') +
       '<div class="tray-toast__body"><p class="tray-toast__title">' + esc(opts.title || '') + '</p>' + (opts.text ? '<p class="tray-toast__text">' + esc(opts.text) + '</p>' : '') + '</div>' +
       '<div class="tray-toast__actions">' + (opts.action ? '<button class="tray-btn tray-btn--ghost tray-btn--xs" type="button" data-action>' + esc(opts.action.label) + '</button>' : '') +
       '<button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-dismiss aria-label="Dismiss">' + icon('x') + '</button></div>';
-    var timer = null, life = opts.duration != null ? opts.duration : (tone === 'danger' ? 0 : 5000);
+    var timer = null, life = opts.duration != null ? opts.duration : (tone === 'danger' || opts.action ? 0 : 5000);
+    /* focus in a toast that goes moves to the next toast, or back to where it came from */
+    function after() {
+      var rest = $$('.tray-toast:not([data-leaving])', region).filter(function (x) { return x !== t; });
+      var next = rest.filter(function (x) { return t.compareDocumentPosition(x) & Node.DOCUMENT_POSITION_FOLLOWING; })[0] || rest[rest.length - 1];
+      return next ? $('button', next) : came;
+    }
     /* a toast leaves the way it came, then is taken out */
     function dismiss() {
       clearTimeout(timer);
       if (!t.parentNode || t.hasAttribute('data-leaving')) return;
+      rescue(t, after);
       if (calm()) { t.remove(); return; }
       t.removeAttribute('data-enter');
       t.setAttribute('data-leaving', '');
@@ -1042,9 +1300,19 @@ if (typeof document !== 'undefined') (function () {
     });
     t.addEventListener('pointerenter', function () { clearTimeout(timer); });
     t.addEventListener('pointerleave', arm);
-    t.addEventListener('focusin', function () { clearTimeout(timer); });
+    /* where focus came from, outside the region; focus passed on from another toast keeps that toast's */
+    t.addEventListener('focusin', function (e) {
+      clearTimeout(timer);
+      var from = e.relatedTarget, toast = from && from.closest && from.closest('.tray-toast');
+      if (from && !region.contains(from)) came = from;
+      else if (toast && toast !== t && toast.__came) came = toast.__came;
+      t.__came = came;
+    });
     t.addEventListener('focusout', arm);
     region.appendChild(t);
+    /* A screen reader hears a live region only once it knows it: in a region that has only just become live, the words
+       of the first toast are put in again a moment later, so that they are read. An alert is read as it comes. */
+    if (fresh && tone !== 'danger') setTimeout(function () { var body = $('.tray-toast__body', t); if (body && t.isConnected) t.insertBefore(body, body.nextSibling); }, 150);
     arm();
     return { dismiss: dismiss, element: t };
   };
@@ -1072,6 +1340,8 @@ if (typeof document !== 'undefined') (function () {
     el.classList.add('tray-chart');
     el.classList.toggle('tray-chart--single', series.length === 1 && type !== 'donut' && !(type === 'radial' && series[0].values.length > 1));
     var summary = cfg.summary || (type + ' chart. ' + series.map(function (s) { return s.name + ': ' + labels.map(function (l, i) { return l + ' ' + val(s.values[i]); }).join(', '); }).join('. '));
+    /* What the arrow keys reach is said through this region. It sits in the figure, beside the drawing: the children of a
+       role="img" are presentational, so a region inside it would never be heard. */
     var live = make('span', 'tray-vh');
     live.setAttribute('aria-live', 'polite');
 
@@ -1139,7 +1409,7 @@ if (typeof document !== 'undefined') (function () {
       if (cross) { cross.hidden = true; plot.appendChild(cross); }
       tip.hidden = true;
       plot.appendChild(tip);
-      plot.appendChild(live);
+      el.appendChild(live);
       function hide() {
         active = null; tip.hidden = true;
         if (cross) cross.hidden = true;
@@ -1187,6 +1457,8 @@ if (typeof document !== 'undefined') (function () {
     function horizontal() {
       var vals = series[0].values, max = cfg.max || Math.max.apply(null, vals);
       var rows = make('div', 'tray-chart__rows');
+      /* Every chart is a stop for Tab, so its summary is read there. Each figure is written beside its bar: nothing to walk. */
+      rows.setAttribute('tabindex', '0');
       rows.setAttribute('role', 'img');
       rows.setAttribute('aria-label', summary);
       rows.innerHTML = labels.map(function (l, i) {
@@ -1209,7 +1481,7 @@ if (typeof document !== 'undefined') (function () {
       round.setAttribute('role', 'img');
       round.setAttribute('aria-label', summary);
       el.appendChild(round);
-      round.appendChild(live);
+      el.appendChild(live);
       var big = $('.tray-chart__center b', round), small = $('.tray-chart__center span', round), active = null;
       function show(i, announce) {
         active = i;
@@ -1241,6 +1513,8 @@ if (typeof document !== 'undefined') (function () {
         svg += '<circle class="tray-chart__ring" cx="50" cy="50" r="' + r + '"/><circle class="tray-chart__value" cx="50" cy="50" r="' + r + '" style="' + colour(i) + '" stroke-dasharray="' + (c * clamp(v / max, 0, 1)).toFixed(2) + ' ' + c.toFixed(2) + '" transform="rotate(-90 50 50)"/>';
       });
       round.innerHTML = svg + '</svg>' + (vals.length === 1 ? '<div class="tray-chart__center"><b>' + val(vals[0]) + '</b><span>' + esc(labels[0] || '') + '</span></div>' : '');
+      /* A stop for Tab like every chart, so its summary is read there; its figures are in the middle or in the key. */
+      round.setAttribute('tabindex', '0');
       round.setAttribute('role', 'img');
       round.setAttribute('aria-label', summary);
       el.appendChild(round);
@@ -1268,7 +1542,7 @@ if (typeof document !== 'undefined') (function () {
       var tip = make('div', 'tray-tip'), active = null;
       tip.hidden = true;
       round.appendChild(tip);
-      round.appendChild(live);
+      el.appendChild(live);
       function show(i, announce) {
         active = i;
         tip.hidden = i == null;
@@ -1332,10 +1606,16 @@ if (typeof document !== 'undefined') (function () {
       list.slice(page * per, page * per + per).forEach(function (r) { r.hidden = false; });
       if (empty) empty.hidden = list.length > 0;
       if (status) status.textContent = list.length ? (page * per + 1) + '–' + Math.min(list.length, (page + 1) * per) + ' of ' + list.length : 'Nothing to show';
-      if (prev) prev.disabled = page === 0;
-      if (next) next.disabled = page >= pages - 1;
+      /* A button that turns off under the reader's finger, on the first or the last page, hands focus to the other one
+         (or to the count when both are off), so focus is not dropped to the top of the page. */
+      var first = page === 0, last = page >= pages - 1;
+      if (prev && !first) prev.disabled = false;
+      if (next && !last) next.disabled = false;
+      if (prev && first) { rescue(prev, !last && next || status); prev.disabled = true; }
+      if (next && last) { rescue(next, !first && prev || status); next.disabled = true; }
+      /* The row's checkbox carries the state: aria-selected means nothing on the row of a plain table. */
       var picked = 0;
-      rows.forEach(function (r) { var c = $('[data-select]', r); if (!c) return; r.setAttribute('aria-selected', String(c.checked)); if (c.checked) picked += 1; });
+      rows.forEach(function (r) { var c = $('[data-select]', r); if (c && c.checked) picked += 1; });
       if (count) count.textContent = picked ? picked + ' of ' + rows.length + ' selected' : rows.length + ' rows';
       if (allBox) { allBox.checked = picked === rows.length && rows.length > 0; allBox.indeterminate = picked > 0 && picked < rows.length; }
       fire(root, 'change', { selected: picked, page: page });
@@ -1375,6 +1655,8 @@ if (typeof document !== 'undefined') (function () {
     }
     function paint() {
       if (atEnd()) fresh = 0;
+      /* "Latest" goes once the newest message is in view: focus on it moves to the conversation it scrolled. */
+      if (jump && atEnd()) rescue(jump, view);
       if (jump) jump.hidden = atEnd();
       if (count) { count.textContent = fresh ? String(fresh) : ''; count.hidden = !fresh; }
     }
@@ -1414,10 +1696,13 @@ if (typeof document !== 'undefined') (function () {
   });
 
   /* Questionnaire: data-tray="questionnaire" on the form. Each .tray-questionnaire__step is one question; [data-back] and [data-next]
-     move between them; [data-progress] and .tray-steps follow; a [data-done] block shows the answers. Fires tray:complete with detail.answers. */
+     move between them; [data-progress] and .tray-steps follow; a [data-done] block shows the answers and takes focus, so it is read.
+     Fires tray:complete with detail.answers. */
   UI.register('questionnaire', function (root) {
     var steps = $$('.tray-questionnaire__step', root), done = $('[data-done]', root), back = $('[data-back]', root), next = $('[data-next]', root);
     var progress = $('[data-progress]', root), pills = $$('.tray-steps span', root), foot = $('.tray-questionnaire__foot', root), i = 0;
+    /* Where focus goes in a question: the answer already chosen, or its first field. */
+    function field(step) { return step && ($('input[type="radio"]:checked', step) || $('input:not([hidden]), textarea:not([hidden])', step)); }
     function answer(step) {
       var picked = $$('input:checked', step).map(function (inp) {
         var other = inp.hasAttribute('data-other') && $('[data-other-text]', step);
@@ -1428,14 +1713,25 @@ if (typeof document !== 'undefined') (function () {
       return picked;
     }
     function paint() {
+      var end = i >= steps.length;
       steps.forEach(function (s, k) { s.hidden = k !== i; });
-      if (done) done.hidden = i < steps.length;
-      if (foot) foot.hidden = i >= steps.length;
-      if (i >= steps.length) return;
+      /* What comes in is shown before what goes is hidden, so focus in the part that goes can move to it:
+         from Finish to the answers, from "Change the answers" to the first question. */
+      if (done && end) { done.hidden = false; done.setAttribute('tabindex', '-1'); rescue(foot, done); }
+      if (foot && !end) { foot.hidden = false; rescue(done, function () { return field(steps[i]); }); }
+      if (done && !end) done.hidden = true;
+      if (foot && end) foot.hidden = true;
+      if (end) return;
       if (progress) progress.textContent = 'Question ' + (i + 1) + ' of ' + steps.length;
       pills.forEach(function (p, k) { p.toggleAttribute('data-done', k <= i); });
-      if (back) back.disabled = i === 0;
-      if (next) { next.disabled = !steps[i].hasAttribute('data-optional') && !answer(steps[i]).length; next.firstChild.textContent = i === steps.length - 1 ? 'Finish' : 'Next'; }
+      /* Back turns off on the first question and Next until a question is answered: focus on either goes to the question. */
+      if (back) { if (i === 0) rescue(back, function () { return field(steps[0]) || next; }); back.disabled = i === 0; }
+      if (next) {
+        var wait = !steps[i].hasAttribute('data-optional') && !answer(steps[i]).length;
+        if (wait) rescue(next, function () { return field(steps[i]); });
+        next.disabled = wait;
+        next.firstChild.textContent = i === steps.length - 1 ? 'Finish' : 'Next';
+      }
       $$('[data-other-text]', steps[i]).forEach(function (t) { var o = $('[data-other]', steps[i]); t.hidden = !(o && o.checked); });
     }
     function finish() {
@@ -1449,7 +1745,7 @@ if (typeof document !== 'undefined') (function () {
     root.addEventListener('submit', function (e) { e.preventDefault(); });
     root.addEventListener('click', function (e) {
       if (e.target.closest('[data-back]')) { i = Math.max(0, i - 1); paint(); }
-      else if (e.target.closest('[data-next]')) { i += 1; if (i >= steps.length) finish(); paint(); var f = steps[i] && $('input, textarea', steps[i]); if (f) f.focus(); }
+      else if (e.target.closest('[data-next]')) { i += 1; if (i >= steps.length) finish(); paint(); var f = field(steps[i]); if (f) f.focus(); }
       else if (e.target.closest('[data-restart]')) { i = 0; paint(); }
     });
     paint();
@@ -1459,23 +1755,31 @@ if (typeof document !== 'undefined') (function () {
      happened for two seconds: on the button, and aloud through a status beside it, since a button's own content is not
      announced as it changes. A copy the browser refuses says so; it never claims "Copied". */
   var lastSaid = '';
-  UI.register('copy', function (btn) {
-    var label = $('[data-label]', btn), was = label ? label.textContent : '', timer = null;
+  /* statusAfter(el): a hidden role="status" region placed after el. say(region, words) has it read the words aloud. */
+  function statusAfter(el) {
     var status = document.createElement('span');
     status.className = 'tray-vh';
     status.setAttribute('role', 'status');
-    btn.insertAdjacentElement('afterend', status);
+    el.insertAdjacentElement('afterend', status);
+    return status;
+  }
+  function say(status, words) {
+    status.textContent = '';
+    /* the same words twice are read only if they differ: a no-break space makes them differ, and is not read */
+    var said = words === lastSaid ? words + '\u00a0' : words;
+    lastSaid = said;
+    requestAnimationFrame(function () { status.textContent = said; });
+  }
+  UI.register('copy', function (btn) {
+    var label = $('[data-label]', btn), was = label ? label.textContent : '', timer = null;
+    var status = statusAfter(btn);
     function report(ok) {
       var words = ok ? 'Copied' : 'Copy failed';
       clearTimeout(timer);
       if (label) label.textContent = words;
       btn.toggleAttribute('data-copied', ok);
       btn.toggleAttribute('data-failed', !ok);
-      status.textContent = '';
-      /* the same words twice are read only if they differ: a no-break space makes them differ, and is not read */
-      var said = words === lastSaid ? words + '\u00a0' : words;
-      lastSaid = said;
-      requestAnimationFrame(function () { status.textContent = said; });
+      say(status, words);
       timer = setTimeout(function () {
         if (label) label.textContent = was;
         btn.removeAttribute('data-copied'); btn.removeAttribute('data-failed');
@@ -1493,11 +1797,28 @@ if (typeof document !== 'undefined') (function () {
 
   /* ---------- Application set: banners, metrics, billing, account, onboarding ---------- */
 
-  /* dismiss: a button that takes away the block it sits in. Put data-dismissable on that block, or name it with data-target. */
+  /* beyond(el): where focus goes when el is taken away from the page: the first control after it, as Tab would go,
+     or else the main content, or else the last control before it. */
+  var CONTROLS = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])';
+  function beyond(el) {
+    var all = $$(CONTROLS).filter(function (n) { return !el.contains(n) && n.getClientRects().length > 0; });
+    var after = all.filter(function (n) { return el.compareDocumentPosition(n) & Node.DOCUMENT_POSITION_FOLLOWING; })[0];
+    return after || $('main, [role="main"]') || all.filter(function (n) { return el.compareDocumentPosition(n) & Node.DOCUMENT_POSITION_PRECEDING; }).pop();
+  }
+  /* The control to focus in el: el itself, or the first one inside it. */
+  function controlIn(el) { return el && (el.matches(CONTROLS) ? el : $(CONTROLS, el)); }
+
+  /* A pip repeats the count that the aria-label of its button already says ("Notifications, 2 unread"): it is hidden from
+     screen readers, so the number is not read twice. */
+  UI.upgrade('.tray-pip', function (pip) { pip.setAttribute('aria-hidden', 'true'); });
+
+  /* dismiss: a button that takes away the block it sits in. Put data-dismissable on that block, or name it with data-target.
+     Focus moves on to the next control in the page, so it is not dropped to the top. */
   UI.register('dismiss', function (btn) {
     btn.addEventListener('click', function () {
       var root = btn.getAttribute('data-target') ? $(btn.getAttribute('data-target')) : btn.closest('[data-dismissable]');
       if (!root) return;
+      rescue(root, function () { return beyond(root); });
       hide(root);
       fire(root, 'close');
     });
@@ -1523,14 +1844,30 @@ if (typeof document !== 'undefined') (function () {
     el.setAttribute('aria-hidden', 'true');
   });
 
-  /* pricing: a billing-period switch. Inside the wrapper, an element with data-monthly and data-yearly shows the text of the chosen period. */
+  /* pricing: a billing-period switch. Inside the wrapper, an element with data-monthly and data-yearly shows the text of the chosen period.
+     Focus stays on the switch while the prices change, so a hidden status reads the new ones. */
   UI.register('pricing', function (root) {
+    var status = null;
+    function words(el) { return [].slice.call(el.childNodes).map(function (n) { return n.textContent.trim(); }).filter(Boolean).join(' '); }
+    function spoken(on, period) {
+      var label = on && on.closest('label') ? on.closest('label').textContent.trim() : period;
+      var plans = $$('.tray-plan', root).filter(function (p) { return $('[data-' + period + ']', p); }).map(function (p) {
+        var h = $('.tray-plan__name', p), price = $('.tray-plan__price', p);
+        /* the plan's name is the first words of its heading, before a badge such as "Most chosen" */
+        var name = h ? (h.firstChild && h.firstChild.nodeType === 3 ? h.firstChild.textContent : h.textContent).trim() : '';
+        return (name ? name + ', ' : '') + (price ? words(price) : '');
+      });
+      return label + ' prices' + (plans.length ? ': ' + plans.join('; ') : '');
+    }
     function apply(tell) {
       var on = $('input[type="radio"][name="' + (root.getAttribute('data-name') || 'period') + '"]:checked', root);
       var period = on ? on.value : 'monthly';
       root.setAttribute('data-period', period);
       $$('[data-' + period + ']', root).forEach(function (n) { n.textContent = n.getAttribute('data-' + period); });
-      if (tell) fire(root, 'change', { period: period });
+      if (!tell) return;
+      if (!status) { status = document.createElement('span'); status.className = 'tray-vh'; status.setAttribute('role', 'status'); root.appendChild(status); }
+      say(status, spoken(on, period));
+      fire(root, 'change', { period: period });
     }
     root.addEventListener('change', function (e) { if (e.target.type === 'radio') apply(true); });
     apply(false);
@@ -1540,9 +1877,16 @@ if (typeof document !== 'undefined') (function () {
   UI.register('mask', function (input) {
     var kind = input.getAttribute('data-mask');
     input.addEventListener('input', function () {
-      var d = input.value.replace(/\D/g, '');
+      var at = input.selectionStart, v = input.value, d = v.replace(/\D/g, '');
+      var before = at == null ? d.length : v.slice(0, at).replace(/\D/g, '').length;
       if (kind === 'card') input.value = d.slice(0, 19).replace(/(.{4})(?=.)/g, '$1 ');
       else if (kind === 'expiry') { d = d.slice(0, 4); input.value = d.length > 2 ? d.slice(0, 2) + '/' + d.slice(2) : d; }
+      else return;
+      /* Writing the value puts the caret at the end: put it back after the digit it followed, so a number edited in the middle keeps its place. */
+      if (at == null || document.activeElement !== input) return;
+      var out = input.value, pos = 0, seen = 0;
+      while (pos < out.length && seen < before) { if (/\d/.test(out.charAt(pos))) seen += 1; pos += 1; }
+      input.setSelectionRange(pos, pos);
     });
   });
 
@@ -1552,60 +1896,86 @@ if (typeof document !== 'undefined') (function () {
     var show = $('[data-secret="show"]', root), copy = $('[data-secret="copy"]', root);
     var labels = [show && show.getAttribute('aria-label') || 'Show the key', show && show.getAttribute('data-label-on') || 'Hide the key'];
     if (show) {
-      show.setAttribute('aria-pressed', 'false');
+      /* The name says what a press will do, "Show the key" or "Hide the key". aria-pressed would say it a second time
+         ("Hide the key, pressed"), so the button carries none. */
+      show.removeAttribute('aria-pressed');
       show.addEventListener('click', function () {
         shown = !shown;
         code.textContent = shown ? value : masked;
-        show.setAttribute('aria-pressed', String(shown));
         show.setAttribute('aria-label', labels[shown ? 1 : 0]);
         show.innerHTML = icon(shown ? 'eye-off' : 'eye');
       });
     }
-    if (copy) copy.addEventListener('click', function () {
-      function said() {
-        copy.innerHTML = icon('check');
-        copy.setAttribute('aria-live', 'polite');
-        setTimeout(function () { copy.innerHTML = icon('copy'); }, 1800);
-        fire(root, 'change', { copied: true });
-      }
-      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(value).then(said, said); else said();
-    });
+    if (copy) {
+      /* What happened is shown on the button for a moment and said through a hidden status beside it: a copy the
+         browser refuses says so, and never shows the check. */
+      var status = statusAfter(copy), timer = null;
+      var report = function (ok) {
+        clearTimeout(timer);
+        copy.innerHTML = icon(ok ? 'check' : 'circle-alert');
+        copy.toggleAttribute('data-failed', !ok);
+        say(status, ok ? 'Copied' : 'Copy failed');
+        timer = setTimeout(function () { copy.innerHTML = icon('copy'); copy.removeAttribute('data-failed'); status.textContent = ''; }, 1800);
+        fire(root, 'change', { copied: ok });
+      };
+      copy.addEventListener('click', function () {
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(value).then(function () { report(true); }, function () { report(false); });
+        else report(false);
+      });
+    }
   });
 
-  /* A chip with a remove button, as the tag input and the filter bar make them. */
-  function chipOf(value, label) {
+  /* A chip with a remove button, as the tag input and the filter bar make them. A wrong one (wrong: what is wrong, in words)
+     carries data-invalid and says so in a hidden span, since its danger edge is seen and not read. */
+  function chipOf(value, label, wrong) {
     var chip = document.createElement('span');
     chip.className = 'tray-chip';
     chip.setAttribute('data-value', value);
-    chip.innerHTML = esc(label || value) + '<button type="button" class="tray-chip__x" aria-label="Remove ' + esc(label || value) + '">' + icon('x', 'tray-icon--sm') + '</button>';
+    if (wrong) chip.setAttribute('data-invalid', '');
+    chip.innerHTML = esc(label || value) + (wrong ? wrongText(wrong) : '') + '<button type="button" class="tray-chip__x" aria-label="Remove ' + esc(label || value) + '">' + icon('x', 'tray-icon--sm') + '</button>';
     return chip;
   }
+  function wrongText(words) { return '<span class="tray-vh" data-invalid-text>, ' + esc(words) + '</span>'; }
 
-  /* taginput: several values in one field. Enter or a comma adds one, Backspace on an empty field takes the last away, a pasted list is split. */
+  /* taginput: several values in one field. Enter or a comma adds one, Backspace on an empty field takes the last away, a pasted list is split.
+     A wrong value (data-pattern="email") keeps its chip, marked data-invalid, and makes the text field aria-invalid; at data-max
+     what was typed stays in the field and the limit is said. */
   UI.register('taginput', function (root) {
     var input = $('input:not([type="hidden"])', root), store = $('input[type="hidden"]', root);
     if (!input) return;
     var kind = root.getAttribute('data-pattern'), max = parseInt(root.getAttribute('data-max'), 10) || Infinity;
-    var live = document.createElement('span');
+    var wrong = root.getAttribute('data-invalid-text') || (kind === 'email' ? 'not an email address' : 'not valid');
+    var live = document.createElement('span'), mine = false;
     live.className = 'tray-vh';
     live.setAttribute('aria-live', 'polite');
     root.appendChild(live);
     function ok(v) { return kind !== 'email' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
     function chips() { return $$('.tray-chip', root); }
     function values() { return chips().map(function (c) { return c.getAttribute('data-value'); }); }
+    /* aria-invalid belongs on the text field, which a screen reader reaches, not on the tray around it. The behaviour takes
+       away only the mark it set itself: an error put on the field from elsewhere (a Field's, the server's) stays. */
+    function mark() {
+      var bad = !!$('.tray-chip[data-invalid]', root);
+      root.removeAttribute('aria-invalid');
+      if (bad && input.getAttribute('aria-invalid') !== 'true') { input.setAttribute('aria-invalid', 'true'); mine = true; }
+      else if (!bad && mine) { input.removeAttribute('aria-invalid'); mine = false; }
+    }
     function sync(said) {
       if (store) store.value = values().join(',');
-      if ($('.tray-chip[data-invalid]', root)) root.setAttribute('aria-invalid', 'true'); else root.removeAttribute('aria-invalid');
-      if (said) live.textContent = said;
+      mark();
+      if (said) say(live, said);
       fire(root, 'change', { values: values(), valid: !$('.tray-chip[data-invalid]', root) });
     }
+    /* add(raw): false when there is no room for it, so the caller keeps what was typed. */
     function add(raw) {
       var v = String(raw).trim().replace(/[,;]+$/, '');
-      if (!v || values().indexOf(v) >= 0 || values().length >= max) return;
-      var chip = chipOf(v);
-      if (!ok(v)) chip.setAttribute('data-invalid', '');
-      root.insertBefore(chip, input);
-      sync(v + ' added');
+      if (!v) return true;
+      if (values().indexOf(v) >= 0) { say(live, v + ' is already in the list'); return true; }
+      if (values().length >= max) { say(live, v + ' not added: the limit is ' + max); return false; }
+      var bad = !ok(v);
+      root.insertBefore(chipOf(v, null, bad ? wrong : null), input);
+      sync(v + ' added' + (bad ? ', ' + wrong : ''));
+      return true;
     }
     function drop(chip) { var v = chip.getAttribute('data-value'); chip.remove(); sync(v + ' removed'); }
     root.addEventListener('click', function (e) {
@@ -1613,18 +1983,25 @@ if (typeof document !== 'undefined') (function () {
       if (x) { drop(x.closest('.tray-chip')); input.focus(); } else if (e.target === root) input.focus();
     });
     input.addEventListener('keydown', function (e) {
-      if ((e.key === 'Enter' || e.key === ',') && input.value.trim()) { e.preventDefault(); add(input.value); input.value = ''; }
+      if ((e.key === 'Enter' || e.key === ',') && input.value.trim()) { e.preventDefault(); if (add(input.value)) input.value = ''; }
       else if (e.key === 'Backspace' && !input.value) { var all = chips(); if (all.length) drop(all[all.length - 1]); }
     });
     input.addEventListener('paste', function (e) {
       var text = (e.clipboardData || window.clipboardData).getData('text');
       if (!/[,;\s]/.test(text.trim())) return;
       e.preventDefault();
-      text.split(/[,;\s]+/).forEach(add);
+      /* what does not fit stays in the field, so nothing pasted is lost */
+      var left = text.split(/[,;\s]+/).filter(function (v) { return !add(v); });
+      if (left.length) input.value = left.join(', ');
     });
-    input.addEventListener('blur', function () { if (input.value.trim()) { add(input.value); input.value = ''; } });
-    chips().forEach(function (c) { if (!c.hasAttribute('data-value')) c.setAttribute('data-value', c.textContent.trim()); });
+    input.addEventListener('blur', function () { if (input.value.trim() && add(input.value)) input.value = ''; });
+    chips().forEach(function (c) {
+      if (!c.hasAttribute('data-value')) c.setAttribute('data-value', c.textContent.trim());
+      var x = $('.tray-chip__x', c);
+      if (c.hasAttribute('data-invalid') && !$('[data-invalid-text]', c)) { if (x) x.insertAdjacentHTML('beforebegin', wrongText(wrong)); else c.insertAdjacentHTML('beforeend', wrongText(wrong)); }
+    });
     if (store) store.value = values().join(',');
+    mark();
   });
 
   /* dropzone: takes files that are dropped or chosen and lists them in the element named by data-list. data-max-mb marks a file as too large. It uploads nothing. */
@@ -1643,7 +2020,12 @@ if (typeof document !== 'undefined') (function () {
           '<span class="tray-attachment__body"><span class="tray-attachment__name">' + esc(f.name) + '</span><span class="tray-attachment__meta">' +
           (big ? esc((root.getAttribute('data-too-large') || 'Too large. The limit is {max} MB.').replace('{max}', max)) : size(f.size)) + '</span></span>' +
           '<button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Remove ' + esc(f.name) + '">' + icon('x') + '</button>';
-        $('button', row).addEventListener('click', function () { row.remove(); fire(root, 'change', { removed: f.name }); });
+        $('button', row).addEventListener('click', function () {
+          /* focus goes to the next file's remove button, or the one before, or back to the field once the list is empty */
+          rescue(row, function () { var sib = row.nextElementSibling || row.previousElementSibling; return (sib && $('button', sib)) || input || root; });
+          row.remove();
+          fire(root, 'change', { removed: f.name });
+        });
         list.appendChild(row);
       });
       fire(root, 'change', { files: files });
@@ -1654,9 +2036,15 @@ if (typeof document !== 'undefined') (function () {
     if (input) input.addEventListener('change', function () { take(input.files); input.value = ''; });
   });
 
-  /* checklist: a button with data-task-done finishes its task; the next open task becomes the current one and the progress follows. */
+  /* checklist: a button with data-task-done finishes its task; the next open task becomes the current one and the progress follows.
+     A done task says so in words too: a hidden ", done" after its title, which 80-saas.css lets a screen reader hear only while
+     the task carries data-done. Markup that holds its own [data-task-state] span keeps its words. */
   UI.register('checklist', function (root) {
     var tasks = $$('.tray-task', root);
+    tasks.forEach(function (t) {
+      var b = $('.tray-task__body > b', t);
+      if (b && !$('[data-task-state]', t)) b.insertAdjacentHTML('beforeend', '<span class="tray-vh" data-task-state>, done</span>');
+    });
     function paint() {
       var done = tasks.filter(function (t) { return t.hasAttribute('data-done'); }).length;
       var next = tasks.filter(function (t) { return !t.hasAttribute('data-done'); })[0];
@@ -1676,8 +2064,10 @@ if (typeof document !== 'undefined') (function () {
       var btn = e.target.closest('[data-task-done]');
       if (!btn) return;
       btn.closest('.tray-task').setAttribute('data-done', '');
-      var done = paint(), next = $('.tray-task[aria-current] .tray-btn', root);
+      var done = paint(), next = $('.tray-task[aria-current] .tray-btn', root), end = $('[data-checklist-done]', root);
+      /* Focus follows to the next task's button. After the last one, whose button goes, it moves to the closing line, so that line is read. */
       if (next) next.focus();
+      else rescue(btn, end && !end.hidden ? end : root);
       fire(root, done === tasks.length ? 'complete' : 'change', { done: done, total: tasks.length });
     });
     paint();
@@ -1707,16 +2097,29 @@ if (typeof document !== 'undefined') (function () {
       if (count) count.textContent = (i + 1) + ' of ' + steps.length;
       if (target(s)) place(s, target(s));
     }
+    /* The tour ends: focus in the step goes to the part the step pointed at, the last thing it spoke of, or else to the area. */
+    function end(finished) {
+      var s = steps[at], t = target(s);
+      if (s) rescue(s, function () { return controlIn(t) || t || root; });
+      show(-1);
+      fire(root, 'complete', { finished: finished });
+    }
     root.addEventListener('click', function (e) {
       var b = e.target.closest('[data-tour]');
       if (!b) return;
       var act = b.getAttribute('data-tour');
       if (act === 'back' && at > 0) show(at - 1);
       else if (act === 'next' && at < steps.length - 1) show(at + 1);
-      else { show(-1); fire(root, 'complete', { finished: act !== 'skip' }); return; }
+      else { end(act !== 'skip'); return; }
       var go = $('[data-tour="next"]', steps[at]);
       if (go) go.focus();
       fire(root, 'change', { step: at + 1 });
+    });
+    /* Escape in a step closes the tour, as Skip does. */
+    root.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' || at < 0 || !steps[at] || !steps[at].contains(e.target)) return;
+      e.preventDefault();
+      end(false);
     });
     watch(root, function () { if (at >= 0 && steps[at]) show(at); });
   });
@@ -1745,27 +2148,42 @@ if (typeof document !== 'undefined') (function () {
         if (kind === 'necessary' && !c.disabled) c.checked = false;
         choice[c.name || c.id] = c.checked;
       });
+      /* the answer closes the panel under the reader's finger: focus moves on to the next control in the page */
+      rescue(root, function () { return beyond(root); });
       root.hidden = true;
       fire(root, 'complete', { choice: choice });
     });
   });
 
-  /* notices: opening a notification marks it read, "mark all as read" clears the rest, and the count on the trigger follows. */
+  /* notices: opening a notification marks it read, "mark all as read" clears the rest, and the count on the trigger follows:
+     in the pip, which is aria-hidden, and in the trigger's aria-label ("Notifications, 2 unread"). */
   UI.register('notices', function (root) {
     var scope = root.closest('.tray-anchor') || root;
+    var bell = scope !== root ? $(':scope > button, :scope > a', scope) : null;
+    var named = bell && bell.getAttribute('aria-label') ? bell.getAttribute('aria-label').replace(/,\s*\d+\s+unread$/i, '') : '';
     function read(n) { n.removeAttribute('data-unread'); var v = $('.tray-vh', n); if (v) v.remove(); }
     function paint() {
       var n = $$('.tray-notice[data-unread]', root).length, only = $('input[name="notices-view"][value="unread"]', root);
       only = !!(only && only.checked);
-      $$('[data-notices-count]', scope).forEach(function (p) { p.textContent = n ? String(n) : ''; });
+      $$('[data-notices-count]', scope).forEach(function (p) { p.textContent = n ? String(n) : ''; p.setAttribute('aria-hidden', 'true'); });
+      if (named) bell.setAttribute('aria-label', n ? named + ', ' + n + ' unread' : named);
       var all = $('[data-notices="read-all"]', root), empty = $('[data-notices="empty"]', root);
-      if (all) all.disabled = !n;
-      $$('.tray-notice', root).forEach(function (item) { (item.closest('li') || item).hidden = only && !item.hasAttribute('data-unread'); });
+      /* With nothing to mark, "Mark all as read" is aria-disabled, not disabled: it keeps focus when it is the one pressed,
+         and it stays the first stop in the panel, where the Popover puts focus as it opens. */
+      if (all) { all.disabled = false; all.setAttribute('aria-disabled', String(!n)); }
       if (empty) empty.hidden = !(only && !n);
+      var items = $$('.tray-notice', root), keep = function (item) { return !only || item.hasAttribute('data-unread'); };
+      items.forEach(function (item, k) {
+        var row = item.closest('li') || item;
+        /* a notification read in the Unread view goes from it: focus on it moves to the next one left, or to what is shown instead */
+        if (!keep(item)) rescue(row, function () { var to = items.slice(k + 1).filter(keep)[0] || items.slice(0, k).filter(keep).pop(); return to || (empty && !empty.hidden ? empty : all); });
+        row.hidden = !keep(item);
+      });
       return n;
     }
     root.addEventListener('click', function (e) {
       var all = e.target.closest('[data-notices="read-all"]'), item = e.target.closest('.tray-notice');
+      if (all && all.getAttribute('aria-disabled') === 'true') return;
       if (all) $$('.tray-notice[data-unread]', root).forEach(read);
       else if (item && item.hasAttribute('data-unread')) read(item);
       else return;
@@ -1783,11 +2201,20 @@ if (typeof document !== 'undefined') (function () {
     function option(v) { return $$('[role="menuitemcheckbox"][data-value]', root).filter(function (o) { return o.getAttribute('data-value') === v; })[0]; }
     function find(v) { return all().filter(function (c) { return c.getAttribute('data-value') === v; })[0]; }
     function tell() { fire(root, 'change', { filters: all().map(function (c) { return c.getAttribute('data-value'); }) }); }
-    function drop(chip) { var o = option(chip.getAttribute('data-value')); if (o) o.setAttribute('aria-checked', 'false'); chip.remove(); }
+    /* The button of the menu a filter came from, or else the first control of the bar: where focus goes once no chip is left. */
+    function home(v) { var o = v && option(v), a = o && o.closest('.tray-anchor'); return (a && $(':scope > button', a)) || $('input, button', root); }
+    function drop(chip) {
+      var v = chip.getAttribute('data-value'), o = option(v);
+      /* focus on the chip goes to the next chip, or the one before, or back to the menu it came from */
+      rescue(chip, function () { var rest = all().filter(function (c) { return c !== chip; }), k = all().indexOf(chip), to = rest[k] || rest[k - 1]; return to ? $('.tray-chip__x', to) : home(v); });
+      if (o) o.setAttribute('aria-checked', 'false');
+      chip.remove();
+    }
     root.addEventListener('click', function (e) {
       var x = e.target.closest('.tray-chip__x'), clear = e.target.closest('[data-filter="clear"]'), opt = e.target.closest('[role="menuitemcheckbox"][data-value]');
       if (x && chips.contains(x)) { drop(x.closest('.tray-chip')); tell(); }
-      else if (clear) { all().forEach(drop); tell(); }
+      /* "Clear all" goes with the last chip: focus on it moves back to the menu of the first filter */
+      else if (clear) { var first = all()[0]; rescue(clear, function () { return home(first && first.getAttribute('data-value')); }); all().forEach(drop); tell(); }
       else if (opt) setTimeout(function () {
         var v = opt.getAttribute('data-value'), on = opt.getAttribute('aria-checked') === 'true', have = find(v);
         if (on && !have) chips.insertBefore(chipOf(v, opt.getAttribute('data-label') || v), $('[data-filter="clear"]', chips));

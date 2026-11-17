@@ -28,6 +28,10 @@ export interface CalendarProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   weekStart?: 0 | 1;
   /** A BCP 47 tag for the names of months and weekdays. Default 'en-GB'. */
   locale?: string;
+  /** The name of the button that turns back a month, in the page's language. Default 'Previous month'. */
+  prevLabel?: string;
+  /** The name of the button that turns on a month, in the page's language. Default 'Next month'. */
+  nextLabel?: string;
 }
 
 /**
@@ -35,14 +39,14 @@ export interface CalendarProps extends Omit<React.HTMLAttributes<HTMLDivElement>
  * Use it on its own in a page or a panel; inside a form, a Date Picker opens one from a field. Do not use it for a date of birth: three plain fields are faster.
  */
 export const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(function Calendar(
-  { mode = 'single', months = 1, value, defaultValue = '', onChange, min, max, month, today, weekStart = 1, locale = 'en-GB', className, ...rest },
+  { mode = 'single', months = 1, value, defaultValue = '', onChange, min, max, month, today, weekStart = 1, locale = 'en-GB', prevLabel, nextLabel, className, ...rest },
   forwarded,
 ) {
   const ref = React.useRef<HTMLDivElement | null>(null);
   const setRef = useMergedRef(ref, forwarded);
   const [current, setCurrent] = useControlled(value, defaultValue);
   // UI.calendar takes its options once, so a change of options draws a new element.
-  const optionsKey = [mode, months, min, max, month, today, weekStart, locale].join('|');
+  const optionsKey = [mode, months, min, max, month, today, weekStart, locale, prevLabel, nextLabel].join('|');
   const drawn = React.useRef<{ el: Element; cal: CalendarHandle } | null>(null);
   const latest = React.useRef(current);
   latest.current = current;
@@ -50,7 +54,7 @@ export const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(function
   useIsoLayoutEffect(() => {
     const el = ref.current;
     if (!el || drawn.current?.el === el) return;
-    runtime.calendar(el, { mode, months, value: latest.current, min, max, month, today, weekStart, locale });
+    runtime.calendar(el, { mode, months, value: latest.current, min, max, month, today, weekStart, locale, prevLabel, nextLabel });
     const cal = calendarHandle(el);
     if (cal) drawn.current = { el, cal };
     // eslint-disable-next-line react-hooks/exhaustive-deps

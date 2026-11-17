@@ -38,7 +38,7 @@ export const ContextMenu = React.forwardRef<HTMLDivElement, ContextMenuProps>(fu
   useTrayEvent(ref, 'select', (detail: { value?: string }) => onSelect?.(detail.value ?? ''));
 
   return (
-    <div ref={setRef} className={cx('tray-context', className)} data-tray="contextmenu" tabIndex={tabIndex} {...rest}>
+    <div ref={setRef} className={cx('tray-context', className)} data-tray="contextmenu" role="group" tabIndex={tabIndex} {...rest}>
       {children}
       <div
         className="tray-pop"

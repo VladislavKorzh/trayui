@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { IconSource } from '../lib/icon';
 import { useFieldControl } from '../lib/field';
-import { cx, useTrayEvent, useBehaviour, useControlled, useForwardedRef } from '../lib/util';
+import { cx, useTrayEvent, useBehaviour, useControlled, useForwardedRef, useUid } from '../lib/util';
 import { fileSize } from '../lib/account';
 import { Attachment } from './Attachment';
 import { Icon } from './Icon';
@@ -104,6 +104,10 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(fu
   const input = useForwardedRef(ref);
   const tray = React.useRef<HTMLDivElement | null>(null);
   const field = useFieldControl({ id, disabled, invalid, 'aria-describedby': rest['aria-describedby'], 'aria-invalid': rest['aria-invalid'] });
+  // The line of types and sizes is read with the input's name.
+  const hintId = useUid('drop-hint');
+  const describedBy = [description != null ? hintId : null, field['aria-describedby']].filter(Boolean).join(' ') || undefined;
+  const listRef = React.useRef<HTMLDivElement | null>(null);
   const [rows, setRows] = useControlled(items, defaultItems, onItemsChange);
   const latest = React.useRef(rows);
   latest.current = rows;
@@ -140,6 +144,9 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(fu
   useBehaviour(tray, [over]);
 
   const drop = (item: FileUploadItem, i: number) => {
+    // Focus on the button of the row that goes moves to the next row's, or the one before, or back to the tray.
+    const shown = listRef.current ? Array.from(listRef.current.querySelectorAll<HTMLElement>('.tray-attachment')) : [];
+    if (shown[i]?.contains(document.activeElement)) ((shown[i + 1] ?? shown[i - 1])?.querySelector('button') ?? input.current)?.focus();
     latest.current = latest.current.filter((r, j) => (item.id != null ? r.id !== item.id : j !== i));
     setRows(latest.current);
     onRemove?.(item);
@@ -160,12 +167,12 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(fu
         </span>
         <p className="tray-drop__text">
           <b>{title}</b>
-          {description != null ? <small>{description}</small> : null}
+          {description != null ? <small id={hintId}>{description}</small> : null}
         </p>
-        {over ? null : <input ref={input} type="file" {...rest} {...field} />}
+        {over ? null : <input ref={input} type="file" {...rest} {...field} aria-describedby={describedBy} />}
       </div>
       {list && rows.length ? (
-        <div className="tray-attachments" style={{ marginBlockStart: 'var(--space-3)' }}>
+        <div ref={listRef} className="tray-attachments" style={{ marginBlockStart: 'var(--space-3)' }}>
           {rows.map((item, i) => {
             const uploading = item.progress !== undefined && item.error == null;
             const action = item.error != null && item.retry ? 'retry' : uploading ? 'cancel' : 'remove';

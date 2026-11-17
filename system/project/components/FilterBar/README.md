@@ -27,7 +27,7 @@ The filter bar sits over a list or a table: search at the start, filters as menu
 Render the chips for filters that are already on, and mark their menu items `aria-checked="true"`.
 
 ## Accessibility
-The search field has no visible label, so it takes an `aria-label` ("Search orders"). Each filter is a Dropdown Menu of `menuitemcheckbox` items: `aria-checked` says which are on, and `Enter` or `Space` flips one while the menu stays open. Each chip's button is named with the whole filter ("Remove Status: To pack"), and each radio of an icon-only view switch needs an `aria-label`. The list changing is not announced: put the count of results ("12 orders match") in a `role="status"` region so it is read after each change.
+The search field has no visible label, so it takes an `aria-label` ("Search orders"). Each filter is a Dropdown Menu of `menuitemcheckbox` items: `aria-checked` says which are on, and `Enter` or `Space` flips one while the menu stays open. Each chip's button is named with the whole filter ("Remove Status: To pack"), and each radio of an icon-only view switch needs an `aria-label`. When a chip goes, focus moves to the next chip's button, or the one before, or back to the menu the filter came from; "Clear all" sends it back to the menu of the first filter. The remove button is 28px to the eye and 44px to a finger. The list changing is not announced: put the count of results ("12 orders match") in a `role="status"` region so it is read after each change.
 
 ## Do and don't
 - Do name the chip in full: "Status: To pack", not "To pack".

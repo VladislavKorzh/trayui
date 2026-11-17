@@ -109,7 +109,7 @@ function renderItem(item: MenuItem, i: number, ctx: MenuContext): React.ReactNod
             <span className="tray-option__text">{item.label}</span>
             <Icon name="chevron-right" size="sm" flip />
           </button>
-          <div className="tray-pop tray-pop--side">
+          <div className="tray-pop tray-pop--side" role="menu">
             <div className="tray-list">{item.items.map((sub, j) => renderItem(sub, j, ctx))}</div>
           </div>
         </div>

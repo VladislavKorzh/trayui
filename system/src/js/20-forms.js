@@ -19,7 +19,12 @@
       out.textContent = String(value);
       /* the number bumps when it changes: two names for one animation, so each change starts it again */
       if (value !== was) out.setAttribute('data-bump', out.getAttribute('data-bump') === 'a' ? 'b' : 'a');
-      $$('[data-step]', root).forEach(function (b) { b.disabled = (+b.dataset.step < 0 && value <= min) || (+b.dataset.step > 0 && value >= max); });
+      $$('[data-step]', root).forEach(function (b) {
+        var off = (+b.dataset.step < 0 && value <= min) || (+b.dataset.step > 0 && value >= max);
+        /* the button that reaches the limit has focus: the group takes it, or disabling the button would drop focus to the page */
+        if (off) rescue(b, root);
+        b.disabled = off;
+      });
       fire(root, 'change', { value: value });
     }
     root.addEventListener('click', function (e) { var b = e.target.closest('[data-step]'); if (b) set(value + (+b.dataset.step)); });
@@ -29,15 +34,39 @@
   /* Input OTP: data-tray="otp" on the row of one-character inputs. */
   UI.register('otp', function (root) {
     var cells = $$('input', root);
+    function done() {
+      var code = cells.map(function (c) { return c.value; }).join('');
+      if (code.length === cells.length) fire(root, 'complete', { value: code });
+    }
+    /* A code that comes in one go fills the cells from cell i on, and focus goes to the cell after its last character. */
+    function spread(i, text) {
+      text.split('').slice(0, cells.length - i).forEach(function (ch, k) { cells[i + k].value = ch; });
+      cells[Math.min(cells.length - 1, i + text.length)].focus();
+      done();
+    }
+    /* aria-invalid is not announced on a group, so the group's aria-invalid and aria-describedby are copied to every cell,
+       now and whenever they change: each cell is then read as invalid, with the error. */
+    function mirror() {
+      cells.forEach(function (c) {
+        ['aria-invalid', 'aria-describedby'].forEach(function (a) { var v = root.getAttribute(a); if (v === null) c.removeAttribute(a); else c.setAttribute(a, v); });
+      });
+    }
+    mirror();
+    if (window.MutationObserver) new MutationObserver(mirror).observe(root, { attributes: true, attributeFilter: ['aria-invalid', 'aria-describedby'] });
     cells.forEach(function (cell, i) {
       cell.setAttribute('inputmode', cell.getAttribute('inputmode') || 'numeric');
-      cell.setAttribute('maxlength', '1');
+      /* No maxlength: a phone that fills in the code from the message (autocomplete="one-time-code") puts the whole code
+         in the first cell, and maxlength would cut it to one character. The input handler keeps one per cell. */
+      cell.removeAttribute('maxlength');
       cell.setAttribute('aria-label', 'Character ' + (i + 1) + ' of ' + cells.length);
-      cell.addEventListener('input', function () {
-        cell.value = cell.value.slice(-1);
-        if (cell.value && cells[i + 1]) cells[i + 1].focus();
-        var code = cells.map(function (c) { return c.value; }).join('');
-        if (code.length === cells.length) fire(root, 'complete', { value: code });
+      cell.addEventListener('input', function (e) {
+        var text = cell.value.replace(/\s/g, '');
+        /* one key pressed in a cell that already held a character: the new one replaces it */
+        if (text.length > 1 && e.data && e.data.length === 1) text = e.data.replace(/\s/g, '');
+        if (text.length > 1) { spread(i, text); return; }
+        cell.value = text;
+        if (text && cells[i + 1]) cells[i + 1].focus();
+        done();
       });
       cell.addEventListener('keydown', function (e) {
         if (e.key === 'Backspace' && !cell.value && cells[i - 1]) { cells[i - 1].focus(); cells[i - 1].value = ''; e.preventDefault(); }
@@ -49,9 +78,7 @@
         var text = (e.clipboardData.getData('text') || '').replace(/\s/g, '');
         if (!text) return;
         e.preventDefault();
-        text.split('').slice(0, cells.length - i).forEach(function (ch, k) { cells[i + k].value = ch; });
-        cells[Math.min(cells.length - 1, i + text.length)].focus();
-        cell.dispatchEvent(new Event('input'));
+        spread(i, text);
       });
     });
   });
@@ -63,6 +90,8 @@
       var min = +(input.min || 0), max = +(input.max || 100);
       input.style.setProperty('--tray-v', ((+input.value - min) / (max - min) * 100) + '%');
       if (out) out.textContent = input.value + unit;
+      /* a screen reader reads the bare number of a range input: aria-valuetext gives it the unit as well, "30 km" */
+      if (unit) input.setAttribute('aria-valuetext', (input.value + unit).trim());
     }
     input.addEventListener('input', paint);
     paint();
@@ -79,17 +108,45 @@
   /* Reveal: data-tray="reveal" on a button inside an input group shows and hides a password. */
   UI.register('reveal', function (btn) {
     var input = $('input', btn.closest('.tray-input-group'));
+    /* The name stays "Show password" and aria-pressed carries the state: a name that changed as well would be read as
+       "Hide password, pressed". */
+    if (!btn.hasAttribute('aria-label')) btn.setAttribute('aria-label', 'Show password');
     btn.setAttribute('aria-pressed', 'false');
     btn.addEventListener('click', function () {
       var show = input.type === 'password';
       input.type = show ? 'text' : 'password';
       btn.setAttribute('aria-pressed', String(show));
-      btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
       btn.innerHTML = icon(show ? 'eye-off' : 'eye');
     });
   });
 
-  /* Select: data-tray="select" on the anchor that holds a .tray-select-trigger and a .tray-pop of [role=option]. */
+  /* What names a control, as ids for aria-labelledby: its own aria-labelledby; else the control itself, when an
+     aria-label names it; else its <label>s, given ids for it. Empty when only its content names it. */
+  function labelIds(el) {
+    var ids = (el.getAttribute('aria-labelledby') || '').split(/\s+/).filter(Boolean);
+    if (ids.length) return ids;
+    if (el.getAttribute('aria-label')) { el.id = el.id || uid('tray-named'); return [el.id]; }
+    return [].slice.call(el.labels || []).map(function (l) { l.id = l.id || uid('tray-label'); return l.id; });
+  }
+  /* A list or a panel that opens from a control is named as the control is ("City"), so a screen reader says which one it
+     has entered. Call it before nameWithValue, so the name is the label alone. */
+  function nameLike(panel, control) {
+    if (panel.hasAttribute('aria-label') || panel.hasAttribute('aria-labelledby')) return;
+    var ids = labelIds(control);
+    if (ids.length) panel.setAttribute('aria-labelledby', ids.join(' '));
+  }
+  /* A trigger that shows its value is named by its label and by that value, "Jar size, 50 g": a label names a button in
+     place of its content, so the value would go unheard. With no label, the content names it, value and all. */
+  function nameWithValue(trigger, valueEl) {
+    var ids = labelIds(trigger);
+    if (!ids.length || !valueEl) return;
+    valueEl.id = valueEl.id || uid('tray-value');
+    if (ids.indexOf(valueEl.id) < 0) ids.push(valueEl.id);
+    trigger.setAttribute('aria-labelledby', ids.join(' '));
+  }
+
+  /* Select: data-tray="select" on the anchor that holds a .tray-select-trigger and a .tray-pop of [role=option]. A group of
+     options is a role="group" named by its .tray-list__label. */
   UI.register('select', function (root) {
     var trigger = $('.tray-select-trigger', root), panel = $('.tray-pop', root);
     var valueEl = $('.tray-select-trigger__value', trigger), hidden = $('input[type="hidden"]', root);
@@ -98,6 +155,8 @@
     panel.id = panel.id || uid('tray-listbox');
     trigger.setAttribute('aria-haspopup', 'listbox');
     trigger.setAttribute('aria-controls', panel.id);
+    nameLike(panel, trigger);
+    nameWithValue(trigger, valueEl);
     options().forEach(function (o) { o.setAttribute('tabindex', '-1'); if (!o.hasAttribute('aria-selected')) o.setAttribute('aria-selected', 'false'); });
     var pop = popup(trigger, panel, { onOpen: function () { var cur = $('[aria-selected="true"]', panel) || options()[0]; if (cur) cur.focus(); } });
     function choose(opt) {
@@ -130,8 +189,15 @@
     input.setAttribute('aria-autocomplete', 'list');
     input.setAttribute('aria-controls', panel.id);
     input.setAttribute('autocomplete', 'off');
+    nameLike(panel, input);
     options().forEach(function (o) { o.id = o.id || uid('tray-option'); o.setAttribute('tabindex', '-1'); });
-    var pop = popup(input, panel, { manual: true });
+    /* The no-match sentence sits in the list, where nothing reads it while focus is in the input: a status line beside
+       the list says it as it appears. */
+    var said = document.createElement('span');
+    said.className = 'tray-vh';
+    said.setAttribute('role', 'status');
+    root.appendChild(said);
+    var pop = popup(input, panel, { manual: true, onClose: function () { said.textContent = ''; } });
     function setActive(o) {
       if (active) active.removeAttribute('data-active');
       active = o || null;
@@ -141,7 +207,7 @@
     function filter() {
       var q = input.value.trim().toLowerCase(), shown = 0;
       options().forEach(function (o) { var hit = !q || o.textContent.toLowerCase().indexOf(q) >= 0; o.hidden = !hit; if (hit) shown += 1; });
-      if (empty) empty.hidden = shown > 0;
+      if (empty) { empty.hidden = shown > 0; said.textContent = shown ? '' : empty.textContent.trim(); }
       setActive(visible()[0]);
     }
     function choose(o) {
@@ -166,7 +232,8 @@
   });
 
   /* Calendar: TrayUI.calendar(el, options) or data-tray="calendar" with data-mode, data-months, data-value,
-     data-min, data-max, data-month, data-today, data-week-start, data-locale. Dates are YYYY-MM-DD; a range is start/end. */
+     data-min, data-max, data-month, data-today, data-week-start, data-locale, data-prev-label and data-next-label (the
+     names of the month buttons, in the page's language). Dates are YYYY-MM-DD; a range is start/end. */
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   function iso(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
   function parseDate(s) { var p = String(s).split('-'); return new Date(+p[0], +p[1] - 1, +(p[2] || 1)); }
@@ -181,6 +248,7 @@
     var d = el.dataset;
     function opt(key, attr, fallback) { return opts[key] != null ? opts[key] : (d[attr || key] != null ? d[attr || key] : fallback); }
     var mode = opt('mode', null, 'single'), months = +opt('months', null, 1), weekStart = +opt('weekStart', null, 1), locale = opt('locale', null, 'en-GB');
+    var prevLabel = opt('prevLabel', null, 'Previous month'), nextLabel = opt('nextLabel', null, 'Next month');
     var today = parseDate(opt('today', null, iso(new Date())));
     var min = opt('min') ? parseDate(opt('min')) : null, max = opt('max') ? parseDate(opt('max')) : null;
     var start = null, end = null;
@@ -201,9 +269,9 @@
       for (var m = 0; m < months; m += 1) {
         var first = new Date(view.getFullYear(), view.getMonth() + m, 1);
         html += '<div class="tray-cal__month"><div class="tray-cal__head">' +
-          '<button type="button" class="tray-cal__nav" data-nav="-1" aria-label="Previous month"' + (m > 0 ? ' data-ghost' : '') + '>' + icon('chevron-left', 'tray-icon--flip') + '</button>' +
+          '<button type="button" class="tray-cal__nav" data-nav="-1" aria-label="' + esc(prevLabel) + '"' + (m > 0 ? ' data-ghost' : '') + '>' + icon('chevron-left', 'tray-icon--flip') + '</button>' +
           '<div class="tray-cal__title">' + esc(monthFmt.format(first)) + '</div>' +
-          '<button type="button" class="tray-cal__nav" data-nav="1" aria-label="Next month"' + (m < months - 1 ? ' data-ghost' : '') + '>' + icon('chevron-right', 'tray-icon--flip') + '</button></div>' +
+          '<button type="button" class="tray-cal__nav" data-nav="1" aria-label="' + esc(nextLabel) + '"' + (m < months - 1 ? ' data-ghost' : '') + '>' + icon('chevron-right', 'tray-icon--flip') + '</button></div>' +
           '<div class="tray-cal__grid">';
         for (var w = 0; w < 7; w += 1) html += '<span class="tray-cal__dow" aria-hidden="true">' + esc(dowFmt.format(new Date(2024, 0, 1 + ((weekStart + w + 6) % 7))).slice(0, 2)) + '</span>';
         var offset = (first.getDay() - weekStart + 7) % 7;
@@ -248,7 +316,9 @@
     });
     el.addEventListener('keydown', function (e) {
       var day = e.target.closest && e.target.closest('.tray-cal__day');
-      var step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key];
+      /* in a right-to-left page the week runs from right to left, so the left arrow goes on to the next day */
+      var back = getComputedStyle(el).direction === 'rtl' ? 1 : -1;
+      var step = { ArrowLeft: back, ArrowRight: -back, ArrowUp: -7, ArrowDown: 7 }[e.key];
       if (!day || !step) return;
       e.preventDefault();
       var from = parseDate(day.dataset.date), to = new Date(from.getFullYear(), from.getMonth(), from.getDate() + step);
@@ -281,8 +351,19 @@
     var placeholder = valueEl.textContent, locale = calEl.dataset.locale || 'en-GB';
     UI.init(panel);
     var cal = calEl.__calendar;
+    /* the panel is the dialog that aria-haspopup promises, named as the field is */
+    panel.setAttribute('role', 'dialog');
+    panel.id = panel.id || uid('tray-dialog');
     trigger.setAttribute('aria-haspopup', 'dialog');
-    var pop = popup(trigger, panel, { onOpen: function () { var t = $('.tray-cal__day[tabindex="0"]', calEl); if (t) t.focus(); } });
+    trigger.setAttribute('aria-controls', panel.id);
+    nameLike(panel, trigger);
+    /* a trigger with no label is named by its own words, and its dialog by the trigger */
+    if (!panel.hasAttribute('aria-label') && !panel.hasAttribute('aria-labelledby')) { trigger.id = trigger.id || uid('tray-named'); panel.setAttribute('aria-labelledby', trigger.id); }
+    nameWithValue(trigger, valueEl);
+    function toDay() { var t = $('.tray-cal__day[tabindex="0"]', calEl); if (t) t.focus(); }
+    var pop = popup(trigger, panel, { onOpen: toDay });
+    /* the down arrow opens the panel too, as on a Select, or goes into it when it is open */
+    trigger.addEventListener('keydown', function (e) { if (e.key === 'ArrowDown') { e.preventDefault(); if (pop.isOpen()) toDay(); else pop.open(); } });
     function show(v) {
       var complete = v && (v.indexOf('/') < 0 || v.split('/')[1]);
       valueEl.textContent = complete ? UI.formatDate(v, locale) : (v ? UI.formatDate(v.split('/')[0], locale) + ' – …' : placeholder);

@@ -4,7 +4,7 @@ The changelog tells people what changed in the product: one entry per release, t
 
 ## Markup
 ```html
-<ol class="tray-changelog">
+<ol class="tray-changelog" role="list">
   <li class="tray-release">
     <div class="tray-release__meta">
       <time datetime="2026-11-12">12 November 2026</time>
@@ -24,7 +24,7 @@ The date and version sit in a 11rem column and move above the entry below 40rem.
 For "What's new" inside the product, put the latest two entries in a Popover behind a megaphone button with a `tray-pip` on it, and link to the full page.
 
 ## Accessibility
-Each release is an item of an ordered list with a heading of its own, so a screen reader can move from release to release by heading. Choose the heading level that fits the page; the example uses `<h3>`. Write each date in a `<time>` with a `datetime`. The tags are Badges: the word says the kind of change, and the yellow of "New" only repeats it. In a "What's new" Popover, give the megaphone button an `aria-label` that says there is news, as the bell of the App Shell says "Notifications, 2 unread".
+Each release is an item of an ordered list (with `role="list"`, since Safari stops calling a list without markers a list) with a heading of its own, so a screen reader can move from release to release by heading. Choose the heading level that fits the page; the example uses `<h3>`. Write each date in a `<time>` with a `datetime`. The tags are Badges: the word says the kind of change, and the yellow of "New" only repeats it. In a "What's new" Popover, give the megaphone button an `aria-label` that says there is news, as the bell of the App Shell says "Notifications, 2 unread".
 
 ## Do and don't
 - Do write the title as what the person can do now.

@@ -37,6 +37,8 @@
 .tray-input::placeholder, .tray-textarea::placeholder { color: var(--ink-hint); opacity: 1; }
 .tray-input:focus-visible, .tray-textarea:focus-visible, .tray-select select:focus-visible, .tray-select-trigger:focus-visible { outline: 2px solid var(--ink); outline-offset: 0; }
 .tray-input[aria-invalid="true"], .tray-textarea[aria-invalid="true"], .tray-select select[aria-invalid="true"], .tray-select-trigger[aria-invalid="true"] { outline: 2px solid var(--danger); outline-offset: -2px; }
+/* A wrong value with focus draws the focus ring on the edge, and keeps its danger edge inside as a shadow. */
+.tray-input[aria-invalid="true"]:focus-visible, .tray-textarea[aria-invalid="true"]:focus-visible, .tray-select select[aria-invalid="true"]:focus-visible, .tray-select-trigger[aria-invalid="true"]:focus-visible { outline: 2px solid var(--ink); outline-offset: 0; box-shadow: inset 0 0 0 2px var(--danger); }
 .tray-input:disabled, .tray-textarea:disabled, .tray-select select:disabled, .tray-select-trigger:disabled { opacity: var(--opacity-disabled); cursor: not-allowed; }
 .tray-input[readonly] { color: var(--ink-soft); }
 .tray-input--sm { min-block-size: var(--size-sm); padding: 0 14px; border-radius: var(--radius-control); font-size: 1rem; }
@@ -56,13 +58,18 @@
 .tray-select-trigger[data-placeholder] .tray-select-trigger__value { color: var(--ink-hint); }
 .tray-select-trigger > .tray-icon { color: var(--ink-muted); }
 .tray-select-trigger--sm { min-block-size: var(--size-sm); padding: 0 14px; border-radius: var(--radius-control); font-size: 1rem; }
+/* A group of options in a Select's list (role="group", named by its tray-list__label) keeps the list's spacing. */
+.tray-list > [role="group"] { display: grid; gap: 2px; }
 
 /* ---------- Input group: one field that also holds an icon, a unit or a small button ---------- */
 
 .tray-input-group { display: flex; align-items: center; gap: var(--space-1); min-block-size: var(--size-md); padding-inline: 6px; border-radius: var(--radius-input); background: var(--tray-fill); }
 .tray-input-group:focus-within { outline: 2px solid var(--ink); outline-offset: 0; }
 .tray-input-group:has([aria-invalid="true"]) { outline: 2px solid var(--danger); outline-offset: -2px; }
+.tray-input-group:has([aria-invalid="true"]):focus-within { outline: 2px solid var(--ink); outline-offset: 0; box-shadow: inset 0 0 0 2px var(--danger); }
 .tray-input-group .tray-input { flex: 1; min-inline-size: 0; padding-inline: var(--space-3); background: none; outline: none; }
+/* the group draws the edges of a wrong value, focused or not */
+.tray-input-group .tray-input[aria-invalid="true"] { outline: none; box-shadow: none; }
 .tray-input-group__addon { display: inline-flex; align-items: center; gap: var(--space-2); padding-inline: var(--space-3); color: var(--ink-muted); font: 400 1rem/1 var(--font-sans); white-space: nowrap; }
 .tray-input-group__addon + .tray-input { padding-inline-start: 0; }
 .tray-input-group__btn { flex: none; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-inline-size: var(--size-hit); block-size: var(--size-hit); padding: 0 var(--space-3); border: 0; border-radius: var(--radius-chip); background: var(--tray-ground); color: var(--ink); font: 500 .9375rem/1 var(--font-sans); cursor: pointer; transition: transform var(--duration-press) ease; }
@@ -77,6 +84,7 @@
 .tray-otp input { inline-size: 52px; block-size: var(--size-lg); padding: 0; border: 0; border-radius: var(--radius-control); background: var(--tray-fill); color: var(--ink); caret-color: var(--ink); font: 700 1.375rem/1 var(--font-sans); font-variant-numeric: tabular-nums; text-align: center; }
 .tray-otp input:focus-visible { outline: 2px solid var(--ink); outline-offset: 0; }
 .tray-otp[aria-invalid="true"] input { outline: 2px solid var(--danger); outline-offset: -2px; }
+.tray-otp[aria-invalid="true"] input:focus-visible { outline: 2px solid var(--ink); outline-offset: 0; box-shadow: inset 0 0 0 2px var(--danger); }
 .tray-otp input:disabled { opacity: var(--opacity-disabled); }
 .tray-otp__sep { inline-size: var(--space-3); block-size: 2px; border-radius: var(--radius-pill); background: var(--rule-strong); }
 

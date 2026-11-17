@@ -22,7 +22,7 @@ It is a `raised` panel with the float shadow, usually opened inside a Dialog by 
 The list (pages, recent items, actions), one icon per option, shortcuts where they exist, and the sentence for no results.
 
 ## Accessibility
-Focus stays in the field. Up and down move the highlight and wrap at the ends, Enter runs it, Escape closes the dialog around it. The field gets `role="combobox"`, `aria-expanded="true"` and `aria-controls` naming the list, which becomes a `listbox`, and the highlight is `aria-activedescendant`, so a screen reader reads each option as it is reached. There is no visible label, so keep the field's `aria-label`. An option's name is all its text, shortcut keys included, and its icon is `aria-hidden`.
+Focus stays in the field, and the search row draws the 2px ink ring of a field inside its edge while it does. Up and down move the highlight and wrap at the ends, Enter runs it, Escape closes the dialog around it. The field gets `role="combobox"`, `aria-expanded="true"` and `aria-controls` naming the list, which becomes a `listbox`, and the highlight is `aria-activedescendant`, so a screen reader reads each option as it is reached. Each `data-group` becomes a `group` of the listbox named by its `tray-list__label`, so the group's name is read on the way into it. There is no visible label, so keep the field's `aria-label`. An option's name is all its text, shortcut keys included, and its icon is `aria-hidden`.
 
 ## Do and don't
 - Do put what people do most at the top, before they type.

@@ -3,6 +3,7 @@ import type { IconSource } from '../lib/icon';
 import { cx, useControlled, useUid } from '../lib/util';
 import { Button } from './Button';
 import { Card } from './Card';
+import { Field } from './Field';
 import { Icon } from './Icon';
 import { InputGroup } from './InputGroup';
 
@@ -39,7 +40,7 @@ export interface CheckoutSummaryProps extends Omit<React.HTMLAttributes<HTMLElem
   onPromoCodeChange?: (code: string) => void;
   /** Called with the code when "Apply" is pressed. */
   onApplyPromo?: (code: string) => void;
-  /** The placeholder and the name of the promo field. Default "Promo code". */
+  /** The label over the promo field. Default "Promo code". */
   promoLabel?: string;
   /** The words of the button in the promo field. Default "Apply". */
   applyLabel?: string;
@@ -100,7 +101,7 @@ export const CheckoutSummary = React.forwardRef<HTMLElement, CheckoutSummaryProp
           {title}
         </H>
       ) : null}
-      <ul className="tray-summary__lines">
+      <ul className="tray-summary__lines" role="list">
         {lines.map((line, i) => (
           <li key={i} className="tray-summary__line">
             <span>
@@ -112,14 +113,16 @@ export const CheckoutSummary = React.forwardRef<HTMLElement, CheckoutSummaryProp
         ))}
       </ul>
       {promo ? (
-        <InputGroup
-          size="sm"
-          placeholder={promoLabel}
-          aria-label={promoLabel}
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          action={{ label: applyLabel, onClick: () => onApplyPromo?.(code.trim()) }}
-        />
+        // A visible label: a placeholder alone would name the field only while it is empty.
+        <Field label={promoLabel}>
+          <InputGroup
+            size="sm"
+            autoComplete="off"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            action={{ label: applyLabel, onClick: () => onApplyPromo?.(code.trim()) }}
+          />
+        </Field>
       ) : null}
       <p className="tray-summary__total">
         <span>{totalLabel}</span>

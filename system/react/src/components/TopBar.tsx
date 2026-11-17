@@ -150,7 +150,7 @@ export const TopBar = React.forwardRef<HTMLElement, TopBarProps>(function TopBar
                 aria-label={a.count ? `${a.label}, ${a.count} unread` : a.label}
                 onClick={a.onClick}
               />
-              {a.count !== undefined ? <span className="tray-pip">{a.count ? a.count : null}</span> : null}
+              {a.count !== undefined ? <span className="tray-pip" aria-hidden="true">{a.count ? a.count : null}</span> : null}
             </span>
           ))}
           {end}

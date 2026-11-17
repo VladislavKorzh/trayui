@@ -28,7 +28,7 @@ The feedback widget asks one question with a row of numbers, then offers a box f
 `tray-scale` is a row of radio buttons drawn as number tiles; the chosen one is solid ink. Use 0 to 10 for "would you recommend", 1 to 5 for "how was it". Name both ends in `tray-scale__ends`.
 
 ## Accessibility
-The scale is a `<fieldset>` of native radios: the `<legend>` asks the question, each number names its radio, `Tab` enters the group and the arrow keys move the choice. The tile under focus shows the 3px ink ring. Choosing a number shows the reason box and leaves focus where it is. Sending moves focus to the thanks, so it is read at once. The named ends sit outside the fieldset and are not read with the radios: give `tray-scale__ends` an `id` and point the fieldset's `aria-describedby` at it.
+The scale is a `<fieldset>` of native radios: the `<legend>` asks the question, each number names its radio, `Tab` enters the group and the arrow keys move the choice. The tile under focus shows the 3px ink ring. Choosing a number shows the reason box and leaves focus where it is. Sending moves focus to the thanks, so it is read at once. The named ends sit outside the fieldset, so each end is tied to its radio: give each word of `tray-scale__ends` an `id` and point the first and the last radio's `aria-describedby` at it, as the example does, so "0" is read with "Not at all" and "10" with "Very".
 
 ## Do and don't
 - Do ask after the person finished something, not while they work.

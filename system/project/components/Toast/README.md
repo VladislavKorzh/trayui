@@ -14,9 +14,9 @@ TrayUI.toast({ tone: 'danger', title: 'The export failed', text: 'Check the conn
 | `text` | One more line, when needed. |
 | `tone` | `'success'` or `'danger'` add an icon in that colour. Leave it out for a neutral toast. |
 | `action` | One button: `{ label, onClick }`. "Undo" is the best action a toast can have. |
-| `duration` | Milliseconds on screen; default 5000. A danger toast stays until dismissed. |
+| `duration` | Milliseconds on screen; default 5000. A danger toast, and a toast with an action, stay until dismissed. |
 
-Toasts stack at the bottom end corner in a `tray-toasts` region; the timer pauses while the pointer or focus is on one. Each is a `raised` row with 16px corners and the float shadow, announced politely (errors at once).
+Toasts stack at the bottom end corner in a `tray-toasts` region; the timer pauses while the pointer or focus is on one. Each is a `raised` row with 16px corners and the float shadow, read out politely (errors at once).
 
 The markup of one toast is a `tray-toast` with an optional icon, a `tray-toast__body` holding `tray-toast__title` and `tray-toast__text`, and `tray-toast__actions`.
 
@@ -26,8 +26,10 @@ A toast rises in and, when it is dismissed or its time is up, sinks out quicker 
 A toast is for what already happened and needs no decision. Something the person must read or act on goes in an Alert in the page, or in a Dialog.
 
 ## Accessibility
-- Each toast is a `role="status"`, and a danger toast a `role="alert"`. The region the script makes for them is a `role="region"` named "Notifications", at the end of the page.
+- The region the script makes for the toasts is the live one: a `role="region"` named "Notifications", with `aria-live="polite"`, at the end of the page. A toast added to it is read out once, politely; a danger toast is a `role="alert"` and is read at once. The first toast in a region that has only just been made has its words put in again a moment later, so it is read too.
 - Focus stays where it was, so `Tab` reaches a toast after everything else on the page.
+- A toast with an action stays until it is dismissed, so there is time to reach its button (WCAG 2.2.1). Any other toast leaves after `duration`, and waits while the pointer or focus is on it.
+- Dismissing a toast, or running its action, moves focus that was in it to the next toast, or back to where it came from, never to the top of the page.
 - The close button is named "Dismiss". A tone always comes with its icon and the words of the title, so colour is never the only sign.
 - Under `prefers-reduced-motion: reduce` a toast appears and goes at once.
 

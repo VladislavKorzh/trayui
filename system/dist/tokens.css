@@ -561,11 +561,11 @@
   --section-gap: clamp(72px, 9vw, 128px);
   --grid-gap: 16px;
   --measure: 38rem;
-  --display-size: clamp(2.75rem, 6.6vw, 6rem);
-  --headline-size: clamp(2.125rem, 4.6vw, 4rem);
-  --title-size: clamp(1.75rem, 3vw, 2.5rem);
-  --subtitle-size: clamp(1.375rem, 2vw, 1.75rem);
-  --figure-size: clamp(4rem, 7.6vw, 7rem);
+  --display-size: clamp(2.75rem, 0.25rem + 6.2vw, 6rem);
+  --headline-size: clamp(2.125rem, 0.25rem + 4.2vw, 4rem);
+  --title-size: clamp(1.75rem, 0.25rem + 2.6vw, 2.5rem);
+  --subtitle-size: clamp(1.375rem, 0.5rem + 1.4vw, 1.75rem);
+  --figure-size: clamp(4rem, 0.25rem + 7.2vw, 7rem);
   --ease: cubic-bezier(.2, .8, .2, 1);
   --duration-press: .15s;
   --duration-fill: .18s;

@@ -55,7 +55,8 @@ export const IntegrationCard = React.forwardRef<HTMLElement, IntegrationCardProp
       <div className="tray-integration__head">
         <span className="tray-integration__icon">{logo ? <img src={logo} alt="" /> : <Icon name={icon} />}</span>
         {action != null ? (
-          <Button variant="quiet" size="xs" onClick={onAction}>
+          // the same word is on every card, so the name holds the service too, after the word: "Connect Chat alerts"
+          <Button variant="quiet" size="xs" aria-label={`${action} ${title}`} onClick={onAction}>
             {action}
           </Button>
         ) : (
@@ -80,7 +81,11 @@ export const IntegrationCard = React.forwardRef<HTMLElement, IntegrationCardProp
           ) : (
             <span>{status}</span>
           )}
-          {link ? <a href={link.href}>{link.label}</a> : null}
+          {link ? (
+            <a href={link.href} aria-label={`${link.label} for ${title}`}>
+              {link.label}
+            </a>
+          ) : null}
         </div>
       ) : null}
     </article>

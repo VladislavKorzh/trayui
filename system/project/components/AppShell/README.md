@@ -38,7 +38,7 @@ The app shell is the frame of a product: the sidebar on a tray at the start edge
 `tray-app--contained` gives the shell a fixed height (`--tray-app-height`) and scrolls the content inside it. Use it for an embedded tool or a preview, never for the product page.
 
 ## Accessibility
-The shell gives the page its landmarks: the sidebar is a `<nav>` with an `aria-label`, the top bar a `<header>`, and the content the page's one `<main>`. The collapse button carries `aria-controls` naming the sidebar, and `data-tray="sidebar-toggle"` keeps its `aria-expanded` in step. In the rail the item text is hidden, so give each Sidebar item an `aria-label` with its name. Below 56rem the `tray-app__menu` button opens the same sidebar in a modal Sheet named after it: focus moves in, `Escape` or the close button shuts it, and focus returns to the button. Following a link in the sheet closes it too.
+The shell gives the page its landmarks: the sidebar is a `<nav>` with an `aria-label`, the top bar a `<header>`, and the content the page's one `<main>`. The collapse button carries `aria-controls` naming the sidebar, and `data-tray="sidebar-toggle"` keeps its `aria-expanded` in step and changes its name from "Collapse the sidebar" to "Expand the sidebar". In the rail the item text is only hidden from sight, so each Sidebar item keeps its name. Below 56rem the `tray-app__menu` button opens the same sidebar in a modal Sheet named after it: focus moves in, `Escape` or the close button shuts it, and focus returns to the button. Following a link in the sheet closes it too.
 
 ## Do and don't
 - Do put the Workspace Switcher at the top of the sidebar and the Usage Meter at its foot.

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cx, useTrayEvent, useBehaviour, useForwardedRef } from '../lib/util';
+import { cx, useTrayEvent, useBehaviour, useForwardedRef, useUid } from '../lib/util';
 import { Button } from './Button';
 import { Field } from './Field';
 import { Textarea } from './Textarea';
@@ -69,6 +69,9 @@ export const FeedbackWidget = React.forwardRef<HTMLFormElement, FeedbackWidgetPr
   useBehaviour(ref);
 
   const numbers = scale === '1-5' ? [1, 2, 3, 4, 5] : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  // The named ends sit outside the fieldset: each end's radio points at its word, so "0" is read with "Not at all".
+  const ends = useUid('scale-end');
+  const endOf = (n: number) => (n === numbers[0] ? `${ends}-lo` : n === numbers[numbers.length - 1] ? `${ends}-hi` : undefined);
   return (
     <form ref={ref} className={cx('tray-card tray-feedback', className)} data-tray="feedback" {...rest}>
       <div className="tray-stack tray-stack--sm" data-feedback="ask">
@@ -77,14 +80,14 @@ export const FeedbackWidget = React.forwardRef<HTMLFormElement, FeedbackWidgetPr
           <legend className="tray-label">{question}</legend>
           {numbers.map((n) => (
             <label key={n}>
-              <input type="radio" name="rating" value={n} defaultChecked={n === defaultRating} />
+              <input type="radio" name="rating" value={n} defaultChecked={n === defaultRating} aria-describedby={endOf(n)} />
               <span>{n}</span>
             </label>
           ))}
         </fieldset>
         <p className="tray-scale__ends">
-          <span>{lowLabel}</span>
-          <span>{highLabel}</span>
+          <span id={`${ends}-lo`}>{lowLabel}</span>
+          <span id={`${ends}-hi`}>{highLabel}</span>
         </p>
       </div>
       <div className="tray-stack" data-feedback="more" hidden={!reasonOpen}>

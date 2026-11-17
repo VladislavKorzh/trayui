@@ -2,6 +2,18 @@
 
 What changed in each version of Tray UI, the design system in plain HTML and CSS: its components, blocks, themes and tools, newest first.
 
+## Not released yet
+
+Accessibility, after every component was given a section on it. Each change below was checked in Chrome and its accessibility tree; none was tested in a screen reader.
+
+- **Focus stays on the page.** A control that hides or turns off while it has focus (a step button at its limit, the end of a carousel, a toast dismissed, a chip removed, a banner closed, a tour skipped) now hands focus to the control beside it. `TrayUI.rescue(el, to)` does it, and is there for your own scripts.
+- **Menus and lists close on Tab**, as they close on Escape. Submenus are menus of their own: they open on the right arrow, Enter or Space, and the left arrow closes them. A menubar is one Tab stop, with arrows between its menus.
+- **Changed for whoever listens:** a checkbox or radio item in a menu fires `tray:change` with `{ value, checked }`, no longer `tray:select`; Tag input puts `aria-invalid` on its text field, not on the tray; Input OTP spreads a whole code typed, pasted or filled in over its cells; Reveal keeps the name "Show password" and says its state with `aria-pressed`; a Calendar's month buttons take their names from `data-prev-label` and `data-next-label`.
+- **Easier to hear:** toasts in a live region, the value of a Select and the date of a Date picker in their names, a slider's unit, the count of a reaction, the unread count of the bell, a price that changes, a copy that failed, a task that is done.
+- **Easier to see and to hit:** a focused field that is invalid keeps its focus ring; extra small buttons and toggles, a chip's remove, reactions, footer links and the checkboxes of a matrix reach 44px; a tooltip stays while the pointer moves onto it.
+- **Less motion when asked for:** presses, turning icons, filling bars and a folding sidebar change at once.
+- **Type that grows with zoom:** the five heading sizes have a part in rem, so browser zoom enlarges them inside their range.
+
 ## 0.1.0, November 2026
 
 The first public version.

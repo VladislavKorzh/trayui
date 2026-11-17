@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cx, useControlled } from '../lib/util';
+import { cx, useControlled, useForwardedRef } from '../lib/util';
 import { Button } from './Button';
 import { DropdownMenu, type MenuItem } from './DropdownMenu';
 import { Icon } from './Icon';
@@ -104,6 +104,7 @@ export const FilterBar = React.forwardRef<HTMLDivElement, FilterBarProps>(functi
   },
   ref,
 ) {
+  const own = useForwardedRef<HTMLDivElement>(ref);
   const [on, setOn] = useControlled<string[]>(value, defaultValue ?? [], onChange);
   const [text, setText] = useControlled(query, defaultQuery ?? '', onQueryChange);
   const firstSort = sortOptions?.[0];
@@ -114,9 +115,21 @@ export const FilterBar = React.forwardRef<HTMLDivElement, FilterBarProps>(functi
   const flip = (v: string, checked: boolean) => setOn(checked ? (on.includes(v) ? on : [...on, v]) : on.filter((x) => x !== v));
   const chips = on.filter((v) => chipOf.has(v));
   const hasEnd = end != null || !!sortOptions?.length || !!views?.length;
+  // A chip's button and "Clear all" go once pressed. Focus on one moves first: to the next chip, or the one before, or back
+  // to the menu the filter came from (the bar's first control when it is not known), so it is not dropped to the top of the page.
+  const moveFrom = (el: HTMLElement, v?: string) => {
+    const root = own.current;
+    if (!root || !el.contains(document.activeElement)) return;
+    const xs = Array.from(root.querySelectorAll<HTMLElement>('.tray-filterbar__chips .tray-chip__x'));
+    const k = xs.indexOf(el);
+    const menu = filters.findIndex((m) => m.options.some((o) => o.value === v));
+    const triggers = root.querySelectorAll<HTMLElement>('.tray-filterbar__row .tray-anchor > button');
+    const to = (k >= 0 ? xs[k + 1] ?? xs[k - 1] : undefined) ?? (menu >= 0 ? triggers[menu] : undefined) ?? root.querySelector<HTMLElement>('.tray-filterbar__row input, .tray-filterbar__row button');
+    to?.focus();
+  };
 
   return (
-    <div ref={ref} className={cx('tray-filterbar', className)} {...rest}>
+    <div ref={own} className={cx('tray-filterbar', className)} {...rest}>
       <div className="tray-filterbar__row">
         {search !== false ? (
           <InputGroup size="sm" icon="search" type="search" placeholder={search} aria-label={search} value={text} onChange={(e) => setText(e.target.value)} />
@@ -151,13 +164,27 @@ export const FilterBar = React.forwardRef<HTMLDivElement, FilterBarProps>(functi
         {chips.map((v) => (
           <span key={v} className="tray-chip" data-value={v}>
             {chipOf.get(v)}
-            <button type="button" className="tray-chip__x" aria-label={`Remove ${chipOf.get(v)}`} onClick={() => flip(v, false)}>
+            <button
+              type="button"
+              className="tray-chip__x"
+              aria-label={`Remove ${chipOf.get(v)}`}
+              onClick={(e) => {
+                moveFrom(e.currentTarget, v);
+                flip(v, false);
+              }}
+            >
               <Icon name="x" size="sm" />
             </button>
           </span>
         ))}
         {chips.length ? (
-          <Button variant="link" onClick={() => setOn(on.filter((v) => !chipOf.has(v)))}>
+          <Button
+            variant="link"
+            onClick={(e) => {
+              moveFrom(e.currentTarget, chips[0]);
+              setOn(on.filter((v) => !chipOf.has(v)));
+            }}
+          >
             {clearLabel}
           </Button>
         ) : null}

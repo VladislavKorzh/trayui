@@ -262,11 +262,6 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 .site-foot a { color: var(--ink-soft); }
 .site-foot .tray-footer__legal { display: flex; flex-wrap: wrap; gap: 0 var(--space-5); margin: 0; padding: 0; list-style: none; }
 .site-foot .tray-footer__legal a { display: inline-flex; align-items: center; min-block-size: var(--size-hit); }
-/* A button smaller than a finger (the copy of a code block, the tools of a viewer) keeps its look and takes a hit area of 44px. */
-@media (pointer: coarse) {
-  .site .tray-btn--xs { position: relative; }
-  .site .tray-btn--xs::before { content: ""; position: absolute; inset: calc((var(--size-xs) - var(--size-hit)) / 2); }
-}
 
 @media (max-width: 64rem) {
   .site-maker { grid-template-columns: minmax(0, 1fr); }

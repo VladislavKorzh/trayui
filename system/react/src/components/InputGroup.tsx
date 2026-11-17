@@ -65,8 +65,9 @@ export const InputGroup = React.forwardRef<HTMLInputElement, InputGroupProps>(fu
         <button
           className="tray-input-group__btn"
           type="button"
+          // One name in both states: aria-pressed carries the state, or it would be read as "Hide password, pressed".
           aria-pressed={shown}
-          aria-label={shown ? 'Hide password' : 'Show password'}
+          aria-label="Show password"
           disabled={field.disabled}
           onClick={() => setShown((s) => !s)}
         >

@@ -198,3 +198,14 @@
 @keyframes tray-pop-in { from { opacity: 0; scale: .5; } }
 @keyframes tray-bump-a { 40% { scale: 1.3; } }
 @keyframes tray-bump-b { 40% { scale: 1.3; } }
+
+/* ---------- Asked for less motion: what slides, turns, grows or gives under a press changes at once ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  /* a press gives no more; the knob of a switch, a tile's plus, a chevron and a caret are at their place at once */
+  .tray-btn:active, .tray-btn-group__item:active, .tray-toggle:active, .tray-seg__item:active span { transform: none; }
+  .tray-btn, .tray-btn-group__item, .tray-toggle, .tray-switch__track::before, .tray-tile .tray-icon,
+  summary.tray-sidebar__label > .tray-icon, .tray-sidebar__caret, .tray-trace-group > summary .tray-icon { transition-property: background-color, color, filter; }
+  /* a bar fills, and a sidebar folds, without travelling */
+  .tray-progress__bar::before, .tray-checklist *, .tray-sidebar, .tray-app__side { transition: none; }
+}

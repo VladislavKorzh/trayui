@@ -21,6 +21,8 @@
     el.classList.add('tray-chart');
     el.classList.toggle('tray-chart--single', series.length === 1 && type !== 'donut' && !(type === 'radial' && series[0].values.length > 1));
     var summary = cfg.summary || (type + ' chart. ' + series.map(function (s) { return s.name + ': ' + labels.map(function (l, i) { return l + ' ' + val(s.values[i]); }).join(', '); }).join('. '));
+    /* What the arrow keys reach is said through this region. It sits in the figure, beside the drawing: the children of a
+       role="img" are presentational, so a region inside it would never be heard. */
     var live = make('span', 'tray-vh');
     live.setAttribute('aria-live', 'polite');
 
@@ -88,7 +90,7 @@
       if (cross) { cross.hidden = true; plot.appendChild(cross); }
       tip.hidden = true;
       plot.appendChild(tip);
-      plot.appendChild(live);
+      el.appendChild(live);
       function hide() {
         active = null; tip.hidden = true;
         if (cross) cross.hidden = true;
@@ -136,6 +138,8 @@
     function horizontal() {
       var vals = series[0].values, max = cfg.max || Math.max.apply(null, vals);
       var rows = make('div', 'tray-chart__rows');
+      /* Every chart is a stop for Tab, so its summary is read there. Each figure is written beside its bar: nothing to walk. */
+      rows.setAttribute('tabindex', '0');
       rows.setAttribute('role', 'img');
       rows.setAttribute('aria-label', summary);
       rows.innerHTML = labels.map(function (l, i) {
@@ -158,7 +162,7 @@
       round.setAttribute('role', 'img');
       round.setAttribute('aria-label', summary);
       el.appendChild(round);
-      round.appendChild(live);
+      el.appendChild(live);
       var big = $('.tray-chart__center b', round), small = $('.tray-chart__center span', round), active = null;
       function show(i, announce) {
         active = i;
@@ -190,6 +194,8 @@
         svg += '<circle class="tray-chart__ring" cx="50" cy="50" r="' + r + '"/><circle class="tray-chart__value" cx="50" cy="50" r="' + r + '" style="' + colour(i) + '" stroke-dasharray="' + (c * clamp(v / max, 0, 1)).toFixed(2) + ' ' + c.toFixed(2) + '" transform="rotate(-90 50 50)"/>';
       });
       round.innerHTML = svg + '</svg>' + (vals.length === 1 ? '<div class="tray-chart__center"><b>' + val(vals[0]) + '</b><span>' + esc(labels[0] || '') + '</span></div>' : '');
+      /* A stop for Tab like every chart, so its summary is read there; its figures are in the middle or in the key. */
+      round.setAttribute('tabindex', '0');
       round.setAttribute('role', 'img');
       round.setAttribute('aria-label', summary);
       el.appendChild(round);
@@ -217,7 +223,7 @@
       var tip = make('div', 'tray-tip'), active = null;
       tip.hidden = true;
       round.appendChild(tip);
-      round.appendChild(live);
+      el.appendChild(live);
       function show(i, announce) {
         active = i;
         tip.hidden = i == null;
@@ -281,10 +287,16 @@
       list.slice(page * per, page * per + per).forEach(function (r) { r.hidden = false; });
       if (empty) empty.hidden = list.length > 0;
       if (status) status.textContent = list.length ? (page * per + 1) + '–' + Math.min(list.length, (page + 1) * per) + ' of ' + list.length : 'Nothing to show';
-      if (prev) prev.disabled = page === 0;
-      if (next) next.disabled = page >= pages - 1;
+      /* A button that turns off under the reader's finger, on the first or the last page, hands focus to the other one
+         (or to the count when both are off), so focus is not dropped to the top of the page. */
+      var first = page === 0, last = page >= pages - 1;
+      if (prev && !first) prev.disabled = false;
+      if (next && !last) next.disabled = false;
+      if (prev && first) { rescue(prev, !last && next || status); prev.disabled = true; }
+      if (next && last) { rescue(next, !first && prev || status); next.disabled = true; }
+      /* The row's checkbox carries the state: aria-selected means nothing on the row of a plain table. */
       var picked = 0;
-      rows.forEach(function (r) { var c = $('[data-select]', r); if (!c) return; r.setAttribute('aria-selected', String(c.checked)); if (c.checked) picked += 1; });
+      rows.forEach(function (r) { var c = $('[data-select]', r); if (c && c.checked) picked += 1; });
       if (count) count.textContent = picked ? picked + ' of ' + rows.length + ' selected' : rows.length + ' rows';
       if (allBox) { allBox.checked = picked === rows.length && rows.length > 0; allBox.indeterminate = picked > 0 && picked < rows.length; }
       fire(root, 'change', { selected: picked, page: page });

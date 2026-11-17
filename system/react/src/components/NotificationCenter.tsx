@@ -94,7 +94,7 @@ export const NotificationCenter = React.forwardRef<HTMLSpanElement, Notification
   return (
     <span ref={setRef} className={cx('tray-anchor', className)} data-tray="popover" {...rest}>
       <Button variant="quiet" size="sm" icon="bell" aria-label={unread.length ? `${title}, ${unread.length} unread` : title} />
-      <span className="tray-pip">{unread.length ? unread.length : null}</span>
+      <span className="tray-pip" aria-hidden="true">{unread.length ? unread.length : null}</span>
       <div
         className={cx('tray-pop', align === 'end' && 'tray-pop--end', 'tray-notices')}
         data-open={initiallyOpen ? '' : undefined}
@@ -102,7 +102,8 @@ export const NotificationCenter = React.forwardRef<HTMLSpanElement, Notification
       >
         <div className="tray-notices__head">
           <h2>{title}</h2>
-          <Button variant="ghost" size="xs" disabled={!unread.length} onClick={() => markRead(unread.map((n) => n.id))}>
+          {/* aria-disabled, not disabled: with nothing to mark it keeps focus when pressed, and stays the panel's first stop */}
+          <Button variant="ghost" size="xs" aria-disabled={unread.length ? undefined : true} onClick={() => markRead(unread.map((n) => n.id))}>
             {readAllLabel}
           </Button>
         </div>

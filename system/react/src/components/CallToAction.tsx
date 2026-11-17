@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cx } from '../lib/util';
+import { cx, useUid } from '../lib/util';
 import { Card } from './Card';
 import { InputGroup } from './InputGroup';
 
@@ -7,7 +7,7 @@ import { InputGroup } from './InputGroup';
 export interface CallToActionEmail {
   /** The words of the button inside the field: "Subscribe". */
   action: string;
-  /** The field's name for screen readers. Default "Email". */
+  /** The field's label, kept for screen readers and hidden from view: the card has no room for it. Default "Email". */
   label?: string;
   /** An example address: "you@farm.example". */
   placeholder?: string;
@@ -41,6 +41,7 @@ export const CallToAction = React.forwardRef<HTMLElement, CallToActionProps>(fun
   ref,
 ) {
   const H = `h${headingLevel}` as 'h2' | 'h3';
+  const emailId = useUid('cta-email');
   const cardTone = tone ?? (email ? 'tray' : 'accent');
   const send = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -56,12 +57,16 @@ export const CallToAction = React.forwardRef<HTMLElement, CallToActionProps>(fun
       {email ? (
         // the field's width, as the original form sets it
         <form style={{ flex: '1 1 20rem', maxInlineSize: '26rem' }} onSubmit={send}>
+          {/* a real label, visually hidden: the field sits in one row with the title, with no room above it */}
+          <label className="tray-vh" htmlFor={emailId}>
+            {email.label ?? 'Email'}
+          </label>
           <InputGroup
+            id={emailId}
             type="email"
             name="email"
             required
             autoComplete="email"
-            aria-label={email.label ?? 'Email'}
             placeholder={email.placeholder}
             action={{ label: email.action, accent: true, type: 'submit' }}
           />

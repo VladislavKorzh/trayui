@@ -43,6 +43,9 @@
 /* A count on the corner of a button. The anchor around the button places it. */
 .tray-pip { position: absolute; inset-block-start: -4px; inset-inline-end: -4px; display: grid; place-items: center; min-inline-size: 22px; block-size: 22px; padding: 0 6px; border-radius: var(--radius-pill); background: var(--accent); color: var(--on-accent); font: 600 .8125rem/1 var(--font-sans); font-variant-numeric: tabular-nums; box-shadow: 0 0 0 3px var(--tray-ground); pointer-events: none; }
 .tray-pip:empty { display: none; }
+/* The remove button of a chip (Tag Input, Filter Bar) is 28px to the eye and 44px to a finger. */
+.tray-chip__x { position: relative; }
+.tray-chip__x::before { content: ""; position: absolute; inset: calc((28px - var(--size-hit)) / 2); }
 
 /* ---------- Page header ---------- */
 
@@ -132,8 +135,9 @@ a.tray-step, button.tray-step { cursor: pointer; }
 .tray-stepper--v > li:last-child::before { display: none; }
 .tray-stepper--v > li > .tray-step { grid-column: 1 / -1; grid-row: 1; align-items: flex-start; }
 .tray-stepper--v .tray-step__text { padding-block-start: 5px; }
+/* Folded away from the eye only: a step's words stay its name for a screen reader, so a link to a done step is not left nameless. */
 @media (max-width: 34rem) {
-  .tray-stepper:not(.tray-stepper--v) > li:not([aria-current]) .tray-step__text { display: none; }
+  .tray-stepper:not(.tray-stepper--v) > li:not([aria-current]) .tray-step__text { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }
 
 /* ---------- Banner ---------- */
@@ -251,7 +255,7 @@ a.tray-stat:hover { filter: brightness(.96); }
 .tray-compare tbody .tray-compare__group th { color: var(--ink-muted); font: 500 .875rem/1.4 var(--font-sans); }
 .tray-compare [data-featured] { background: var(--tray-fill); }
 .tray-compare thead [data-featured] { border-start-start-radius: var(--radius-button); border-start-end-radius: var(--radius-button); }
-.tray-compare tbody tr:last-child [data-featured] { border-block-end: 0; border-end-start-radius: var(--radius-button); border-end-end-radius: var(--radius-button); }
+.tray-compare tbody:last-of-type tr:last-child [data-featured] { border-block-end: 0; border-end-start-radius: var(--radius-button); border-end-end-radius: var(--radius-button); }
 .tray-compare td > .tray-icon { display: inline-block; vertical-align: middle; }
 .tray-compare td[data-off] { color: var(--ink-hint); }
 
@@ -320,6 +324,7 @@ a.tray-stat:hover { filter: brightness(.96); }
 .tray-secret button { flex: none; display: grid; place-items: center; inline-size: var(--size-xs); block-size: var(--size-xs); padding: 0; border: 0; border-radius: var(--radius-chip); background: none; color: var(--ink-soft); cursor: pointer; }
 .tray-secret button:hover { background: var(--tray-fill); color: var(--ink); }
 .tray-secret:has(button) { padding-inline-end: 2px; }
+.tray-secret button[data-failed] { color: var(--danger); }
 .tray-secret--block { display: flex; }
 
 /* ---------- Integration card ---------- */
@@ -345,7 +350,8 @@ a.tray-stat:hover { filter: brightness(.96); }
 .tray-matrix tbody th b { display: block; font-weight: 600; }
 .tray-matrix tbody th small { color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
 .tray-matrix td { inline-size: 5.5rem; }
-.tray-matrix td .tray-check { display: inline-flex; }
+/* A box alone in its cell is 26px wide: its label grows to 44px each way, so the target is a finger's size. */
+.tray-matrix td .tray-check { display: inline-flex; justify-content: center; min-inline-size: var(--size-hit); min-block-size: var(--size-hit); }
 .tray-matrix__group th { padding-block-start: var(--space-6); color: var(--ink-muted); font: 500 .875rem/1.4 var(--font-sans); }
 
 /* ---------- Onboarding checklist ---------- */
@@ -363,6 +369,8 @@ a.tray-stat:hover { filter: brightness(.96); }
 .tray-task__body .tray-btn { margin-block-start: var(--space-3); }
 .tray-task:not([aria-current]) .tray-task__body p, .tray-task:not([aria-current]) .tray-task__body .tray-btn { display: none; }
 .tray-task[data-done] .tray-task__body b { color: var(--ink-muted); font-weight: 500; text-decoration: line-through; }
+/* The hidden ", done" after a title (the behaviour adds it) is heard only while the task is done. */
+.tray-task:not([data-done]) [data-task-state] { display: none; }
 
 /* ---------- Tour ---------- */
 
@@ -370,7 +378,9 @@ a.tray-stat:hover { filter: brightness(.96); }
 .tray-tour { position: absolute; z-index: var(--z-float); display: grid; gap: var(--space-2); inline-size: min(21rem, calc(100% - 1rem)); padding: var(--space-5); border-radius: var(--radius-panel); }
 .tray-tour__count { color: var(--ink-muted); font: 500 .875rem/1.4 var(--font-sans); font-variant-numeric: tabular-nums; }
 .tray-tour__foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-block-start: var(--space-3); }
-[data-tour-on] { outline: 3px solid var(--ink); outline-offset: 4px; border-radius: var(--radius-control); }
+/* The part a step points at: a dashed ring further out, so it is not taken for the focus ring. While that part has focus,
+   the focus ring shows in its place. */
+[data-tour-on]:not(:focus-visible) { outline: 2px dashed var(--ink); outline-offset: 6px; border-radius: var(--radius-control); }
 
 /* ---------- Feedback ---------- */
 
@@ -407,7 +417,11 @@ a.tray-stat:hover { filter: brightness(.96); }
 
 .tray-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-block-size: var(--size-md); padding: 6px; border-radius: var(--radius-input); background: var(--tray-fill); cursor: text; }
 .tray-tags:focus-within { outline: 2px solid var(--ink); outline-offset: 0; }
-.tray-tags[aria-invalid="true"] { outline: 2px solid var(--danger); outline-offset: -2px; }
+/* A wrong field (aria-invalid on its text input) is edged in danger inside the tray, so the focus ring outside it still shows. */
+.tray-tags:has(input[aria-invalid="true"]) { box-shadow: inset 0 0 0 2px var(--danger); }
+@media (forced-colors: active) {
+  .tray-tags:has(input[aria-invalid="true"]):not(:focus-within) { outline: 2px solid; outline-offset: -2px; }
+}
 .tray-tags input:not([type="hidden"]) { flex: 1 1 8rem; min-inline-size: 6rem; block-size: var(--size-hit); padding: 0 var(--space-3); border: 0; background: none; color: var(--ink); font: 400 1.0625rem/1.4 var(--font-sans); outline: none; }
 .tray-tags input::placeholder { color: var(--ink-hint); opacity: 1; }
 .tray-tags .tray-chip[data-invalid] { color: var(--danger); box-shadow: inset 0 0 0 2px var(--danger); }
@@ -455,9 +469,10 @@ a.tray-stat:hover { filter: brightness(.96); }
 .tray-footer { display: grid; gap: var(--space-10); padding-block: var(--space-12) var(--space-8); color: var(--ink); }
 .tray-footer__top { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-8) var(--space-6); }
 .tray-footer__brand { grid-column: 1 / -1; display: grid; align-content: start; justify-items: start; gap: var(--space-3); max-inline-size: 22rem; color: var(--ink-soft); font: 400 1rem/1.45 var(--font-sans); }
-.tray-footer__col { display: grid; align-content: start; justify-items: start; gap: 2px; }
-.tray-footer__col h3 { margin-block-end: var(--space-2); color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
-.tray-footer__col a { display: inline-flex; align-items: center; min-block-size: 36px; border-radius: var(--radius-mark); color: var(--ink); font: 500 1rem/1.3 var(--font-sans); text-decoration: none; }
+/* Each link is a 44px row, a finger's size; the rows touch, so the column keeps its rhythm. */
+.tray-footer__col { display: grid; align-content: start; justify-items: start; gap: 0; }
+.tray-footer__col h3 { margin-block-end: var(--space-1); color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
+.tray-footer__col a { display: inline-flex; align-items: center; min-block-size: var(--size-hit); border-radius: var(--radius-mark); color: var(--ink); font: 500 1rem/1.3 var(--font-sans); text-decoration: none; }
 .tray-footer__col a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .2em; }
 .tray-footer__bottom { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3) var(--space-6); padding-block-start: var(--space-6); border-block-start: 1px solid var(--hairline); color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
 .tray-footer__legal { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); margin: 0; padding: 0; list-style: none; }

@@ -1,11 +1,11 @@
-<!-- @dsCard group="Forms" height=132 -->
+<!-- @dsCard group="Forms" height=157 -->
 <!doctype html>
 <html lang="en">
 <head><meta charset="utf-8"><title>NativeSelect — preview</title></head>
 <body>
 <div class="tray-demo tray-demo--grid">
 <div class="tray-field"><label class="tray-label" for="n1">Delivery window</label><span class="tray-select"><select id="n1"><option>10:00 to 14:00</option><option selected>14:00 to 18:00</option><option>18:00 to 22:00</option></select></span></div>
-<div class="tray-field"><label class="tray-label" for="n2">Pickup point</label><span class="tray-select"><select id="n2" aria-invalid="true"><option disabled selected>Choose a point</option><optgroup label="City"><option>Market square</option><option>Station</option></optgroup><optgroup label="Farm"><option>Farm shop</option></optgroup></select></span></div>
+<div class="tray-field"><label class="tray-label" for="n2">Pickup point</label><span class="tray-select"><select id="n2" aria-invalid="true" aria-describedby="n2e"><option disabled selected>Choose a point</option><optgroup label="City"><option>Market square</option><option>Station</option></optgroup><optgroup label="Farm"><option>Farm shop</option></optgroup></select></span><p class="tray-field__error" id="n2e">Choose where to collect the order.</p></div>
 <div class="tray-field"><label class="tray-label" for="n3">Rows per page</label><span class="tray-select tray-select--sm"><select id="n3"><option>10</option><option>25</option><option>50</option></select></span></div>
 </div>
 </body>

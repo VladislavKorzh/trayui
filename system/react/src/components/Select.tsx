@@ -130,14 +130,20 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(function Sel
   const rows: React.ReactNode[] = [];
   options.forEach((entry, i) => {
     const prev = options[i - 1];
-    if (i > 0 && (isGroup(entry) || (prev && isGroup(prev)))) rows.push(<hr key={`rule-${i}`} className="tray-list__rule" />);
+    if (i > 0 && (isGroup(entry) || (prev && isGroup(prev)))) rows.push(<hr key={`rule-${i}`} className="tray-list__rule" aria-hidden="true" />);
     if (isGroup(entry)) {
+      // A group of options is a role="group" named by its label, so a screen reader says the group's name on entering it.
+      const groupLabelId = `${listId}-group-${i}`;
       rows.push(
-        <div key={`label-${i}`} className="tray-list__label">
-          {entry.label}
+        <div key={`group-${i}`} role="group" aria-labelledby={groupLabelId}>
+          <div className="tray-list__label" id={groupLabelId}>
+            {entry.label}
+          </div>
+          {entry.options.map((o, j) => (
+            <ListOption key={j} option={o} selected={o.value === current} />
+          ))}
         </div>,
       );
-      entry.options.forEach((o, j) => rows.push(<ListOption key={`${i}-${j}`} option={o} selected={o.value === current} />));
     } else {
       rows.push(<ListOption key={i} option={entry} selected={entry.value === current} />);
     }

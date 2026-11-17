@@ -20,7 +20,7 @@ Every part is optional and found by its attribute:
 | Sorting | A `<button class="tray-sort">` with the label and the `sort` icon inside a column head. The head gets `aria-sort`; the icon turns into an arrow. |
 | Sort value | `data-value` on a cell when its text does not sort as written (a date, a status). |
 | Filter | `<input data-filter>`: rows that do not contain the text are hidden. |
-| Selection | A checkbox with `data-select` in each row and one with `data-select-all` in the head. Selected rows take the resting fill and `aria-selected`. |
+| Selection | A checkbox with `data-select` in each row and one with `data-select-all` in the head. Selected rows take the resting fill. The checkbox carries the state: a row of a plain table has no selected state of its own. |
 | Paging | `data-page-size` on the wrapper; the status reads "1–5 of 8". |
 | Empty | A `<tr data-empty hidden>` holding an Empty state, shown when the filter matches nothing. |
 
@@ -30,7 +30,7 @@ The wrapper fires `tray:change` with `detail.selected` and `detail.page`.
 The bar is one row above the table: the filter first, bulk actions at the end. Row actions hide behind one "more" button per row. Numbers align right; the first column is the row's name and is a row head.
 
 ## Accessibility
-It is a real `<table>`: name it with a `<caption>` or an `aria-label`, and keep `scope` on the column and row heads. A sort button sits inside its column head, and the head gets `aria-sort="ascending"` or `"descending"`, so a screen reader says how the column is sorted. Give the filter field an `aria-label`, and each row's checkbox one that names the row, such as "Select order PL-20418"; the head checkbox is announced as mixed while only some rows are chosen. The behaviour writes the counts into `data-page-status` and `data-selected-count` but announces nothing, so give those `role="status"` to have the changes read. Each row's action button is an icon button that names its row, such as "Actions for order PL-20418".
+It is a real `<table>`: name it with a `<caption>` or an `aria-label`, and keep `scope` on the column and row heads. A sort button sits inside its column head, and the head gets `aria-sort="ascending"` or `"descending"`, so a screen reader says how the column is sorted. Give the filter field an `aria-label`, and each row's checkbox one that names the row, such as "Select order PL-20418"; the head checkbox is announced as mixed while only some rows are chosen. The behaviour writes the counts into `data-page-status` and `data-selected-count` but announces nothing, so give those `role="status"` to have the changes read. The previous and next buttons turn off on the first and the last page; when the one in focus turns off, focus moves to the other one, or to the count when there is a single page, so it is never dropped to the top of the page. Each row's action button is an icon button that names its row, such as "Actions for order PL-20418".
 
 ## Do and don't
 - Do sort by the column people look for first, and say so with `aria-sort` on load.

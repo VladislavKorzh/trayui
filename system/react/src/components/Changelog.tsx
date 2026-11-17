@@ -53,7 +53,7 @@ export const Changelog = React.forwardRef<HTMLOListElement, ChangelogProps>(func
 ) {
   const H = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
   return (
-    <ol ref={ref} className={cx('tray-changelog', className)} {...rest}>
+    <ol ref={ref} className={cx('tray-changelog', className)} role="list" {...rest}>
       {releases.map((r, i) => (
         <li key={r.date + i} className="tray-release">
           <div className="tray-release__meta">

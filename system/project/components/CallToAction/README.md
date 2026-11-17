@@ -17,10 +17,17 @@ The call to action closes a page: one yellow card with the offer in a headline a
 ```
 The text sits at the start edge, the buttons at the end edge on the same baseline; when there is no room the buttons drop under the text. On yellow the main button is `tray-btn--dark` and the second is quiet.
 
-To collect an email instead, replace the buttons with an Input Group whose button is the action.
+To collect an email instead, replace the buttons with an Input Group whose button is the action:
+```html
+<form class="tray-input-group">
+  <label class="tray-vh" for="cta-email">Email</label>
+  <input class="tray-input" id="cta-email" type="email" placeholder="you@farm.example" autocomplete="email">
+  <button class="tray-input-group__btn tray-input-group__btn--accent" type="submit">Subscribe</button>
+</form>
+```
 
 ## Accessibility
-It is a `<section>` opened by a heading, so the offer is in the page's list of headings. Its buttons are links when they lead to another page, and their words, not the yellow, say what happens. On the yellow card every colour keeps the light palette and the focus ring takes the card's own ink, so it shows in every theme. When the card collects an email, the field needs a name, a visible `<label>` or at least an `aria-label`, since a placeholder is not one.
+It is a `<section>` opened by a heading, so the offer is in the page's list of headings. Its buttons are links when they lead to another page, and their words, not the yellow, say what happens. On the yellow card every colour keeps the light palette and the focus ring takes the card's own ink, so it shows in every theme. When the card collects an email, the field has a `<label>`, since a placeholder is not a name. The field sits in one row with the title and has no room for a label above it, so the label is `tray-vh`: hidden from view, read by screen readers, and the title and the button say what the field is for.
 
 ## Do and don't
 - Do repeat the hero's offer in other words, with the same button label.

@@ -104,7 +104,9 @@
 .tray-sidebar__sub .tray-sidebar__item[aria-current] { background: var(--page); color: var(--ink); font-weight: 600; }
 .tray-sidebar[data-collapsed] { inline-size: calc(var(--size-hit) + 2 * var(--space-4)); }
 .tray-sidebar[data-collapsed] .tray-sidebar__item { justify-content: center; padding: 0; }
-.tray-sidebar[data-collapsed] .tray-sidebar__item > span, .tray-sidebar[data-collapsed] .tray-sidebar__label, .tray-sidebar[data-collapsed] .tray-sidebar__sub, .tray-sidebar[data-collapsed] .tray-wordmark span, .tray-sidebar[data-collapsed] .tray-sidebar__user { display: none; }
+.tray-sidebar[data-collapsed] .tray-sidebar__label, .tray-sidebar[data-collapsed] .tray-sidebar__sub, .tray-sidebar[data-collapsed] .tray-sidebar__user { display: none; }
+/* In the rail an item's words and count are only hidden from sight (as tray-vh does), so they still name the link. */
+.tray-sidebar[data-collapsed] .tray-sidebar__item > span, .tray-sidebar[data-collapsed] .tray-wordmark span { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .tray-sidebar[data-collapsed] .tray-sidebar__head, .tray-sidebar[data-collapsed] .tray-sidebar__foot { justify-content: center; padding: 0; }
 .tray-sidebar[data-collapsed] .tray-sidebar__head .tray-wordmark { display: none; }
 .tray-sidebar__user { display: flex; align-items: center; gap: var(--space-3); min-inline-size: 0; }
@@ -114,8 +116,10 @@
 /* ---------- Command ---------- */
 
 .tray-command { --tray-ground: var(--raised); --tray-fill: var(--surface); --tray-ground-up: var(--raised); --tray-fill-up: var(--surface); --tray-off: var(--ink-hint); display: grid; inline-size: min(100%, 34rem); border-radius: var(--radius-panel); background: var(--raised); color: var(--ink); box-shadow: var(--shadow-float); overflow: hidden; }
-.tray-command__search { display: flex; align-items: center; gap: var(--space-3); min-block-size: var(--size-lg); padding-inline: var(--space-5); border-block-end: 1px solid var(--hairline); color: var(--ink-muted); }
+.tray-command__search { display: flex; align-items: center; gap: var(--space-3); min-block-size: var(--size-lg); padding-inline: var(--space-5); border-block-end: 1px solid var(--hairline); border-start-start-radius: var(--radius-panel); border-start-end-radius: var(--radius-panel); color: var(--ink-muted); }
+/* The field has no edge of its own: the whole search row draws the 2px ring of a field inside its edge, round with the panel's top corners. */
 .tray-command__search input { flex: 1; min-inline-size: 0; border: 0; background: none; color: var(--ink); font: 400 1.0625rem/1.4 var(--font-sans); outline: none; }
+.tray-command__search:focus-within { outline: 2px solid var(--ink); outline-offset: -2px; }
 .tray-command__search input::placeholder { color: var(--ink-hint); opacity: 1; }
 .tray-command__list { position: relative; max-block-size: 20rem; padding: 6px; overflow: auto; scrollbar-width: thin; scrollbar-color: var(--control-off) transparent; }
 .tray-command__foot { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) var(--space-5); border-block-start: 1px solid var(--hairline); color: var(--ink-muted); font: 400 .875rem/1 var(--font-sans); }

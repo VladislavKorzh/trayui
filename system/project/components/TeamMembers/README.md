@@ -24,7 +24,7 @@ It is a Table whose first cell is `tray-person`: a small Avatar, the name in bol
 Above the table go the count of seats in words and the button that opens the Invite Form. Removing a person asks first, in an Alert Dialog.
 
 ## Accessibility
-It is a Table: give it a `<caption>`, or point `aria-labelledby` at the heading above it. The person's cell is the row head (`<th scope="row">`), so a screen reader moving along a row reads each cell with the person's name, and the avatar is `aria-hidden` because the name is beside it. Every control in a row names the person, as in "Role of Bohdan Savchuk" and "Remove Bohdan Savchuk". The head over the remove buttons holds the word "Remove" in a `tray-vh` span, so the column is not nameless. A status is a word in a badge, never a colour alone.
+It is a Table: give it a `<caption>`, or point `aria-labelledby` at the heading above it. The person's cell is the row head (`<th scope="row">`), so a screen reader moving along a row reads each cell with the person's name, and the avatar is `aria-hidden` because the name is beside it. Every control in a row names the person, as in "Role of Bohdan Savchuk", "Remove Bohdan Savchuk" and "Send again to Andriy Tkachuk", whose last words are a `tray-vh` span. The head over the remove buttons holds the word "Remove" in a `tray-vh` span, so the column is not nameless. A status is a word in a badge, never a colour alone.
 
 ## Do and don't
 - Do mark the signed-in person with "(you)" and show the owner's role as text: it cannot be changed here.

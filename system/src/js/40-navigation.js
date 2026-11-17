@@ -46,53 +46,120 @@
     watch(strip, clip);
   });
 
+  /* The items of one menu panel, not those of a submenu inside it. */
+  var OWN_ITEMS = '[role^="menuitem"]:not(.tray-submenu > .tray-pop *)';
+
+  /* A submenu: in a .tray-submenu, an item with aria-haspopup="menu" and the .tray-pop beside it, which becomes a menu of
+     its own. The item opens it with the arrow towards it (ArrowRight, or ArrowLeft right to left), Enter or Space, and
+     reports aria-expanded; the pointer resting on the item opens it too. Up and down stay inside it; the arrow back or
+     Escape closes it and puts focus back on its item. It is shown by data-open, so focus that only passes by does not
+     open it. */
+  function submenu(box) {
+    var item = $(':scope > [aria-haspopup]', box), sub = $(':scope > .tray-pop', box), timer = null;
+    if (!item || !sub) return;
+    item.id = item.id || uid('tray-menuitem');
+    sub.setAttribute('role', 'menu');
+    sub.setAttribute('aria-labelledby', item.id);
+    $$('[role^="menuitem"]', sub).forEach(function (i) { i.setAttribute('tabindex', '-1'); });
+    function arrows() { var rtl = getComputedStyle(box).direction === 'rtl'; return { into: rtl ? 'ArrowLeft' : 'ArrowRight', out: rtl ? 'ArrowRight' : 'ArrowLeft' }; }
+    function set(open, focus) {
+      clearTimeout(timer);
+      if (open && item.getAttribute('aria-disabled') === 'true') return;
+      if (!open) rescue(sub, item);
+      sub.toggleAttribute('data-open', open);
+      item.setAttribute('aria-expanded', String(open));
+      var first = $('[role^="menuitem"]', sub);
+      if (open && focus && first) first.focus();
+    }
+    item.setAttribute('aria-expanded', 'false');
+    set(sub.hasAttribute('data-open'));
+    rove(sub, '[role^="menuitem"]');
+    item.addEventListener('click', function () { set(true, true); });
+    item.addEventListener('keydown', function (e) { if (e.key === arrows().into) { e.preventDefault(); e.stopPropagation(); set(true, true); } });
+    sub.addEventListener('keydown', function (e) {
+      if (e.key === arrows().out || e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); set(false); }
+      /* the menu around it would take these for its own items */
+      else if (/^(ArrowUp|ArrowDown|Home|End)$/.test(e.key)) e.stopPropagation();
+    });
+    box.addEventListener('pointerenter', function () { set(true); });
+    /* the pointer may cross the gap to the panel: it closes a moment after the pointer has left both, unless focus is in it */
+    box.addEventListener('pointerleave', function () { clearTimeout(timer); timer = setTimeout(function () { if (!sub.contains(document.activeElement)) set(false); }, 300); });
+    box.addEventListener('focusout', function (e) { if (!box.contains(e.relatedTarget)) set(false); });
+  }
+
   /* Menu: data-tray="menu" on the anchor that holds a trigger button and a .tray-pop of menu items.
-     Items are role=menuitem, menuitemcheckbox or menuitemradio (with data-group). Fires tray:select with detail.value. */
+     Items are role=menuitem, menuitemcheckbox or menuitemradio (with data-group). An action fires tray:select with
+     detail.value and closes the menu; a check or radio item fires tray:change with detail.value and detail.checked, and
+     the menu stays open. */
   UI.register('menu', function (root) {
     var trigger = root.querySelector(':scope > button, :scope > a'), panel = root.querySelector(':scope > .tray-pop');
     if (!trigger || !panel) return;
-    function items() { return $$('[role^="menuitem"]', panel).filter(function (i) { return i.offsetParent !== null; }); }
+    function items() { return $$(OWN_ITEMS, panel).filter(function (i) { return i.offsetParent !== null; }); }
     panel.setAttribute('role', 'menu');
     trigger.setAttribute('aria-haspopup', 'menu');
     $$('[role^="menuitem"]', panel).forEach(function (i) { i.setAttribute('tabindex', '-1'); });
+    /* The head of a user menu (who is signed in) is not an item, so a screen reader inside the menu never reaches it: the
+       name and the line under it name the menu instead, and are read as it opens. */
+    var head = $(':scope > .tray-pop__head', panel);
+    if (head && !panel.hasAttribute('aria-label') && !panel.hasAttribute('aria-labelledby')) {
+      var who = $('.tray-person__text', head) || head;
+      who.id = who.id || uid('tray-menu-name');
+      panel.setAttribute('aria-labelledby', who.id);
+    }
     var pop = popup(trigger, panel, { onOpen: function () { var first = items()[0]; if (first) first.focus(); } });
-    rove(panel, '[role^="menuitem"]');
+    rove(panel, OWN_ITEMS);
+    $$('.tray-submenu', panel).forEach(submenu);
     panel.addEventListener('click', function (e) {
       var it = e.target.closest('[role^="menuitem"]');
       if (!it || it.getAttribute('aria-disabled') === 'true' || it.hasAttribute('aria-haspopup')) return;
-      var role = it.getAttribute('role');
-      if (role === 'menuitemcheckbox') { it.setAttribute('aria-checked', String(it.getAttribute('aria-checked') !== 'true')); return; }
-      if (role === 'menuitemradio') { $$('[role="menuitemradio"][data-group="' + it.dataset.group + '"]', panel).forEach(function (x) { x.setAttribute('aria-checked', String(x === it)); }); return; }
-      fire(root, 'select', { value: it.dataset.value || it.textContent.trim() });
+      var role = it.getAttribute('role'), value = it.dataset.value || it.textContent.trim();
+      if (role === 'menuitemcheckbox') {
+        var on = it.getAttribute('aria-checked') !== 'true';
+        it.setAttribute('aria-checked', String(on));
+        fire(root, 'change', { value: value, checked: on });
+        return;
+      }
+      if (role === 'menuitemradio') {
+        $$('[role="menuitemradio"][data-group="' + it.dataset.group + '"]', panel).forEach(function (x) { x.setAttribute('aria-checked', String(x === it)); });
+        fire(root, 'change', { value: value, checked: true });
+        return;
+      }
+      fire(root, 'select', { value: value });
       pop.close(true);
-    });
-    panel.addEventListener('keydown', function (e) {
-      var it = document.activeElement;
-      if (e.key === 'ArrowRight' && it.hasAttribute('aria-haspopup')) { var sub = $('.tray-option', it.parentNode.querySelector('.tray-pop')); if (sub) { e.preventDefault(); e.stopPropagation(); sub.focus(); } }
-      if (e.key === 'ArrowLeft' && it.closest('.tray-submenu')) { var back = it.closest('.tray-submenu').querySelector('[aria-haspopup]'); if (back && back !== it) { e.preventDefault(); e.stopPropagation(); back.focus(); } }
     });
     trigger.addEventListener('keydown', function (e) { if (e.key === 'ArrowDown') { e.preventDefault(); pop.open(); } });
     root.__menu = pop;
   });
 
-  /* Menubar: data-tray="menubar" on the strip of menus. With one menu open, pointing at another opens it; left and right move between menus. */
+  /* Menubar: data-tray="menubar" on the strip of menus. Its triggers become the bar's menu items and one stop for Tab:
+     the arrow keys move along the bar (mirrored right to left) and Home and End go to its ends. With one menu open,
+     pointing at another opens it, and the arrows open the next one. */
   UI.register('menubar', function (bar) {
     function menus() { return $$(':scope > [data-tray~="menu"]', bar); }
+    function triggerOf(m) { return m.querySelector(':scope > button, :scope > a'); }
     function openOnly(m) { menus().forEach(function (x) { if (x.__menu) { if (x === m) x.__menu.open(); else x.__menu.close(); } }); }
+    function stop(t) { menus().forEach(function (m) { var x = triggerOf(m); if (x) x.setAttribute('tabindex', x === t ? '0' : '-1'); }); }
     bar.setAttribute('role', 'menubar');
+    menus().forEach(function (m) { var t = triggerOf(m); if (t) t.setAttribute('role', 'menuitem'); });
+    if (menus()[0]) stop(triggerOf(menus()[0]));
+    /* the trigger last used keeps the bar's Tab stop */
+    bar.addEventListener('focusin', function (e) { var m = e.target.closest('[data-tray~="menu"]'); if (m && m.parentNode === bar && triggerOf(m) === e.target) stop(e.target); });
     bar.addEventListener('pointerover', function (e) {
       var m = e.target.closest('[data-tray~="menu"]');
       if (m && m.parentNode === bar && menus().some(function (x) { return x.__menu && x.__menu.isOpen(); }) && !m.__menu.isOpen()) openOnly(m);
     });
     bar.addEventListener('keydown', function (e) {
-      var step = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
-      if (!step) return;
-      var list = menus(), i = list.indexOf(e.target.closest('[data-tray~="menu"]'));
+      var rtl = getComputedStyle(bar).direction === 'rtl', step = { ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1 }[e.key];
+      var list = menus(), i = list.indexOf(e.target.closest('[data-tray~="menu"]')), to = -1;
       if (i < 0) return;
-      var next = list[(i + step + list.length) % list.length], wasOpen = list[i].__menu.isOpen();
+      if (step) to = (i + step + list.length) % list.length;
+      else if (e.target === triggerOf(list[i]) && e.key === 'Home') to = 0;
+      else if (e.target === triggerOf(list[i]) && e.key === 'End') to = list.length - 1;
+      if (to < 0) return;
+      var wasOpen = list[i].__menu.isOpen();
       e.preventDefault();
-      next.querySelector(':scope > button').focus();
-      if (wasOpen) openOnly(next);
+      triggerOf(list[to]).focus();
+      if (wasOpen) openOnly(list[to]);
     });
   });
 
@@ -100,14 +167,17 @@
   UI.register('contextmenu', function (region) {
     var panel = $('.tray-pop', region);
     panel.setAttribute('role', 'menu');
+    /* a name on a plain div is not read without a role: the region is a named group */
+    if (!region.hasAttribute('role') && /^(DIV|SPAN)$/.test(region.tagName) && (region.hasAttribute('aria-label') || region.hasAttribute('aria-labelledby'))) region.setAttribute('role', 'group');
     $$('[role^="menuitem"]', panel).forEach(function (i) { i.setAttribute('tabindex', '-1'); });
-    function close() { hide(panel); }
+    /* focus in the menu goes back to the region before the menu goes, not to the top of the page */
+    function close() { rescue(panel, region); hide(panel); }
     function openAt(x, y) {
       var box = region.getBoundingClientRect();
       show(panel);
       panel.style.insetInlineStart = clamp(x - box.left, 8, Math.max(8, box.width - panel.offsetWidth - 8)) + 'px';
       panel.style.insetBlockStart = clamp(y - box.top, 8, Math.max(8, box.height - panel.offsetHeight - 8)) + 'px';
-      var first = $('[role^="menuitem"]', panel);
+      var first = $(OWN_ITEMS, panel);
       if (first) first.focus();
     }
     if (!panel.hasAttribute('data-open')) close();
@@ -116,16 +186,28 @@
       if (e.key === 'Escape') { close(); region.focus(); }
       if (e.key === 'ContextMenu' || (e.shiftKey && e.key === 'F10')) { e.preventDefault(); var b = region.getBoundingClientRect(); openAt(b.left + 24, b.top + 24); }
     });
-    rove(panel, '[role^="menuitem"]');
-    panel.addEventListener('click', function (e) { var it = e.target.closest('[role^="menuitem"]'); if (it && it.getAttribute('aria-disabled') !== 'true') { fire(region, 'select', { value: it.dataset.value || it.textContent.trim() }); close(); } });
+    rove(panel, OWN_ITEMS);
+    $$('.tray-submenu', panel).forEach(submenu);
+    panel.addEventListener('click', function (e) { var it = e.target.closest('[role^="menuitem"]'); if (it && it.getAttribute('aria-disabled') !== 'true' && !it.hasAttribute('aria-haspopup')) { fire(region, 'select', { value: it.dataset.value || it.textContent.trim() }); close(); } });
+    /* Tab out of the menu closes it, as it does a dropdown menu */
+    panel.addEventListener('focusout', function (e) { var to = e.relatedTarget; if (!panel.hidden && to && !panel.contains(to)) hide(panel); });
     document.addEventListener('pointerdown', function (e) { if (!panel.hidden && !panel.contains(e.target) && e.button !== 2) close(); });
   });
 
-  /* Sidebar: data-tray="sidebar-toggle" on a button whose aria-controls names the sidebar; it collapses it to icons. */
+  /* Sidebar: data-tray="sidebar-toggle" on a button whose aria-controls names the sidebar; it collapses it to icons. The
+     button's name says what a press will do: data-label-collapse and data-label-expand (by default its aria-label and
+     "Expand the sidebar"), while aria-expanded says how the sidebar is. */
   UI.register('sidebar-toggle', function (btn) {
     var side = document.getElementById(btn.getAttribute('aria-controls'));
     if (!side) return;
-    function paint() { btn.setAttribute('aria-expanded', String(!side.hasAttribute('data-collapsed'))); }
+    var named = btn.getAttribute('aria-label'), rail = side.hasAttribute('data-collapsed');
+    btn.dataset.labelCollapse = btn.dataset.labelCollapse || (!rail && named) || 'Collapse the sidebar';
+    btn.dataset.labelExpand = btn.dataset.labelExpand || (rail && named) || 'Expand the sidebar';
+    function paint() {
+      var open = !side.hasAttribute('data-collapsed');
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? btn.dataset.labelCollapse : btn.dataset.labelExpand);
+    }
     btn.addEventListener('click', function () { side.toggleAttribute('data-collapsed'); paint(); fire(side, 'change', { collapsed: side.hasAttribute('data-collapsed') }); });
     paint();
   });
@@ -181,6 +263,12 @@
     input.setAttribute('aria-controls', list.id);
     input.setAttribute('autocomplete', 'off');
     options().forEach(function (o) { o.id = o.id || uid('tray-option'); o.setAttribute('tabindex', '-1'); });
+    /* a group of options is a group of the listbox, named by its label, so the name is read on the way into it */
+    $$('[data-group]', list).forEach(function (g) {
+      var label = $(':scope > .tray-list__label', g);
+      if (!g.hasAttribute('role')) g.setAttribute('role', 'group');
+      if (label && !g.hasAttribute('aria-labelledby') && !g.hasAttribute('aria-label')) { label.id = label.id || uid('tray-group'); g.setAttribute('aria-labelledby', label.id); }
+    });
     function setActive(o) {
       if (active) active.removeAttribute('data-active');
       active = o || null;

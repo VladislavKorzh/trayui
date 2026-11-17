@@ -18,7 +18,7 @@ export interface TagInputProps
   max?: number;
   /** Sends the values with a form under this name, joined by commas, from a hidden input. */
   name?: string;
-  /** Marks the field as wrong: a 2px danger ring around the tray. Inside a Field, pass `error` to the Field instead. */
+  /** Marks the field as wrong: `aria-invalid` on the text input and a 2px danger edge inside the tray. Inside a Field, pass `error` to the Field instead. */
   invalid?: boolean;
   /** Classes for the tray (the grey box that holds the chips), for width and layout. Other props go to the text `<input>`. */
   className?: string;
@@ -58,12 +58,14 @@ export const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(functi
     setVersion((v) => v + 1);
   }, [value]);
 
-  // The behaviour sets aria-invalid on the tray from its chips; a Field's error or `invalid` keeps the ring on as well.
+  // The behaviour sets aria-invalid on the text input from its chips (a screen reader reaches the input, not the tray);
+  // a Field's error or `invalid` keeps it on as well.
   const paint = () => {
     const el = root.current;
-    if (!el) return;
-    if (ringed || el.querySelector('.tray-chip[data-invalid]')) el.setAttribute('aria-invalid', 'true');
-    else el.removeAttribute('aria-invalid');
+    const box = input.current;
+    if (!el || !box) return;
+    if (ringed || el.querySelector('.tray-chip[data-invalid]')) box.setAttribute('aria-invalid', 'true');
+    else box.removeAttribute('aria-invalid');
   };
   React.useLayoutEffect(paint);
 
@@ -92,6 +94,11 @@ export const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(functi
       {drawn.current.chips.map((v) => (
         <span key={v} className="tray-chip" data-value={v} data-invalid={wrongFor(pattern, v) ? '' : undefined}>
           {v}
+          {wrongFor(pattern, v) ? (
+            <span className="tray-vh" data-invalid-text="">
+              , not an email address
+            </span>
+          ) : null}
           <button type="button" className="tray-chip__x" aria-label={`Remove ${v}`} disabled={field.disabled}>
             <Icon name="x" size="sm" />
           </button>

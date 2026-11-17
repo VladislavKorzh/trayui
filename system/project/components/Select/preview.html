@@ -17,11 +17,13 @@
 <div class="tray-anchor tray-anchor--block" data-tray="select">
 <button class="tray-select-trigger" type="button" aria-labelledby="s2"><span class="tray-select-trigger__value">Courier, chilled box</span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chevrons-up-down"/></svg></button>
 <div class="tray-pop" data-open><div class="tray-list">
-<div class="tray-list__label">To your door</div>
+<div role="group" aria-labelledby="s2a"><div class="tray-list__label" id="s2a">To your door</div>
 <button type="button" class="tray-option" role="option" data-value="courier" aria-selected="true"><span class="tray-option__text">Courier, chilled box</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button><button type="button" class="tray-option" role="option" data-value="express"><span class="tray-option__text">Express, two hours</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
-<hr class="tray-list__rule">
-<div class="tray-list__label">Collect it yourself</div>
+</div>
+<hr class="tray-list__rule" aria-hidden="true">
+<div role="group" aria-labelledby="s2b"><div class="tray-list__label" id="s2b">Collect it yourself</div>
 <button type="button" class="tray-option" role="option" data-value="shop"><span class="tray-option__text">Farm shop</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button><button type="button" class="tray-option" role="option" data-value="locker" aria-disabled="true"><span class="tray-option__text">Parcel locker</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+</div>
 </div></div>
 </div>
 </div>

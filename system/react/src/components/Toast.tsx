@@ -24,7 +24,7 @@ export interface ToastOptions {
   tone?: ToastTone;
   /** One button: `{ label: 'Undo', onClick: restore }`. */
   action?: ToastAction;
-  /** Milliseconds on screen. Default 5000; a danger toast stays until dismissed. 0 keeps any toast until dismissed. */
+  /** Milliseconds on screen. Default 5000; a danger toast, and one with an `action`, stay until dismissed. 0 keeps any toast until dismissed. */
   duration?: number;
 }
 
@@ -74,7 +74,7 @@ Toast.displayName = 'Toast';
 
 /**
  * Shows a toast at the bottom end corner of the screen, in the system's `tray-toasts` region: `toast({ title: 'Order archived', action: { label: 'Undo', onClick: restore } })`.
- * It leaves after `duration` (5 s; a danger toast stays), and its timer pauses while the pointer or focus is on it. Returns `{ dismiss() }` to take it away early.
+ * It leaves after `duration` (5 s; a danger toast, and one with an action, stay), and its timer pauses while the pointer or focus is on it. Returns `{ dismiss() }` to take it away early.
  */
 export function toast(options: ToastOptions): { dismiss(): void } {
   const { tone, ...rest } = options;

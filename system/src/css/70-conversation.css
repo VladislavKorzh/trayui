@@ -17,6 +17,8 @@
 .tray-bubble--own { background: var(--ink); color: var(--tray-on-ink); }
 .tray-bubble--plain { padding: 0; border-radius: 0; background: none; }
 .tray-bubble a { color: inherit; }
+/* On the ink of your own bubble an ink ring would not show: it takes the colour of the text. */
+.tray-bubble--own :focus-visible { outline-color: var(--tray-on-ink); }
 .tray-bubble > * + * { margin-block-start: .6em; }
 .tray-bubble-group { display: grid; gap: var(--space-1); justify-items: inherit; max-inline-size: 100%; }
 /* The corner next to the speaker is the small one. */
@@ -26,6 +28,9 @@
 .tray-reactions { display: flex; flex-wrap: wrap; gap: var(--space-1); }
 .tray-reaction { display: inline-flex; align-items: center; gap: 6px; min-block-size: 32px; padding: 0 10px; border: 0; border-radius: var(--radius-chip); background: var(--tray-fill); color: var(--ink); font: 600 .875rem/1 var(--font-sans); font-variant-numeric: tabular-nums; cursor: pointer; transition: background-color var(--duration-fill) var(--ease), color var(--duration-fill) var(--ease); }
 .tray-reaction[aria-pressed="true"] { background: var(--ink); color: var(--tray-on-ink); }
+/* A reaction is 32px to the eye and 44px to a finger: the target reaches past its top and bottom. */
+.tray-reaction { position: relative; }
+.tray-reaction::before { content: ""; position: absolute; inset: calc((32px - var(--size-hit)) / 2) 0; }
 
 /* ---------- Marker: what happened between messages ---------- */
 
@@ -107,6 +112,9 @@
 .tray-code > * { --tray-ground: var(--tray-fill-up); --tray-fill: var(--tray-ground-up); }
 .tray-code__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); min-block-size: var(--size-sm); padding-inline: var(--space-4) 6px; border-block-end: 1px solid var(--hairline); color: var(--ink-soft); font: 500 .9375rem/1 var(--font-sans); }
 .tray-code pre { position: relative; margin: 0; padding: var(--space-4); overflow-x: auto; font: 400 .9375rem/1.55 var(--font-mono); tab-size: 2; scrollbar-width: thin; scrollbar-color: var(--control-off) transparent; }
+/* The block clips to its round corners, so the ring of the code that scrolls is drawn inside its edge, round where the block is. */
+.tray-code pre:focus-visible { outline-offset: -3px; border-radius: var(--radius-button); }
+.tray-code__head + pre:focus-visible { border-start-start-radius: 0; border-start-end-radius: 0; }
 .tray-code code { font: inherit; }
 .tray-code--numbered code { display: grid; counter-reset: tray-line; }
 .tray-code--numbered .tray-code__line { counter-increment: tray-line; }

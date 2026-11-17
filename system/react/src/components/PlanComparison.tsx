@@ -74,6 +74,12 @@ export const PlanComparison = React.forwardRef<HTMLTableElement, PlanComparisonP
       </td>
     );
   };
+  // A <tbody> per group: a group's heading (scope="rowgroup") then names its own rows, not every row after it.
+  const sections: { start: number; rows: typeof rows }[] = [];
+  rows.forEach((row, r) => {
+    if (!sections.length || row.group != null) sections.push({ start: r, rows: [] });
+    sections[sections.length - 1].rows.push(row);
+  });
   return (
     <div className="tray-table-wrap">
       <table ref={ref} className={cx('tray-compare', className)} {...rest}>
@@ -90,24 +96,26 @@ export const PlanComparison = React.forwardRef<HTMLTableElement, PlanComparisonP
             ))}
           </tr>
         </thead>
-        <tbody>
-          {rows.map((row, r) => (
-            <React.Fragment key={r}>
-              {row.group != null ? (
-                <tr className="tray-compare__group">
-                  <th scope="rowgroup">{row.group}</th>
-                  {plans.map((_, i) => (
-                    <td key={i} data-featured={feat(i)} />
-                  ))}
+        {sections.map((section) => (
+          <tbody key={section.start}>
+            {section.rows.map((row, k) => (
+              <React.Fragment key={section.start + k}>
+                {row.group != null ? (
+                  <tr className="tray-compare__group">
+                    <th scope="rowgroup">{row.group}</th>
+                    {plans.map((_, i) => (
+                      <td key={i} data-featured={feat(i)} />
+                    ))}
+                  </tr>
+                ) : null}
+                <tr>
+                  <th scope="row">{row.feature}</th>
+                  {plans.map((_, i) => cell(row.values[i], i))}
                 </tr>
-              ) : null}
-              <tr>
-                <th scope="row">{row.feature}</th>
-                {plans.map((_, i) => cell(row.values[i], i))}
-              </tr>
-            </React.Fragment>
-          ))}
-        </tbody>
+              </React.Fragment>
+            ))}
+          </tbody>
+        ))}
       </table>
     </div>
   );

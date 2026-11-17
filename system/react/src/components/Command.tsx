@@ -96,8 +96,12 @@ export const Command = React.forwardRef<HTMLDivElement, CommandProps>(function C
       </label>
       <div className="tray-command__list" id={listId} role="listbox">
         {groups.map((g, i) => (
-          <div key={i} data-group="">
-            {g.label ? <div className="tray-list__label">{g.label}</div> : null}
+          <div key={i} data-group="" role="group" aria-labelledby={g.label ? `${listId}-g${i}` : undefined}>
+            {g.label ? (
+              <div className="tray-list__label" id={`${listId}-g${i}`}>
+                {g.label}
+              </div>
+            ) : null}
             {g.items.map((it, j) => (
               <button key={j} type="button" className="tray-option" role="option" id={`${listId}-${i}-${j}`} tabIndex={-1} data-value={it.value ?? it.label}>
                 {it.icon ? <Icon name={it.icon} /> : null}

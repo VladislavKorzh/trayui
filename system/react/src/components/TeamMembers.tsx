@@ -119,6 +119,8 @@ export const TeamMembers = React.forwardRef<HTMLDivElement, TeamMembersProps>(fu
                   {invited ? (
                     <Button variant="link" style={{ minBlockSize: 0 }} onClick={() => onResend?.(m)}>
                       {resendLabel}
+                      {/* every invitation has the same link: its name says whose it is */}
+                      <span className="tray-vh"> to {m.name}</span>
                     </Button>
                   ) : (
                     m.lastSeen

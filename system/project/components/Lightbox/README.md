@@ -22,7 +22,7 @@ A lightbox shows the pictures of a gallery one at a time, as large as the window
     <button class="tray-btn tray-btn--icon" type="button" data-prev aria-label="Previous picture">…chevron-left, tray-icon--flip…</button>
     <button class="tray-btn tray-btn--icon" type="button" data-next aria-label="Next picture">…chevron-right, tray-icon--flip…</button>
   </div>
-  <ul class="tray-lightbox__track" aria-label="Pictures"></ul>
+  <ul class="tray-lightbox__track" role="list" aria-label="Pictures"></ul>
   <p class="tray-vh" role="status"></p>
 </dialog>
 ```
@@ -38,7 +38,7 @@ The full pictures and their thumbnails, a real `alt` for each thumbnail (it is t
 
 ## Accessibility
 - It is the browser's own `<dialog>`, named by its `aria-label`. Each thumbnail link takes its name from the thumbnail's `alt`.
-- Each picture in the track is a group announced as a slide and named "2 of 6", with the same `alt` and its caption in a `<figcaption>`.
+- The track is a list of the pictures (keep its `role="list"`: without bullets Safari would drop it). In each item the `<figure>` is a group announced as a slide and named "2 of 6", with the same `alt` and its caption in a `<figcaption>`.
 - The arrow keys, `Home` and `End` work from anywhere inside, not only on the track, and mirror under `dir="rtl"`. The track takes `Tab` too, with the 3px ring drawn inside its edge.
 - The count is `aria-hidden`: the `role="status"` line reads "2 of 6" and the caption once the scroll settles. When a step button turns off at an end, focus moves to the other one.
 - Under `prefers-reduced-motion: reduce` the pictures change without a smooth scroll and the lightbox fades in a tenth of a second.

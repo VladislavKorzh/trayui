@@ -23,7 +23,7 @@ Put the composer under the scroller, not inside it. `tray-composer` is a field-s
 ## Accessibility
 - The behaviour makes the viewport a `role="log"` region with `tabindex="0"`: `Tab` reaches it, the arrow keys, `Page Up` and `Page Down` scroll it, and screen readers read new messages as they arrive, without moving focus.
 - Name the viewport with an `aria-label` ("Conversation with the farm"). Its focus ring is drawn inside its edge.
-- The count in the "Latest" button is read as part of its name.
+- The count in the "Latest" button is read as part of its name. Once the newest message is in view the button goes, and focus on it moves to the conversation it scrolled.
 - Under `prefers-reduced-motion: reduce` "Latest" jumps to the newest message instead of scrolling there.
 
 ## Do and don't

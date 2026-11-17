@@ -20,7 +20,7 @@ A table sets figures in rows and columns: hairline rows, quiet heads, numbers al
 - `tray-table-wrap` lets a wide table scroll sideways on a phone instead of breaking the page.
 
 ## Accessibility
-It is a real `<table>`: the `<caption>` (or an `aria-label`) names it, and `scope` on every head lets a screen reader read each cell with its column and row. A figure in `tray-success` or `tray-danger` keeps its sign, so the colour only repeats what "+2 kg" already says. When the table may be wider than the screen, give `tray-table-wrap` `tabindex="0"`, `role="region"` and an `aria-label`, so a keyboard can reach it and scroll it sideways. The hover tint follows the pointer only and carries no meaning.
+It is a real `<table>`: the `<caption>` (or an `aria-label`) names it, and `scope` on every head lets a screen reader read each cell with its column and row. A figure in `tray-success` or `tray-danger` keeps its sign, so the colour only repeats what "+2 kg" already says. When the table may be wider than the screen, give `tray-table-wrap` `tabindex="0"`, `role="region"` and a name (`aria-labelledby` on the caption, as in the example, or an `aria-label`), so a keyboard can reach it and scroll it sideways. The hover tint follows the pointer only and carries no meaning.
 
 ## Do and don't
 - Do give every table a caption or an `aria-label`, and every head a `scope`.

@@ -25,7 +25,7 @@ Nothing a finger must hit is smaller than 44px (`size-hit`). Checkboxes, radios 
 - Every control has a visible label, or an `aria-label` when it is an icon button. A Tooltip repeats the name; it never holds the only copy.
 - State lives in ARIA attributes, and the styles read those same attributes: if it looks selected, it is announced as selected.
 - Components use the element the browser already provides wherever one exists, so they work without script and with assistive technology: `details`, `dialog`, real form controls, `table` with captions and scoped heads.
-- Charts carry a written `summary`, are focusable, and can be walked with the arrow keys.
+- Charts carry a written `summary` and are focusable. A chart with points along an axis can be walked with the arrow keys, each value said aloud; a radial chart and horizontal bars are read from their summary and their table of figures.
 
 ## Motion
 

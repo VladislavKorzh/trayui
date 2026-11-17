@@ -55,8 +55,8 @@ The React package draws its charts with Recharts instead of this script, in the 
 
 ## Accessibility
 - The figure is named by its `figcaption`, and the drawing is `role="img"` named by the `summary`. Write the summary: without it a screen reader hears a long list of every value, made up by the script.
-- The plot of a bar, line or area chart takes focus: `ArrowLeft` and `ArrowRight` move through the points, `Home` and `End` jump to the ends, `Escape` clears, and the tooltip shows the values at that point. On a donut or a radar the arrow keys walk the segments or the spokes, and the centre or the tooltip shows the one in focus.
-- A radial chart and horizontal bars do not take focus, so their `summary` is all a screen reader hears of them: put every figure in it.
+- The plot of a bar, line or area chart takes focus: `ArrowLeft` and `ArrowRight` move through the points, `Home` and `End` jump to the ends, `Escape` clears, and the tooltip shows the values at that point. On a donut or a radar the arrow keys walk the segments or the spokes, and the centre or the tooltip shows the one in focus. What the keys reach is said through a polite live region that sits in the figure beside the drawing, since whatever is inside a `role="img"` is not read.
+- A radial chart and horizontal bars take focus too, so their `summary` is read when `Tab` reaches them. They have nothing to walk: every figure is written beside its bar, in the middle of the ring or in the key.
 - Colour never names a series alone: several series come with a legend, a donut with a key table, and "Show the figures" opens a real table with scoped heads. Set `labelHead` to name its first column.
 
 ## Do and don't

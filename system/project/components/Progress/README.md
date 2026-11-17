@@ -19,7 +19,7 @@ Use `role="meter"` instead of `progressbar` for a level that is not a task: stoc
 
 ## Accessibility
 - The bar is a `role="progressbar"` for a task or a `role="meter"` for a level, named by an `aria-label` that repeats the visible name.
-- `aria-valuemin`, `aria-valuemax` and `aria-valuenow` carry the amount. When the words beside the bar are not a percentage, add `aria-valuetext` with those words ("132 of 412 jars left").
+- `aria-valuemin`, `aria-valuemax` and `aria-valuenow` carry the amount. When the words beside the bar are not a percentage, add `aria-valuetext` with those words ("68%: 132 of 412 jars left"), as the example does.
 - A busy bar has no `aria-valuenow`, so it is read as a progress bar of unknown length. Its sliding segment stops under `prefers-reduced-motion: reduce`.
 - A `tray-steps` row on its own takes `role="progressbar"` and an `aria-valuetext` such as "Step 2 of 4: Delivery". Beside a written count, as in Questionnaire, it is `aria-hidden="true"`.
 - The fill is ink on grey, not a hue, and with forced colours the track and the fill are drawn in the system's colours.

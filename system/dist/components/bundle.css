@@ -161,6 +161,9 @@ mark { padding-inline: .12em; border-radius: var(--radius-mark); background: var
 .tray-btn--md { gap: var(--space-3); min-block-size: var(--size-md); padding: 0 var(--space-6); border-radius: var(--radius-input); font: 600 1.0625rem/1 var(--font-sans); }
 .tray-btn--sm { gap: var(--space-2); min-block-size: var(--size-sm); padding: 0 22px; border-radius: var(--radius-control); font: 600 1rem/1.1 var(--font-sans); }
 .tray-btn--xs { gap: var(--space-2); min-block-size: var(--size-xs); padding: 0 var(--space-4); border-radius: var(--radius-chip); font: 600 .9375rem/1.1 var(--font-sans); }
+/* An extra small button or toggle is 40px to the eye and 44px to a finger: the target reaches past its edge. */
+.tray-btn--xs, .tray-toggle--xs { position: relative; }
+.tray-btn--xs::before, .tray-toggle--xs::before { content: ""; position: absolute; inset: calc((var(--size-xs) - var(--size-hit)) / 2); }
 .tray-btn--dark { background: var(--ink); color: var(--tray-on-ink); }
 .tray-btn--dark:hover { filter: contrast(.82); }
 .tray-btn--quiet { background: var(--tray-fill); color: var(--ink); }
@@ -366,6 +369,8 @@ mark { padding-inline: .12em; border-radius: var(--radius-mark); background: var
 .tray-input::placeholder, .tray-textarea::placeholder { color: var(--ink-hint); opacity: 1; }
 .tray-input:focus-visible, .tray-textarea:focus-visible, .tray-select select:focus-visible, .tray-select-trigger:focus-visible { outline: 2px solid var(--ink); outline-offset: 0; }
 .tray-input[aria-invalid="true"], .tray-textarea[aria-invalid="true"], .tray-select select[aria-invalid="true"], .tray-select-trigger[aria-invalid="true"] { outline: 2px solid var(--danger); outline-offset: -2px; }
+/* A wrong value with focus draws the focus ring on the edge, and keeps its danger edge inside as a shadow. */
+.tray-input[aria-invalid="true"]:focus-visible, .tray-textarea[aria-invalid="true"]:focus-visible, .tray-select select[aria-invalid="true"]:focus-visible, .tray-select-trigger[aria-invalid="true"]:focus-visible { outline: 2px solid var(--ink); outline-offset: 0; box-shadow: inset 0 0 0 2px var(--danger); }
 .tray-input:disabled, .tray-textarea:disabled, .tray-select select:disabled, .tray-select-trigger:disabled { opacity: var(--opacity-disabled); cursor: not-allowed; }
 .tray-input[readonly] { color: var(--ink-soft); }
 .tray-input--sm { min-block-size: var(--size-sm); padding: 0 14px; border-radius: var(--radius-control); font-size: 1rem; }
@@ -385,13 +390,18 @@ mark { padding-inline: .12em; border-radius: var(--radius-mark); background: var
 .tray-select-trigger[data-placeholder] .tray-select-trigger__value { color: var(--ink-hint); }
 .tray-select-trigger > .tray-icon { color: var(--ink-muted); }
 .tray-select-trigger--sm { min-block-size: var(--size-sm); padding: 0 14px; border-radius: var(--radius-control); font-size: 1rem; }
+/* A group of options in a Select's list (role="group", named by its tray-list__label) keeps the list's spacing. */
+.tray-list > [role="group"] { display: grid; gap: 2px; }
 
 /* ---------- Input group: one field that also holds an icon, a unit or a small button ---------- */
 
 .tray-input-group { display: flex; align-items: center; gap: var(--space-1); min-block-size: var(--size-md); padding-inline: 6px; border-radius: var(--radius-input); background: var(--tray-fill); }
 .tray-input-group:focus-within { outline: 2px solid var(--ink); outline-offset: 0; }
 .tray-input-group:has([aria-invalid="true"]) { outline: 2px solid var(--danger); outline-offset: -2px; }
+.tray-input-group:has([aria-invalid="true"]):focus-within { outline: 2px solid var(--ink); outline-offset: 0; box-shadow: inset 0 0 0 2px var(--danger); }
 .tray-input-group .tray-input { flex: 1; min-inline-size: 0; padding-inline: var(--space-3); background: none; outline: none; }
+/* the group draws the edges of a wrong value, focused or not */
+.tray-input-group .tray-input[aria-invalid="true"] { outline: none; box-shadow: none; }
 .tray-input-group__addon { display: inline-flex; align-items: center; gap: var(--space-2); padding-inline: var(--space-3); color: var(--ink-muted); font: 400 1rem/1 var(--font-sans); white-space: nowrap; }
 .tray-input-group__addon + .tray-input { padding-inline-start: 0; }
 .tray-input-group__btn { flex: none; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-inline-size: var(--size-hit); block-size: var(--size-hit); padding: 0 var(--space-3); border: 0; border-radius: var(--radius-chip); background: var(--tray-ground); color: var(--ink); font: 500 .9375rem/1 var(--font-sans); cursor: pointer; transition: transform var(--duration-press) ease; }
@@ -406,6 +416,7 @@ mark { padding-inline: .12em; border-radius: var(--radius-mark); background: var
 .tray-otp input { inline-size: 52px; block-size: var(--size-lg); padding: 0; border: 0; border-radius: var(--radius-control); background: var(--tray-fill); color: var(--ink); caret-color: var(--ink); font: 700 1.375rem/1 var(--font-sans); font-variant-numeric: tabular-nums; text-align: center; }
 .tray-otp input:focus-visible { outline: 2px solid var(--ink); outline-offset: 0; }
 .tray-otp[aria-invalid="true"] input { outline: 2px solid var(--danger); outline-offset: -2px; }
+.tray-otp[aria-invalid="true"] input:focus-visible { outline: 2px solid var(--ink); outline-offset: 0; box-shadow: inset 0 0 0 2px var(--danger); }
 .tray-otp input:disabled { opacity: var(--opacity-disabled); }
 .tray-otp__sep { inline-size: var(--space-3); block-size: 2px; border-radius: var(--radius-pill); background: var(--rule-strong); }
 
@@ -910,7 +921,9 @@ a.tray-item:hover, button.tray-item:hover { filter: brightness(.96); }
 .tray-sidebar__sub .tray-sidebar__item[aria-current] { background: var(--page); color: var(--ink); font-weight: 600; }
 .tray-sidebar[data-collapsed] { inline-size: calc(var(--size-hit) + 2 * var(--space-4)); }
 .tray-sidebar[data-collapsed] .tray-sidebar__item { justify-content: center; padding: 0; }
-.tray-sidebar[data-collapsed] .tray-sidebar__item > span, .tray-sidebar[data-collapsed] .tray-sidebar__label, .tray-sidebar[data-collapsed] .tray-sidebar__sub, .tray-sidebar[data-collapsed] .tray-wordmark span, .tray-sidebar[data-collapsed] .tray-sidebar__user { display: none; }
+.tray-sidebar[data-collapsed] .tray-sidebar__label, .tray-sidebar[data-collapsed] .tray-sidebar__sub, .tray-sidebar[data-collapsed] .tray-sidebar__user { display: none; }
+/* In the rail an item's words and count are only hidden from sight (as tray-vh does), so they still name the link. */
+.tray-sidebar[data-collapsed] .tray-sidebar__item > span, .tray-sidebar[data-collapsed] .tray-wordmark span { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .tray-sidebar[data-collapsed] .tray-sidebar__head, .tray-sidebar[data-collapsed] .tray-sidebar__foot { justify-content: center; padding: 0; }
 .tray-sidebar[data-collapsed] .tray-sidebar__head .tray-wordmark { display: none; }
 .tray-sidebar__user { display: flex; align-items: center; gap: var(--space-3); min-inline-size: 0; }
@@ -920,8 +933,10 @@ a.tray-item:hover, button.tray-item:hover { filter: brightness(.96); }
 /* ---------- Command ---------- */
 
 .tray-command { --tray-ground: var(--raised); --tray-fill: var(--surface); --tray-ground-up: var(--raised); --tray-fill-up: var(--surface); --tray-off: var(--ink-hint); display: grid; inline-size: min(100%, 34rem); border-radius: var(--radius-panel); background: var(--raised); color: var(--ink); box-shadow: var(--shadow-float); overflow: hidden; }
-.tray-command__search { display: flex; align-items: center; gap: var(--space-3); min-block-size: var(--size-lg); padding-inline: var(--space-5); border-block-end: 1px solid var(--hairline); color: var(--ink-muted); }
+.tray-command__search { display: flex; align-items: center; gap: var(--space-3); min-block-size: var(--size-lg); padding-inline: var(--space-5); border-block-end: 1px solid var(--hairline); border-start-start-radius: var(--radius-panel); border-start-end-radius: var(--radius-panel); color: var(--ink-muted); }
+/* The field has no edge of its own: the whole search row draws the 2px ring of a field inside its edge, round with the panel's top corners. */
 .tray-command__search input { flex: 1; min-inline-size: 0; border: 0; background: none; color: var(--ink); font: 400 1.0625rem/1.4 var(--font-sans); outline: none; }
+.tray-command__search:focus-within { outline: 2px solid var(--ink); outline-offset: -2px; }
 .tray-command__search input::placeholder { color: var(--ink-hint); opacity: 1; }
 .tray-command__list { position: relative; max-block-size: 20rem; padding: 6px; overflow: auto; scrollbar-width: thin; scrollbar-color: var(--control-off) transparent; }
 .tray-command__foot { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) var(--space-5); border-block-start: 1px solid var(--hairline); color: var(--ink-muted); font: 400 .875rem/1 var(--font-sans); }
@@ -965,12 +980,18 @@ a.tray-item:hover, button.tray-item:hover { filter: brightness(.96); }
 .tray-pop__text { color: var(--ink-soft); font: 400 1rem/1.45 var(--font-sans); }
 .tray-pop--card { inline-size: min(22rem, calc(100vw - 2rem)); padding: var(--space-5); border-radius: var(--radius-panel); }
 .tray-submenu { position: relative; }
+/* A submenu shows while the menu behaviour holds it open (data-open): on its arrow key, Enter or Space, and while the pointer rests on it. */
 .tray-submenu > .tray-pop { display: none; }
-.tray-submenu:hover > .tray-pop, .tray-submenu:focus-within > .tray-pop, .tray-submenu > .tray-pop[data-open] { display: block; }
+.tray-submenu > .tray-pop[data-open] { display: block; }
 
 /* ---------- Tooltip ---------- */
 
-.tray-tooltip { position: absolute; inset-block-end: calc(100% + var(--space-2)); inset-inline-start: 50%; z-index: var(--z-float); transform: translateX(-50%); padding: var(--space-2) var(--space-3); border-radius: var(--radius-chip); background: var(--ink); color: var(--tray-on-ink); box-shadow: var(--shadow-float); font: 600 .9375rem/1.2 var(--font-sans); white-space: nowrap; pointer-events: none; }
+.tray-tooltip { position: absolute; inset-block-end: calc(100% + var(--space-2)); inset-inline-start: 50%; z-index: var(--z-float); transform: translateX(-50%); padding: var(--space-2) var(--space-3); border-radius: var(--radius-chip); background: var(--ink); color: var(--tray-on-ink); box-shadow: var(--shadow-float); font: 600 .9375rem/1.2 var(--font-sans); white-space: nowrap; }
+/* The pointer can cross from the control onto the bubble without leaving either (WCAG 1.4.13): a strip over the gap belongs to the bubble. */
+.tray-tooltip::after { content: ""; position: absolute; inset-inline: 0; inset-block-start: 100%; block-size: var(--space-2); }
+.tray-tooltip--bottom::after { inset-block: auto 100%; }
+/* Words that only repeat the control's name: shown, with an empty text alternative, so a screen reader does not read them twice. */
+.tray-tooltip__said::before { content: attr(data-said); content: attr(data-said) / ""; }
 [dir="rtl"] .tray-tooltip { transform: translateX(50%); }
 .tray-tooltip--bottom { inset-block: calc(100% + var(--space-2)) auto; }
 .tray-tooltip .tray-kbd { margin-inline-start: var(--space-2); background: var(--tray-on-ink); color: var(--ink); }
@@ -1039,6 +1060,7 @@ a.tray-item:hover, button.tray-item:hover { filter: brightness(.96); }
 .tray-chart__rows .tray-chart__track { block-size: 16px; border-radius: var(--radius-mark); background: none; }
 .tray-chart__rows .tray-chart__track span { display: block; block-size: 100%; min-inline-size: 2px; border-radius: var(--radius-mark); background: var(--tray-c); }
 .tray-chart__rows .tray-num { color: var(--ink-soft); font-weight: 400; }
+.tray-chart__rows:focus-visible { border-radius: var(--radius-mark); outline-offset: 6px; }
 
 /* Round charts: donut, radial, radar. */
 .tray-chart__round { position: relative; inline-size: min(100%, var(--tray-d, 14rem)); aspect-ratio: 1; margin-inline: auto; }
@@ -1114,6 +1136,11 @@ a.tray-item:hover, button.tray-item:hover { filter: brightness(.96); }
 .tray-sort .tray-icon { color: var(--ink-hint); }
 th[aria-sort="ascending"] .tray-sort, th[aria-sort="descending"] .tray-sort { color: var(--ink); }
 th[aria-sort="ascending"] .tray-sort .tray-icon, th[aria-sort="descending"] .tray-sort .tray-icon { color: var(--ink); }
+/* A chosen row takes the resting fill. The row's checkbox carries the state, so the look follows it. */
+.tray-table tbody tr:has([data-select]:checked) { background: var(--tray-fill); }
+@media (forced-colors: active) {
+  .tray-table tbody tr:has([data-select]:checked) { outline: 2px solid Highlight; outline-offset: -2px; }
+}
 .tray-table .tray-check { min-block-size: 0; padding-block: 0; }
 .tray-table td.tray-table__check, .tray-table th.tray-table__check { inline-size: 1%; padding-inline-end: var(--space-3); }
 .tray-table td.tray-table__act { inline-size: 1%; padding-block: 4px; }
@@ -1137,6 +1164,8 @@ th[aria-sort="ascending"] .tray-sort .tray-icon, th[aria-sort="descending"] .tra
 .tray-bubble--own { background: var(--ink); color: var(--tray-on-ink); }
 .tray-bubble--plain { padding: 0; border-radius: 0; background: none; }
 .tray-bubble a { color: inherit; }
+/* On the ink of your own bubble an ink ring would not show: it takes the colour of the text. */
+.tray-bubble--own :focus-visible { outline-color: var(--tray-on-ink); }
 .tray-bubble > * + * { margin-block-start: .6em; }
 .tray-bubble-group { display: grid; gap: var(--space-1); justify-items: inherit; max-inline-size: 100%; }
 /* The corner next to the speaker is the small one. */
@@ -1146,6 +1175,9 @@ th[aria-sort="ascending"] .tray-sort .tray-icon, th[aria-sort="descending"] .tra
 .tray-reactions { display: flex; flex-wrap: wrap; gap: var(--space-1); }
 .tray-reaction { display: inline-flex; align-items: center; gap: 6px; min-block-size: 32px; padding: 0 10px; border: 0; border-radius: var(--radius-chip); background: var(--tray-fill); color: var(--ink); font: 600 .875rem/1 var(--font-sans); font-variant-numeric: tabular-nums; cursor: pointer; transition: background-color var(--duration-fill) var(--ease), color var(--duration-fill) var(--ease); }
 .tray-reaction[aria-pressed="true"] { background: var(--ink); color: var(--tray-on-ink); }
+/* A reaction is 32px to the eye and 44px to a finger: the target reaches past its top and bottom. */
+.tray-reaction { position: relative; }
+.tray-reaction::before { content: ""; position: absolute; inset: calc((32px - var(--size-hit)) / 2) 0; }
 
 /* ---------- Marker: what happened between messages ---------- */
 
@@ -1227,6 +1259,9 @@ th[aria-sort="ascending"] .tray-sort .tray-icon, th[aria-sort="descending"] .tra
 .tray-code > * { --tray-ground: var(--tray-fill-up); --tray-fill: var(--tray-ground-up); }
 .tray-code__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); min-block-size: var(--size-sm); padding-inline: var(--space-4) 6px; border-block-end: 1px solid var(--hairline); color: var(--ink-soft); font: 500 .9375rem/1 var(--font-sans); }
 .tray-code pre { position: relative; margin: 0; padding: var(--space-4); overflow-x: auto; font: 400 .9375rem/1.55 var(--font-mono); tab-size: 2; scrollbar-width: thin; scrollbar-color: var(--control-off) transparent; }
+/* The block clips to its round corners, so the ring of the code that scrolls is drawn inside its edge, round where the block is. */
+.tray-code pre:focus-visible { outline-offset: -3px; border-radius: var(--radius-button); }
+.tray-code__head + pre:focus-visible { border-start-start-radius: 0; border-start-end-radius: 0; }
 .tray-code code { font: inherit; }
 .tray-code--numbered code { display: grid; counter-reset: tray-line; }
 .tray-code--numbered .tray-code__line { counter-increment: tray-line; }
@@ -1295,6 +1330,9 @@ th[aria-sort="ascending"] .tray-sort .tray-icon, th[aria-sort="descending"] .tra
 /* A count on the corner of a button. The anchor around the button places it. */
 .tray-pip { position: absolute; inset-block-start: -4px; inset-inline-end: -4px; display: grid; place-items: center; min-inline-size: 22px; block-size: 22px; padding: 0 6px; border-radius: var(--radius-pill); background: var(--accent); color: var(--on-accent); font: 600 .8125rem/1 var(--font-sans); font-variant-numeric: tabular-nums; box-shadow: 0 0 0 3px var(--tray-ground); pointer-events: none; }
 .tray-pip:empty { display: none; }
+/* The remove button of a chip (Tag Input, Filter Bar) is 28px to the eye and 44px to a finger. */
+.tray-chip__x { position: relative; }
+.tray-chip__x::before { content: ""; position: absolute; inset: calc((28px - var(--size-hit)) / 2); }
 
 /* ---------- Page header ---------- */
 
@@ -1384,8 +1422,9 @@ a.tray-step, button.tray-step { cursor: pointer; }
 .tray-stepper--v > li:last-child::before { display: none; }
 .tray-stepper--v > li > .tray-step { grid-column: 1 / -1; grid-row: 1; align-items: flex-start; }
 .tray-stepper--v .tray-step__text { padding-block-start: 5px; }
+/* Folded away from the eye only: a step's words stay its name for a screen reader, so a link to a done step is not left nameless. */
 @media (max-width: 34rem) {
-  .tray-stepper:not(.tray-stepper--v) > li:not([aria-current]) .tray-step__text { display: none; }
+  .tray-stepper:not(.tray-stepper--v) > li:not([aria-current]) .tray-step__text { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }
 
 /* ---------- Banner ---------- */
@@ -1503,7 +1542,7 @@ a.tray-stat:hover { filter: brightness(.96); }
 .tray-compare tbody .tray-compare__group th { color: var(--ink-muted); font: 500 .875rem/1.4 var(--font-sans); }
 .tray-compare [data-featured] { background: var(--tray-fill); }
 .tray-compare thead [data-featured] { border-start-start-radius: var(--radius-button); border-start-end-radius: var(--radius-button); }
-.tray-compare tbody tr:last-child [data-featured] { border-block-end: 0; border-end-start-radius: var(--radius-button); border-end-end-radius: var(--radius-button); }
+.tray-compare tbody:last-of-type tr:last-child [data-featured] { border-block-end: 0; border-end-start-radius: var(--radius-button); border-end-end-radius: var(--radius-button); }
 .tray-compare td > .tray-icon { display: inline-block; vertical-align: middle; }
 .tray-compare td[data-off] { color: var(--ink-hint); }
 
@@ -1572,6 +1611,7 @@ a.tray-stat:hover { filter: brightness(.96); }
 .tray-secret button { flex: none; display: grid; place-items: center; inline-size: var(--size-xs); block-size: var(--size-xs); padding: 0; border: 0; border-radius: var(--radius-chip); background: none; color: var(--ink-soft); cursor: pointer; }
 .tray-secret button:hover { background: var(--tray-fill); color: var(--ink); }
 .tray-secret:has(button) { padding-inline-end: 2px; }
+.tray-secret button[data-failed] { color: var(--danger); }
 .tray-secret--block { display: flex; }
 
 /* ---------- Integration card ---------- */
@@ -1597,7 +1637,8 @@ a.tray-stat:hover { filter: brightness(.96); }
 .tray-matrix tbody th b { display: block; font-weight: 600; }
 .tray-matrix tbody th small { color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
 .tray-matrix td { inline-size: 5.5rem; }
-.tray-matrix td .tray-check { display: inline-flex; }
+/* A box alone in its cell is 26px wide: its label grows to 44px each way, so the target is a finger's size. */
+.tray-matrix td .tray-check { display: inline-flex; justify-content: center; min-inline-size: var(--size-hit); min-block-size: var(--size-hit); }
 .tray-matrix__group th { padding-block-start: var(--space-6); color: var(--ink-muted); font: 500 .875rem/1.4 var(--font-sans); }
 
 /* ---------- Onboarding checklist ---------- */
@@ -1615,6 +1656,8 @@ a.tray-stat:hover { filter: brightness(.96); }
 .tray-task__body .tray-btn { margin-block-start: var(--space-3); }
 .tray-task:not([aria-current]) .tray-task__body p, .tray-task:not([aria-current]) .tray-task__body .tray-btn { display: none; }
 .tray-task[data-done] .tray-task__body b { color: var(--ink-muted); font-weight: 500; text-decoration: line-through; }
+/* The hidden ", done" after a title (the behaviour adds it) is heard only while the task is done. */
+.tray-task:not([data-done]) [data-task-state] { display: none; }
 
 /* ---------- Tour ---------- */
 
@@ -1622,7 +1665,9 @@ a.tray-stat:hover { filter: brightness(.96); }
 .tray-tour { position: absolute; z-index: var(--z-float); display: grid; gap: var(--space-2); inline-size: min(21rem, calc(100% - 1rem)); padding: var(--space-5); border-radius: var(--radius-panel); }
 .tray-tour__count { color: var(--ink-muted); font: 500 .875rem/1.4 var(--font-sans); font-variant-numeric: tabular-nums; }
 .tray-tour__foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-block-start: var(--space-3); }
-[data-tour-on] { outline: 3px solid var(--ink); outline-offset: 4px; border-radius: var(--radius-control); }
+/* The part a step points at: a dashed ring further out, so it is not taken for the focus ring. While that part has focus,
+   the focus ring shows in its place. */
+[data-tour-on]:not(:focus-visible) { outline: 2px dashed var(--ink); outline-offset: 6px; border-radius: var(--radius-control); }
 
 /* ---------- Feedback ---------- */
 
@@ -1659,7 +1704,11 @@ a.tray-stat:hover { filter: brightness(.96); }
 
 .tray-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-block-size: var(--size-md); padding: 6px; border-radius: var(--radius-input); background: var(--tray-fill); cursor: text; }
 .tray-tags:focus-within { outline: 2px solid var(--ink); outline-offset: 0; }
-.tray-tags[aria-invalid="true"] { outline: 2px solid var(--danger); outline-offset: -2px; }
+/* A wrong field (aria-invalid on its text input) is edged in danger inside the tray, so the focus ring outside it still shows. */
+.tray-tags:has(input[aria-invalid="true"]) { box-shadow: inset 0 0 0 2px var(--danger); }
+@media (forced-colors: active) {
+  .tray-tags:has(input[aria-invalid="true"]):not(:focus-within) { outline: 2px solid; outline-offset: -2px; }
+}
 .tray-tags input:not([type="hidden"]) { flex: 1 1 8rem; min-inline-size: 6rem; block-size: var(--size-hit); padding: 0 var(--space-3); border: 0; background: none; color: var(--ink); font: 400 1.0625rem/1.4 var(--font-sans); outline: none; }
 .tray-tags input::placeholder { color: var(--ink-hint); opacity: 1; }
 .tray-tags .tray-chip[data-invalid] { color: var(--danger); box-shadow: inset 0 0 0 2px var(--danger); }
@@ -1707,9 +1756,10 @@ a.tray-stat:hover { filter: brightness(.96); }
 .tray-footer { display: grid; gap: var(--space-10); padding-block: var(--space-12) var(--space-8); color: var(--ink); }
 .tray-footer__top { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-8) var(--space-6); }
 .tray-footer__brand { grid-column: 1 / -1; display: grid; align-content: start; justify-items: start; gap: var(--space-3); max-inline-size: 22rem; color: var(--ink-soft); font: 400 1rem/1.45 var(--font-sans); }
-.tray-footer__col { display: grid; align-content: start; justify-items: start; gap: 2px; }
-.tray-footer__col h3 { margin-block-end: var(--space-2); color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
-.tray-footer__col a { display: inline-flex; align-items: center; min-block-size: 36px; border-radius: var(--radius-mark); color: var(--ink); font: 500 1rem/1.3 var(--font-sans); text-decoration: none; }
+/* Each link is a 44px row, a finger's size; the rows touch, so the column keeps its rhythm. */
+.tray-footer__col { display: grid; align-content: start; justify-items: start; gap: 0; }
+.tray-footer__col h3 { margin-block-end: var(--space-1); color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
+.tray-footer__col a { display: inline-flex; align-items: center; min-block-size: var(--size-hit); border-radius: var(--radius-mark); color: var(--ink); font: 500 1rem/1.3 var(--font-sans); text-decoration: none; }
 .tray-footer__col a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .2em; }
 .tray-footer__bottom { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3) var(--space-6); padding-block-start: var(--space-6); border-block-start: 1px solid var(--hairline); color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
 .tray-footer__legal { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); margin: 0; padding: 0; list-style: none; }
@@ -2148,6 +2198,17 @@ summary.tray-sidebar__item { list-style: none; }
 @keyframes tray-pop-in { from { opacity: 0; scale: .5; } }
 @keyframes tray-bump-a { 40% { scale: 1.3; } }
 @keyframes tray-bump-b { 40% { scale: 1.3; } }
+
+/* ---------- Asked for less motion: what slides, turns, grows or gives under a press changes at once ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  /* a press gives no more; the knob of a switch, a tile's plus, a chevron and a caret are at their place at once */
+  .tray-btn:active, .tray-btn-group__item:active, .tray-toggle:active, .tray-seg__item:active span { transform: none; }
+  .tray-btn, .tray-btn-group__item, .tray-toggle, .tray-switch__track::before, .tray-tile .tray-icon,
+  summary.tray-sidebar__label > .tray-icon, .tray-sidebar__caret, .tray-trace-group > summary .tray-icon { transition-property: background-color, color, filter; }
+  /* a bar fills, and a sidebar folds, without travelling */
+  .tray-progress__bar::before, .tray-checklist *, .tray-sidebar, .tray-app__side { transition: none; }
+}
 
 /* ---------- Modes: the page for someone who asks for more contrast, forces their own colours, or prints ----------
    The system draws most things as fills with no edge: a tray on the page, an ink fill for what is chosen. Each mode

@@ -38,7 +38,7 @@ export interface ActivityFeedProps extends Omit<React.HTMLAttributes<HTMLOListEl
  */
 export const ActivityFeed = React.forwardRef<HTMLOListElement, ActivityFeedProps>(function ActivityFeed({ items, className, ...rest }, ref) {
   return (
-    <ol ref={ref} className={cx('tray-feed', className)} {...rest}>
+    <ol ref={ref} className={cx('tray-feed', className)} role="list" {...rest}>
       {items.map((ev, i) => {
         const key = ev.id ?? String(i);
         return (

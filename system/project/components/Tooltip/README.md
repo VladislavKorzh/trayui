@@ -8,17 +8,17 @@ A tooltip is one short line that names a control when the pointer or the keyboar
   <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" aria-label="Copy the link">…</button>
 </span>
 ```
-The behaviour builds the bubble, ties it to the control with `aria-describedby`, shows it on hover and on focus, and hides it on leave, blur and Escape. `data-side="bottom"` puts it under the control; `data-keys` adds key caps for a shortcut.
+The behaviour builds the bubble, ties it to the control with `aria-describedby`, shows it on hover and on focus, and hides it on leave, blur and Escape. `data-side="bottom"` puts it under the control; `data-keys` adds key caps for a shortcut. Change `data-tip` and the bubble follows ("Copy the link", then "Copied").
 
 The bubble is solid `ink` with page-coloured text, 12px corners and the float shadow: the same look as a chart tooltip.
 
 ## Rules
 - A tooltip never holds the only copy of anything. An icon button still needs its `aria-label`; the tooltip repeats it for sighted users.
 - One line, a few words, no full stop: "Copy the link", "Collapse the sidebar".
-- Nothing inside can be clicked. If it needs a link or a button it is a Popover.
+- Nothing inside can be clicked: the bubble takes the pointer only so it can be read. If it needs a link or a button it is a Popover.
 
 ## Accessibility
-The bubble is a `role="tooltip"` tied to the control with `aria-describedby`, so a screen reader reads it as the control's description, after its name. It shows on hover and on keyboard focus, and `Escape` hides it while focus stays on the control. Under `prefers-reduced-motion: reduce` it only fades, in a tenth of a second.
+The bubble is a `role="tooltip"` tied to the control with `aria-describedby`, so a screen reader reads it as the control's description, after its name. When its words only repeat the control's name, as they do on an icon button, they are drawn for the eye alone (CSS generated content with an empty text alternative), so the name is not read twice and the description holds just the shortcut keys, if any. It shows on hover and on keyboard focus, and stays while the control has focus. The pointer can move from the control onto the bubble and rest there; the bubble goes a moment after the pointer leaves both (WCAG 1.4.13). `Escape` hides it while focus stays on the control. Under `prefers-reduced-motion: reduce` it only fades, in a tenth of a second.
 
 ## Do and don't
 - Do give every icon-only button a tooltip.

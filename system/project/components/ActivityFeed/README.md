@@ -4,7 +4,7 @@ An activity feed is the record of who did what, newest first: a mark, one senten
 
 ## Markup
 ```html
-<ol class="tray-feed">
+<ol class="tray-feed" role="list">
   <li class="tray-feed__day">Today</li>
   <li>
     <span class="tray-avatar tray-avatar--xs" aria-hidden="true">OF</span>
@@ -26,7 +26,7 @@ An activity feed is the record of who did what, newest first: a mark, one senten
 The mark is a 32px Avatar for a person and a `tray-feed__mark` tile with an icon for the system. The actor and the object are in bold or linked; the rest of the sentence is soft. `tray-feed__detail` holds what changed: an amount, a quoted note, old and new values. `tray-feed__day` starts each day.
 
 ## Accessibility
-The feed is an `<ol>`, one `<li>` per event, and each day label is an item of its own. The avatar is `aria-hidden`, and so is the icon in a `tray-feed__mark`, so the sentence must name the actor and the object by itself. Events are told apart by their icon and their words, never by colour. The feed has no live region, so events that arrive while the page is open are not announced unless the page adds one.
+The feed is an `<ol>`, one `<li>` per event, and each day label is an item of its own. Its markers are taken away with `list-style: none`, and Safari then stops calling it a list, so the list carries `role="list"`. The avatar is `aria-hidden`, and so is the icon in a `tray-feed__mark`, so the sentence must name the actor and the object by itself. Events are told apart by their icon and their words, never by colour. The feed has no live region, so events that arrive while the page is open are not announced unless the page adds one.
 
 ## Do and don't
 - Do write each event as one sentence in the past tense, actor first.

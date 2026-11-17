@@ -90,41 +90,40 @@ export const NotificationPreferences = React.forwardRef<HTMLTableElement, Notifi
             ))}
           </tr>
         </thead>
-        <tbody>
-          {groups.map((g, gi) => (
-            <React.Fragment key={gi}>
-              {g.label != null ? (
-                <tr className="tray-matrix__group">
-                  <th scope="colgroup" colSpan={span}>
-                    {g.label}
-                  </th>
-                </tr>
-              ) : null}
-              {g.events.map((ev) => (
-                <tr key={ev.key}>
-                  <th scope="row">
-                    <b>{ev.title}</b>
-                    {ev.description != null ? <small>{ev.description}</small> : null}
-                  </th>
-                  {channels.map((c) => {
-                    const locked = !!ev.locked?.includes(c.key);
-                    const off = !!c.disabled || !!ev.unavailable?.includes(c.key);
-                    return (
-                      <td key={c.key}>
-                        <Checkbox
-                          aria-label={`${ev.title}, ${c.spoken ?? 'by ' + c.key}`}
-                          checked={locked || (!off && !!current[ev.key]?.includes(c.key))}
-                          disabled={locked || off}
-                          onCheckedChange={(checked) => toggle(ev.key, c.key, checked)}
-                        />
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </React.Fragment>
-          ))}
-        </tbody>
+        {/* a <tbody> per group, headed by a scope="rowgroup" cell that names its own rows */}
+        {groups.map((g, gi) => (
+          <tbody key={gi}>
+            {g.label != null ? (
+              <tr className="tray-matrix__group">
+                <th scope="rowgroup" colSpan={span}>
+                  {g.label}
+                </th>
+              </tr>
+            ) : null}
+            {g.events.map((ev) => (
+              <tr key={ev.key}>
+                <th scope="row">
+                  <b>{ev.title}</b>
+                  {ev.description != null ? <small>{ev.description}</small> : null}
+                </th>
+                {channels.map((c) => {
+                  const locked = !!ev.locked?.includes(c.key);
+                  const off = !!c.disabled || !!ev.unavailable?.includes(c.key);
+                  return (
+                    <td key={c.key}>
+                      <Checkbox
+                        aria-label={`${ev.title}, ${c.spoken ?? 'by ' + c.key}`}
+                        checked={locked || (!off && !!current[ev.key]?.includes(c.key))}
+                        disabled={locked || off}
+                        onCheckedChange={(checked) => toggle(ev.key, c.key, checked)}
+                      />
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        ))}
       </table>
     </div>
   );

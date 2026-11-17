@@ -43,6 +43,7 @@
 .tray-chart__rows .tray-chart__track { block-size: 16px; border-radius: var(--radius-mark); background: none; }
 .tray-chart__rows .tray-chart__track span { display: block; block-size: 100%; min-inline-size: 2px; border-radius: var(--radius-mark); background: var(--tray-c); }
 .tray-chart__rows .tray-num { color: var(--ink-soft); font-weight: 400; }
+.tray-chart__rows:focus-visible { border-radius: var(--radius-mark); outline-offset: 6px; }
 
 /* Round charts: donut, radial, radar. */
 .tray-chart__round { position: relative; inline-size: min(100%, var(--tray-d, 14rem)); aspect-ratio: 1; margin-inline: auto; }
@@ -118,6 +119,11 @@
 .tray-sort .tray-icon { color: var(--ink-hint); }
 th[aria-sort="ascending"] .tray-sort, th[aria-sort="descending"] .tray-sort { color: var(--ink); }
 th[aria-sort="ascending"] .tray-sort .tray-icon, th[aria-sort="descending"] .tray-sort .tray-icon { color: var(--ink); }
+/* A chosen row takes the resting fill. The row's checkbox carries the state, so the look follows it. */
+.tray-table tbody tr:has([data-select]:checked) { background: var(--tray-fill); }
+@media (forced-colors: active) {
+  .tray-table tbody tr:has([data-select]:checked) { outline: 2px solid Highlight; outline-offset: -2px; }
+}
 .tray-table .tray-check { min-block-size: 0; padding-block: 0; }
 .tray-table td.tray-table__check, .tray-table th.tray-table__check { inline-size: 1%; padding-inline-end: var(--space-3); }
 .tray-table td.tray-table__act { inline-size: 1%; padding-block: 4px; }

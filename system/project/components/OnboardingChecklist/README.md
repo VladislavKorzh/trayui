@@ -35,7 +35,7 @@ The onboarding checklist gets a new workspace to its first real result: a short 
 Usually a task is done by doing it elsewhere in the product: set `data-done` from your own state and leave `data-task-done` for tasks finished on the spot.
 
 ## Accessibility
-It is a `<section>` named by its heading through `aria-labelledby`, and the tasks are an `<ol>`. The task to do now carries `aria-current="step"` and is announced as the current step, and the others show their title only. The bar is a `role="progressbar"` with an `aria-label`, and the behaviour keeps its `aria-valuenow`, `aria-valuemax` and `aria-valuetext` ("2 of 5") up to date. When a `data-task-done` button finishes a task, focus moves to the next task's button.
+It is a `<section>` named by its heading through `aria-labelledby`, and the tasks are an `<ol>`. The task to do now carries `aria-current="step"` and is announced as the current step, and the others show their title only. A done task says so in words as well as by its check and its line-through: the behaviour puts a hidden ", done" after each title, which a screen reader hears only while the task carries `data-done`. To word it otherwise, write your own `<span class="tray-vh" data-task-state>` in the title. The bar is a `role="progressbar"` with an `aria-label`, and the behaviour keeps its `aria-valuenow`, `aria-valuemax` and `aria-valuetext` ("2 of 5") up to date. When a `data-task-done` button finishes a task, focus moves to the next task's button. After the last task, whose button goes, focus moves to the `data-checklist-done` line, so it is read (or to the section when there is no such line).
 
 ## Do and don't
 - Do keep it to three to five tasks, each done in a minute or two.

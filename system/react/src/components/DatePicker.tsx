@@ -41,6 +41,10 @@ export interface DatePickerProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   weekStart?: 0 | 1;
   /** A BCP 47 tag for month names and for the date in the field. Default 'en-GB', which reads "18 – 24 Nov 2026". */
   locale?: string;
+  /** The name of the calendar's button that turns back a month, in the page's language. Default 'Previous month'. */
+  prevLabel?: string;
+  /** The name of the calendar's button that turns on a month, in the page's language. Default 'Next month'. */
+  nextLabel?: string;
   /** Shortcuts above the calendar that pick the last N days: `[{ label: 'Last 7 days', days: 7 }]`. Offer them when a few ranges cover most needs, as in reports. */
   presets?: DatePickerPreset[];
   /** Adds Clear and Apply under the calendar; the panel then stays open until Apply is pressed. */
@@ -94,6 +98,8 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(func
     today,
     weekStart,
     locale = 'en-GB',
+    prevLabel,
+    nextLabel,
     presets,
     apply,
     align = 'start',
@@ -123,7 +129,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(func
   // The behaviour owns the panel's `hidden` from here on: React only sets the first state, so the panel never flashes open.
   const [initiallyOpen] = React.useState(defaultOpen);
   // The calendar takes its options once, so a change of options draws a new picker.
-  const optionsKey = [mode, shownMonths, min, max, month, today, weekStart, locale, apply ? 1 : 0].join('|');
+  const optionsKey = [mode, shownMonths, min, max, month, today, weekStart, locale, prevLabel, nextLabel, apply ? 1 : 0].join('|');
   useBehaviour(ref, [optionsKey]);
 
   const take = (next: string, complete: boolean) => {
@@ -169,7 +175,12 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(func
         <Icon name="calendar" />
         <span className="tray-select-trigger__value">{text}</span>
       </button>
-      <div className={cx('tray-pop tray-pop--roomy', align === 'end' && 'tray-pop--end')} data-open={initiallyOpen ? '' : undefined} hidden={initiallyOpen ? undefined : true}>
+      <div
+        className={cx('tray-pop tray-pop--roomy', align === 'end' && 'tray-pop--end')}
+        role="dialog"
+        data-open={initiallyOpen ? '' : undefined}
+        hidden={initiallyOpen ? undefined : true}
+      >
         {presets && presets.length ? (
           <div className="tray-datepicker__presets">
             {presets.map((p, i) => (
@@ -190,6 +201,8 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(func
           data-today={today}
           data-week-start={weekStart}
           data-locale={locale}
+          data-prev-label={prevLabel}
+          data-next-label={nextLabel}
         />
         {apply ? (
           <div className="tray-pop__foot">

@@ -42,7 +42,7 @@ export const Menubar = React.forwardRef<HTMLDivElement, MenubarProps>(function M
         const open = menu.label === initiallyOpen;
         return (
           <div key={i} className="tray-anchor" data-tray="menu">
-            <button className="tray-tab" type="button" aria-haspopup="menu">
+            <button className="tray-tab" type="button" role="menuitem" aria-haspopup="menu">
               {menu.label}
             </button>
             <div className="tray-pop" role="menu" data-open={open ? '' : undefined} hidden={open ? undefined : true}>

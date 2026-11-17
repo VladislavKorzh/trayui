@@ -80,8 +80,24 @@
     document.addEventListener('pointerdown', function (e) { if (open && !panel.contains(e.target) && !trigger.contains(e.target)) set(false); });
     /* Escape closes the panel and nothing else: the event stops here, and a dialog around the panel is not asked to close. */
     [trigger, panel].forEach(function (n) { n.addEventListener('keydown', function (e) { if (e.key === 'Escape' && open) { e.preventDefault(); e.stopPropagation(); set(false, true); } }); });
+    /* Tab out of the trigger and the panel closes it: what is open follows the keyboard. A click on plain text inside the
+       panel sends focus nowhere in particular, and leaves it open. */
+    [trigger, panel].forEach(function (n) { n.addEventListener('focusout', function (e) { var to = e.relatedTarget; if (open && to && !panel.contains(to) && !trigger.contains(to)) set(false); }); });
     return { open: function () { set(true); }, close: function (back) { set(false, back); }, toggle: function () { set(!open); }, isOpen: function () { return open; } };
   }
+
+  /* rescue(el, to): el is about to be hidden, removed or disabled. If focus is in it, focus moves to `to` (an element, or a
+     function that gives one) first, so a keyboard user is not dropped to the top of the page. An element that cannot take
+     focus is given tabindex="-1" for it. */
+  function rescue(el, to) {
+    var a = document.activeElement;
+    if (!el || !a || (el !== a && !el.contains(a))) return;
+    var t = typeof to === 'function' ? to() : to;
+    if (!t || !t.focus || !t.isConnected) return;
+    if (!t.matches('a[href], button, input, select, textarea, summary, [tabindex]')) t.setAttribute('tabindex', '-1');
+    t.focus({ preventScroll: true });
+  }
+  UI.rescue = rescue;
 
   /* Run fn now, and again whenever the element's box changes: its first real layout may come after this script has started. */
   function watch(el, fn) {

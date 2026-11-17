@@ -22,6 +22,9 @@
 .tray-btn--md { gap: var(--space-3); min-block-size: var(--size-md); padding: 0 var(--space-6); border-radius: var(--radius-input); font: 600 1.0625rem/1 var(--font-sans); }
 .tray-btn--sm { gap: var(--space-2); min-block-size: var(--size-sm); padding: 0 22px; border-radius: var(--radius-control); font: 600 1rem/1.1 var(--font-sans); }
 .tray-btn--xs { gap: var(--space-2); min-block-size: var(--size-xs); padding: 0 var(--space-4); border-radius: var(--radius-chip); font: 600 .9375rem/1.1 var(--font-sans); }
+/* An extra small button or toggle is 40px to the eye and 44px to a finger: the target reaches past its edge. */
+.tray-btn--xs, .tray-toggle--xs { position: relative; }
+.tray-btn--xs::before, .tray-toggle--xs::before { content: ""; position: absolute; inset: calc((var(--size-xs) - var(--size-hit)) / 2); }
 .tray-btn--dark { background: var(--ink); color: var(--tray-on-ink); }
 .tray-btn--dark:hover { filter: contrast(.82); }
 .tray-btn--quiet { background: var(--tray-fill); color: var(--ink); }

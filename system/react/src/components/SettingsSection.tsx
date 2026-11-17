@@ -53,24 +53,26 @@ export interface SettingsSectionProps extends Omit<React.HTMLAttributes<HTMLElem
 }
 
 const named: unknown[] = [Switch, NativeSelect, Input, InputGroup];
+// A button keeps its own words as its name, and is described by the row like the others.
+const described: unknown[] = [...named, Button];
 
 function Setting({ row }: { row: SettingRow }) {
   const titleId = useUid('setting');
+  const descId = `${titleId}-text`;
   const { control } = row;
-  // The row's title names a control that has no words of its own.
-  const labelled =
-    React.isValidElement<Record<string, unknown>>(control) &&
-    named.includes(control.type) &&
-    control.props['aria-label'] == null &&
-    control.props['aria-labelledby'] == null &&
-    control.props.label == null
-      ? React.cloneElement(control, { 'aria-labelledby': titleId })
-      : control;
+  const element = React.isValidElement<Record<string, unknown>>(control) ? control : null;
+  // The row's title names a control that has no words of its own, and the line under it describes the control,
+  // so the effect is read when the control takes focus.
+  const extra: Record<string, string> = {};
+  if (element && named.includes(element.type) && element.props['aria-label'] == null && element.props['aria-labelledby'] == null && element.props.label == null)
+    extra['aria-labelledby'] = titleId;
+  if (element && described.includes(element.type) && row.description != null && element.props['aria-describedby'] == null) extra['aria-describedby'] = descId;
+  const labelled = element && Object.keys(extra).length ? React.cloneElement(element, extra) : control;
   return (
     <div className="tray-setting">
       <div className="tray-setting__text">
         <b id={titleId}>{row.title}</b>
-        {row.description != null ? <small>{row.description}</small> : null}
+        {row.description != null ? <small id={descId}>{row.description}</small> : null}
       </div>
       {control != null ? <div className="tray-setting__control">{labelled}</div> : null}
     </div>

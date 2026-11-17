@@ -4,7 +4,7 @@ A context menu opens where something is right-clicked and offers the actions for
 
 ## Markup
 ```html
-<div class="tray-context" data-tray="contextmenu" tabindex="0" aria-label="Order PL-20418">
+<div class="tray-context" data-tray="contextmenu" role="group" tabindex="0" aria-label="Order PL-20418">
   …the content…
   <div class="tray-pop"><div class="tray-list">…menu items, as in Dropdown Menu…</div></div>
 </div>
@@ -17,7 +17,7 @@ A context menu opens where something is right-clicked and offers the actions for
 - Leave the browser's own menu alone on text, links and form fields.
 
 ## Accessibility
-Give the region `tabindex="0"` so a keyboard can reach it; there the Menu key or `Shift+F10` opens the menu, as a right-click does. The panel becomes a `menu` and focus moves to its first item: `ArrowUp` and `ArrowDown` move between items and wrap, `Home` and `End` jump to the ends, and `Enter` or `Space` runs one. `Escape` closes the menu and returns focus to the region. Items are `role="menuitem"` buttons with `aria-hidden` icons, and the focus ring is drawn inside each one. A destructive item is in `danger` and says what it destroys in words. Under `prefers-reduced-motion: reduce` the menu only fades, in a tenth of a second.
+Give the region `tabindex="0"` so a keyboard can reach it; there the Menu key or `Shift+F10` opens the menu, as a right-click does. Name the region with an `aria-label` after the thing it holds, and give it `role="group"`: a name on a plain `div` is not read without a role (the behaviour adds the role to a named `div` that has none). The panel becomes a `menu` and focus moves to its first item: `ArrowUp` and `ArrowDown` move between items and wrap, `Home` and `End` jump to the ends, and `Enter` or `Space` runs one. Running an item or pressing `Escape` closes the menu and returns focus to the region; `Tab` out of the menu closes it too. Items are `role="menuitem"` buttons with `aria-hidden` icons, and the focus ring is drawn inside each one. A destructive item is in `danger` and says what it destroys in words. Under `prefers-reduced-motion: reduce` the menu only fades, in a tenth of a second.
 
 ## Do and don't
 - Do use it in dense working tools: tables, file lists, canvases.

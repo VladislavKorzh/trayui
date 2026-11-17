@@ -29,7 +29,9 @@
       handle.addEventListener('pointerup', up);
     });
     handle.addEventListener('keydown', function (e) {
-      var back = vertical ? 'ArrowUp' : 'ArrowLeft', forth = vertical ? 'ArrowDown' : 'ArrowRight';
+      /* right to left the first pane is on the right: the arrows follow the handle, not the numbers */
+      var rtl = !vertical && getComputedStyle(root).direction === 'rtl';
+      var back = vertical ? 'ArrowUp' : rtl ? 'ArrowRight' : 'ArrowLeft', forth = vertical ? 'ArrowDown' : rtl ? 'ArrowLeft' : 'ArrowRight';
       if (e.key === back) { e.preventDefault(); set(size - 2); }
       else if (e.key === forth) { e.preventDefault(); set(size + 2); }
       else if (e.key === 'Home') { e.preventDefault(); set(min); }
@@ -51,6 +53,9 @@
     function paint() {
       var i = index(), n = slides().length, end = Math.abs(track.scrollLeft) + track.clientWidth >= track.scrollWidth - 2;
       if (count) count.textContent = (i + 1) + ' / ' + n;
+      /* a button that turns off at an end while it has focus hands it to the other one, or to the track */
+      if (prev && i === 0) rescue(prev, next && !end ? next : track);
+      if (next && end) rescue(next, prev && i > 0 ? prev : track);
       if (prev) prev.disabled = i === 0;
       if (next) next.disabled = end;
     }
@@ -64,8 +69,9 @@
     track.addEventListener('scroll', paint, { passive: true });
     track.setAttribute('tabindex', '0');
     track.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+      /* right to left the next slide is on the left */
+      var rtl = getComputedStyle(track).direction === 'rtl', step = { ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1 }[e.key];
+      if (step) { e.preventDefault(); go(step); }
     });
     watch(track, paint);
   });
@@ -84,10 +90,11 @@
     function make() {
       if (made) return;
       made = true;
+      /* the track is a list, so each picture stays a list item; the slide inside it is the group, named "2 of 6" */
       track.innerHTML = links.map(function (a, i) {
         var img = $('img', a), cap = a.dataset.caption || '';
-        return '<li class="tray-lightbox__slide" role="group" aria-roledescription="slide" aria-label="' + (i + 1) + ' ' + esc(of) + ' ' + links.length + '">' +
-          '<figure><img src="' + esc(a.href) + '" alt="' + esc(img ? img.alt : '') + '" decoding="async"' + (i ? ' loading="lazy"' : '') + '>' +
+        return '<li class="tray-lightbox__slide">' +
+          '<figure role="group" aria-roledescription="slide" aria-label="' + (i + 1) + ' ' + esc(of) + ' ' + links.length + '"><img src="' + esc(a.href) + '" alt="' + esc(img ? img.alt : '') + '" decoding="async"' + (i ? ' loading="lazy"' : '') + '>' +
           (cap ? '<figcaption>' + esc(cap) + '</figcaption>' : '') + '</figure></li>';
       }).join('');
       track.setAttribute('tabindex', '0');
@@ -160,6 +167,7 @@
     if (!v) return;
     var plays = $$('[data-play]', root), seek = $('[data-seek]', root), now = $('[data-now]', root), total = $('[data-total]', root);
     var mute = $('[data-mute]', root), cc = $('[data-captions]', root), full = $('[data-full]', root), of = root.dataset.of || 'of', dragging = false;
+    var big = $('.tray-player__big', root), barPlay = plays.filter(function (b) { return b !== big; })[0];
     function time(s) { s = Math.max(0, Math.floor(s || 0)); var h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, r = s % 60; return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(r).padStart(2, '0'); }
     function label(b, on, offName, onName, offIcon, onIcon) {
       if (!b) return;
@@ -197,7 +205,8 @@
     root.setAttribute('data-ready', '');
     plays.forEach(function (b) { b.addEventListener('click', toggle); });
     v.addEventListener('click', toggle);
-    v.addEventListener('play', function () { root.setAttribute('data-started', ''); state(); });
+    /* the large button goes once the film starts: focus on it moves to the bar's play button first */
+    v.addEventListener('play', function () { rescue(big, barPlay || seek); root.setAttribute('data-started', ''); state(); });
     v.addEventListener('ended', function () { root.removeAttribute('data-started'); state(); });
     ['pause', 'playing', 'volumechange'].forEach(function (n) { v.addEventListener(n, state); });
     ['timeupdate', 'loadedmetadata', 'durationchange', 'seeked'].forEach(function (n) { v.addEventListener(n, clock); });
@@ -209,6 +218,16 @@
         clock();
       });
       seek.addEventListener('change', function () { dragging = false; clock(); });
+      /* The range's step is fine for dragging, too fine for a key: an arrow moves five seconds (mirrored right to left),
+         Page Up and Page Down a tenth of the film. Home and End are the range's own. */
+      seek.addEventListener('keydown', function (e) {
+        var d = isFinite(v.duration) ? v.duration : 0, rtl = getComputedStyle(seek).direction === 'rtl';
+        var by = { ArrowRight: rtl ? -5 : 5, ArrowLeft: rtl ? 5 : -5, ArrowUp: 5, ArrowDown: -5, PageUp: d / 10, PageDown: -d / 10 }[e.key];
+        if (!by || !d) return;
+        e.preventDefault();
+        v.currentTime = clamp(v.currentTime + by, 0, d);
+        clock();
+      });
     }
     if (mute) mute.addEventListener('click', function () { v.muted = !v.muted; });
     /* captions: one toggle with a constant name, pressed while they show */

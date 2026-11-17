@@ -77,7 +77,7 @@ export const Lightbox = React.forwardRef<HTMLDivElement, LightboxProps>(function
             <Icon name="chevron-right" flip />
           </button>
         </div>
-        <ul className="tray-lightbox__track" aria-label={label} />
+        <ul className="tray-lightbox__track" role="list" aria-label={label} />
         <p className="tray-vh" role="status" />
       </dialog>
     </div>

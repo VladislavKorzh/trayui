@@ -169,10 +169,11 @@ export const Message = React.forwardRef<HTMLDivElement, MessageProps>(function M
                   type="button"
                   data-tray="reaction"
                   aria-pressed={r.pressed ? 'true' : 'false'}
-                  aria-label={r.label}
                   onClick={react(r, i)}
                 >
+                  {/* named by its words and its count ("Thumbs up, 2"): an aria-label would hide the count */}
                   <Icon name={r.icon} size="sm" />
+                  <span className="tray-vh">{r.label}, </span>
                   <span data-count="">{r.count}</span>
                 </button>
               ))}

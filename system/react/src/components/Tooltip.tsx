@@ -21,21 +21,8 @@ export interface TooltipProps extends React.HTMLAttributes<HTMLSpanElement> {
 export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function Tooltip({ tip, keys, side = 'top', open = false, className, children, ...rest }, forwarded) {
   const ref = useForwardedRef<HTMLSpanElement>(forwarded);
   const keyText = keys && keys.length ? keys.join(' ') : undefined;
+  // The behaviour builds the bubble, and rebuilds it whenever data-tip, data-keys or data-side change ("Copy the link" -> "Copied").
   useBehaviour(ref);
-
-  // The behaviour builds the bubble once. Keep its words, keys and side in step when they change afterwards ("Copy the link" -> "Copied").
-  React.useEffect(() => {
-    const bubble = ref.current?.querySelector<HTMLElement>(':scope > .tray-tooltip');
-    if (!bubble) return;
-    bubble.className = cx('tray-tooltip', side === 'bottom' && 'tray-tooltip--bottom') ?? 'tray-tooltip';
-    bubble.textContent = tip;
-    (keyText ?? '').split(' ').filter(Boolean).forEach((k) => {
-      const kbd = document.createElement('kbd');
-      kbd.className = 'tray-kbd';
-      kbd.textContent = k;
-      bubble.appendChild(kbd);
-    });
-  }, [tip, keyText, side, ref]);
 
   // Holding it open is read by the behaviour from data-open; letting go hides the bubble unless the pointer or focus is still on the control.
   React.useEffect(() => {

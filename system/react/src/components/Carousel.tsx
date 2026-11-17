@@ -33,7 +33,7 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(function
   const trackStyle = slideWidth ? ({ '--tray-slide': slideWidth } as React.CSSProperties) : undefined;
   return (
     <div ref={ref as React.RefObject<HTMLDivElement>} className={cx('tray-carousel', className)} data-tray="carousel" {...rest}>
-      <ul className="tray-carousel__track" aria-label={label} style={trackStyle}>
+      <ul className="tray-carousel__track" role="list" aria-label={label} style={trackStyle}>
         {slides.map((s, i) => (
           <li key={React.isValidElement(s) && s.key != null ? s.key : i} className="tray-carousel__slide">
             {s}

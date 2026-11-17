@@ -118,7 +118,13 @@ export const OnboardingChecklist = React.forwardRef<HTMLElement, OnboardingCheck
                 <Icon name="check" size="sm" />
               </span>
               <div className="tray-task__body">
-                <b>{t.title}</b>
+                <b>
+                  {t.title}
+                  {/* heard only while the task is done (80-saas.css) */}
+                  <span className="tray-vh" data-task-state="">
+                    , done
+                  </span>
+                </b>
                 {t.description != null ? <p>{t.description}</p> : null}
                 {t.action != null ? (
                   <Button size="sm" href={t.href} data-task-done={completes ? '' : undefined} onClick={t.onAction}>

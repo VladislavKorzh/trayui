@@ -30,13 +30,15 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(fun
   const own = useForwardedRef(ref);
   const around = React.useContext(FieldContext);
   const hintId = useUid('textarea-hint');
+  const countId = useUid('textarea-count');
   const counting = !!showCount;
   const showHint = counting && hint != null && !around?.invalid;
+  // The count is tied to the field too, so "39 / 140" is read when it takes focus (not as each letter is typed).
   const field = useFieldControl({
     id,
     disabled,
     invalid,
-    'aria-describedby': cx(rest['aria-describedby'], showHint && hintId),
+    'aria-describedby': cx(rest['aria-describedby'], showHint && hintId, counting && countId),
     'aria-invalid': rest['aria-invalid'],
   });
   // The count behaviour writes "39 / 140" into the field's tray-field__count as the person types.
@@ -62,7 +64,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(fun
           {hint}
         </p>
       ) : null}
-      <span className="tray-field__count" />
+      <span className="tray-field__count" id={countId} />
     </div>
   );
   // The count behaviour looks for its counter inside the nearest tray-field: outside a Field, the textarea brings one.

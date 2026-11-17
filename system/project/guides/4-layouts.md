@@ -37,7 +37,7 @@ Below 56rem the sidebars leave the page. A button with `class="tray-app__menu"`,
 | `tray-sidebar__body` | What a group holds when it is not rows of navigation: checkboxes, a description list. |
 | `tray-sidebar__sub--text` | A second level under items without icons, as in a table of contents. |
 
-In the rail every item keeps its name in an `aria-label` and shows it in a Tooltip beside the icon; the tooltip stays away while the label is in view. A sidebar with `tray-sidebar--flyout` cannot scroll, because its menus must be able to leave it: keep its navigation short enough for the smallest window you support (about 790px for eleven items), and in the phone sheet its menus open under their items.
+In the rail every item keeps its name: the label is hidden from the eye but not from a screen reader, and shows in a Tooltip beside the icon; the tooltip stays away while the label is in view. A sidebar with `tray-sidebar--flyout` cannot scroll, because its menus must be able to leave it: keep its navigation short enough for the smallest window you support (about 790px for eleven items), and in the phone sheet its menus open under their items.
 
 `tray-dialog--split` is a dialog with its own navigation: `tray-dialog__split` holds a `tray-sidebar` and a `tray-dialog__pane`. Below 48rem the navigation becomes a strip above the pane.
 
