@@ -60,6 +60,11 @@
         var name = h ? (h.firstChild && h.firstChild.nodeType === 3 ? h.firstChild.textContent : h.textContent).trim() : '';
         return (name ? name + ', ' : '') + (price ? words(price) : '');
       });
+      /* a plan comparison has no cards: each plan is the head of a column, its name and then its price */
+      if (!plans.length) plans = $$('th[scope="col"]', root).filter(function (th) { return $('[data-' + period + ']', th); }).map(function (th) {
+        var name = th.firstChild && th.firstChild.nodeType === 3 ? th.firstChild.textContent.trim() : '';
+        return (name ? name + ', ' : '') + words($('[data-' + period + ']', th));
+      });
       return label + ' prices' + (plans.length ? ': ' + plans.join('; ') : '');
     }
     function apply(tell) {

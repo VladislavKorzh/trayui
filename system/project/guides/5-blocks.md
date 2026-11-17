@@ -14,7 +14,7 @@ A page links `../tokens.css`, `../components/bundle.css` and `../components/bund
 
 | File | What it is |
 | --- | --- |
-| `blocks/stats-01.html` | Stat cards with a period switch. Six stat cards in two groups, each set against the period before, under a switch between 7 days, 30 days and the season. |
+| `blocks/stats-01.html` | Stat cards with a period switch. Six stat cards in two groups under a switch between 7 days, 30 days and the season, each set against the period before, the season against last year. |
 | `blocks/stats-02.html` | Stat cards over a season chart. Stat cards and one large chart of the season on the ink card, with the harvest by bed and the goals of the season beneath. |
 | `blocks/stats-03.html` | Breakdown by channel. A breakdown of the month: orders by channel beside the best sellers with their share, then orders by city and the share of repeat customers. |
 
@@ -31,7 +31,7 @@ A page links `../tokens.css`, `../components/bundle.css` and `../components/bund
 | File | What it is |
 | --- | --- |
 | `blocks/settings-01.html` | Profile settings. A personal profile in sections: a photo to upload, name and contact, language and time, and one bar that saves every change. |
-| `blocks/settings-02.html` | Notifications by channel. Notification settings channel by channel: email, the phone app and text messages, each with its own switches, and quiet hours for the night. |
+| `blocks/settings-02.html` | Notifications by channel. Notification settings channel by channel: switches for email and the phone app, a phone number to add for text messages, and quiet hours for the night. |
 | `blocks/settings-03.html` | Security and the danger zone. Two-step sign-in, the devices you are signed in on, and deleting the workspace behind a dialog that asks you to type its name. |
 
 ## Empty states
@@ -97,7 +97,7 @@ A page links `../tokens.css`, `../components/bundle.css` and `../components/bund
 | File | What it is |
 | --- | --- |
 | `blocks/catalog-01.html` | Catalog with filters on top. Products in a grid of cards under a filter bar for type, size and price, with the count, the sort and pages; for a range that three filters cover. |
-| `blocks/catalog-02.html` | Catalog with a filter column. Products as rows beside a column of filters: checkboxes, a price limit and an in-stock switch. On a phone the column opens from a button. |
+| `blocks/catalog-02.html` | Catalog with a filter column. Products as rows beside a column of filters: checkboxes, a price limit and an in-stock switch. On a phone or a tablet the column opens from a button. |
 | `blocks/catalog-03.html` | The range at a glance. The whole range on one page: a tile per category with its count, a table of jar sizes with the price of 10 g, and the three products ordered most. |
 
 ## Shop

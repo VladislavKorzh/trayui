@@ -175,11 +175,11 @@
           <ul class="tray-summary__lines">
             <li class="tray-summary__line"><span>Snail caviar, 30 g<small>1 &times; $38.00</small></span><span>$38.00</span></li>
             <li class="tray-summary__line"><span>Snail caviar, 50 g<small>2 &times; $59.00</small></span><span>$118.00</span></li>
-            <li class="tray-summary__line"><span>Snail caviar, 100 g<small>1 &times; $109.00</small></span><span>$109.00</span></li>
+            <li class="tray-summary__line"><span>Snail caviar, 100 g<small>1 &times; $112.00</small></span><span>$112.00</span></li>
             <li class="tray-summary__line"><span id="way-name">Courier, chilled box<small id="way-when">Today, 16:00 to 18:00</small></span><span id="way-sum">$9.00</span></li>
           </ul>
-          <p class="tray-summary__total" aria-live="polite"><span>Total</span><span id="total">$274.00</span></p>
-          <button class="tray-btn tray-btn--block" type="submit" form="checkout" id="pay">Pay $274.00</button>
+          <p class="tray-summary__total" aria-live="polite"><span>Total</span><span id="total">$277.00</span></p>
+          <button class="tray-btn tray-btn--block" type="submit" form="checkout" id="pay">Pay $277.00</button>
           <p class="tray-summary__note"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-lock"/></svg>We never see the card number.</p>
         </div>
       </aside>
@@ -193,7 +193,7 @@
 /* Keeps the summary in step with the form: the way the jars come, the day and the time, and how the order is paid.
    The farm shop needs no address and no time slot; paying at the door needs no card. Amounts are in cents. */
 (function () {
-  var JARS = 26500, COURIER = 900;
+  var JARS = 26800, COURIER = 900;
   var form = document.getElementById('checkout');
   var $ = function (id) { return document.getElementById(id); };
   var picked = function (name) { return form.querySelector('input[name="' + name + '"]:checked'); };

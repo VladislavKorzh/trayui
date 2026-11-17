@@ -29,7 +29,7 @@ A toast is for what already happened and needs no decision. Something the person
 - The region the script makes for the toasts is the live one: a `role="region"` named "Notifications", with `aria-live="polite"`, at the end of the page. A toast added to it is read out once, politely; a danger toast is a `role="alert"` and is read at once. The first toast in a region that has only just been made has its words put in again a moment later, so it is read too.
 - Focus stays where it was, so `Tab` reaches a toast after everything else on the page.
 - A toast with an action stays until it is dismissed, so there is time to reach its button (WCAG 2.2.1). Any other toast leaves after `duration`, and waits while the pointer or focus is on it.
-- Dismissing a toast, or running its action, moves focus that was in it to the next toast, or back to where it came from, never to the top of the page.
+- Dismissing a toast, or running its action, moves focus that was in it to the next toast, or back to the control it came from.
 - The close button is named "Dismiss". A tone always comes with its icon and the words of the title, so colour is never the only sign.
 - Under `prefers-reduced-motion: reduce` a toast appears and goes at once.
 

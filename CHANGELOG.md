@@ -2,6 +2,25 @@
 
 What changed in each version of Tray UI, the design system in plain HTML and CSS: its components, blocks, themes and tools, newest first.
 
+## Not released yet
+
+- **Menus have a name.** A dropdown menu is named by the button that opens it (`aria-labelledby`), unless it has a name of its own. Shift+Tab from an item now closes the menu and returns focus to the button, as Tab closes it.
+- **A plan comparison reads its prices.** Switching it between monthly and yearly reads the new price of each plan, as the pricing cards already do.
+- **Blocks:**
+  - Wide tables can be reached and scrolled from the keyboard: their wrap is a named region with `tabindex="0"`. This is in the catalogue, stats, dashboard, wiki and table blocks.
+  - The plan comparison puts each group of rows in its own `<tbody>`, so a screen reader reads a group's heading only with its own rows.
+  - The dashboard's collapsed sidebar names its items and its workspace button, and shows a tooltip on each item.
+  - The dashboard and the batches table read their selection and page counts aloud as they change.
+  - The blog hides the "…" in its page numbers from screen readers.
+  - The social sign-up page links to sign in.
+- **Examples:**
+  - The 100 g jar costs $112 in the checkout, as it does in the shop.
+  - The blog's post counts match its posts.
+  - Three block descriptions now say only what the block shows.
+- **Docs:**
+  - Auth Form describes the reveal button as it works.
+  - Toast describes where focus goes when a toast is dismissed exactly as it happens.
+
 ## trayui-react 0.2.1, November 2026
 
 - The package's imports name their files (`./components/Button.js`), so it loads in Node and in webpack and Next.js, which follow the standard for ES modules; 0.2.0 loaded only where the bundler guessed the extension.

@@ -934,13 +934,17 @@ if (typeof document !== 'undefined') (function () {
     /* The head of a user menu (who is signed in) is not an item, so a screen reader inside the menu never reaches it: the
        name and the line under it name the menu instead, and are read as it opens. */
     var head = $(':scope > .tray-pop__head', panel);
-    if (head && !panel.hasAttribute('aria-label') && !panel.hasAttribute('aria-labelledby')) {
-      var who = $('.tray-person__text', head) || head;
-      who.id = who.id || uid('tray-menu-name');
+    if (!panel.hasAttribute('aria-label') && !panel.hasAttribute('aria-labelledby')) {
+      /* Any other menu is named by the button that opens it, as a menu must have a name. */
+      var who = head ? $('.tray-person__text', head) || head : trigger;
+      who.id = who.id || uid(head ? 'tray-menu-name' : 'tray-menu-button');
       panel.setAttribute('aria-labelledby', who.id);
     }
     var pop = popup(trigger, panel, { onOpen: function () { var first = items()[0]; if (first) first.focus(); } });
     rove(panel, OWN_ITEMS);
+    /* Shift+Tab from an item would land on the trigger, which counts as inside, and leave the menu open: it closes the
+       menu as Tab does, and focus goes to the trigger. */
+    panel.addEventListener('keydown', function (e) { if (e.key === 'Tab' && e.shiftKey && pop.isOpen()) { e.preventDefault(); pop.close(true); } });
     $$('.tray-submenu', panel).forEach(submenu);
     panel.addEventListener('click', function (e) {
       var it = e.target.closest('[role^="menuitem"]');
@@ -1856,6 +1860,11 @@ if (typeof document !== 'undefined') (function () {
         /* the plan's name is the first words of its heading, before a badge such as "Most chosen" */
         var name = h ? (h.firstChild && h.firstChild.nodeType === 3 ? h.firstChild.textContent : h.textContent).trim() : '';
         return (name ? name + ', ' : '') + (price ? words(price) : '');
+      });
+      /* a plan comparison has no cards: each plan is the head of a column, its name and then its price */
+      if (!plans.length) plans = $$('th[scope="col"]', root).filter(function (th) { return $('[data-' + period + ']', th); }).map(function (th) {
+        var name = th.firstChild && th.firstChild.nodeType === 3 ? th.firstChild.textContent.trim() : '';
+        return (name ? name + ', ' : '') + words($('[data-' + period + ']', th));
       });
       return label + ' prices' + (plans.length ? ': ' + plans.join('; ') : '');
     }

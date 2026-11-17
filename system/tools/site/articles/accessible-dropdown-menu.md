@@ -38,7 +38,7 @@ Make the items buttons as well. A `<button>` fires `click` on Enter and on Space
 </div>
 ```
 
-Tray UI's markup has the same shape: a `tray-anchor` with `data-tray="menu"` around the button and a `tray-pop` panel of `tray-option` buttons. Its script writes most of that ARIA: `role="menu"` on the panel, `aria-haspopup="menu"` and `aria-expanded` on the button, `tabindex="-1"` on every item. Radio items that belong together share a `data-group`, which the script reads to uncheck the others when one is chosen.
+Tray UI's markup has the same shape: a `tray-anchor` with `data-tray="menu"` around the button and a `tray-pop` panel of `tray-option` buttons. Its script writes most of that ARIA: `role="menu"` on the panel and its name, `aria-haspopup="menu"` and `aria-expanded` on the button, `tabindex="-1"` on every item. Radio items that belong together share a `data-group`, which the script reads to uncheck the others when one is chosen.
 
 ## The keyboard
 
@@ -54,6 +54,7 @@ These are the keys of Tray UI's menu.
 | Enter or Space | On a check or radio item | Sets `aria-checked`; the menu stays open. |
 | Escape | On the button or in the menu | Closes the menu and returns focus to the button. |
 | Tab | In the menu | Focus moves on to the next control on the page, and the menu closes. |
+| Shift+Tab | In the menu | The menu closes and focus returns to the button. |
 
 The APG marks two keys as optional, and Tray UI has neither: ArrowUp on the button, which opens the menu on its last item, and type-ahead, where a typed letter moves to the next item that starts with it. The script below has ArrowUp. Type-ahead matters most in long menus; the Dropdown Menu keeps to about eight items, and the arrows reach each of them in a few presses.
 
@@ -67,7 +68,7 @@ A menu closes in five ways, and each one decides where focus goes.
 
 1. **An action runs.** The menu closes and focus returns to the button, so the next Tab starts where the person was.
 2. **Escape.** The menu closes and focus returns to the button. Tray UI also stops the event there, so a dialog around the menu is not asked to close too.
-3. **Tab.** Focus has already moved to the next control, and the menu closes behind it. Tray UI listens for `focusout` on the button and the panel, and closes the menu when `relatedTarget`, the element that receives focus, lies outside both. Version 0.2.0 added it: "Menus and lists close on Tab, as they close on Escape."
+3. **Tab.** Focus has already moved to the next control, and the menu closes behind it. Shift+Tab from an item would land on the button, which counts as inside, so Tray UI closes the menu on that key itself and focus goes to the button. Tray UI listens for `focusout` on the button and the panel, and closes the menu when `relatedTarget`, the element that receives focus, lies outside both. Version 0.2.0 added it: "Menus and lists close on Tab, as they close on Escape."
 4. **A click outside.** A `pointerdown` listener on the document closes the menu when its target is outside the button and the panel. Focus goes where the click sends it.
 5. **The button again.** A second click on the button closes the menu.
 
@@ -214,8 +215,8 @@ Write the button and the panel, with `data-tray="menu"` on the anchor around the
 
 ```html
 <span class="tray-anchor" data-tray="menu" id="order-menu">
-  <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" id="order-actions">Actions</button>
-  <div class="tray-pop" aria-labelledby="order-actions">
+  <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button">Actions</button>
+  <div class="tray-pop">
     <div class="tray-list">
       <button type="button" class="tray-option" role="menuitem" data-value="duplicate">
         <span class="tray-option__text">Duplicate</span>
@@ -234,6 +235,6 @@ Write the button and the panel, with `data-tray="menu"` on the anchor around the
 </span>
 ```
 
-The three files do the rest: `tokens.css`, `components/bundle.css` and `components/bundle.js`. The script adds the roles, `aria-haspopup`, `aria-expanded` and the `tabindex` values, and handles the keys, the closing, the submenu and the events above; `aria-checked` draws the tick. It names the panel by itself only when the panel has a head (`tray-pop__head`), as a user menu does, so the `aria-labelledby` above is yours to write. An icon-only button needs an `aria-label`, such as "More actions". For markup added after the page has loaded, call `TrayUI.init(root)`.
+The three files do the rest: `tokens.css`, `components/bundle.css` and `components/bundle.js`. The script adds the roles, `aria-haspopup`, `aria-expanded` and the `tabindex` values, and handles the keys, the closing, the submenu and the events above; `aria-checked` draws the tick. It names the panel too: by its button, through `aria-labelledby`, or by the person's name when the panel has a head (`tray-pop__head`), as a user menu does. An icon-only button needs an `aria-label`, such as "More actions". For markup added after the page has loaded, call `TrayUI.init(root)`.
 
 The [Dropdown Menu](#c-dropdown-menu) page has a live example, the submenu and the rules for writing items, and [Installation](#d-installation) has the lines that link the three files.
