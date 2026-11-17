@@ -23,13 +23,13 @@ Link the three files, in this order:
 <!doctype html>
 <html lang="en" data-theme="light">
 <head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/VladislavKorzh/trayui@v0.1.0/system/dist/tokens.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/VladislavKorzh/trayui@v0.1.0/system/dist/components/bundle.css">
-  <script src="https://cdn.jsdelivr.net/gh/VladislavKorzh/trayui@v0.1.0/system/dist/components/bundle.js" defer></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.2.0/tokens.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.2.0/components/bundle.css">
+  <script src="https://cdn.jsdelivr.net/npm/trayui@0.2.0/components/bundle.js" defer></script>
 </head>
 ```
 
-You can also copy the [`system/dist`](system/dist) folder into your project and link the same files from there. The folder also holds the font, the blocks and the tokens for Tailwind and Figma. Each release on the [releases page](https://github.com/VladislavKorzh/trayui/releases) carries the same folder as a zip.
+With a bundler, install them from npm (`npm install trayui`) and import `trayui/tokens.css`, `trayui/components/bundle.css` and `trayui/components/bundle.js`. You can also copy the [`system/dist`](system/dist) folder into your project and link the same files from there. The folder also holds the font, the blocks and the tokens for Tailwind and Figma. Each release on the [releases page](https://github.com/VladislavKorzh/trayui/releases) carries the same folder as a zip.
 
 ## Write a first screen
 
@@ -68,7 +68,7 @@ export function OrderForm() {
 }
 ```
 
-The package is not on npm yet: build it from [`system/react`](system/react), whose README says how.
+Install it with `npm install trayui-react`. It needs React 18 or later; `recharts` (for the charts) and `react-icons` (for icons beyond the built-in ones) are optional. Its source is [`system/react`](system/react).
 
 ## Themes
 

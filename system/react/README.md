@@ -1,18 +1,14 @@
 # trayui-react
 
-[Tray UI](../../README.md) for React. The 108 components are typed React components over the system's own stylesheet and behaviours, so a page built in React looks the same as one written by hand. The charts are drawn with Recharts in the style of the system.
+[Tray UI](https://trayui.com) for React. The 108 components are typed React components over the system's own stylesheet and behaviours, so a page built in React looks the same as one written by hand. The charts are drawn with Recharts in the style of the system.
 
 ## Install
 
-The package is not on npm yet. Build it from this folder:
-
 ```sh
-python3 ../tools/build.py   # the system's stylesheet, behaviours and icons, which the package is built from
-npm ci
-npm run build                # dist/
+npm install trayui-react
 ```
 
-Then add it to a project as a local package (`npm install ../path/to/system/react`). It needs React 18 or later. `recharts` (for `trayui-react/charts`) and `react-icons` (for icons beyond the built-in ones) are optional peer dependencies.
+It needs React 18 or later. `recharts` (for `trayui-react/charts`) and `react-icons` (for icons beyond the built-in ones) are optional peer dependencies.
 
 ## Use
 

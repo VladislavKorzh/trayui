@@ -13,6 +13,7 @@ Accessibility, after every component was given a section on it. Each change belo
 - **Easier to see and to hit:** a focused field that is invalid keeps its focus ring; extra small buttons and toggles, a chip's remove, reactions, footer links and the checkboxes of a matrix reach 44px; a tooltip stays while the pointer moves onto it.
 - **Less motion when asked for:** presses, turning icons, filling bars and a folding sidebar change at once.
 - **Type that grows with zoom:** the five heading sizes have a part in rem, so browser zoom enlarges them inside their range.
+- **On npm.** `trayui` holds the three files, the font, the blocks and the tokens for Tailwind and Figma, and jsDelivr serves each of its releases (`https://cdn.jsdelivr.net/npm/trayui@0.2.0/tokens.css`). `trayui-react` is the React package.
 
 ## 0.1.0, November 2026
 

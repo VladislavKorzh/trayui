@@ -7,5 +7,5 @@
   "license": "MIT",
   "author": "Vladyslav Korzh",
   "author_url": "https://github.com/VladislavKorzh",
-  "npm": false
+  "npm": true
 }
