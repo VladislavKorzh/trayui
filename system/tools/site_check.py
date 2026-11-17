@@ -98,8 +98,10 @@ def main():
         pg = ctx.new_page(); errors, asked = [], []
         pg.on('pageerror', lambda e: errors.append(str(e)[:200]))
         pg.on('console', lambda m: errors.append(m.text[:200]) if m.type == 'error' else None)
-        # a film or a font the page was loading when it moved on (a frame taken away) is cut off by the browser: that is not a failure
-        pg.on('requestfailed', lambda r: None if r.resource_type in ('media', 'font') and 'ERR_ABORTED' in (r.failure or '') else errors.append('failed: ' + r.url[-60:]))
+        # A request the browser cut off because the page moved on (a frame taken away while its script or font loaded) is
+        # not a failure; one the network failed is, and so is a file the site does not have (an answer of 400 or more).
+        pg.on('requestfailed', lambda r: None if 'ERR_ABORTED' in (r.failure or '') else errors.append('failed: ' + r.url[-60:]))
+        pg.on('response', lambda r: errors.append(f'{r.status}: ' + r.url[-60:]) if r.status >= 400 else None)
         pg.on('request', lambda r: asked.append(r.url.rsplit('/', 1)[-1]))
         pg.goto(url, wait_until='load'); pg.evaluate('document.fonts.ready'); pg.wait_for_timeout(700)
         if not pg.locator('#site-view h1').count():
