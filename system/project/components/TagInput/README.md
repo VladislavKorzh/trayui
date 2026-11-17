@@ -24,6 +24,9 @@ A tag input takes several short values in one field: each becomes a chip that ca
 
 It fires `tray:change` with `{ values, valid }`. Additions and removals are announced to screen readers.
 
+## Accessibility
+The text field is named by the `<label>`, and the hint or the error joins it through `aria-describedby`. `Enter` or a comma adds what was typed, and `Backspace` in the empty field removes the last chip. Each chip's button is named "Remove" and the value, and after a press focus goes back to the field. A polite live region, hidden from view, says "gift added" or "gift removed" after each change. A wrong value keeps its chip with a `danger` edge as well as the colour: say what is wrong in words, in a `tray-field__error`.
+
 ## Do and don't
 - Do say under the field how a value is added.
 - Do keep wrong values as chips so they can be seen and removed.

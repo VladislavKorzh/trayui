@@ -34,6 +34,9 @@ The onboarding checklist gets a new workspace to its first real result: a short 
 
 Usually a task is done by doing it elsewhere in the product: set `data-done` from your own state and leave `data-task-done` for tasks finished on the spot.
 
+## Accessibility
+It is a `<section>` named by its heading through `aria-labelledby`, and the tasks are an `<ol>`. The task to do now carries `aria-current="step"` and is announced as the current step, and the others show their title only. The bar is a `role="progressbar"` with an `aria-label`, and the behaviour keeps its `aria-valuenow`, `aria-valuemax` and `aria-valuetext` ("2 of 5") up to date. When a `data-task-done` button finishes a task, focus moves to the next task's button.
+
 ## Do and don't
 - Do keep it to three to five tasks, each done in a minute or two.
 - Do start with a task that is already done, such as creating the account.

@@ -17,6 +17,9 @@ The bubble is solid `ink` with page-coloured text, 12px corners and the float sh
 - One line, a few words, no full stop: "Copy the link", "Collapse the sidebar".
 - Nothing inside can be clicked. If it needs a link or a button it is a Popover.
 
+## Accessibility
+The bubble is a `role="tooltip"` tied to the control with `aria-describedby`, so a screen reader reads it as the control's description, after its name. It shows on hover and on keyboard focus, and `Escape` hides it while focus stays on the control. Under `prefers-reduced-motion: reduce` it only fades, in a tenth of a second.
+
 ## Do and don't
 - Do give every icon-only button a tooltip.
 - Do show the shortcut in it when there is one.

@@ -14,6 +14,9 @@ An input takes one line of text: a grey fill, 16px corners, 56px tall, no stroke
 ## You provide
 A label (see Label), and a sensible width: a field that takes five digits should not span the page.
 
+## Accessibility
+It is the browser's own `<input>`, so its role and keys come with the `type` you set. Its name comes from the `<label for>` of its Field, never from the placeholder. `aria-invalid="true"` is announced as invalid, and `aria-describedby` on the error has the reason read with it. `disabled` takes the field out of the `Tab` order, while `readonly` keeps it focusable and is announced as read-only. The right `autocomplete` lets the browser fill the field for the person.
+
 ## Do and don't
 - Do set typed values at weight 400 in `control` size.
 - Don't add borders or shadows to mark the field; fill alone separates it (the No-Outline Rule).

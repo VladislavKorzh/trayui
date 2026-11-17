@@ -22,6 +22,9 @@ The links are Tabs in a tray strip. A link that has children is a button that op
 - From 76rem the header is one row. Below that the strip (`tray-nav__strip`) takes a second row of its own and scrolls sideways when its links do not fit (`data-tray="strip"` fades its end).
 - The current section is marked with `aria-current`.
 
+## Accessibility
+It is a `<header>` holding a `<nav>` named by its `aria-label`: at the top of the page both are listed as landmarks. The link to the current section carries `aria-current="page"`: it is announced as the current page, and its ink fill is drawn from that attribute. A button that opens a panel is a Popover trigger: it reports `aria-expanded`, opening moves focus to the panel's first link, and `Escape` closes it and puts focus back on the button. Links draw their focus ring inside their edge. The theme switch is an icon button, so it needs an `aria-label`, and `aria-pressed` says whether the dark theme is on.
+
 ## Do and don't
 - Do keep one primary action in the header, small (48px), in yellow.
 - Do keep top-level links to seven at most.

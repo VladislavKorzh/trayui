@@ -24,6 +24,9 @@ It differs from a Dialog in three ways: there is no close button in the corner, 
 - The text says what will happen, in one sentence.
 - Each button repeats its own outcome: "Keep the order", "Delete order". Never "Yes" and "No".
 
+## Accessibility
+It is the browser's own `<dialog>` with `role="alertdialog"`: the title named by `aria-labelledby` is its name, and the sentence named by `aria-describedby` is read after it. Opened with `showModal()`, it makes the page behind it inert. Focus starts on the safe button, `Tab` moves between the buttons, and `Escape` closes the dialog unless it has `data-static`. When it closes, the browser returns focus to the control that opened it. Under `prefers-reduced-motion: reduce` it only fades, in a tenth of a second.
+
 ## Do and don't
 - Do use it only for what cannot be undone: delete, cancel a paid order, send to many people.
 - Do prefer undo: if the action can be reversed, do it and offer "Undo" in a Toast instead.

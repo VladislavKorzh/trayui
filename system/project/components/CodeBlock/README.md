@@ -37,6 +37,9 @@ code.innerHTML = hljs.highlight(source, { language: 'xml' }).value;
 
 The mono face is the system stack; no code font is shipped.
 
+## Accessibility
+The copy button keeps its name in `data-label`, which reads "Copied" for two seconds, or "Copy failed" when the browser refuses, and a hidden `role="status"` beside the button says the same aloud. The syntax colours carry no meaning of their own; a line marked with `data-mark` is only tinted, so say in the text which line matters. Line numbers are drawn by CSS, and some screen readers read them before each line. In a right-to-left page set `dir="ltr"` on the block, as the example does, so the code keeps its direction. Under `prefers-reduced-motion: reduce` the new word on the button appears without its pop.
+
 ## Do and don't
 - Do give the `<pre>` a `tabindex="0"` so a keyboard can scroll it.
 - Do name the language or the file in the header.

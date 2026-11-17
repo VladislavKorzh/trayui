@@ -22,6 +22,9 @@ A tour points at parts of a screen one at a time: a small raised panel beside th
 ## Behaviour
 `data-tray="tour"` on the area that holds both the screen and the steps. Each `tray-tour` names its target with `data-for`; the step that is not `hidden` is the one shown. The current target gets a 3px ink ring (`data-tour-on`) and the panel is placed under it, or over it when there is no room. Buttons carry `data-tour="next"`, `"back"` or `"skip"`; "next" on the last step ends the tour. The count is written for you. It fires `tray:change` with `{ step }` and `tray:complete` with `{ finished }`: remember there that the tour was seen.
 
+## Accessibility
+Each step is a non-modal `role="dialog"` named by its heading through `aria-labelledby`, and the steps not shown are `hidden`. Next and Back move focus to the Next button of the new step. The page behind stays usable, and the steps come after the screen in the markup, so `Tab` reaches a step after the parts it points at. The ring on the target (`data-tour-on`) is not read, so name the part in the words of the step. The count ("2 of 3") is plain text, not a live region.
+
 ## Do and don't
 - Do keep a tour to three or four steps, and let it be skipped from every step.
 - Do point at things the person will use today.

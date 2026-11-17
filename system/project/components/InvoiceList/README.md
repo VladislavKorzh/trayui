@@ -25,6 +25,9 @@ It is a Table. The status is a Badge with an icon and a word: `circle-check` "Pa
 
 For more than a year of invoices, put a Pagination under the table rather than a scroll.
 
+## Accessibility
+It is a real `<table>`: the `<caption>` names it, and `scope="col"` and `scope="row"` tie each cell to its column and its invoice number. The last column's head is hidden text, so that column is named too. Each download is an icon link whose `aria-label` carries the invoice number ("Download invoice CN-0042"). The status is an icon and a word, so `success` and `danger` are never the only sign.
+
 ## Do and don't
 - Do right-align the amounts and use tabular numerals (`data-num`).
 - Do name each download button with its invoice number.

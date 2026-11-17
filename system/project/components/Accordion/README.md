@@ -15,6 +15,9 @@ It is the browser's own `<details>`: no script, searchable with find-in-page, op
 
 `tray-accordion` sets questions in `subtitle`; `tray-accordion--sm` sets them in `control` for settings and filters. Answers are `ink-soft` and at most 60 characters wide.
 
+## Accessibility
+It is the browser's own `<details>`: `Tab` reaches each question, `Enter` or `Space` opens and closes it, and screen readers announce it as expanded or collapsed. The question in `<summary>` is its name; the plus tile is `aria-hidden`. The question takes the 3px `ink` focus ring. Under `prefers-reduced-motion: reduce` the answer opens at once instead of unfolding.
+
 ## Do and don't
 - Do write the summary as the question a person would ask.
 - Do open the first item when the answers are the point of the page.

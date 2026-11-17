@@ -2,6 +2,7 @@
 node_modules/
 system/site/
 system/.preview/
+system/.cache/
 system/react/dist/
 system/react/.try/
 .wrangler/

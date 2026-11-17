@@ -5,7 +5,7 @@ foundations, the ten themes, the maker of another and a theme sent as a link, a 
 
     python3 tools/site_check.py            checks, and screenshots in .preview/site/
 """
-import json, pathlib, re, sys, urllib.error, urllib.request, zipfile
+import html, json, pathlib, re, sys, urllib.error, urllib.parse, urllib.request, zipfile
 from playwright.sync_api import sync_playwright
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -13,6 +13,15 @@ SITE, SHOTS = ROOT / 'site', ROOT / '.preview' / 'site'
 sys.path.insert(0, str(ROOT / 'tools'))
 from serve import serve  # the site at its real addresses, as the host serves it
 results = []
+
+
+def plain_name(url):
+    """The name of a file the browser asked for, without the hash the build puts in it: _/pages/c-button.1a2b3c4d5e.js is
+    pages/c-button.js, _/charts.1a2b3c4d5e.js is charts.js; anything else, its last part."""
+    path = urllib.parse.urlparse(url).path
+    if path.startswith('/_/'):
+        return re.sub(r'\.[0-9a-f]{10}(\.\w+)$', r'\1', path[3:])
+    return path.rsplit('/', 1)[-1]
 
 
 def check(name, ok, detail=''):
@@ -59,11 +68,12 @@ FRAME_JS = '''() => { const f = document.querySelector('.site-frame iframe'); if
 
 def main():
     SHOTS.mkdir(parents=True, exist_ok=True)
-    data = (SITE / 'data.js').read_text(encoding='utf-8')
+    data = next((SITE / '_').glob('data.*.js')).read_text(encoding='utf-8')  # the map of the site: its name holds a hash of it
     site = json.loads(data[data.index('{'):data.index(';\nwindow.TRAY_SITE.run')].replace('<\\/', '</'))
     index = site['index']
     by_section = {sec['id']: [it['id'] for g in sec['nav'] for it in g['items']] for sec in site['sections']}
-    docs, comps, block_ids = by_section['docs'], by_section['components'], by_section['blocks'][1:]
+    docs, comps = by_section['docs'], by_section['components']
+    block_ids = [i for i in by_section['blocks'] if i not in ('blocks', 'b-login', 'b-sidebar')]  # the blocks, without the pages that gather them
     chart_pages = by_section['charts']
     every = ['home'] + docs + comps + by_section['blocks'] + chart_pages
     framed = set(block_ids)
@@ -76,9 +86,17 @@ def main():
     check('the download holds the three files, the font with its licence, the licence of the system and the blocks',
           all(n in names for n in ('trayui/tokens.css', 'trayui/components/bundle.css', 'trayui/components/bundle.js', 'trayui/fonts/Onest-Variable.ttf',
                                    'trayui/fonts/OFL.txt', 'trayui/LICENSE', 'trayui/blocks/sidebar-01.html')) and not any('/templates/' in n for n in names), names[:8])
-    llms = (SITE / 'llms.txt').read_text(encoding='utf-8')
-    check('llms.txt holds the rules, the guides and every component', llms.startswith('# Tray UI') and '## Button' in llms and '## Footer' in llms and 'data-tray' in llms, len(llms))
-    check('llms.txt says how charts are made in React', '# Charts in React' in llms and 'ChartContainer' in llms)
+    index_txt = (SITE / 'llms.txt').read_text(encoding='utf-8')
+    llms = (SITE / 'llms-full.txt').read_text(encoding='utf-8')
+    check('llms.txt is a short index: what Tray UI is, how to install it, and a link to the Markdown of every component', index_txt.startswith('# Tray UI\n\n> ') and len(index_txt) < 16000
+          and index_txt.count('/components/') >= len(comps) and '.md)' in index_txt and 'tokens.css' in index_txt, len(index_txt))
+    check('llms-full.txt holds the rules, the guides and every component, each heading under its component', llms.startswith('# Tray UI') and '### Button' in llms and '### Footer' in llms
+          and '#### Markup' in llms and '\n## Markup' not in llms and 'data-tray' in llms, len(llms))
+    check('llms-full.txt says how charts are made in React', '## Charts in React' in llms and 'ChartContainer' in llms)
+    mds = [SITE / (m['path'] + '.md') for i, m in index.items() if i != 'home']
+    check('every page but the home page is also Markdown, at its address with .md added', all(f.exists() for f in mds), [str(f) for f in mds if not f.exists()][:4])
+    robots = (SITE / 'robots.txt').read_text(encoding='utf-8') if (SITE / 'robots.txt').exists() else ''
+    check('robots.txt lets every reader in and names the sitemap', 'User-agent: *\nAllow: /' in robots and f'Sitemap: {site["site"]}/sitemap.xml' in robots, robots)
     check('the download and the site hold the tokens for Tailwind 4 and 3 and the Figma variables, a file for each theme',
           all(f'trayui/{n}' in names for n in ('tailwind/theme.css', 'tailwind/preset.cjs', 'figma/colours/Light.tokens.json', 'figma/colours/Espresso.tokens.json', 'figma/scale/Scale.tokens.json'))
           and (SITE / 'tailwind' / 'theme.css').exists() and len(list((SITE / 'figma' / 'colours').glob('*.tokens.json'))) == 10, [n for n in names if 'tailwind' in n or 'figma' in n][:4])
@@ -87,9 +105,9 @@ def main():
           and figma['page']['$value']['hex'].startswith('#') and len(figma['page']['$value']['components']) == 3, figma['page'])
     tw = (SITE / 'tailwind' / 'theme.css').read_text(encoding='utf-8')
     check('the Tailwind theme maps the tokens without declaring them again', '@theme inline reference {' in tw and '--color-page: var(--page);' in tw and '--radius-card: var(--radius-card);' in tw and '@custom-variant dark' in tw)
-    check('llms.txt says how to use the tokens with Tailwind and Figma', '# Tailwind and Figma' in llms and 'tailwind/theme.css' in llms)
+    check('llms-full.txt says how to use the tokens with Tailwind and Figma', '## Tailwind and Figma' in llms and 'tailwind/theme.css' in llms)
     notice = (SITE / 'charts.licenses.txt').read_text(encoding='utf-8') if (SITE / 'charts.licenses.txt').exists() else ''
-    check('the script that draws the charts comes with the licences of what it holds', (SITE / 'charts.js').exists() and all(f'\n{n} ' in notice for n in ('recharts', 'react', 'react-dom')) and 'MIT License' in notice, len(notice))
+    check('the script that draws the charts comes with the licences of what it holds', any((SITE / '_').glob('charts.*.js')) and all(f'\n{n} ' in notice for n in ('recharts', 'react', 'react-dom')) and 'MIT License' in notice, len(notice))
 
     server, url = serve()
     with sync_playwright() as p:
@@ -102,7 +120,7 @@ def main():
         # not a failure; one the network failed is, and so is a file the site does not have (an answer of 400 or more).
         pg.on('requestfailed', lambda r: None if 'ERR_ABORTED' in (r.failure or '') else errors.append('failed: ' + r.url[-60:]))
         pg.on('response', lambda r: errors.append(f'{r.status}: ' + r.url[-60:]) if r.status >= 400 else None)
-        pg.on('request', lambda r: asked.append(r.url.rsplit('/', 1)[-1]))
+        pg.on('request', lambda r: asked.append(plain_name(r.url)))
         pg.goto(url, wait_until='load'); pg.evaluate('document.fonts.ready'); pg.wait_for_timeout(700)
         if not pg.locator('#site-view h1').count():
             # the page did not draw: say what the browser saw, then try once more, so one lost request does not sink the whole run
@@ -136,9 +154,9 @@ def main():
         lifted = pg.evaluate("getComputedStyle(document.querySelector('.site-top .site-mark__bar')).transform")
         pg.mouse.move(700, 500)
         check('for a visitor who asks for reduced motion the mark stays still', lifted == 'none', lifted)
-        shown_home = {i + '.js' for i in re.findall(r'name="home-show" value="([a-z0-9-]+)"', page_html)}  # the blocks the home page shows live in its frame
+        shown_home = {f'pages/{i}.js' for i in re.findall(r'name="home-show" value="([a-z0-9-]+)"', page_html)}  # the blocks the home page shows live in its frame
         check('no page but the home page, and the block it shows, is loaded before one is opened', 'data.js' in asked
-              and not any(a.startswith(('c-', 'd-', 'f-', 'g-', 'b-')) and a.endswith('.js') and a not in shown_home for a in asked),
+              and not any(a.startswith('pages/') and a not in shown_home for a in asked),
               [a for a in asked if a.endswith('.js')])
         check('the script that draws the charts is not loaded before a chart comes near the window', 'charts.js' not in asked, [a for a in asked if 'chart' in a])
         check('the home page shows real components: a chart, a calendar, a counter that counts',
@@ -180,8 +198,8 @@ def main():
         pg.screenshot(path=str(SHOTS / 'search.png'))
         pg.keyboard.press('Enter'); pg.wait_for_timeout(500)
         check('Enter opens the match and closes the search', here(pg) == 'c-date-picker' and not pg.evaluate("document.getElementById('site-search').open") and pg.inner_text('#site-view h1') == 'Date Picker')
-        check('opening a component loads that page alone; the other components and the blocks wait until they are shown', 'c-date-picker.js' in asked and 'c-button.js' not in asked and not any(a.startswith('b-') and a not in shown_home for a in asked),
-              [a for a in asked if a.startswith('data')])
+        check('opening a component loads that page alone; the other components and the blocks wait until they are shown', 'pages/c-date-picker.js' in asked and 'pages/c-button.js' not in asked
+              and not any(a.startswith('pages/b-') and a not in shown_home for a in asked), [a for a in asked if a.startswith('pages/')])
         pg.keyboard.press('Control+k'); pg.wait_for_timeout(150)
         pg.keyboard.type('zzz')
         check('Ctrl with K opens the search too, and it says when nothing matches', pg.locator('#site-command .tray-list__empty').is_visible())
@@ -200,10 +218,28 @@ def main():
                 undrawn.append(i)
         check(f'every page has a file of its own, drawn in it, for its address ({len(index)} pages)', len(index) > 200 and not undrawn, undrawn[:5])
         lightbox = (SITE / 'components' / 'lightbox.html').read_text(encoding='utf-8')
-        check('a page\'s file names it: its title, its summary and its one address', '<title>Lightbox - Tray UI</title>' in lightbox and '<meta name="description" content="' + index['c-lightbox']['summary'][:30] in lightbox
-              and f'<link rel="canonical" href="{site["site"]}/components/lightbox">' in lightbox and 'rel="preload" href="/pages/c-lightbox.js"' in lightbox)
+        lb = index['c-lightbox']
+        check('a page\'s file names it: its title, its description, its one address, its picture, its Markdown and its place in the site', f'<title>{lb["head"]}</title>' in lightbox
+              and lb['head'] == 'Lightbox: HTML and CSS component - Tray UI' and '<meta name="description" content="' + html.escape(lb['desc'])[:30] in lightbox
+              and f'<link rel="canonical" href="{site["site"]}/components/lightbox">' in lightbox and (lb.get('bare') or f'rel="preload" href="/{lb["file"]}"' in lightbox)
+              and f'<meta property="og:image" content="{site["site"]}/{lb["og"]}">' in lightbox and '<link rel="alternate" type="text/markdown" href="/components/lightbox.md">' in lightbox
+              and '"@type":"BreadcrumbList"' in lightbox)
+        heads = [m['head'] for m in index.values()]
+        check('no two pages share a title, and none is longer than 60 characters', len(set(heads)) == len(heads) and max(map(len, heads)) <= 60, max(heads, key=len))
+        bad = []
+        for i, m in index.items():
+            text = (SITE / ('index.html' if i == 'home' else m['path'] + '.html')).read_text(encoding='utf-8')
+            main = text[text.index('<main'):text.index('</main>')]
+            ld = re.findall(r'<script type="application/ld\+json">(.*?)</script>', text, re.S)
+            try: parsed = [json.loads(x) for x in ld]
+            except ValueError: parsed = []
+            if len(re.findall(r'<h1[\s>]', main)) != 1 or len(re.findall(r'<main[\s>]', text)) != 1 or len(parsed) != 1 or not 70 <= len(m['desc']) <= 160:
+                bad.append(i)
+            if i in framed and len(re.search(r'<code id="site-src-code">(.*?)</code>', text, re.S).group(1)) < 200:
+                bad.append(i + ' (no code)')
+        check('every page has one h1, one main, one block of structured data that parses, a description of 70 to 160 characters, and every block its code', not bad, bad[:6])
         leftover = []
-        for f in list(SITE.rglob('*.html')) + list(SITE.glob('data*.js')) + list((SITE / 'pages').glob('*.js')):
+        for f in list(SITE.rglob('*.html')) + list((SITE / '_').rglob('*.js')):
             leftover += [(f.name, m.group(1)) for m in re.finditer(r'href=\\?"#([a-z0-9-]+)', f.read_text(encoding='utf-8')) if m.group(1) in index]
         check('no link between pages is left as a #: every one goes by address', not leftover, leftover[:5])
         st = {where: answer(url + where)[:2] for where in ('', 'docs', 'components/lightbox', 'components/lightbox/', 'components/lightbox.html', 'charts/usage', 'index.html')}
@@ -216,12 +252,12 @@ def main():
         check('the sitemap lists every address', sitemap.count('<loc>') == len(index) and f'<loc>{site["site"]}/components/lightbox</loc>' in sitemap, sitemap.count('<loc>'))
         bare = b.new_context(viewport={'width': 1440, 'height': 900}, java_script_enabled=False); bp = bare.new_page()
         bp.goto(url + 'components/lightbox', wait_until='load')
-        check('a page opened straight shows itself, its sidebar and its section before any script runs', bp.inner_text('#site-view h1') == 'Lightbox' and bp.title() == 'Lightbox - Tray UI'
+        check('a page opened straight shows itself, its sidebar and its section before any script runs', bp.locator('#site-view h1').is_visible() and bp.inner_text('#site-view h1') == 'Lightbox' and bp.title() == lb['head']
               and bp.locator('#site-nav [aria-current="page"]').inner_text() == 'Lightbox' and bp.locator('#site-sections [aria-current="page"]').inner_text() == 'Components'
               and bp.locator('.tray-gallery img').count() == 6, bp.title())
         bare.close()
         go(pg, 'c-button'); pg.wait_for_timeout(400)
-        check('opening a page puts its address in the address bar, with no #', pg.evaluate('location.pathname + location.search + location.hash') == '/components/button' and pg.title() == 'Button - Tray UI', pg.url)
+        check('opening a page puts its address in the address bar, with no #', pg.evaluate('location.pathname + location.search + location.hash') == '/components/button' and pg.title() == index['c-button']['head'], pg.url)
         pg.evaluate('window.scrollTo(0, 700)'); pg.wait_for_timeout(100); y = pg.evaluate('window.scrollY')
         pg.locator('#site-nav a[href="/components/card"]').click(); pg.wait_for_timeout(400)
         moved = [pg.evaluate('location.pathname'), pg.evaluate('window.scrollY')]
@@ -276,7 +312,8 @@ def main():
         # ---------- a component page ----------
         go(pg, 'c-button'); pg.wait_for_timeout(150)
         check('a component page shows its example, markup tab and guidelines', pg.locator('.site-stage .tray-btn').count() > 3 and pg.locator('#site-t2').count() == 1 and pg.locator('.site-prose h2').count() >= 2)
-        check('the tab title follows the page', pg.title() == 'Button - Tray UI', pg.title())
+        check('the tab title, the description and the canonical address follow the page', pg.title() == index['c-button']['head']
+              and pg.get_attribute('link[rel="canonical"]', 'href') == f'{site["site"]}/components/button' and pg.get_attribute('meta[name="description"]', 'content') == index['c-button']['desc'], pg.title())
         pg.screenshot(path=str(SHOTS / 'button.png'), full_page=True)
         # the playground under the example
         pg.wait_for_selector('[data-play-stage] .tray-btn', timeout=8000)
@@ -361,9 +398,15 @@ def main():
 
         # ---------- blocks ----------
         go(pg, 'blocks'); pg.wait_for_timeout(700)
-        check('the Blocks link opens the gallery and the sidebar lists the blocks', pg.inner_text('#site-view h1') == 'Blocks' and pg.locator('#site-nav .tray-sidebar__item').count() == len(block_ids) + 1
+        check('the Blocks link opens the gallery and the sidebar lists the blocks, after the gallery and the two pages that gather sign-in pages and sidebars',
+              pg.inner_text('#site-view h1') == 'Blocks' and pg.locator('#site-nav .tray-sidebar__item').count() == len(block_ids) + 3
               and pg.locator('#site-sections [aria-current="page"]').inner_text() == 'Blocks', pg.locator('#site-nav .tray-sidebar__item').count())
         check('the gallery has a picture for every block', pg.locator('[data-thumb]').count() == len(block_ids), pg.locator('[data-thumb]').count())
+        go(pg, 'b-login'); pg.wait_for_timeout(500)
+        logins = [i for i in block_ids if i.startswith(('b-login-', 'b-signup-'))]
+        check('the page of sign-in and sign-up pages shows each of them, and nothing else', pg.inner_text('#site-view h1') == 'Sign-in and sign-up pages'
+              and sorted(pg.eval_on_selector_all('#site-view .site-thumb', 'as => as.map(a => a.getAttribute("href"))')) == sorted('/' + index[i]['path'] for i in logins), len(logins))
+        go(pg, 'blocks'); pg.wait_for_timeout(500)
         check('the pictures in view are live and cannot take the keyboard', pg.locator('[data-thumb] iframe').count() >= 3 and pg.locator('[data-thumb] iframe:not([inert])').count() == 0, pg.locator('[data-thumb] iframe').count())
         pg.screenshot(path=str(SHOTS / 'blocks.png'))
         pg.locator('.site-thumb').first.click(); pg.wait_for_timeout(600)
@@ -409,7 +452,7 @@ def main():
             pg.wait_for_timeout(500)
         go(pg, 'charts'); pg.wait_for_timeout(900)
         check('the Charts link opens the overview and the sidebar lists the forms', pg.inner_text('#site-view h1') == 'Charts' and pg.locator('#site-nav .tray-sidebar__item').count() == len(chart_pages)
-              and pg.locator('#site-sections [aria-current="page"]').inner_text() == 'Charts' and 'data-charts.js' in asked, pg.locator('#site-nav .tray-sidebar__item').count())
+              and pg.locator('#site-sections [aria-current="page"]').inner_text() == 'Charts' and 'pages/charts.js' in asked, pg.locator('#site-nav .tray-sidebar__item').count())
         check('the overview draws the charts in view', pg.locator('#site-view [data-rechart] svg.recharts-surface').count() >= 3, pg.locator('#site-view [data-rechart] svg.recharts-surface').count())
         pg.screenshot(path=str(SHOTS / 'charts.png'))
         total, undrawn, misfit = 0, [], []
@@ -423,7 +466,7 @@ def main():
         n_examples = len(list((ROOT / 'react' / 'examples' / 'charts').glob('*.tsx')))
         check(f'every chart on every page of the section is drawn, at the width of its card ({n_examples} examples)', n_examples >= 50 and total > n_examples and not undrawn and not misfit, (total, undrawn[:4], misfit[:4]))
         go(pg, 'ch-bar'); pg.wait_for_timeout(700); walk(); pg.evaluate('window.scrollTo(0, 0)')
-        check('a page of one form shows each example under its name, with a way to its code', pg.inner_text('#site-view h1') == 'Bar charts' and pg.locator('.site-chart').count() == pg.locator('[data-chart-code]').count() >= 8
+        check('a page of one form shows each example under its name, with its code folded under it', pg.inner_text('#site-view h1') == 'Bar charts' and pg.locator('.site-chart').count() == pg.locator('.site-chart__code').count() >= 8
               and pg.locator('.site-chart--wide').count() == 1, pg.locator('.site-chart').count())
         fill = lambda: pg.evaluate("getComputedStyle(document.querySelector('[data-rechart=\"bar-default\"] .recharts-bar-rectangle path')).fill")
         ink = fill()
@@ -449,15 +492,14 @@ def main():
         pg.locator('[data-rechart="bar-interactive"] .tray-seg__item', has_text='Restaurants').click(); pg.wait_for_timeout(400)
         after = pg.get_attribute('[data-rechart="bar-interactive"] .tray-chart__canvas', 'aria-label')
         check('a control in an example works: the switch changes the series, and the summary a screen reader hears', 'the farm shop' in before and 'restaurants' in after and before != after, after)
-        pg.locator('[data-chart-code="bar-stacked"]').click(); pg.wait_for_timeout(300)
-        shown = pg.inner_text('#site-code-text')
-        check('"Code" opens the example\'s file in a sheet', pg.evaluate("document.getElementById('site-code').open") and pg.inner_text('#site-code-title') == 'Bar: Stacked'
+        code = pg.locator('.site-chart:has([data-rechart="bar-stacked"]) .site-chart__code')
+        code.locator('summary').click(); pg.wait_for_timeout(300)
+        shown = code.locator('pre').inner_text()
+        check('"Code" under a chart opens the example\'s file, which the page already holds', code.evaluate('d => d.open')
               and shown.startswith("import { Bar, BarChart") and "from 'trayui-react/charts'" in shown and 'export function BarStacked()' in shown, shown[:60])
         pg.screenshot(path=str(SHOTS / 'chart-code.png'))
-        pg.locator('#site-code [data-tray="copy"]').click(); pg.wait_for_timeout(250)
+        code.locator('[data-tray="copy"]').click(); pg.wait_for_timeout(250)
         check('the code can be copied whole', pg.evaluate('navigator.clipboard.readText()').strip() == shown.strip())
-        pg.keyboard.press('Escape'); pg.wait_for_timeout(200)
-        check('Escape closes the code', not pg.evaluate("document.getElementById('site-code').open"))
         go(pg, 'ch-pie'); pg.wait_for_timeout(600); walk()
         pg.evaluate("document.querySelector('[data-rechart=\"pie-active\"]').scrollIntoView({ block: 'center' })"); pg.wait_for_timeout(200)
         box = pg.locator('[data-rechart="pie-active"] .recharts-wrapper').bounding_box()
@@ -618,9 +660,10 @@ def main():
         check('on a phone a chart fits its card, and the switch in the head of a card drops below the title in one row', head and head[0] >= 0 and head[1] <= 390 and head[2] != 'grid'
               and pg.evaluate("(() => { const s = document.querySelector('[data-rechart=\"area-interactive\"] svg.recharts-surface'), c = document.querySelector('[data-rechart=\"area-interactive\"] .tray-chart__canvas'); return s && Math.abs(Number(s.getAttribute('width')) - c.getBoundingClientRect().width) <= 2; })()"), head)
         pg.screenshot(path=str(SHOTS / 'phone-charts.png'))
-        pg.locator('[data-chart-code="area-default"]').click(); pg.wait_for_timeout(300)
-        box = pg.locator('#site-code').bounding_box()
-        check('on a phone the code sheet fits the screen', pg.evaluate("document.getElementById('site-code').open") and box['x'] >= 0 and box['x'] + box['width'] <= 390, box)
+        code = pg.locator('.site-chart:has([data-rechart="area-default"]) .site-chart__code')
+        code.locator('summary').click(); pg.wait_for_timeout(300)
+        box = code.bounding_box()
+        check('on a phone the code of a chart opens within the screen', code.evaluate('d => d.open') and box['x'] >= 0 and box['x'] + box['width'] <= 390, box)
         check('no script errors on a phone', not perr, perr[:3])
         b.close()
     server.shutdown()

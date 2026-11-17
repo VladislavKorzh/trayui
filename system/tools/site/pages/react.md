@@ -4,7 +4,7 @@ The same {{components}} components as typed React components, over the same styl
 
 ## Where it is
 
-The package is called `trayui-react`. It is not on npm yet: it is the `system/react` folder of the repository{{#repo}} ([open it]({{repo}})){{/repo}}. Build it there with `npm install` and `npm run build`, then add it to a project as a local package.
+The package is called `trayui-react`. It is not on npm yet: it is the `system/react` folder of the repository{{#repo}} ([open it]({{repo}})){{/repo}}.{{^repo}} The repository is not public yet, so for now the package cannot be downloaded from here.{{/repo}} Build it there with `npm install` and `npm run build`, then add it to a project as a local package.
 
 ## Use it
 

@@ -1,8 +1,23 @@
 # Installation
 
-Three files and a font. Copy them into your project, link them, and write HTML.
+Three files and a font. Link them from a CDN or copy them into your project, then write HTML. There is nothing to build.
 
-## Get the files
+{{#cdn}}## Link them from a CDN
+
+The quickest start: put these lines in the `<head>` of a page, the script before `</body>` or with `defer`, and write HTML.
+
+```html
+<link rel="stylesheet" href="{{cdn}}/tokens.css">
+<link rel="stylesheet" href="{{cdn}}/components/bundle.css">
+<script src="{{cdn}}/components/bundle.js" defer></script>
+```
+{{#jsdelivr}}
+jsDelivr serves the files of every release of the repository, and the address names the release, so a page keeps the version it was built with. For production, copy the files into your project or pin the release you tested.
+{{/jsdelivr}}{{^jsdelivr}}
+This site serves the files of the current release, with the font. The addresses do not name a version, so a page that links them gets each new release as it comes out. For production, download the files below and serve them yourself.
+{{/jsdelivr}}{{/cdn}}
+
+## Or get the files
 
 Download [trayui-{{version}}.zip]({{zip}}) and unpack it beside your pages.{{#repo}} The same files are in the `system/dist` folder of [the repository]({{repo}}).{{/repo}}
 
@@ -40,18 +55,6 @@ In this order, in every page:
 ```
 
 The script is one classic file. It assigns `window.TrayUI`, adds the icon sprite to the page and wires up every element that carries a `data-tray` attribute. It loads nothing from the network. If you add markup after the page has loaded, call `TrayUI.init(root)` on it.
-{{#cdn}}
-
-## Or link them from a CDN
-
-jsDelivr serves the files of every release of the repository, so a page can link them without copying anything. The address names the release, so a page keeps the version it was built with. For production, copy the files into your project or pin the release you tested.
-
-```html
-<link rel="stylesheet" href="{{cdn}}/tokens.css">
-<link rel="stylesheet" href="{{cdn}}/components/bundle.css">
-<script src="{{cdn}}/components/bundle.js"></script>
-```
-{{/cdn}}
 
 ## Write a first screen
 

@@ -22,6 +22,9 @@ An integration card stands for one outside service the product can work with: it
 
 The mark is the service's own logo when you may use it (an `<img>` in the 48px tile). Otherwise an icon for what the service does.
 
+## Accessibility
+Each card is an `<article>`. The switch is a checkbox with `role="switch"`: it is announced as on or off, `Space` flips it, and its `aria-label` is the service's name. "Connect", "Fix" and "Settings" read the same in every card, so add the service to their names (`aria-label="Connect Chat alerts"`), keeping the visible word first. The mark is decoration beside the name: an icon is `aria-hidden`, a logo `<img>` takes `alt=""`. A failed connection is said in words with an icon, never by the `danger` colour alone.
+
 ## Do and don't
 - Do say what the person gets, not what the service is: "Sends each paid order to your books".
 - Do show a failed connection in the foot in `danger` with a way to fix it.

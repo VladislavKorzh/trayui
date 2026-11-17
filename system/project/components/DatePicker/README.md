@@ -22,6 +22,9 @@ Optional parts inside the panel:
 
 The hidden input holds `YYYY-MM-DD` or `start/end`.
 
+## Accessibility
+The trigger is a `<button>` with `aria-haspopup="dialog"` and an `aria-expanded` that follows the panel. `Enter` or `Space` opens the panel and moves focus to the picked day, or to today, where the Calendar's keys take over. `Escape` closes it, as does pressing Apply, or, without Apply, picking the date or the end of the range; each returns focus to the trigger. Name the trigger so the chosen date is heard with the field's name: point its `aria-labelledby` at the label and at the `tray-select-trigger__value`, given an `id`. Under `prefers-reduced-motion: reduce` the panel only fades, in a tenth of a second.
+
 ## Do and don't
 - Do write the placeholder as an instruction: "Pick a day".
 - Do offer presets when a few ranges cover most needs (reports).

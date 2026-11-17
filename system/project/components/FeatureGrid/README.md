@@ -17,6 +17,9 @@ The feature grid tells what the product does in a few cards of unequal size: eac
 ```
 It is the Bento grid with Cards: spans of 4, 5, 6, 7 and 8 columns that add up to 12 in a row, one column below 56rem. The largest card holds the feature that matters most and may show a piece of the product in `tray-feature__end`, which sits at the bottom of the card. One card may be ink for rhythm; yellow stays with the page's call to action.
 
+## Accessibility
+The grid is a `<section>` named through `aria-labelledby` by a visible heading you provide, and each card is an `<article>` titled by its `h3`. The icon tiles are `aria-hidden`. Cards are read in source order, whatever their span. What sits in `tray-feature__end` is read as it stands: make it real text, or give a picture an `alt` that says what it shows. On the ink card the text takes its on-dark colours, which hold 4.5:1.
+
 ## Do and don't
 - Do give the cards different sizes: the important feature gets the room.
 - Do write the title as what the person can do.

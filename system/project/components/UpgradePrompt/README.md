@@ -24,6 +24,9 @@ An upgrade prompt stands where a feature would be when the plan does not have it
 
 The dimmed preview must be `inert` and `aria-hidden="true"`: it is a picture of the feature, not the feature.
 
+## Accessibility
+The prompt is plain content: its heading says what is missing and which plan has it, and its icon is `aria-hidden`. Its actions are links styled as buttons, so they are read as links and `Enter` follows them. Over a preview, `inert` takes the dimmed copy out of the `Tab` order and `aria-hidden="true"` takes it out of what a screen reader reads, so only the prompt is left. Pick the heading level that fits the page around it.
+
 ## Do and don't
 - Do name the plan and say what the person gets, in their words.
 - Do offer a way to compare plans beside the button.

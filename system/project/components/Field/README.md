@@ -18,6 +18,9 @@ A field is one question in a form: a label, its control, and one line of help or
 ## You provide
 The label, the control, and help only when it prevents a mistake. Error text says what to do: "Enter the street and house number", not "Invalid value".
 
+## Accessibility
+The `<label for>` names the control, and `aria-describedby` adds the hint or the error, so both are read when the field takes focus. `aria-invalid="true"` is announced as invalid and draws the `danger` edge, and the error says the same in words, so colour is never the only sign. An error that appears is not announced by itself: moving focus to the first invalid field after a failed submit is what makes it heard. A `<fieldset>` is read with the name of its `<legend>`. Under `prefers-reduced-motion: reduce` the error appears at once instead of sliding in.
+
 ## Do and don't
 - Do validate when the person leaves the field or submits, never on every key.
 - Do move focus to the first invalid field after a failed submit.

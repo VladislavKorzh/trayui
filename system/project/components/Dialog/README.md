@@ -20,6 +20,9 @@ It is the browser's own `<dialog>`: opened with `showModal()` it traps focus, cl
 ## Look
 A `raised` panel with 40px corners, card padding and the float shadow, over the `scrim`. Widths: 32rem, `tray-dialog--sm` 26rem, `tray-dialog--lg` 44rem. The title is `title` type. Buttons sit at the end, the action last; on a phone they stack, the action on top.
 
+## Accessibility
+The title named by `aria-labelledby` is the dialog's name; tie the sentence under it with `aria-describedby` when it explains the task. Focus starts on the first control inside, which is the close button in the head, so put `autofocus` on the field the person came to fill. The close button is an icon button with `aria-label="Close"`, and the buttons in the foot say what they do. A dialog opened with `data-modal="false"` stays in the page: nothing behind it is inert, and `Escape` does not close it. Under `prefers-reduced-motion: reduce` it only fades, in a tenth of a second.
+
 ## Do and don't
 - Do keep one task per dialog and one primary button.
 - Do label the action with what it does ("Save the day"), never "OK".

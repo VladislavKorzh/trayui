@@ -27,6 +27,13 @@ The bar has no fill of its own: it sits on the page. `tray-topbar--sticky` keeps
 
 `tray-pip` is the yellow count on the corner of a button. Wrap the button in a `tray-anchor`, put the count in the button's `aria-label` too, and leave the pip empty to hide it.
 
+## Accessibility
+- The breadcrumb is a `<nav>` named "Breadcrumb", and its last item carries `aria-current="page"`.
+- The search is a `<button>` named by its words. The system does not bind the key shown in its `tray-kbd`: listen for it in your own script. With `tray-topbar__search--fold` the words are hidden, so the button needs an `aria-label`.
+- Every icon button needs an `aria-label` ("Help", "More actions"), and the avatar button names the account ("Account: Oksana Franko").
+- A button with a pip says the count in its `aria-label` too ("Notifications, 2 unread"). Change that label whenever the count changes.
+- The back link hides its arrow and says where it goes in a `tray-vh` span.
+
 ## Do and don't
 - Do keep the bar to one row: at most three icon buttons and the avatar at the end.
 - Do show the page's place with a Breadcrumb, or its title when there is no parent.

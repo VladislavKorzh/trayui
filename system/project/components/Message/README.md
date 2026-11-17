@@ -33,6 +33,9 @@ A message is one row of a conversation: who spoke, what they said, and what happ
 
 `tray-thread` spaces the rows. Put Markers between them for dates and events.
 
+## Accessibility
+Messages are plain text, read in order: the name and time in `tray-message__head`, the bubble, then the foot. Your own messages have no name on screen and are told apart only by their place and fill, so give them one a screen reader can read, such as `<span class="tray-vh">You:</span>` at the start of the bubble. An avatar of initials is read as letters: mark it `aria-hidden="true"` when the name is beside it, and give an icon avatar, like the assistant's, `role="img"` and an `aria-label`. Each icon button in `tray-message__actions` needs an `aria-label` that says what it does ("Copy the answer"). The delivery state is a word beside its icon, never the icon alone.
+
 ## Do and don't
 - Do write times as the person's clock shows them, and dates as a Marker between days.
 - Do keep the line length of long answers to the reading measure.

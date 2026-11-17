@@ -3,13 +3,14 @@
 /* The header stays in place, so what scrolls into view stops below it. */
 html { scroll-padding-block-start: calc(var(--size-lg) + var(--space-8)); }
 
-.site-skip { position: absolute; inset-block-start: var(--space-2); inset-inline-start: var(--space-2); z-index: var(--z-toast); transform: translateY(-300%); }
+.site-skip { position: absolute; inset-block-start: var(--space-2); inset-inline-start: var(--space-2); z-index: var(--z-toast); min-block-size: var(--size-hit); transform: translateY(-300%); }
 .site-skip:focus-visible { transform: none; }
 .site-noscript { padding: var(--space-6); }
 
 /* ---------- The logo: the mark of the system before its name ---------- */
 
 .site-logo { display: inline-flex; align-items: center; gap: 10px; }
+a.site-logo { min-block-size: var(--size-hit); }
 .site-mark { flex: none; display: block; inline-size: 1.25em; block-size: 1.25em; overflow: visible; }
 /* The tile takes the accent of the theme, so a page keeps one loud colour; the bar is the ink that goes on it. */
 .site-mark__tile { fill: var(--accent); }
@@ -39,14 +40,20 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 :root[data-home] .site { grid-template-columns: minmax(0, 1fr); }
 :root[data-home] .site > .tray-app__side { display: none; }
 :root[data-home] .site .tray-app__content { inline-size: min(100%, var(--container)); }
-/* The home page is drawn in index.html. Opened at another page, it stays out of sight until that page is drawn. */
-:root:not([data-home]) #site-view[data-prerendered] > * { display: none; }
+/* The home page is drawn in index.html. Opened there at another page (by its hash), it stays out of sight until that
+   page is drawn. Every other page is drawn in its own file, and shows at once, script or none. */
+:root:not([data-home]) #site-view[data-prerendered="home"] > * { display: none; }
 /* A block or a template may use more of a wide window than a page of text does. */
 #site-view[data-wide] { inline-size: min(100%, 92rem); }
 :root[data-home] .site #site-view[data-wide] { inline-size: min(100%, var(--container)); }
 /* The title takes focus after a page change so a screen reader starts there; it is not a control and draws no ring. */
 #site-view h1:focus { outline: none; }
 .site-wait { block-size: 20rem; border-radius: var(--radius-panel); }
+
+/* ---------- The page for an address with no page: a search of every page, and the sections ---------- */
+.site-lost__find { inline-size: 100%; }
+.site-lost__find .tray-command__list { max-block-size: min(20rem, 40vh); }
+.site-lost__ways { margin: 0; padding: 0; list-style: none; }
 
 /* ---------- Search: the command list in a dialog near the top of the window ---------- */
 
@@ -76,6 +83,8 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 .site-iconwall { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); justify-items: center; gap: var(--space-5) var(--space-2); }
 .site-result { display: grid; align-content: center; }
 .site-show { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+/* The lines that install the system, in the yellow card: a step smaller, so they fit the card on a wide screen. */
+.site-home .tray-hero__media pre { font-size: .8125rem; overflow-x: auto; }
 
 /* ---------- A page of words: guidelines, docs, the foundations ---------- */
 
@@ -138,6 +147,10 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 .site-viewer:has(#site-t2[aria-selected="true"]) .site-viewer__sizes, .site-viewer:has(#site-t2[aria-selected="true"]) [data-full] { display: none; }
 .site-frame { display: grid; justify-items: center; padding: var(--space-3); border-radius: var(--radius-panel); background: var(--surface); overflow: hidden; }
 .site-frame__box { position: relative; border-radius: var(--radius-button); background: var(--page); overflow: hidden; }
+/* Before its frame arrives, the viewer of a block keeps the frame's place: a desktop at 1280 by 800, scaled to the room,
+   or a phone at 390 by 780, so nothing below it moves when it comes. */
+.site-viewer .site-frame:empty::before { content: ""; inline-size: 100%; aspect-ratio: 1280 / 800; }
+@media (max-width: 40rem) { .site-viewer .site-frame:empty::before { inline-size: min(100%, 390px); aspect-ratio: 390 / 780; } }
 .site-frame__box iframe { display: block; border: 0; transform-origin: 0 0; }
 [dir="rtl"] .site-frame__box iframe { transform-origin: 100% 0; }
 .site-viewer pre { max-block-size: 44rem; overflow: auto; }
@@ -233,8 +246,27 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 .site-chartrow__head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: var(--space-3) var(--space-6); max-inline-size: none; }
 .site-chartrow__head > div { display: grid; gap: var(--space-2); max-inline-size: 46rem; }
 .site-chartrow__head p { color: var(--ink-soft); font: 400 1.0625rem/1.5 var(--font-sans); }
-.site-code { inline-size: min(100%, 50rem); }
-.site-code .tray-code { margin-block-start: var(--space-5); }
+/* The example of a component: the tabs and the button that copies its markup on one line, then the stage. */
+.site-example { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); min-inline-size: 0; }
+/* The file of a chart example, folded under it. */
+.site-chart__code { min-inline-size: 0; }
+.site-chart__code > summary { display: inline-flex; align-items: center; gap: var(--space-2); min-block-size: var(--size-hit); padding: 0 var(--space-4); border-radius: var(--radius-chip);
+  background: var(--tray-fill); color: var(--ink); font: 600 .9375rem/1.1 var(--font-sans); list-style: none; cursor: pointer; }
+.site-chart__code > summary::-webkit-details-marker { display: none; }
+.site-chart__code > summary:hover { filter: brightness(.95); }
+.site-chart__code[open] > summary { background: var(--ink); color: var(--tray-on-ink); }
+.site-chart__code > .tray-code { margin-block-start: var(--space-3); }
+.site-chart__code pre { max-block-size: 32rem; overflow: auto; }
+/* The foot of every page but the home page: what the system is, its licence, who keeps it. */
+.site-foot { display: grid; gap: var(--space-3); margin-block-start: var(--space-12); padding-block: var(--space-6) var(--space-2); border-block-start: 1px solid var(--hairline); color: var(--ink-muted); font: 400 .9375rem/1.5 var(--font-sans); }
+.site-foot a { color: var(--ink-soft); }
+.site-foot .tray-footer__legal { display: flex; flex-wrap: wrap; gap: 0 var(--space-5); margin: 0; padding: 0; list-style: none; }
+.site-foot .tray-footer__legal a { display: inline-flex; align-items: center; min-block-size: var(--size-hit); }
+/* A button smaller than a finger (the copy of a code block, the tools of a viewer) keeps its look and takes a hit area of 44px. */
+@media (pointer: coarse) {
+  .site .tray-btn--xs { position: relative; }
+  .site .tray-btn--xs::before { content: ""; position: absolute; inset: calc((var(--size-xs) - var(--size-hit)) / 2); }
+}
 
 @media (max-width: 64rem) {
   .site-maker { grid-template-columns: minmax(0, 1fr); }

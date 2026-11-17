@@ -28,6 +28,9 @@ Each `tray-questionnaire__step` is one question. The behaviour shows one at a ti
 - Several: Checkboxes.
 - Free text: a Textarea, usually on an optional last step.
 
+## Accessibility
+It is a `<form>`, and each question is a `<fieldset>` whose `<legend>` names its group of answers. The questions not shown carry `hidden`, so only the current one is in the reading order. Next stays `disabled` until a required question is answered, and pressing it moves focus to the first field of the next question, so a screen reader announces that question's legend with it. "Question 2 of 3" is plain text, not a live region, and the step pills are `aria-hidden`. Give a free-text field its own name: an `aria-label` when the legend already says what to write.
+
 ## Do and don't
 - Do ask only what changes what happens next, and three to five questions at most.
 - Do offer the likely answers as choices and keep typing for the exception.

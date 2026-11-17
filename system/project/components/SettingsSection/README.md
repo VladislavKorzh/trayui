@@ -35,6 +35,9 @@ A settings section is one topic of a settings page: its name and a line of expla
 
 A section that deletes or transfers things comes last, with `danger` buttons and a title that says what is lost.
 
+## Accessibility
+The `<section>` takes its name from its heading through `aria-labelledby`, so a screen reader can list it with the page's regions and jump to it. The bold name of a row sits outside its control, so the control points at it with `aria-labelledby`. Point `aria-describedby` at the line under the name as well, so the effect is read when the control takes focus. A button in a row needs a name that holds the setting, such as `aria-label="Change the courier days"`, since "Change" alone says nothing outside its row. The section that deletes says what it does in words, not only in the `danger` colour.
+
 ## Do and don't
 - Do name a switch by what happens when it is on.
 - Do save a switch at once and a text field with the "Save" button; never mix the two in one card.

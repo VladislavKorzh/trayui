@@ -10,6 +10,9 @@ Kbd shows a key of the keyboard as a small cap in the mono face.
 - In a search field, to show the key that focuses it.
 - In help text: "Press <kbd>Esc</kbd> to close".
 
+## Accessibility
+A `<kbd>` is read as its text, and screen readers do not say that it is a key, which is why keys are written as words. Inside a button or a menu item the caps are read as part of its name. The cap only shows a shortcut: it is not focusable, and making the shortcut work is up to you.
+
 ## Do and don't
 - Do show the shortcut for the platform the person is on.
 - Don't use it for anything that is not a key (no version numbers, no codes).

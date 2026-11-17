@@ -14,17 +14,24 @@ Tabs switch between views of the same thing: a tray strip of 44px tabs, the curr
   <div class="tray-tabpanel" role="tabpanel" id="p-delivery" aria-labelledby="t-delivery" hidden>…</div>
 </div>
 ```
-The left and right arrows move between tabs, Home and End jump to the ends, and the panel follows. The wrapper fires `tray:change`.
+The wrapper fires `tray:change`.
 
 **Navigation.** The tabs are links to pages or to sections of a long page: `<nav class="tray-tabs">` holding `<a class="tray-tab">`, the current one marked `aria-current="page"` (or `"true"` for a section that follows the scroll). No script needed.
 
 ## Details
-- Hover turns a tab the colour of the ground behind the strip; focus draws the ring inside the tab.
+- Hover turns a tab the colour of the ground behind the strip.
 - `tray-tabs--fill` spreads the tabs across the full width.
 - A tab may carry a `tray-badge tray-badge--count`.
 - A strip that may not fit takes `data-tray="strip"`: it scrolls sideways, and fades over its last 56px while tabs run past the end.
 
 - The ink pill of the chosen tab slides to the next one chosen, and a panel chosen by a press fades in; a strip of links follows its `aria-current` the same way.
+
+## Accessibility
+- Panels in place are a `tablist` of `tab` buttons, each tied to its `tabpanel` by `aria-controls` and `aria-labelledby`.
+- The chosen tab carries `aria-selected="true"` and is the only one in the `Tab` order, so `Tab` goes from it into its panel. Give a panel `tabindex="0"` when it holds no control.
+- `ArrowLeft` and `ArrowRight` move to the next tab and show its panel at once (the other way round on a right-to-left page), `Home` and `End` jump to the ends, and a `disabled` tab is passed over.
+- Navigation tabs are links in a `<nav>` with an `aria-label`, the current one marked by `aria-current`, and `Tab` moves through them.
+- Focus draws the ring inside the tab. The chosen tab is solid ink, and with forced colours it takes the system's colours for a chosen item. Under `prefers-reduced-motion: reduce` the pill moves at once and the panel appears without fading.
 
 ## Do and don't
 - Do keep labels to one or two words, and two to seven tabs.

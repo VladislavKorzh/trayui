@@ -23,6 +23,9 @@ Each pair sits in a `<div>` so the row can be a grid: the term column is 12rem, 
 
 A value may hold a Badge, a link, or a small ghost button that copies or edits it.
 
+## Accessibility
+The `<dl>` keeps each term with its value, and HTML allows the `<div>` around each pair, so the grid costs no meaning. A copy or edit button in a value is an icon button: give it an `aria-label` that names the fact, such as "Copy the tracking number". With `data-tray="copy"` the result, "Copied" or "Copy failed", is said through a hidden status beside the button. A Badge in a value is read as its word.
+
 ## Do and don't
 - Do use real `<dl>`, `<dt>` and `<dd>`: screen readers announce the pairs.
 - Do write "None" or "Not set" for an empty value.

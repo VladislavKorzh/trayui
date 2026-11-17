@@ -11,7 +11,7 @@
         <a class="tray-btn" href="#d-installation">Get started</a>
         <a class="tray-btn tray-btn--quiet" href="#components">Browse the components</a>
       </div>
-      <p class="tray-hero__note">{{kb}} KB when compressed. No framework, no build step. {{themes}} themes, or one of your own.</p>
+      <p class="tray-hero__note">{{kb}} KB compressed, {{license}} licence, built to WCAG 2.2 AA. {{themes}} themes, or one of your own. Building with an AI tool? <a href="#d-agents">Give it llms.txt</a>.</p>
     </div>
   </div>
   <div class="tray-card tray-card--accent tray-hero__media">
@@ -19,13 +19,14 @@
       <h2 class="title">Three files</h2>
       <span class="tray-badge tray-badge--ink">Version {{version}}</span>
     </div>
+    {{install}}
     <div class="tray-stack">
       <ul class="tray-items">
         <li class="tray-item tray-item--sm"><span class="tray-item__body"><span class="tray-item__title">tokens.css</span><span class="tray-item__text">Every colour, size and type style</span></span><span class="tray-item__end tray-num">1 KB</span></li>
         <li class="tray-item tray-item--sm"><span class="tray-item__body"><span class="tray-item__title">components/bundle.css</span><span class="tray-item__text">The classes of every component</span></span><span class="tray-item__end tray-num">{{css_kb}} KB</span></li>
         <li class="tray-item tray-item--sm"><span class="tray-item__body"><span class="tray-item__title">components/bundle.js</span><span class="tray-item__text">Behaviour and the icons</span></span><span class="tray-item__end tray-num">{{js_kb}} KB</span></li>
       </ul>
-      <p>Link them and write HTML. A button is one class; a menu, a calendar or a chart is one attribute more.</p>
+      <p>Link them as above, or <a href="#d-installation">download them</a>, and write HTML. A button is one class; a menu, a calendar or a chart is one attribute more.</p>
     </div>
   </div>
 </section>
@@ -289,7 +290,7 @@
     </nav>
   </div>
   <div class="tray-footer__bottom">
-    <p>Version {{version}}. Counter and Perly Farm, in the examples, are invented, and so is every figure.</p>
+    <p>Tray UI {{version}}, released under the {{license}} licence{{#author}}, maintained by <a href="{{author_url}}">{{author}}</a>{{/author}}. Counter and Perly Farm, in the examples, are invented, and so is every figure.</p>
     <ul class="tray-footer__legal">
       <li><a href="llms.txt">llms.txt</a></li>{{#repo}}
       <li><a href="{{repo}}">GitHub</a></li>{{/repo}}

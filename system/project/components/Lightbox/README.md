@@ -36,6 +36,13 @@ A lightbox shows the pictures of a gallery one at a time, as large as the window
 ## You provide
 The full pictures and their thumbnails, a real `alt` for each thumbnail (it is the picture's text in the lightbox too), and a caption wherever the picture needs one to be understood.
 
+## Accessibility
+- It is the browser's own `<dialog>`, named by its `aria-label`. Each thumbnail link takes its name from the thumbnail's `alt`.
+- Each picture in the track is a group announced as a slide and named "2 of 6", with the same `alt` and its caption in a `<figcaption>`.
+- The arrow keys, `Home` and `End` work from anywhere inside, not only on the track, and mirror under `dir="rtl"`. The track takes `Tab` too, with the 3px ring drawn inside its edge.
+- The count is `aria-hidden`: the `role="status"` line reads "2 of 6" and the caption once the scroll settles. When a step button turns off at an end, focus moves to the other one.
+- Under `prefers-reduced-motion: reduce` the pictures change without a smooth scroll and the lightbox fades in a tenth of a second.
+
 ## Do and don't
 - Do give each thumbnail its `width` and `height`, so the gallery keeps its shape while it loads.
 - Do make a thumbnail a smaller file of its own, not the full picture scaled down.

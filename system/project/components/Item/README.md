@@ -19,6 +19,9 @@ Each item is a grey row with 16px corners, 8px apart. `tray-items--ruled` drops 
 
 The end slot takes a value, a Badge, a Switch, a button, or a chevron when the row goes somewhere.
 
+## Accessibility
+When the whole row is an `<a class="tray-item">` or a `<button class="tray-item">`, all its text is its name: keep the end short, and the chevron is `aria-hidden`. Such a row holds no other control, since a link or a button cannot contain one. A control in the end slot of a plain row needs a name that says which row it belongs to ("Download the receipt of 14 November"): the same words in every row cannot be told apart. An avatar of initials is read as letters before the title, so mark it `aria-hidden="true"` when the title names the person.
+
 ## Do and don't
 - Do keep the title to one line and the detail to one line.
 - Do put one thing at the end.

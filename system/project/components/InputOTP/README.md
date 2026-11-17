@@ -13,6 +13,9 @@ The behaviour moves focus forward as digits are typed, back on Backspace, and sp
 ## You provide
 The number of cells (four to eight), where the separator goes, and the first cell's `autocomplete="one-time-code"` so phones offer the code from the message.
 
+## Accessibility
+The cells are one `role="group"`, named by `aria-label` or `aria-labelledby`. The behaviour names each cell "Character 1 of 6", sets `maxlength="1"`, and sets `inputmode="numeric"` unless you set another. Typing moves focus to the next cell, `Backspace` in an empty cell clears the one before and moves there, and `ArrowLeft` and `ArrowRight` step between cells. A pasted code fills the cells from the focused one on, and a cell selects its character when it takes focus, so typing replaces it. Point the group's `aria-describedby` at the error, as in the example.
+
 ## Do and don't
 - Do verify as soon as the last digit lands; don't ask for a second tap.
 - Do offer "Send a new code" beside it.

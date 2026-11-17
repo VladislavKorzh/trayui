@@ -26,6 +26,9 @@ Cookie consent is a raised panel in the corner of the first visit: what is store
 
 `tray-consent--fixed` pins the panel to the bottom start corner over the page. Without it the panel sits in the flow, for a settings page.
 
+## Accessibility
+It is a `<section>` named by its heading through `aria-labelledby`, so a screen reader lists it as a region called "Cookies". It does not hold focus or block the page, so put it early in the document, where `Tab` reaches it before the content it floats over. Each kind is an `<input type="checkbox" role="switch">` in its `<label>`, announced as on or off, and the necessary one is `disabled` and stays on. The three answers are buttons whose words say the outcome.
+
 ## Do and don't
 - Do give "Only necessary" and "Accept all" the same weight: both quiet, the same size.
 - Do say what each kind is for in one line.

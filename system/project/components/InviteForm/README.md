@@ -24,6 +24,9 @@ The emails are a Tag Input with `data-pattern="email"`: an address that is not a
 
 Listen for `tray:change` on the tag input: `detail.valid` is false while a wrong address is in the field. Keep the button enabled and answer a wrong submit with the error, rather than disabling it.
 
+## Accessibility
+The emails field is a real `<input>` named by its `<label>`, with the hint or the error tied on by `aria-describedby`. `Enter` or a comma turns what is typed into a chip, `Backspace` in the empty field removes the last one, and leaving the field keeps what was typed. Each address added or removed is announced through a polite live region that the behaviour adds. A chip's button is named "Remove" and the address, and focus returns to the field after it. A wrong address is marked only by the look of its `danger` chip, so the error must name it in words, as in the example.
+
 ## Do and don't
 - Do say how many seats are free before the person types.
 - Do explain the chosen role in one line under the row.

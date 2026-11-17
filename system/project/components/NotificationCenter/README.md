@@ -31,6 +31,9 @@ The notification centre is the panel behind the bell: what happened while you we
 
 An unread notification is told apart three ways: full-ink text, the ink mark at the end, and the hidden word "Unread".
 
+## Accessibility
+The bell is an icon button named by its `aria-label`. As a Popover trigger it reports `aria-expanded`, and `Escape` closes the panel and returns focus to the bell. Each notification is one link, read as a sentence: the avatar is `aria-hidden`, since the sentence names the actor, and an unread one ends with the hidden word "Unread", which the behaviour takes away once the notification is opened. The All and Unread switch is a radio group named by its `aria-label`. Notifications draw their focus ring inside their edge.
+
 ## Do and don't
 - Do write each line as who did what to which thing, with the actor in bold.
 - Do link every notification to the thing it is about.

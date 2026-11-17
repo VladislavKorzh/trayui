@@ -25,6 +25,12 @@ A toast rises in and, when it is dismissed or its time is up, sinks out quicker 
 ## Toast or Alert
 A toast is for what already happened and needs no decision. Something the person must read or act on goes in an Alert in the page, or in a Dialog.
 
+## Accessibility
+- Each toast is a `role="status"`, and a danger toast a `role="alert"`. The region the script makes for them is a `role="region"` named "Notifications", at the end of the page.
+- Focus stays where it was, so `Tab` reaches a toast after everything else on the page.
+- The close button is named "Dismiss". A tone always comes with its icon and the words of the title, so colour is never the only sign.
+- Under `prefers-reduced-motion: reduce` a toast appears and goes at once.
+
 ## Do and don't
 - Do offer Undo instead of asking "Are you sure?" beforehand.
 - Do keep one toast per event, and no more than three on screen.

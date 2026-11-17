@@ -27,6 +27,9 @@ The plan comparison is the full table under the pricing cards: every feature as 
 
 Group the rows with a `tray-compare__group` row: its heading in the first cell and an empty cell under each plan, so the tray of the featured column runs through. Wrap the table in `tray-table-wrap` so it scrolls sideways on a phone.
 
+## Accessibility
+It is a real `<table>`: `scope="col"` ties each cell to its plan and `scope="row"` to its feature, and the first head cell holds a hidden "Feature", so that column is named too. A check or a dash is `aria-hidden` and comes with a hidden word, "Included" or "Not included", so the icon is never the only sign. The featured column is marked by its tray alone: if it matters, say it in words in its head too. Give the table a `<caption>`, hidden with `tray-vh` if the heading above it says the same.
+
 ## Do and don't
 - Do keep the plan names and prices in the head, in the order of the pricing cards.
 - Do write the limit rather than a check where there is one: "Five people".

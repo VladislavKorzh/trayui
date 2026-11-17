@@ -19,6 +19,9 @@ File upload is a tray with a dashed edge that takes files dropped on it or chose
 
 The file input covers the whole tray, so a click, a tap and the keyboard all open the picker. `tray-drop--row` is the short form for a narrow column.
 
+## Accessibility
+The tray holds the browser's own `<input type="file">`, stretched over it and named through `aria-labelledby` by the visible label. `Tab` reaches it, `Space` or `Enter` opens the picker, and the whole tray draws the 3px ink focus ring. Dropping needs a pointer, choosing does not. Each row in the list has a remove button named after its file ("Remove jar-50g-front.jpg"), and a file that is too large says so in words as well as in `danger`. Rows and progress are not announced: give each bar `role="progressbar"` and a name, as in the example, and say when an upload ends in a `role="status"` region.
+
 ## Do and don't
 - Do say which kinds of file and how large, inside the tray.
 - Do keep a failed file in the list with the reason and a way to try again.

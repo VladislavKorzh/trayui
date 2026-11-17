@@ -15,10 +15,11 @@ A popover is a small panel that opens beside the button that asked for it, for a
 ```
 The panel is `raised` with the float shadow. `tray-pop` alone is a tight list panel (20px corners, used by menus); add `tray-pop--card` for a 22rem panel with 28px corners and room for text, or `tray-pop--roomy` to keep the natural width. Placement: under the trigger from its start edge; `tray-pop--end` aligns it to the end edge, `tray-pop--top` opens it upward.
 
-It opens on click, moves focus to the first control inside, and closes on Escape, on a click outside, or on a `data-close` button; focus returns to the trigger.
-
 ## Popover, Tooltip or Dialog
 A Tooltip is one line that names a control and cannot be interacted with. A popover holds controls or a paragraph and does not block the page. A Dialog blocks the page until answered.
+
+## Accessibility
+It opens on click and moves focus to the first control inside, if it has one. `Escape` or a `data-close` button closes it and puts focus back on the trigger, and a click outside closes it too. The trigger reports `aria-expanded` and points at the panel with `aria-controls`. The panel has no role or name of its own, so its title is read only as text: give each control inside its own name, and an icon-only trigger an `aria-label` ("What is a batch?"). Under `prefers-reduced-motion: reduce` the panel only fades, in a tenth of a second.
 
 ## Do and don't
 - Do keep it to one small job: share, pick a colour, explain a term.

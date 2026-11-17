@@ -19,6 +19,9 @@ The text sits at the start edge, the buttons at the end edge on the same baselin
 
 To collect an email instead, replace the buttons with an Input Group whose button is the action.
 
+## Accessibility
+It is a `<section>` opened by a heading, so the offer is in the page's list of headings. Its buttons are links when they lead to another page, and their words, not the yellow, say what happens. On the yellow card every colour keeps the light palette and the focus ring takes the card's own ink, so it shows in every theme. When the card collects an email, the field needs a name, a visible `<label>` or at least an `aria-label`, since a placeholder is not one.
+
 ## Do and don't
 - Do repeat the hero's offer in other words, with the same button label.
 - Do keep it the only yellow card on its screen.

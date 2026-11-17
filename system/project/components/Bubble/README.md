@@ -17,6 +17,9 @@ Corners are 20px, and the corner beside the speaker shrinks to 4px, so a row rea
 - `tray-reactions` under the bubble holds `tray-reaction` buttons: an icon and a count; your own reaction is solid ink. `data-tray="reaction"` toggles one and adjusts its count.
 - Attachments sit beside the bubble in the same content column, not inside it.
 
+## Accessibility
+A bubble is a plain block with no role: a screen reader reads its text and nothing about who said it. Its fill and its small corner tell yours from theirs only to the eye, so name the speaker in words in the Message around it. A clamped bubble keeps all its text for a screen reader, and only the eye sees three lines. Its `data-tray="more"` button carries `aria-controls`, and the behaviour sets its `aria-expanded` and swaps "Show more" for "Show less". A reaction is a toggle button with `aria-pressed` and an `aria-label` that names it.
+
 ## Do and don't
 - Do let bubbles hug their text; never stretch them to the full width.
 - Do break a long answer into paragraphs.

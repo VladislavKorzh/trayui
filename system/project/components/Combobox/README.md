@@ -19,11 +19,11 @@ A combobox is a field that filters a list as you type and takes one of its optio
 ```
 Typing narrows the list; the first match is highlighted. The anchor fires `tray:change` with `detail.value` when an option is taken.
 
-## Keyboard
-Focus stays in the input. Down and up move the highlight, Enter takes it, Escape closes the list.
-
 ## You provide
 The options, and the sentence shown when nothing matches (`tray-list__empty`). Say what to do next: "No city by that name. Check the spelling."
+
+## Accessibility
+Focus stays in the input. Down and up move the highlight, Enter takes it, Escape closes the list; down also opens a closed list, and typing opens it with the first match highlighted. The input gets `role="combobox"`, `aria-autocomplete="list"`, `aria-controls` naming the list and an `aria-expanded` that follows it, and the list becomes a `listbox`. The highlight is `aria-activedescendant`, so a screen reader reads each option as it is reached, and the option taken gets `aria-selected="true"`. Give the input a visible `<label>`, as the preview does, since a placeholder is not a name. The no-match sentence is not announced, so if the number of matches matters, say it through a live region of your own.
 
 ## Do and don't
 - Do use it when the list is longer than a screen: cities, countries, people.

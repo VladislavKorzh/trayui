@@ -92,9 +92,9 @@ The rules of the system live in the repository:
 - [the guides](system/project/guides): grounds, behaviour, accessibility, page layouts, and the lists of components and blocks;
 - the guidelines and the markup of each component, in `system/project/components/<Name>/README.md`.
 
-The documentation site, with a live example of every component and block and a playground for most, is built from this repository and is not public yet. Anyone can build and run it locally; [CONTRIBUTING.md](CONTRIBUTING.md) says how.
+The documentation site, [trayui.com](https://trayui.com), has a live example of every component and block and a playground for most. It is built from this repository, and anyone can build and run it locally; [CONTRIBUTING.md](CONTRIBUTING.md) says how.
 
-For an AI agent, the build writes `llms.txt`: the rules, the guides and the markup of every component in one plain file.
+For an AI agent, the site has [llms.txt](https://trayui.com/llms.txt), an index of every page, and `llms-full.txt`, the rules, the guides and the markup of every component in one plain file. Every page is also Markdown at its address with `.md` added.
 
 ## What is where
 

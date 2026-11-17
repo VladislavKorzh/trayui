@@ -19,6 +19,9 @@ The group carries the fill, the 16px corners and the focus ring; the input insid
 - Units and prefixes that are not part of the value: "kg", "$", "https://".
 - One action that only makes sense with this field: apply a code, copy a link, show a password.
 
+## Accessibility
+The group is a plain `<div>`: the field inside is named on its own, and an icon add-on is `aria-hidden`. A text add-on such as "kg" or "https://" is not read with the field, so put it in the field's name too ("Weight in kg"). An icon-only inner button needs an `aria-label` ("Copy the address"). `data-tray="reveal"` switches the field between `type="password"` and `type="text"` and changes the button's name between "Show password" and "Hide password".
+
 ## Do and don't
 - Do give the input its own label or `aria-label`; an icon is not a label.
 - Don't put more than one button in a group.

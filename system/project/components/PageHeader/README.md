@@ -22,6 +22,9 @@ The page header names the page: its title in `title`, one line about it, the pag
 ```
 Every part but the title is optional. Above the row goes a `tray-back` link or a Breadcrumb, never both. `tray-pagehead__meta` is one line of facts in `caption`. Tabs under the header switch the page's sections and are links (`aria-current="page"`).
 
+## Accessibility
+The title is the page's one `<h1>`, and a Badge beside it is read after it as plain text. The tabs are links in a `<nav>` named by its `aria-label`: the current one carries `aria-current="page"`, which is announced and which draws its ink fill. A count Badge in a tab is read as part of the tab's name. An icon-only action, such as the "more" button, needs an `aria-label`. The icons in the meta line are `aria-hidden`, so the words carry the facts.
+
 ## Do and don't
 - Do write the title as the name of the thing: "Orders", "Dana Kovalenko". Not "Manage your orders".
 - Do keep one yellow button, at the end of the actions. More than three actions go into a Dropdown Menu.

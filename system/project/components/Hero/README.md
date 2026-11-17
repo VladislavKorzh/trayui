@@ -25,6 +25,9 @@ Two cards on the 12-column grid: the text takes seven columns, the media five; b
 
 Use `display` for a headline of four words or fewer, `headline` for a longer one.
 
+## Accessibility
+The headline is the page's one `<h1>`. The two buttons are links (`<a class="tray-btn">`) and are announced as links. The `<section>` has no name, so it is not listed as a region. What fills the media card needs words of its own: `alt` on a screenshot or a photograph, and `role="img"` with an `aria-label` on a drawn figure such as the row of `tray-steps` ("26 of 38 orders packed"). The yellow card keeps the light palette in every theme, so its text and focus ring stay dark on yellow.
+
 ## Do and don't
 - Do keep the headline under eight words and the sentence under twenty.
 - Do show the product or its result. A real screen beats an illustration.

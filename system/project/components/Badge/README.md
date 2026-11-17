@@ -18,6 +18,9 @@ A badge states one fact about the thing beside it in a word or two. It is not a 
 
 A chip may carry a remove button (`tray-chip__x`, with an `aria-label`) when it shows an applied filter.
 
+## Accessibility
+A badge is plain text with no role: a screen reader reads its word where it stands, and `Tab` passes it by. The word carries the state, so the fill, or the `danger` and `success` colour, only repeats it, and the icon beside it is `aria-hidden`. A `tray-badge--count` is a bare number: say what it counts in the name of the tab or item it sits on, or in a `tray-vh` span inside it. A chip's `tray-chip__x` names the chip it removes, such as "Remove the filter Kyiv".
+
 ## Do and don't
 - Do write the state as a word: "Paid", "Out of season".
 - Do pair danger and success with an icon; the colour is not the message.

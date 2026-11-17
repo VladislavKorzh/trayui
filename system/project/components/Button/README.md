@@ -23,6 +23,9 @@ A button starts an action; the yellow one is the single most important action in
 ## States
 Hover darkens the fill slightly, press scales to 0.97, keyboard focus draws a 3px `ink` ring 3px out. A disabled button keeps its fill at `opacity-disabled`. While work is running set `aria-busy="true"` and put a `tray-spinner` before the label; keep the label.
 
+## Accessibility
+It is the browser's own `<button>` or `<a>`: `Tab` reaches it, `Enter` presses either, and `Space` presses a `<button>`. Its text is its name, and every icon inside is `aria-hidden`. The focus ring takes the ink of the surface it sits on, so it shows on the yellow and the ink card too. `disabled` takes a button out of the tab order; to keep it reachable, use `aria-disabled="true"`, which looks the same, and ignore its presses yourself. The spinner of a busy button is `aria-hidden`, so the label carries the state, and under `prefers-reduced-motion: reduce` the spinner turns slowly instead of stopping.
+
 ## Do and don't
 - Do keep one primary button per view (the One Yellow Rule).
 - Don't put two yellow buttons side by side; make the second one quiet.

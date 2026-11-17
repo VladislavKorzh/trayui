@@ -22,6 +22,9 @@ A normal day is a quiet grey bar, a slow day a short ink bar, an outage a full i
 
 The state takes an icon and a word: `circle-check` "Working", `circle-alert` "Slow", `circle-x` "Down".
 
+## Accessibility
+The behaviour sets `aria-hidden="true"` on the bars, so a screen reader reads only the head, the foot and the list of incidents. Nothing in it takes focus. With forced colours the bars keep their own fills, so the days can still be told apart.
+
 ## Do and don't
 - Do list the incidents under the bars with their date and length.
 - Do show the same 90 days for every service on the page.

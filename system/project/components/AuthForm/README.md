@@ -45,6 +45,9 @@ A provider's own mark goes before its name as `<img class="tray-icon" alt="">`, 
 
 Set `autocomplete` on every field: `username`, `current-password`, `new-password`, `one-time-code`.
 
+## Accessibility
+Every field has a visible `<label>` tied by `for`. Mark a field in error with `aria-invalid="true"`, which draws its `danger` edge, and tie the sentence that explains it with `aria-describedby`, as the password hint is tied. An error for the whole form is an Alert with `role="alert"`, read as soon as it appears. The `reveal` button starts as "Show password" and is renamed "Hide password" while the password shows. Each provider's `aria-label` holds the name it shows, so a person who says "Google" to voice control still reaches it.
+
 ## Do and don't
 - Do say which account failed and why: "That password does not match this email."
 - Do keep sign-up to what you need today: an email and a password. Ask the rest later.

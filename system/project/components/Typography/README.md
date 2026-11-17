@@ -25,3 +25,6 @@ Each style is a class with the same name as its token: `display`, `headline`, `t
 - No italics and no serif anywhere.
 - Never set text lighter than `ink-hint` on `page` or `surface`.
 - Pick the element for meaning (`h1` to `h3`, `p`) and the class for looks; the two are independent.
+
+## Accessibility
+The styles are classes and change only how text looks: a screen reader knows a heading by its element, not by its size, so the outline of a page comes from its `h1` to `h3` whatever style each one wears. `ink`, `ink-soft` and `ink-muted` read at 4.5:1 or more on `page`, `surface`, `raised` and `leaf` in every theme. `ink-hint` holds that on `page`, `surface` and `raised` only.

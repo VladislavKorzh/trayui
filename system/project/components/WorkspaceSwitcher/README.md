@@ -25,6 +25,12 @@ It is a Dropdown Menu: `data-tray="menu"` opens it, the workspaces are `menuitem
 
 In a collapsed sidebar the switcher shrinks to its avatar. Give the button an `aria-label` with the workspace name for that state.
 
+## Accessibility
+- It is a Dropdown Menu: the switcher button gets `aria-haspopup="menu"` and `aria-expanded`. It is named by its text, the workspace and its plan, since the avatar and the icon are `aria-hidden`.
+- `Enter`, `Space` or `ArrowDown` opens the menu with focus on the first item, `ArrowUp` and `ArrowDown` move round the items, and `Escape` closes it and returns focus to the switcher.
+- The workspaces are `menuitemradio` items. The current one carries `aria-checked="true"`, which is announced, and shows a check and a semibold name, not a colour. Choosing a workspace checks it and leaves the menu open.
+- In a collapsed sidebar only the `aria-hidden` avatar is left, so the button needs its `aria-label` there.
+
 ## Do and don't
 - Do give each workspace its own initials tile; the current one is solid ink.
 - Do end the list with "New workspace", after a rule.

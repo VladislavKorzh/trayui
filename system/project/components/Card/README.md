@@ -19,6 +19,9 @@ A card tells its children what they sit on: inputs and quiet buttons inside a tr
 ## Layout
 Put cards in `tray-bento` on the 16px `grid-gap` and give them unequal widths with `tray-span-4` to `tray-span-8`, usually two to one, so a row reads as a bento and not a grid of equals. Below 56rem every card takes the full width.
 
+## Accessibility
+A card is a container with no role: a screen reader hears its heading and its content, never its fill, so let the heading say what the card is about. `<a class="tray-card">` is one link whose name is all the text inside it, so keep that text short, put the heading first, and put no button or other link inside. The 3px focus ring goes round the whole card; on the yellow and the ink card it takes the theme's ink, so it shows on the page around them. The ground a card stands on is never the only sign of what it means.
+
 ## Do and don't
 - Do keep cards flat: no border, no shadow.
 - Do allow at most one yellow and one ink card in view (the One Yellow Rule).

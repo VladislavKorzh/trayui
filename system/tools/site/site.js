@@ -1,7 +1,7 @@
 /* The site of the design system: every page has an address of its own (/components/lightbox), and comes drawn in a file
    of its own; moving between pages draws the next one here, without loading the site again.
-   data.js holds the map of the site and the pages every visit may need; each section's pages come in a file of their own,
-   loaded when one of them is opened. A block or a template is shown in a frame of its own, so it lays out at the width
+   data.js holds the map of the site and the names of its files; each page comes in a file of its own, loaded when it is
+   opened from another page. A block is shown in a frame of its own, so it lays out at the width
    chosen, not at the width of this page. A chart is a React example: charts.js draws it, and arrives when the first one
    comes near the window. */
 (function () {
@@ -16,7 +16,6 @@
   var navs = [$('#site-nav'), $('#site-nav-sheet')], switches = [$('#site-sections'), $('#site-sections-sheet')];
   var full = $('#site-full'), fullStage = $('#site-full-stage'), fullTitle = $('#site-full-title');
   var search = $('#site-search'), command = $('#site-command'), commandList = $('#site-command-list');
-  var code = $('#site-code'), codeTitle = $('#site-code-title'), codeText = $('#site-code-text');
   var section, shown = null;
 
   /* ---------- Addresses ----------
@@ -95,14 +94,13 @@
   }
   local(document);
 
-  /* ---------- The pages: a doc, a component, a block or a template arrives alone when it is opened, or when its frame is
-     shown (pages/<id>.js); the charts arrive as one section (data-charts.js) ---------- */
+  /* ---------- The pages: each arrives alone, in a file of its own, when it is opened from another page or its frame is
+     shown. A page drawn in the file the visit started with needs its own file only when it has more to do than to be
+     read (a preview's script, a playground, the source of a block): S.index[id].bare says it has not. ---------- */
   var loaded = { core: true }, loading = {};
-  S.code = {};
   S.add = function (name, chunk, run) {
     Object.keys(chunk.pages).forEach(function (id) { S.pages[id] = chunk.pages[id]; });
     Object.keys(run || {}).forEach(function (id) { S.run[id] = run[id]; });
-    Object.keys(chunk.code || {}).forEach(function (id) { S.code[id] = chunk.code[id]; });
     loaded[name] = true;
   };
   /* Code the page writes itself (a playground, a theme, the source of a block) shows at once as plain text, and is coloured
@@ -110,7 +108,7 @@
      whose code sits below the fold, or in a closed tab, opens without it. The build has already coloured every other code block. */
   var codeLib = null, codeWatch = null;
   function colour(el) {
-    if (!codeLib) codeLib = script('code.js');
+    if (!codeLib) codeLib = script(S.files['code.js']);
     codeLib.then(function () {
       var w = el.trayCode;
       if (w && el.textContent === w[0]) el.innerHTML = window.TrayCode.html(w[0], w[1]);
@@ -126,12 +124,14 @@
     }, { rootMargin: '200px 0px' });
     codeWatch.observe(el);
   };
-  function need(name) {
+  /* need(id): the file of that page, which data.js names (its name holds a hash of what is in it). */
+  function need(id) {
+    var name = S.index[id].chunk;
     if (loaded[name]) return Promise.resolve();
     if (!loading[name]) {
       loading[name] = new Promise(function (ok, fail) {
         var s = document.createElement('script');
-        s.src = ROOT + (name.indexOf('pages/') === 0 ? name + '.js' : 'data-' + name + '.js');  /* a page of its own, or a whole section */
+        s.src = ROOT + S.index[id].file;
         s.onload = function () { ok(); };
         s.onerror = function () { delete loading[name]; fail(new Error('The ' + name + ' pages did not load.')); };
         document.head.appendChild(s);
@@ -228,9 +228,9 @@
   function frameDoc(id, themeName) {
     var m = /<body([^>]*)>([\s\S]*)<\/body>/.exec(S.pages[id].source) || ['', '', ''];
     return '<!doctype html><html lang="en" data-theme="' + (themeName || pageTheme()) + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
-      '<title>' + esc(S.index[id].title) + '</title><link rel="stylesheet" href="' + asset('tokens.css') + '"><link rel="stylesheet" href="' + asset('components/bundle.css') + '">' +
+      '<title>' + esc(S.index[id].title) + '</title><link rel="stylesheet" href="' + asset(S.files['tokens.css']) + '"><link rel="stylesheet" href="' + asset(S.files['components/bundle.css']) + '">' +
       (ownTheme() ? '<style>' + ownTheme().css.replace(/<\//g, '<\\/') + '</style>' : '') + '</head><body' + m[1] + '>' +
-      m[2].replace('../components/bundle.js', asset('components/bundle.js')) + GUARD + '</body></html>';
+      m[2].replace('../components/bundle.js', asset(S.files['components/bundle.js'])) + GUARD + '</body></html>';
   }
 
   /* The frame is laid out at the width of the device it stands for and scaled down when the page has less room than that. */
@@ -268,7 +268,7 @@
   function show(fr, id) {
     fr.id = id;
     fr.iframe.title = 'Preview: ' + S.index[id].title;
-    need(S.index[id].chunk).then(function () { if (fr.id === id && frames.indexOf(fr) >= 0) fr.iframe.srcdoc = frameDoc(id, fr.theme); }, function () { /* the page says what is missing */ });
+    need(id).then(function () { if (fr.id === id && frames.indexOf(fr) >= 0) fr.iframe.srcdoc = frameDoc(id, fr.theme); }, function () { /* the page says what is missing */ });
   }
   function unmount(test) {
     frames = frames.filter(function (fr) {
@@ -321,7 +321,8 @@
     var v = $('[data-viewer]', view);
     if (!v) return;
     var id = v.getAttribute('data-viewer'), size = window.innerWidth < 640 ? 'phone' : 'desktop';
-    S.paint($('#site-src-code', v), S.pages[id].source, 'html');
+    var src = $('#site-src-code', v);
+    if (!src.textContent.trim()) S.paint(src, S.pages[id].source, 'html');  /* the build writes it in the page, coloured */
     var fr = mount($('[data-frame]', v), id, { size: size });
     $$('.site-viewer__sizes input', v).forEach(function (i) {
       i.checked = i.value === size;
@@ -338,7 +339,7 @@
     if (!chartsLib) {
       chartsLib = new Promise(function (ok, fail) {
         var s = document.createElement('script');
-        s.src = ROOT + 'charts.js';
+        s.src = ROOT + S.files['charts.js'];
         s.onload = function () { if (window.TrayCharts) ok(window.TrayCharts); else { chartsLib = null; fail(new Error('The charts did not start.')); } };
         s.onerror = function () { chartsLib = null; fail(new Error('The charts did not load.')); };
         document.head.appendChild(s);
@@ -378,15 +379,6 @@
     }, { rootMargin: '600px 0px' });
     hosts.forEach(function (h) { chartWatch.observe(h); });
   }
-  /* The code of an example, in a sheet of its own. */
-  view.addEventListener('click', function (e) {
-    var b = e.target.closest ? e.target.closest('[data-chart-code]') : null;
-    if (!b) return;
-    codeTitle.textContent = b.getAttribute('data-title');
-    codeText.innerHTML = S.code[b.getAttribute('data-chart-code')] || '';  /* coloured by the build */
-    code.showModal();
-    $('pre', code).scrollTop = 0;
-  });
 
   /* ---------- What a page of the docs may hold: the icons, each a button that copies its markup ---------- */
   function wirePage() {
@@ -408,6 +400,21 @@
     });
   }
 
+  /* ---------- What the document says about the page shown: its title, description, address and picture ---------- */
+  function describe(id) {
+    var m = S.index[id], url = S.site ? S.site + '/' + m.path : '';
+    document.title = m.head;
+    function set(sel, attr, value) { var n = $(sel); if (n && value) n.setAttribute(attr, value); }
+    set('meta[name="description"]', 'content', m.desc);
+    set('meta[property="og:description"]', 'content', m.desc);
+    set('meta[property="og:title"]', 'content', id === 'home' ? 'Tray UI' : m.title);
+    set('meta[property="og:url"]', 'content', url);
+    set('link[rel="canonical"]', 'href', url);
+    if (m.og && S.site) { set('meta[property="og:image"]', 'content', S.site + '/' + m.og); set('meta[property="og:image:alt"]', 'content', 'Tray UI: ' + m.title); }
+    var md = $('link[rel="alternate"][type="text/markdown"]');
+    if (md && id !== 'home') md.setAttribute('href', ROOT + m.path + '.md');
+  }
+
   /* ---------- One view for the page the address names ---------- */
   /* paint(id, y, first): the page drawn and wired. y is where to scroll to: the place it was left, on the way back; else the
      top. The first page of a visit stays where the browser put it. */
@@ -417,7 +424,7 @@
     /* a page that came drawn in its file is kept as it is, and only wired */
     if (view.getAttribute('data-prerendered') !== id) put(view, p.html);
     view.removeAttribute('data-prerendered');
-    if (p.wide) view.setAttribute('data-wide', ''); else view.removeAttribute('data-wide');
+    if (S.index[id].wide) view.setAttribute('data-wide', ''); else view.removeAttribute('data-wide');
     UI.init(view);
     wireFrames();
     wireCharts();
@@ -440,9 +447,8 @@
     var sec = S.sections.filter(function (s) { return s.id === meta.section; })[0] || null;
     if (full.open) full.close();
     if (search.open) search.close();
-    if (code.open) code.close();
     showSection(sec);
-    document.title = id === 'home' ? 'Tray UI: a design system in plain HTML and CSS' : meta.title + ' - Tray UI';
+    describe(id);
     navs.forEach(function (nav) {
       $$('.tray-sidebar__item', nav).forEach(function (a) {
         if (a.getAttribute('href') === href(id)) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
@@ -454,21 +460,24 @@
       if (item.top < box.top + 8 || item.bottom > box.bottom - 8) navs[0].scrollTop += item.top - box.top - box.height / 2;
     }
     if (sheet.open) sheet.close();
-    if (loaded[meta.chunk]) { paint(id, y, first); return; }
+    if (loaded[meta.chunk] || (meta.bare && view.getAttribute('data-prerendered') === id)) { paint(id, y, first); return; }
     if (view.getAttribute('data-prerendered') === id) {
       /* the page came drawn in its file: it stays as it is, readable, while the script that wires it arrives */
       if (typeof y === 'number') window.scrollTo(0, y);
-      need(meta.chunk).then(function () { if (current() === id) paint(id, null, true); }, function () { /* it stays readable; its examples wait for a reload */ });
+      need(id).then(function () { if (current() === id) paint(id, null, true); }, function () { /* it stays readable; its examples wait for a reload */ });
       return;
     }
     /* the page is on its way: say so, in the place it will take */
     clearCharts();
     view.removeAttribute('data-prerendered');
     view.setAttribute('aria-busy', 'true');
-    view.innerHTML = '<div class="tray-pagehead"><div class="tray-pagehead__row"><div class="tray-pagehead__text"><h1 class="title" tabindex="-1">' + esc(meta.title) + '</h1><p>' + esc(meta.summary || '') + '</p></div></div></div>' +
+    view.innerHTML = '<div class="tray-pagehead"><div class="tray-pagehead__row"><div class="tray-pagehead__text"><h1 class="title" tabindex="-1">' + esc(meta.title) + '</h1><p>' + esc(meta.desc || '') + '</p></div></div></div>' +
       '<div class="tray-skeleton site-wait" role="status" aria-label="Loading the page"></div>';
-    need(meta.chunk).then(function () { if (current() === id) paint(id, y, first); }, function () {
+    need(id).then(function () { if (current() === id) paint(id, y, first); }, function () {
       if (current() !== id) return;
+      /* a new version of the site came out while this one was open, and the file of the page has another name now:
+         the page itself, loaded afresh, knows it */
+      if (PATHS && navigator.onLine !== false && !first) { location.assign(href(id)); return; }
       view.removeAttribute('aria-busy');
       $('.site-wait', view).outerHTML = '<div class="tray-alert tray-alert--danger" role="alert"><span class="tray-alert__icon">' + UI.icon('circle-alert') + '</span><div class="tray-alert__body">' +
         '<p class="tray-alert__title">This page did not load</p><p class="tray-alert__text">Check the connection and <a href="' + href(id) + '" data-retry>try again</a>.</p></div></div>';
@@ -483,7 +492,7 @@
     if (a.hasAttribute('data-retry')) { e.preventDefault(); render(); return; }
     if (PATHS ? idOf(raw) !== null : raw.charAt(0) === '#' && has(S.index, raw.slice(1))) return;  /* another page: the address changes */
     if (/^https?:\/\//.test(raw)) return;
-    if (/\.(zip|txt|css|js|cjs|json)$/.test(raw) && a.closest('.site-prose, .tray-footer')) {
+    if (/\.(zip|txt|md|css|js|cjs|json)$/.test(raw) && a.closest('.site-prose, .tray-footer, .site-foot')) {
       /* a file of the site: a download cannot start inside another page's frame, so say where it works */
       if (framed) { e.preventDefault(); UI.toast({ title: 'This file opens on the published site', text: 'This preview runs inside another page, which cannot open or download a file.' }); }
       return;
@@ -559,7 +568,7 @@
   function wireThemes() {
     var host = $('[data-themes]', view);
     if (!host) return;
-    if (!themesLib) themesLib = script('theme.js').then(function () { return script('themes.js'); });
+    if (!themesLib) themesLib = script(S.files['theme.js']).then(function () { return script(S.files['themes.js']); });
     themesLib.then(function () { if (host.isConnected) window.TrayThemesPage.mount(host, S, UI); }, function () {
       themesLib = null;
       if (host.isConnected) host.insertAdjacentHTML('afterbegin', '<div class="tray-alert tray-alert--danger" role="alert"><span class="tray-alert__icon">' + UI.icon('circle-alert') + '</span><div class="tray-alert__body">' +
@@ -572,7 +581,7 @@
   function wirePlay(id) {
     var host = $('[data-play]', view), spec = S.pages[id] && S.pages[id].play;
     if (!host || !spec) return;
-    if (!playLib) playLib = script('playground.js');
+    if (!playLib) playLib = script(S.files['playground.js']);
     playLib.then(function () { if (host.isConnected) window.TrayPlay.mount(host, spec, UI); }, function () {
       playLib = null;
       if (host.isConnected) $('[data-play-stage]', host).innerHTML = '<div class="tray-alert tray-alert--danger" role="alert"><span class="tray-alert__icon">' + UI.icon('circle-alert') + '</span><div class="tray-alert__body">' +

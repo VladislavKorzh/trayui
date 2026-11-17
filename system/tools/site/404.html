@@ -14,28 +14,41 @@
   document.documentElement.setAttribute('data-theme', t);
 })();
 </script>
-<link rel="stylesheet" href="/tokens.css">
-<link rel="stylesheet" href="/components/bundle.css">
-<link rel="stylesheet" href="/site.css">
+<link rel="stylesheet" href="/{{f_tokens}}">
+<link rel="stylesheet" href="/{{f_bundle_css}}">
+<link rel="stylesheet" href="/{{f_site_css}}">
 </head>
 <body>
 <div class="tray-screen">
   <header class="tray-screen__bar">
     <a class="tray-wordmark site-logo" href="/">{{mark}}<span>Tray UI</span></a>
   </header>
-  <main class="tray-screen__body tray-screen__body--narrow tray-screen__body--center">
-    <div class="tray-stack tray-stack--lg">
+  <main class="tray-screen__body tray-screen__body--narrow">
+    <div class="tray-stack tray-stack--lg site-lost">
       <div class="tray-stack">
         <h1 class="headline">There is no page at this address</h1>
-        <p class="lead tray-soft">It may have moved, or the address may have a typing mistake. Everything on the site can be found from the home page or by searching.</p>
+        <p class="lead tray-soft">It may have moved, or the address may have a typing mistake. Find the page by its name, or start from one of the sections.</p>
       </div>
-      <div class="tray-row">
-        <a class="tray-btn" href="/">Go to the home page</a>
-        <a class="tray-btn tray-btn--quiet" href="#components">Browse the components</a>
+      <div class="tray-command site-lost__find" data-tray="command" id="site-lost">
+        <label class="tray-command__search"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><input placeholder="Search components, blocks, charts and docs" aria-label="Search the site"></label>
+        <div class="tray-command__list">{{search_list}}<div class="tray-list__empty" hidden>Nothing has that name. Try another word.</div></div>
       </div>
+      <nav aria-label="Sections">
+        <ul class="tray-row site-lost__ways">
+          <li><a class="tray-btn" href="/">Go to the home page</a></li>
+          <li><a class="tray-btn tray-btn--quiet" href="#d-introduction">Docs</a></li>
+          <li><a class="tray-btn tray-btn--quiet" href="#components">Components</a></li>
+          <li><a class="tray-btn tray-btn--quiet" href="#blocks">Blocks</a></li>
+          <li><a class="tray-btn tray-btn--quiet" href="#charts">Charts</a></li>
+        </ul>
+      </nav>
     </div>
   </main>
 </div>
-<script src="/components/bundle.js"></script>
+<script src="/{{f_bundle_js}}"></script>
+<script>
+/* A page chosen in the list opens at its address. */
+document.getElementById('site-lost').addEventListener('tray:select', function (e) { if (e.detail.value.charAt(0) === '/') location.assign(e.detail.value); });
+</script>
 </body>
 </html>

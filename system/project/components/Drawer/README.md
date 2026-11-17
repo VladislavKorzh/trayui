@@ -18,6 +18,9 @@ Open it with a `data-tray="open"` button, like a Dialog. It is pinned to the bot
 - Sheet: a panel from the side that keeps the page visible beside it, on wider screens.
 - Dialog: a decision in the middle of the screen.
 
+## Accessibility
+It is the browser's own `<dialog>`, opened with `showModal()`: the page behind it is inert, and `aria-labelledby` on its title gives it its name. Focus moves into it when it opens and returns to the button that opened it when it closes. `Escape`, a click on the veil and a `data-close` button all close it. The grip is `aria-hidden` and cannot be dragged: it is only a hint. The drawer rises from the foot; under `prefers-reduced-motion: reduce` it only fades, in a tenth of a second.
+
 ## Do and don't
 - Do keep the action at the bottom of the drawer, full width.
 - Do let Escape, the veil and a Cancel button all close it.

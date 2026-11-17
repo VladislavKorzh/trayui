@@ -9,6 +9,9 @@ The fallback is one or two initials on the resting fill. `tray-avatar--ink` mark
 
 `tray-avatar-group` overlaps avatars with a ring in the colour of the ground; end it with a counter avatar ("+3").
 
+## Accessibility
+An avatar of initials is plain text, so a screen reader reads out the letters. When the name is written beside it, add `aria-hidden="true"` so the name is not heard twice. When it stands alone, give it `role="img"` and an `aria-label` with the name, and give a `tray-avatar-group` `role="group"` and an `aria-label` that says who and how many, such as "Packing team, 6 people". `tray-avatar--ink` marks the current person by its fill alone, so say "You" in words too. An avatar that opens something is a `<button class="tray-avatar">` with an `aria-label`, such as "Account: Oksana Franko".
+
 ## Do and don't
 - Do keep initials to two letters.
 - Do put the name next to an avatar whenever there is room; an avatar alone is a guess.

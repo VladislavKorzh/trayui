@@ -32,6 +32,9 @@ The pricing table sets the plans side by side: a card each with the name, the pr
 
 The yellow plan is the one you recommend; its button is `tray-btn--dark`, the others are `tray-btn--quiet`. `tray-ticks` is the list of what is included: a check per line, and `data-off` on a line the plan lacks.
 
+## Accessibility
+The billing period is a radio group named by its `aria-label`: `Tab` reaches the chosen period, the arrow keys change it, and the prices change in place, without moving focus and without an announcement. Each plan is an `<article>` titled by its `h3`, and the "Most chosen" Badge sits inside that heading, so the recommended plan is named in words and not by its yellow alone. The ticks are `aria-hidden`, so write a missing feature in words ("No courier tracking"): `data-off` only greys the line. Each button names its plan ("Start with Shop"). Under `prefers-reduced-motion: reduce` the pill moves to the chosen period at once.
+
 ## Do and don't
 - Do keep to two, three or four plans, cheapest first.
 - Do say what the price is per: "a month", "a month, billed yearly".

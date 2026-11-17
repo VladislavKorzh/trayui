@@ -28,6 +28,9 @@ A stat card shows one number that matters: what it counts, the figure, how it mo
 
 A whole card may be a link: write it as `<a class="tray-stat" href="…">`.
 
+## Accessibility
+A stat card is plain text, read in order: the label, the figure, then the foot. The trend's arrow is `aria-hidden`, so the sign in its text ("+14%") carries the direction. `data-tone` only colours it: when it matters whether the change is welcome, say so in words. The spark line is `aria-hidden` decoration. A card written as `<a class="tray-stat">` is one link whose name is all of its text, and focus draws the 3px ink ring round the whole card.
+
 ## Do and don't
 - Do say what the change is compared with: "than in October".
 - Do keep four cards or fewer in a row.

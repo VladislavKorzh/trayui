@@ -19,15 +19,23 @@ one node process for the whole build), and code.js colours the code the page wri
 On the web every page has an address of its own; framed inside another page, only a # may reach it, so there
 index.html alone shows every page by hash (#c-lightbox). Run tools/build.py first, then python3 tools/serve.py: it serves
 site/ at the same addresses as the host.
+
+The site's own files (its stylesheet and scripts, the pages' scripts, and its copies of the three files) are written to
+_/ with a hash of their content in the name, so the host may let a browser keep them for a year (_headers); the three
+files also stay at their plain addresses, for other sites to link. For readers that are not people, every page also
+comes as Markdown at its address with .md added, llms.txt is the index of them, and llms-full.txt holds the whole
+system in one file. tools/og.py draws the picture a link to each page shows.
 """
-import gzip, html, json, pathlib, re, shutil, subprocess, sys, zipfile
+import gzip, hashlib, html, json, pathlib, re, shutil, subprocess, sys, zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 P, SRC, DIST, OUT = ROOT / 'project', ROOT / 'tools' / 'site', ROOT / 'dist', ROOT / 'site'
 REACT, CHARTS = ROOT / 'react', ROOT / 'react' / 'examples' / 'charts'
 LINKS = json.loads((ROOT / 'tools' / 'links.json').read_text(encoding='utf-8'))
 VERSION = LINKS.get('version', '0.1.0')
+PUBLIC = bool(LINKS.get('public'))  # the repository is open: the site may link it, and jsDelivr serves its releases
 from build import BLOCK_GROUPS, GROUPS, dark_themes, read_blocks  # the order of the groups, the blocks, and which themes are dark
+import og
 
 BLOCK = 'div|ul|ol|li|section|article|aside|nav|header|main|footer|form|fieldset|table|thead|tbody|tr|dl|dialog|figure|details|p|h1|h2|h3|label|button'
 CODE_LABELS = {'html': 'HTML', 'js': 'JavaScript', 'css': 'CSS', 'tsx': 'React', 'jsx': 'React', 'sh': 'Terminal', 'json': 'JSON', 'text': 'Text'}
@@ -64,6 +72,50 @@ def addressed(text, known):
 
 def icon(name, cls=''):
     return f'<svg class="tray-icon{" " + cls if cls else ""}" aria-hidden="true"><use href="#tray-i-{name}"/></svg>'
+
+
+def unmark(text):
+    """Inline Markdown as plain text: a link keeps its words, code and bold lose their marks."""
+    return ' '.join(re.sub(r'\[([^\]]+)\]\([^)]*\)', r'\1', text).replace('`', '').replace('**', '').split())
+
+
+def fit(text, tail=''):
+    """A description for a search result: whole, with the tail after it when both fit in 160 characters; cut at the last
+    clause that fits when the text alone is longer."""
+    text = unmark(text)
+    if tail and len(text) + 1 + len(tail) <= 160:
+        return f'{text} {tail}'
+    if len(text) <= 160:
+        return text
+    cut = text[:158]
+    for mark in ('. ', '; ', ': ', ', '):
+        at = cut.rfind(mark)
+        if at >= 70:
+            return cut[:at] + '.'
+    return cut[:cut.rfind(' ')] + '…'
+
+
+def demoted(markup):
+    """A preview as the page shows it live, under the page's own <h1> and inside its <main>: its h1 becomes an h2 and its
+    main a div. The classes set the look, so nothing changes to the eye; the markup to copy keeps the original."""
+    markup = re.sub(r'<h1(?=[\s>])', '<h2', markup).replace('</h1>', '</h2>')
+    return re.sub(r'<main(?=[\s>])', '<div', markup).replace('</main>', '</div>')
+
+
+def headings(md, level):
+    """Markdown set under a heading of its own: its first heading becomes that level, and the others move down with it."""
+    out, fence, shift = [], False, None
+    for line in md.strip('\n').split('\n'):
+        if line.startswith('```'):
+            fence = not fence
+        elif not fence:
+            m = re.match(r'(#{1,6}) ', line)
+            if m:
+                if shift is None:
+                    shift = level - len(m.group(1))
+                line = '#' * min(6, max(1, len(m.group(1)) + shift)) + line[len(m.group(1)):]
+        out.append(line)
+    return '\n'.join(out)
 
 
 def inline(text):
@@ -195,8 +247,10 @@ def read_component(d):
     title = readme.split('\n', 1)[0].lstrip('# ').strip()
     rest = readme.split('\n', 1)[1].strip()
     summary, _, guide = rest.partition('\n\n')
-    return {'name': d.name, 'id': 'c-' + slug(d.name), 'title': title, 'group': group, 'height': height, 'body': body,
-            'script': '\n'.join(s.strip() for s in scripts), 'summary': summary.replace('\n', ' '), 'guide': guide}
+    wide = re.search(r'width=(\d+)', marker)
+    return {'name': d.name, 'id': 'c-' + slug(d.name), 'title': title, 'group': group, 'height': height, 'body': body, 'stage': demoted(body),
+            'script': '\n'.join(s.strip() for s in scripts), 'summary': summary.replace('\n', ' '), 'guide': guide, 'readme': readme,
+            'width': int(wide.group(1)) if wide else 0}
 
 
 def read_page(f, ident, group):
@@ -208,9 +262,10 @@ def read_page(f, ident, group):
     return {'id': ident, 'title': title, 'summary': summary.replace('\n', ' '), 'guide': body, 'group': group}
 
 
-def head(title, summary):
+def head(title, summary, actions=''):
     return ('<div class="tray-pagehead"><div class="tray-pagehead__row"><div class="tray-pagehead__text">'
-            f'<h1 class="title" tabindex="-1">{html.escape(title)}</h1><p>{inline(summary)}</p></div></div></div>')
+            f'<h1 class="title" tabindex="-1">{html.escape(title)}</h1><p>{inline(summary)}</p></div>'
+            + (f'<div class="tray-pagehead__actions">{actions}</div>' if actions else '') + '</div></div>')
 
 
 def pager(prev, nxt):
@@ -228,10 +283,51 @@ def sizes_control(name):
                    for v, t in (('desktop', 'Desktop'), ('tablet', 'Tablet'), ('phone', 'Phone')))
 
 
-def viewer(p):
-    """The page of one block: the live frame at a chosen width, and its code."""
+# A component by its own class, or by the behaviour that makes it, to say which components a block is made of. A class
+# that many components share (tray-pop, tray-anchor, tray-list) names none of them.
+OWN = {'tray-accordion': 'Accordion', 'tray-feed': 'ActivityFeed', 'tray-alert': 'Alert', 'tray-secret': 'ApiKeys', 'tray-app': 'AppShell',
+       'tray-ratio': 'AspectRatio', 'tray-attachment': 'Attachment', 'tray-auth': 'AuthForm', 'tray-avatar': 'Avatar', 'tray-badge': 'Badge',
+       'tray-banner': 'Banner', 'tray-billing': 'BillingSummary', 'tray-crumbs': 'Breadcrumb', 'tray-bubble': 'Bubble', 'tray-btn': 'Button',
+       'tray-btn-group': 'ButtonGroup', 'tray-cal': 'Calendar', 'tray-cta': 'CallToAction', 'tray-card': 'Card', 'tray-carousel': 'Carousel',
+       'tray-changelog': 'Changelog', 'tray-chart': 'Chart', 'tray-check': 'Checkbox', 'tray-summary': 'CheckoutSummary', 'tray-code': 'CodeBlock',
+       'tray-collapsible': 'Collapsible', 'tray-command': 'Command', 'tray-context': 'ContextMenu', 'tray-consent': 'CookieConsent',
+       'tray-datatable': 'DataTable', 'tray-datepicker': 'DatePicker', 'tray-dl': 'DescriptionList', 'tray-dialog': 'Dialog', 'tray-drawer': 'Drawer',
+       'tray-empty': 'Empty', 'tray-feature': 'FeatureGrid', 'tray-feedback': 'FeedbackWidget', 'tray-field': 'Field', 'tray-drop': 'FileUpload',
+       'tray-filterbar': 'FilterBar', 'tray-footer': 'Footer', 'tray-hero': 'Hero', 'tray-input': 'Input', 'tray-input-group': 'InputGroup',
+       'tray-otp': 'InputOTP', 'tray-integration': 'IntegrationCard', 'tray-invite': 'InviteForm', 'tray-item': 'Item', 'tray-kbd': 'Kbd',
+       'tray-label': 'Label', 'tray-lightbox': 'Lightbox', 'tray-marker': 'Marker', 'tray-menubar': 'Menubar', 'tray-message': 'Message',
+       'tray-scroller': 'MessageScroller', 'tray-select': 'NativeSelect', 'tray-nav': 'NavigationMenu', 'tray-notices': 'NotificationCenter',
+       'tray-matrix': 'NotificationPreferences', 'tray-checklist': 'OnboardingChecklist', 'tray-pagehead': 'PageHeader', 'tray-pages': 'Pagination',
+       'tray-choices': 'PaymentMethod', 'tray-compare': 'PlanComparison', 'tray-plans': 'PricingTable', 'tray-progress': 'Progress',
+       'tray-questionnaire': 'Questionnaire', 'tray-radio-group': 'RadioGroup', 'tray-split': 'Resizable', 'tray-scroll': 'ScrollArea',
+       'tray-select-trigger': 'Select', 'tray-rule': 'Separator', 'tray-settings': 'SettingsSection', 'tray-sheet': 'Sheet', 'tray-sidebar': 'Sidebar',
+       'tray-skeleton': 'Skeleton', 'tray-slider': 'Slider', 'tray-spinner': 'Spinner', 'tray-stat': 'StatCard', 'tray-stepper': 'Stepper',
+       'tray-switch': 'Switch', 'tray-table': 'Table', 'tray-tabs': 'Tabs', 'tray-tags': 'TagInput', 'tray-testimonial': 'Testimonial',
+       'tray-textarea': 'Textarea', 'tray-toast': 'Toast', 'tray-toggle': 'Toggle', 'tray-seg': 'ToggleGroup', 'tray-topbar': 'TopBar',
+       'tray-tour': 'Tour', 'tray-trace': 'Trace', 'tray-upsell': 'UpgradePrompt', 'tray-uptime': 'Uptime', 'tray-usage': 'UsageMeter',
+       'tray-player': 'VideoPlayer', 'tray-switcher': 'WorkspaceSwitcher'}
+OWN_BEHAVIOUR = {'menu': 'DropdownMenu', 'tooltip': 'Tooltip', 'hovercard': 'HoverCard', 'popover': 'Popover', 'combobox': 'Combobox'}
+
+
+def built_from(source, comps):
+    """The components a block is made of, in the order it first uses them: each by its own class or its behaviour."""
+    by_name, seen = {c['name']: c for c in comps}, []
+    for m in re.finditer(r'\btray-[a-z0-9-]+|data-tray="([a-z -]+)"', source):
+        names = [OWN_BEHAVIOUR.get(b) for b in m.group(1).split()] if m.group(1) else [OWN.get(re.sub(r'(__|--).*$', '', m.group(0)))]
+        for n in names:
+            if n in by_name and by_name[n] not in seen:
+                seen.append(by_name[n])
+    return seen
+
+
+def viewer(p, parts):
+    """The page of one block: the live frame at a chosen width, and its code, which is in the page as it comes."""
     uses = ' '.join(f'<code class="tray-code-inline">{b}</code>' for b in p['behaviours'])
-    note = ('<p>Copy the page, or the part of it you need, into a project that links <code class="tray-code-inline">tokens.css</code>, '
+    named = lambda t: t.lower() if t[1:] == t[1:].lower() else t  # "Button" reads as "button" in a sentence; "Input OTP" stays
+    links = [f'<a href="#{c["id"]}">{html.escape(named(c["title"]))}</a>' for c in parts]
+    made = (f'<p>It is made of {", ".join(links[:-1]) + " and " + links[-1] if len(links) > 1 else links[0]}: '
+            'each component has a page with its markup and its rules.</p>') if links else ''
+    note = (made + '<p>Copy the page, or the part of it you need, into a project that links <code class="tray-code-inline">tokens.css</code>, '
             '<code class="tray-code-inline">components/bundle.css</code> and <code class="tray-code-inline">components/bundle.js</code>; the paths in its '
             '<code class="tray-code-inline">&lt;head&gt;</code> assume the page sits one folder below them, as it does in the <a href="#d-installation">download</a>. '
             + ('The grey trays stand in for your content. ' if p['slots'] else '')
@@ -245,17 +341,18 @@ def viewer(p):
             f'<button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" data-tray="copy" data-target="#site-src-code">{icon("copy")}<span data-label>Copy the code</span></button></div></div>'
             f'<div class="tray-tabpanel" role="tabpanel" id="site-live" aria-labelledby="site-t1"><div class="site-frame" data-frame="{p["id"]}"></div></div>'
             '<div class="tray-tabpanel" role="tabpanel" id="site-src" aria-labelledby="site-t2" tabindex="0" hidden>'
-            '<div class="tray-code" dir="ltr"><div class="tray-code__head"><span>HTML</span></div><pre tabindex="0"><code id="site-src-code"></code></pre></div></div></section>'
+            f'<div class="tray-code" dir="ltr"><div class="tray-code__head"><span>HTML</span></div><pre tabindex="0"><code id="site-src-code">{colour(p["source"], "html")}</code></pre></div></div></section>'
             f'<article class="site-prose">{note}</article>')
 
 
-def gallery(title, summary, groups, lead):
-    """The first page of the Blocks section: every block as a small live picture, group by group."""
+def gallery(title, summary, groups, lead, more=None):
+    """A page of blocks, each as a small live picture, group by group. more: a group whose blocks also have a page of their own."""
     out = head(title, summary) + f'<section class="site-prose">{lead}</section>'
     for g, items in groups:
         cards = ''.join(f'<a class="site-thumb" href="#{x["id"]}"><span class="site-thumb__view" data-thumb="{x["id"]}"></span>'
                         f'<span class="site-thumb__text"><b>{html.escape(x["title"])}</b><small>{html.escape(x["summary"])}</small></span></a>' for x in items)
-        out += f'<section class="site-prose"><h2 class="subtitle">{html.escape(g)}</h2><div class="site-gallery">{cards}</div></section>'
+        name = html.escape(g) if not (more or {}).get(g) else f'<a href="#{more[g]}">{html.escape(g)}</a>'
+        out += f'<section class="site-prose"><h2 class="subtitle">{name}</h2><div class="site-gallery">{cards}</div></section>'
     return out
 
 
@@ -433,12 +530,14 @@ def read_charts():
     return groups
 
 
-def chart_card(c, group, level='h2'):
+def chart_card(c, group, level='h2', code=True):
+    """One example, drawn live; on the page of its form its file follows, folded, so the page holds the code it shows."""
     name = f'{group["nav"]}: {c["title"]}' if group['id'] != 'ready' else f'Chart: {c["title"]}'
+    src = (f'<details class="site-chart__code"><summary>{icon("code", "tray-icon--sm")}<span>Code</span><span class="tray-vh"> of {html.escape(name)}</span></summary>'
+           + code_block(c['source'], 'tsx', f'ch-code-{c["id"]}') + '</details>') if code else ''
     return (f'<article class="site-chart{" site-chart--wide" if c.get("wide") else ""}"><div class="site-chart__bar"><div><{level} class="site-chart__name">{html.escape(c["title"])}</{level}>'
-            f'<p>{html.escape(c["note"])}</p></div><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" data-chart-code="{c["id"]}" data-title="{html.escape(name)}" '
-            f'aria-haspopup="dialog" aria-label="Code of {html.escape(name)}">{icon("code", "tray-icon--sm")}Code</button></div>'
-            f'<div class="site-chart__view" data-rechart="{c["id"]}"></div></article>')
+            f'<p>{html.escape(c["note"])}</p></div></div>'
+            f'<div class="site-chart__view" data-rechart="{c["id"]}"></div>{src}</article>')
 
 
 def react_ready():
@@ -579,13 +678,19 @@ def build():
     chart_groups = read_charts()
     charts = [c for g in chart_groups for c in g['charts']]
     sizes = {f: len(gzip.compress((DIST / f).read_bytes(), 9)) for f in ('tokens.css', 'components/bundle.css', 'components/bundle.js')}
+    site_url = LINKS.get('site', '').rstrip('/')
     facts = {'components': len(comps), 'blocks': len(blocks), 'icons': len(icons), 'charts': len(charts), 'version': VERSION,
              'tokens': sum(len(v['tokens']) for v in tok.values() if isinstance(v, dict) and 'tokens' in v), 'kb': round(sum(sizes.values()) / 1024),
              'css_kb': round(sizes['components/bundle.css'] / 1024), 'js_kb': round(sizes['components/bundle.js'] / 1024), 'zip': f'trayui-{VERSION}.zip',
-             'repo': LINKS.get('repo', '') if LINKS.get('public') else '', 'license': LINKS.get('license', ''), 'cdn': LINKS.get('cdn', '').rstrip('/'),
-             'site': LINKS.get('site', '').rstrip('/'),
+             'repo': LINKS.get('repo', '') if PUBLIC else '', 'license': LINKS.get('license', ''),
+             # where the three files can be linked from: jsDelivr, by release, once the repository is open; until then this site
+             'cdn': (LINKS.get('cdn', '') if PUBLIC else site_url).rstrip('/'), 'jsdelivr': PUBLIC and bool(LINKS.get('cdn')),
+             'site': site_url, 'author': LINKS.get('author', ''), 'author_url': LINKS.get('author_url', ''),
              'icon_wall': ''.join(icon(n) for n in sorted(icons)), 'themes': len(tok['color']['themes']),
              'theme_menu': theme_menu(theme_data(tok)['list']), 'mark': MARK, 'plays': len(plays)}
+    at = facts['cdn'] or 'trayui'
+    facts['install'] = code_block(f'<link rel="stylesheet"\n  href="{at}/tokens.css">\n<link rel="stylesheet"\n  href="{at}/components/bundle.css">\n'
+                                  f'<script defer\n  src="{at}/components/bundle.js"></script>', 'html', 'home-install-code')  # the lines the home page starts with, each tag on two to fit the card
 
     def fill(text, more=None):
         """{{name}} in the site's own pages stands for a fact about this build; more holds the facts of one page."""
@@ -595,35 +700,41 @@ def build():
         return re.sub(r'\{\{(\w+)\}\}', lambda m: str(known[m.group(1)]), text)
 
     # ---------- the docs section: the site's own pages, the foundations, the guides of the system ----------
-    docs = [read_page(SRC / 'pages' / f'{n}.md', 'd-' + n, '') for n in ('introduction', 'installation', 'theming', 'react', 'tailwind-figma', 'agents')]
-    docs.append(read_page(ROOT.parent / 'CHANGELOG.md', 'd-changelog', ''))  # the changelog of the repository, as a page of the site
+    doc_names = [n for n in ('introduction', 'installation', 'theming', 'react', 'tailwind-figma', 'from-tailwind', 'agents') if (SRC / 'pages' / f'{n}.md').exists()]
+    docs = [read_page(SRC / 'pages' / f'{n}.md', 'd-' + n, '') for n in doc_names]
+    for d in docs:
+        d['src'] = [f'system/tools/site/pages/{d["id"][2:]}.md']
+    docs.append(dict(read_page(ROOT.parent / 'CHANGELOG.md', 'd-changelog', ''), src=['CHANGELOG.md']))  # the changelog of the repository, as a page of the site
     for d in docs:
         d['summary'], d['guide'] = fill(d['summary']), fill(d['guide'])
     themes = theme_data(tok)
-    docs.insert(3, {'id': 'd-themes', 'title': 'Themes', 'group': '', 'html': themes_page(themes), 'wide': True,
+    docs.insert(3, {'id': 'd-themes', 'title': 'Themes', 'group': '', 'html': themes_page(themes), 'wide': True, 'src': ['system/project/tokens.json'],
                     'summary': f'{len(themes["list"])} themes to choose from, and a maker for your own: four colours in, a whole theme out.'})
     foundations = [{'id': 'f-colours', 'title': 'Colours', 'summary': f'The {len(tok["color"]["tokens"])} colour tokens in the Light and the Dark theme, and what each is for.', 'html': colours_page(tok)},
-                   {'id': 'f-type', 'title': 'Typography', 'summary': 'The type styles: one family in two voices.', 'html': type_page(tok)},
-                   {'id': 'f-scale', 'title': 'Space and shape', 'summary': 'Space, corners, sizes, the one shadow, and the rest of the scale.', 'html': scale_page(tok)},
+                   {'id': 'f-type', 'title': 'Typography', 'summary': 'The type styles of the system: one family, Onest, in two voices, and the size, line height and weight of every class.', 'html': type_page(tok)},
+                   {'id': 'f-scale', 'title': 'Space and shape', 'summary': 'Space, corners, sizes, the one shadow and the rest of the scale: each a token, with its value and what it is for.', 'html': scale_page(tok)},
                    {'id': 'f-icons', 'title': 'Icons', 'summary': f'{len(icons)} icons from Lucide built in, ready to copy, and how to use any other.', 'html': icons_page(icons)}]
     for f in foundations:
-        f['group'] = 'Foundations'
+        f['group'], f['src'] = 'Foundations', ['system/src/icons.json' if f['id'] == 'f-icons' else 'system/project/tokens.json']
     guides = []
     for f in sorted((P / 'guides').glob('*.md')):
         if f.stem in ('0-components', '5-blocks'):
             continue  # the two lists: this site is those lists
-        guides.append(read_page(f, 'g-' + re.sub(r'^\d+-', '', f.stem), 'Guides'))
+        guides.append(dict(read_page(f, 'g-' + re.sub(r'^\d+-', '', f.stem), 'Guides'), src=[f'system/project/guides/{f.name}']))
     brand = {'id': 'g-brand', 'title': 'The brand book', 'group': 'Guides', 'summary': 'The rules of the system in one page: content, colour, type, shape, layout, motion and icons.',
-             'guide': (P / 'README.md').read_text(encoding='utf-8').strip()}
+             'guide': (P / 'README.md').read_text(encoding='utf-8').strip(), 'src': ['system/project/README.md']}
     guides.insert(0, brand)
 
     def grouped(items, order):
         return [(g, [x for x in items if x['group'] == g]) for g in order if any(x['group'] == g for x in items)]
     entry = lambda x: {'id': x['id'], 'title': x['title']}
+    sign_in = [x for x in blocks if x['group'] in ('Login', 'Signup')]
+    sidebars = [x for x in blocks if x['group'] == 'Sidebar']
     doc_nav = [{'group': '', 'items': [entry(d) for d in docs]}, {'group': 'Foundations', 'items': [entry(f) for f in foundations]}, {'group': 'Guides', 'items': [entry(g) for g in guides]}]
     comp_nav = [{'group': '', 'items': [{'id': 'components', 'title': 'All components'}]}] + [{'group': g, 'items': [entry(c) for c in items]} for g, items in grouped(comps, GROUPS)]
     block_groups = grouped(blocks, BLOCK_GROUPS)
-    block_nav = [{'group': '', 'items': [{'id': 'blocks', 'title': 'All blocks'}]}] + [{'group': g, 'items': [entry(x) for x in items]} for g, items in block_groups]
+    block_nav = ([{'group': '', 'items': [{'id': 'blocks', 'title': 'All blocks'}, {'id': 'b-login', 'title': 'Sign-in and sign-up pages'}, {'id': 'b-sidebar', 'title': 'Sidebars'}]}]
+                 + [{'group': g, 'items': [entry(x) for x in items]} for g, items in block_groups])
     chart_use = read_page(SRC / 'pages' / 'charts.md', 'ch-use', '')
     chart_use['summary'], chart_use['guide'] = fill(chart_use['summary']), fill(chart_use['guide'])
     for g in chart_groups:
@@ -637,58 +748,95 @@ def build():
                 {'id': 'blocks', 'title': 'Blocks', 'home': 'blocks', 'nav': block_nav},
                 {'id': 'charts', 'title': 'Charts', 'home': 'charts', 'nav': chart_nav}]
 
-    # Where a page's content travels: 'core' is data.js, loaded on every visit; a section's name is data-<section>.js, loaded
-    # with the first page of that section; 'pages/<id>' is pages/<id>.js, that page alone, so a link straight to it loads
-    # only what it shows.
-    index, chunks, runs = {}, {'core': {}}, {}
+    # Where a page's content travels: 'pages/<id>' is a file of its own, loaded when the page is opened from another one,
+    # so a visit loads only what it shows. data.js, loaded on every visit, holds only the map of the site.
+    # mds holds every page as Markdown, and cards the picture a link to it shows.
+    index, chunks, runs, mds, cards, srcs = {}, {'core': {}}, {}, {}, {}, {}
 
-    def page(ident, title, group, section, chunk, body, summary='', **more):
-        index[ident] = {'title': title, 'group': group, 'section': section, 'chunk': chunk, 'summary': summary, 'path': route(ident)}
-        chunks.setdefault(chunk, {})[ident] = dict({'html': body}, **more)
+    def page(ident, title, group, section, body, summary='', md='', card=None, src=(), wide=False, **more):
+        index[ident] = {'title': title, 'group': group, 'section': section, 'chunk': 'pages/' + ident, 'summary': summary, 'path': route(ident)}
+        if wide:
+            index[ident]['wide'] = 1
+        chunks.setdefault('pages/' + ident, {})[ident] = dict({'html': body}, **more)
+        mds[ident], cards[ident], srcs[ident] = md, dict(card or {}), list(src)
+
+    def md_page(title, summary, body):
+        body = re.sub(r'\A# [^\n]*\n', '', body.strip() + '\n').strip()  # a guide that brings its own title (the brand book) keeps the page's
+        return f'# {title}\n\n{summary}\n\n{body}\n'
 
     # home: the landing page, with its facts filled in
-    page('home', 'Tray UI', '', '', 'core', fill((SRC / 'home.html').read_text(encoding='utf-8')), 'A design system in plain HTML and CSS.', wide=True, needs=['blocks'])
+    page('home', 'Tray UI', '', '', fill((SRC / 'home.html').read_text(encoding='utf-8')), 'A design system in plain HTML and CSS.', wide=True,
+         card={'kind': 'home', 'title': f'{len(comps)} components in plain HTML and CSS', 'line': f'{len(blocks)} blocks, {len(icons)} icons and {len(themes["list"])} themes. Three files, no build step. MIT licence.'},
+         src=['system/tools/site/home.html'])
 
     # docs
+    start = ('<a class="tray-btn tray-btn--md" href="#d-installation">Get started</a>'
+             '<a class="tray-btn tray-btn--quiet tray-btn--md" href="#components">Browse the components</a>')
     seq = docs + foundations + guides
     for i, p in enumerate(seq):
         prev, nxt = (seq[i - 1] if i else None), (seq[i + 1] if i + 1 < len(seq) else None)
         body = p.get('html') or f'<article class="site-prose">{markdown(p["guide"], p["id"])}</article>'
-        page(p['id'], p['title'], p['group'], 'docs', 'pages/' + p['id'], head(p['title'], p['summary']) + body + pager(prev, nxt), p['summary'], **({'wide': True} if p.get('wide') else {}))
+        kind = {'Foundations': 'Foundations', 'Guides': 'Guide'}.get(p['group'], 'Docs')
+        page(p['id'], p['title'], p['group'], 'docs', head(p['title'], p['summary'], start if p['id'] == 'd-introduction' else '') + body + pager(prev, nxt), p['summary'],
+             md=md_page(p['title'], p['summary'], p['guide']) if p.get('guide') else '', card={'kind': kind}, src=p['src'], wide=p.get('wide', False))
 
     # components: an index, then a page each
-    cards = ''.join(
+    cards_html = ''.join(
         f'<section class="tray-card site-group"><h2>{html.escape(g)}</h2><ul>' + ''.join(f'<li><a href="#{x["id"]}">{html.escape(x["title"])}</a></li>' for x in items) + '</ul></section>'
         for g, items in grouped(comps, GROUPS))
     order = [c for g in GROUPS for c in comps if c['group'] == g]
-    page('components', 'Components', '', 'components', 'core',
-         head('Components', f'{len(comps)} components in plain HTML and CSS, with one small script for behaviour. Each has a page: a live example, its markup, and when to use it.')
-         + f'<div class="site-groups">{cards}</div>' + pager(None, order[0]), f'All {len(comps)} components, group by group.', wide=True)
+    comp_md = ''.join(f'## {g}\n\n' + ''.join(f'- [{x["title"]}](#{x["id"]}): {unmark(x["summary"])}\n' for x in items) + '\n' for g, items in grouped(comps, GROUPS))
+    comp_summary = f'{len(comps)} components in plain HTML and CSS, with one small script for behaviour. Each has a page: a live example, its markup, and when to use it.'
+    page('components', 'Components', '', 'components', head('Components', comp_summary) + f'<div class="site-groups">{cards_html}</div>' + pager(None, order[0]),
+         f'All {len(comps)} Tray UI components in plain HTML and CSS, group by group, each with a live example, its markup and when to use it.', wide=True,
+         md=md_page('Components', comp_summary, comp_md), card={'kind': 'Components'}, src=[f'system/project/components/{c["name"]}/README.md' for c in comps])
     for i, p in enumerate(order):
         prev, nxt = (order[i - 1] if i else {'id': 'components', 'title': 'All components'}), (order[i + 1] if i + 1 < len(order) else None)
         ident = p['id']
-        example = (f'<section data-tray="tabs" aria-label="Example"><div class="tray-tabs" role="tablist" aria-label="Example">'
+        example = (f'<section class="site-example" data-tray="tabs" aria-label="Example"><div class="site-viewer__bar"><div class="tray-tabs" role="tablist" aria-label="Example">'
                    f'<button class="tray-tab" role="tab" aria-selected="true" aria-controls="site-live" id="site-t1" type="button">Preview</button>'
                    f'<button class="tray-tab" role="tab" aria-controls="site-src" id="site-t2" type="button">Markup</button></div>'
-                   f'<div class="tray-tabpanel" role="tabpanel" id="site-live" aria-labelledby="site-t1"><div class="site-stage" style="min-block-size: {p["height"]}px">{p["body"]}</div></div>'
+                   f'<div class="site-viewer__tools"><button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" data-tray="copy" data-target="#site-src-code">{icon("copy")}<span data-label>Copy the markup</span></button></div></div>'
+                   f'<div class="tray-tabpanel" role="tabpanel" id="site-live" aria-labelledby="site-t1"><div class="site-stage" style="min-block-size: {p["height"]}px">{p["stage"]}</div></div>'
                    f'<div class="tray-tabpanel" role="tabpanel" id="site-src" aria-labelledby="site-t2" tabindex="0" hidden>{code_block(pretty(p["body"]), "html", "site-src-code")}</div></section>')
         spec = plays.get(p['name'])
-        page(ident, p['title'], p['group'], 'components', 'pages/' + ident,
+        page(ident, p['title'], p['group'], 'components',
              head(p['title'], p['summary']) + example + (play_section(p, spec) if spec else '') + f'<article class="site-prose">{markdown(p["guide"], ident)}</article>' + pager(prev, nxt),
-             p['summary'], **({'play': spec} if spec else {}))
+             p['summary'], md=p['readme'] + '\n', card={'kind': 'Component', 'show': p['stage'], 'script': p['script'], 'width': p['width'] or 760},
+             src=[f'system/project/components/{p["name"]}/README.md', f'system/project/components/{p["name"]}/preview.html'], **({'play': spec} if spec else {}))
         if p['script']:
             runs[ident] = p['script']
 
     # blocks: a gallery first, then a page each, shown live in a frame of its own
-    galleries = (('blocks', blocks, block_groups, 'Blocks',
-                  f'{len(blocks)} screens built from the components: copy one into a product and fill it. Each is a single page of plain HTML.',
-                  '<p>A block is a composition, not a component: a dashboard, a sidebar in one of its variants, a sign-in page, a shop, an article. Open one to see it at desktop, tablet and phone width, in the theme you chose for this site, and to copy its code.</p>'),)
-    for sec, items, groups, title, summary, lead in galleries:
-        seq = [{'id': sec, 'title': 'All ' + sec}] + items
-        page(sec, title, '', sec, 'core', gallery(title, summary, groups, lead) + pager(None, seq[1] if len(seq) > 1 else None), summary, wide=True, needs=[sec])
-        for i, x in enumerate(items, 1):
-            page(x['id'], x['title'], x['group'], sec, 'pages/' + x['id'], head(x['title'], x['summary']) + viewer(x) + pager(seq[i - 1], seq[i + 1] if i + 1 < len(seq) else None),
-                 x['summary'], wide=True, source=x['source'])
+    block_md = lambda items: ''.join(f'## {g}\n\n' + ''.join(f'- [{x["title"]}](#{x["id"]}): {unmark(x["summary"])}\n' for x in its) + '\n' for g, its in items)
+    lead = ('<p>A block is a composition, not a component: a dashboard, a sidebar in one of its variants, a sign-in page, a shop, an article. Open one to see it '
+            'at desktop, tablet and phone width, in the theme you chose for this site, and to copy its code.</p>')
+    summary = f'{len(blocks)} screens built from the components: copy one into a product and fill it. Each is a single page of plain HTML.'
+    more = {'Login': 'b-login', 'Signup': 'b-login', 'Sidebar': 'b-sidebar'}
+    seq = [{'id': 'blocks', 'title': 'All blocks'}] + blocks
+    page('blocks', 'Blocks', '', 'blocks', gallery('Blocks', summary, block_groups, lead, more) + pager(None, seq[1]), summary, wide=True,
+         md=md_page('Blocks', summary, block_md(block_groups)), card={'kind': 'Blocks'}, src=[f'system/project/blocks/{x["name"]}.html' for x in blocks])
+    for ident, title, items, words in (
+            ('b-login', 'Sign-in and sign-up pages', sign_in,
+             f'{len(sign_in)} sign-in and sign-up pages in plain HTML and CSS: a card on the page, a form beside a cover or a picture, an email link, and other accounts first.'),
+            ('b-sidebar', 'Sidebars', sidebars,
+             f'{len(sidebars)} app sidebars in plain HTML and CSS: one level or two, sections that fold, a rail of icons, a file tree, a calendar and a sidebar on each side.')):
+        groups = grouped(items, BLOCK_GROUPS)
+        lead_ = ('<p>Each one is a whole page: open it to see it at desktop, tablet and phone width, and copy its code. Their forms carry labels and <code class="tray-code-inline">autocomplete</code>, '
+                 'and a password can be shown before it is sent.</p>' if ident == 'b-login' else
+                 '<p>Each one is a whole page with the sidebar in place: open it to see it at desktop, tablet and phone width, and copy its code. The current page is marked with '
+                 '<code class="tray-code-inline">aria-current</code>, and sections that fold are the browser\'s own <code class="tray-code-inline">&lt;details&gt;</code>.</p>')
+        page(ident, title, '', 'blocks', gallery(title, words, groups, lead_) + pager({'id': 'blocks', 'title': 'All blocks'}, items[0]), words, wide=True,
+             md=md_page(title, words, block_md(groups)), card={'kind': 'Blocks'}, src=[f'system/project/blocks/{x["name"]}.html' for x in items])
+    for i, x in enumerate(blocks, 1):
+        parts = built_from(x['source'], comps)
+        made = ', '.join(f'[{c["title"]}](#{c["id"]})' for c in parts)
+        uses = ', '.join(f'`{b}`' for b in x['behaviours'])
+        md = md_page(x['title'], x['summary'], (f'It is made of these components: {made}.\n\n' if made else '') + (f'Behaviours it uses: {uses}.\n\n' if uses else '')
+                     + 'Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.\n\n'
+                     + f'```html\n{x["source"].strip()}\n```')
+        page(x['id'], x['title'], x['group'], 'blocks', head(x['title'], x['summary']) + viewer(x, parts) + pager(seq[i - 1], seq[i + 1] if i + 1 < len(seq) else None),
+             x['summary'], wide=True, md=md, card={'kind': 'Block', 'block': x['name']}, src=[f'system/project/blocks/{x["name"]}.html'], source=x['source'])
 
     # charts: an overview with two of each form, how to use them, then a page for each form with every example drawn live
     count = lambda g: f'{len(g["charts"])} {g["title"].lower()}' if g['id'] != 'ready' else f'{len(g["charts"])} examples'
@@ -696,22 +844,53 @@ def build():
             'the package brings the title, the colours, the tooltip, the key and the table of figures, and the stylesheet restyles the marks. '
             'Each example is one file to copy; <a href="#ch-use">Using the charts</a> says how they are put together. Every figure here is invented.</p>'
             + code_block("npm install recharts", 'sh', 'charts-code-1') + '</section>')
-    over = head('Charts', f'{len(charts)} charts for React, drawn with Recharts in the style of the system: area, bar, line, pie, radar and radial, in every theme.') + lead
+    chart_summary = f'{len(charts)} charts for React, drawn with Recharts in the style of the system: area, bar, line, pie, radar and radial, in every theme.'
+    over = head('Charts', chart_summary) + lead
     for g in chart_groups:
         some = [c for c in g['charts'] if not c.get('wide')][:2]
         over += (f'<section class="site-prose site-chartrow"><div class="site-chartrow__head"><div><h2 class="subtitle">{html.escape(g["title"])}</h2><p>{html.escape(g["summary"])}</p></div>'
                  f'<a class="tray-btn tray-btn--quiet tray-btn--sm" href="#{g["page"]}">All {count(g)}{icon("arrow-right", "tray-icon--flip")}</a></div>'
-                 f'<div class="site-charts site-charts--pair">{"".join(chart_card(c, g, "h3") for c in some)}</div></section>')
+                 f'<div class="site-charts site-charts--pair">{"".join(chart_card(c, g, "h3", code=False) for c in some)}</div></section>')
     chart_seq = [{'id': 'charts', 'title': 'All charts'}, chart_use] + [{'id': g['page'], 'title': g['title']} for g in chart_groups]
-    page('charts', 'Charts', '', 'charts', 'charts', over + pager(None, chart_seq[1]), f'All {len(charts)} charts, form by form.', wide=True)
-    page('ch-use', chart_use['title'], '', 'charts', 'charts',
-         head(chart_use['title'], chart_use['summary']) + f'<article class="site-prose">{markdown(chart_use["guide"], "ch-use")}</article>' + pager(chart_seq[0], chart_seq[2]), chart_use['summary'])
-    note = ('<article class="site-prose"><p>Each example is one React file: choose <b>Code</b> above a chart and copy it into a project that has <code class="tray-code-inline">recharts</code> and '
+    chart_files = lambda gs: [f'system/react/examples/charts/{c["id"]}.tsx' for g in gs for c in g['charts']] + ['system/react/examples/charts/charts.json']
+    page('charts', 'Charts', '', 'charts', over + pager(None, chart_seq[1]),
+         f'{len(charts)} React chart examples on Recharts: area, bar, line, pie, radar and radial, each one file to copy, with a key and a table of figures.', wide=True,
+         md=md_page('Charts', chart_summary, ''.join(f'## [{g["title"]}](#{g["page"]})\n\n{g["summary"]}\n\n' + ''.join(f'- {c["title"]}: {c["note"]}\n' for c in g['charts']) + '\n' for g in chart_groups)),
+         card={'kind': 'Charts'}, src=chart_files(chart_groups))
+    page('ch-use', chart_use['title'], '', 'charts',
+         head(chart_use['title'], chart_use['summary']) + f'<article class="site-prose">{markdown(chart_use["guide"], "ch-use")}</article>' + pager(chart_seq[0], chart_seq[2]), chart_use['summary'],
+         md=md_page(chart_use['title'], chart_use['summary'], chart_use['guide']), card={'kind': 'Charts'}, src=['system/tools/site/pages/charts.md'])
+    note = ('<article class="site-prose"><p>Each example is one React file: open <b>Code</b> under a chart and copy it into a project that has <code class="tray-code-inline">recharts</code> and '
             '<code class="tray-code-inline">trayui-react</code>. The names and the figures are invented: replace them. <a href="#ch-use">Using the charts</a> explains the parts.</p></article>')
     for i, g in enumerate(chart_groups, 2):
         group = 'Ready-made' if g['id'] == 'ready' else 'By form'
         body = head(g['title'], g['summary']) + f'<div class="site-charts">{"".join(chart_card(c, g) for c in g["charts"])}</div>' + note
-        page(g['page'], g['title'], group, 'charts', 'charts', body + pager(chart_seq[i - 1], chart_seq[i + 1] if i + 1 < len(chart_seq) else None), g['summary'], wide=True)
+        md = md_page(g['title'], g['summary'], 'Each example is one React file. It needs `recharts` and `trayui-react` (the React package of Tray UI: see [React](#d-react)). '
+                     'The names and the figures are invented.\n\n' + ''.join(f'## {c["title"]}\n\n{c["note"]}\n\n```tsx\n{c["source"].strip()}\n```\n\n' for c in g['charts']))
+        page(g['page'], g['title'], group, 'charts', body + pager(chart_seq[i - 1], chart_seq[i + 1] if i + 1 < len(chart_seq) else None), g['summary'], wide=True,
+             md=md, card={'kind': 'Charts'}, src=chart_files([g]))
+
+    # the foundations and the themes have no Markdown source: their tables, written out
+    cell = lambda s: str(s).replace('|', '\\|').replace('\n', ' ')
+    pick = lambda t, th: t['value'] if isinstance(t['value'], str) else t['value'].get(th, list(t['value'].values())[0])
+    light, dark = tok['color']['themes'][0]['id'], tok['color']['themes'][1]['id']
+    mds['f-colours'] = md_page('Colours', foundations[0]['summary'], '| Token | Light | Dark | Use |\n| --- | --- | --- | --- |\n' + ''.join(
+        f'| `--{t["name"]}` | `{cell(css_value(pick(t, light)))}` | `{cell(css_value(pick(t, dark)))}` | {cell(t.get("usage", ""))} |\n' for t in tok['color']['tokens'])
+        + f'\n[Themes](#d-themes) lists the other {len(tok["color"]["themes"]) - 2} themes, which give the same tokens other values.')
+    mds['f-type'] = md_page('Typography', foundations[1]['summary'], ''.join(
+        f'## {g["name"]}\n\n| Class | Size | Line height | Weight | Tracking |\n| --- | --- | --- | --- | --- |\n'
+        + ''.join(f'| `.{s["name"]}` | {s["fontSize"]} | {s["lineHeight"]} | {s["fontWeight"]} | {s.get("letterSpacing", "")} |\n' for s in g['styles']) + '\n' for g in tok['type']['groups'])
+        + '## Families\n\n' + ''.join(f'- `--font-{k}`: {v}\n' for k, v in tok['type']['families'].items()))
+    mds['f-scale'] = md_page('Space and shape', foundations[2]['summary'], ''.join(
+        f'## {key[:1].upper() + key[1:]}\n\n| Token | Value | Use |\n| --- | --- | --- |\n'
+        + ''.join(f'| `--{t["name"]}` | `{cell(t["value"] if isinstance(t["value"], str) else list(t["value"].values())[0])}` | {cell(t.get("usage", ""))} |\n' for t in tok[key]['tokens']) + '\n'
+        for key in ('spacing', 'radius', 'size', 'layout', 'shadow', 'fluid', 'timing', 'zIndex', 'breakpoint', 'opacity') if key in tok))
+    mds['f-icons'] = md_page('Icons', foundations[3]['summary'], 'Use one by its name: `<svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg>`. '
+                             'The script adds the sprite. `tray-icon--sm` is 16px, `tray-icon--lg` 28px, `tray-icon--flip` mirrors an icon in right-to-left pages.\n\n'
+                             + '```text\n' + '\n'.join(sorted(icons)) + '\n```')
+    mds['d-themes'] = md_page('Themes', docs[3]['summary'], 'Name a theme on `<html>`, or on any element to theme only what is inside it: `<html lang="en" data-theme="mint">`.\n\n'
+                              + ''.join(f'- `{t["id"]}`: {t["name"]}, {t["mode"]}\n' for t in themes['list'])
+                              + '\nThe page on the site has a maker: four colours in (the page, the tray, the ink and the accent), a whole theme out, checked for contrast.')
 
     # ---------- addresses: one for each page, and every link between pages by its address ----------
     taken = {}
@@ -719,17 +898,75 @@ def build():
         if meta['path'] in taken:
             sys.exit(f'two pages have the address /{meta["path"]}: {taken[meta["path"]]} and {ident}')
         taken[meta['path']] = ident
+    by_id = {sec['id']: sec for sec in sections}
+
+    # ---------- what each page says about itself: its title and description in a search, its picture, its place ----------
+    HEADS = {'home': 'Tray UI: a design system in plain HTML and CSS',
+             'components': f'All {len(comps)} components in plain HTML and CSS - Tray UI', 'blocks': f'{len(blocks)} page blocks in plain HTML and CSS - Tray UI',
+             'charts': f'{len(charts)} React chart examples with Recharts - Tray UI', 'b-login': 'Sign-in and sign-up pages in HTML and CSS - Tray UI',
+             'b-sidebar': 'Sidebar layouts in HTML and CSS - Tray UI', 'd-introduction': 'Tray UI docs: an introduction to the design system',
+             'd-installation': 'Install Tray UI: link three files, no build step', 'd-changelog': 'Tray UI changelog: what changed in each version',
+             'd-from-tailwind': 'Coming from Tailwind: a plain CSS alternative - Tray UI', 'd-agents': 'Tray UI for AI agents: llms.txt and Markdown pages',
+             'd-react': 'Tray UI in React: typed components and charts', 'd-themes': f'{len(themes["list"])} themes and a theme maker - Tray UI',
+             'd-theming': 'Theming with CSS custom properties - Tray UI', 'f-type': 'Typography: type styles and the Onest font - Tray UI',
+             'f-colours': 'Colour tokens in the light and dark theme - Tray UI', 'f-icons': f'{len(icons)} Lucide icons, built in - Tray UI',
+             'g-accessibility': 'Accessibility: WCAG 2.2 AA in every theme - Tray UI', 'ch-use': 'Using the charts in React - Tray UI'}
+    TAILS = {'components': 'A Tray UI component in plain HTML and CSS.', 'blocks': 'A Tray UI block in plain HTML and CSS, to copy.', 'charts': 'React and Recharts, from Tray UI.'}
+    home_desc = (f'Tray UI is a design system in plain HTML and CSS: {len(comps)} components, {len(blocks)} blocks and {len(icons)} icons, in {len(themes["list"])} themes. '
+                 'Three files, no framework, no build step.')
+    seen = {}
+    for ident, meta in index.items():
+        t = meta['title']
+        if ident in HEADS:
+            options = [HEADS[ident]]
+        elif ident.startswith('c-'):
+            options = [f'{t}: HTML and CSS component - Tray UI', f'{t}: HTML and CSS - Tray UI']
+        elif ident.startswith('b-'):
+            options = [f'{t}: HTML and CSS block - Tray UI', f'{t}: HTML block - Tray UI']
+        elif ident.startswith('ch-'):
+            options = [f'{t} in React with Recharts - Tray UI']
+        else:
+            options = []
+        meta['head'] = next((o for o in options if len(o) <= 60), f'{t} - Tray UI')
+        if meta['head'] in seen:
+            sys.exit(f'two pages have the title "{meta["head"]}": {seen[meta["head"]]} and {ident}')
+        seen[meta['head']] = ident
+        own_home = ident == (by_id[meta['section']]['home'] if meta['section'] else 'home')
+        meta['desc'] = home_desc if ident == 'home' else fit(meta['summary'], '' if own_home else TAILS.get(meta['section'], ''))
+
+    dates = git_dates()
+    for ident, meta in index.items():
+        found = [dates[s] for s in srcs[ident] if s in dates]
+        if found:
+            meta['lastmod'] = max(found)
+
+    # every link between pages by its address, in the pages and in the theme menu
     for pages_ in chunks.values():
         for p in pages_.values():
             p['html'] = addressed(p['html'], index)
     facts['theme_menu'] = addressed(facts['theme_menu'], index)
+
+    def foot(ident):
+        """The foot of every page but the home page, which has a footer of its own: what this is, its licence, who keeps it."""
+        md = f'/{route(ident)}.md'
+        source = ''
+        if facts['repo'] and ident.startswith('c-'):
+            name = next(c['name'] for c in comps if c['id'] == ident)
+            source = f'<li><a href="{facts["repo"]}/blob/main/system/project/components/{name}/README.md">Source of this page</a></li>'
+        by = f' Maintained by <a href="{facts["author_url"]}">{html.escape(facts["author"])}</a>.' if facts['author'] else ''
+        return (f'<footer class="site-foot"><p>Tray UI {VERSION}, a design system in plain HTML and CSS, released under the {facts["license"]} licence.{by}</p>'
+                '<ul class="tray-footer__legal"><li><a href="/docs/changelog">Changelog</a></li>'
+                f'<li><a href="{md}">This page in Markdown</a></li><li><a href="/llms.txt">llms.txt</a></li>{source}</ul></footer>')
+    for ident in index:
+        if ident != 'home':
+            chunks['pages/' + ident][ident]['html'] += foot(ident)
 
     # ---------- write the site ----------
     if OUT.exists():
         shutil.rmtree(OUT)
     (OUT / 'components').mkdir(parents=True)
     (OUT / 'fonts').mkdir()
-    for rel in ('tokens.css', 'components/bundle.css', 'components/bundle.js'):
+    for rel in ('tokens.css', 'components/bundle.css', 'components/bundle.js'):  # at their plain addresses, for other sites to link
         shutil.copyfile(DIST / rel, OUT / rel)
     for f in (DIST / 'fonts').iterdir():
         shutil.copyfile(f, OUT / 'fonts' / f.name)
@@ -737,17 +974,110 @@ def build():
         if (DIST / folder).exists():
             shutil.copytree(DIST / folder, OUT / folder)
     shutil.copytree(P / 'assets' / 'Media', OUT / 'assets' / 'Media')  # the pictures and the film of the Lightbox and Video Player previews
-    for name in ('site.css', 'site.js', 'theme.js', 'themes.js', 'playground.js', '_headers'):  # _headers is read by the host (Cloudflare Workers), not served
-        shutil.copyfile(SRC / name, OUT / name)
-    (OUT / '404.html').write_text(addressed(fill((SRC / '404.html').read_text(encoding='utf-8')), index), encoding='utf-8')  # what the host serves for a wrong address
+    shutil.copyfile(SRC / '_headers', OUT / '_headers')  # read by the host (Cloudflare Workers), not served
+
+    files = {}
+
+    def own(rel, data):
+        """A file of the site's own, written to _/ with a hash of its content in its name."""
+        b = data if isinstance(data, bytes) else data.encode('utf-8')
+        stem, ext = rel.rsplit('.', 1)
+        name = f'_/{stem}.{hashlib.sha256(b).hexdigest()[:10]}.{ext}'
+        (OUT / name).parent.mkdir(parents=True, exist_ok=True)
+        (OUT / name).write_bytes(b)
+        files[rel] = name
+        return name
+    # the site's own copies of the three files; from _/ the font is one folder up
+    own('tokens.css', re.sub(r'url\((["\']?)fonts/', r'url(\1../fonts/', (DIST / 'tokens.css').read_text(encoding='utf-8')))
+    for rel in ('components/bundle.css', 'components/bundle.js'):
+        own(rel, (DIST / rel).read_bytes())
+    for name in ('site.css', 'site.js', 'theme.js', 'themes.js', 'playground.js'):
+        own(name, (SRC / name).read_bytes())
+
+    dump = lambda o: json.dumps(o, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
+    for name, pages_ in chunks.items():
+        if name == 'core':
+            continue
+        own_runs = [i for i in pages_ if i in runs]  # the preview scripts of the page in this file
+        for i, p in pages_.items():
+            p.pop('wide', None)
+        tail = 'window.TRAY_SITE.add(' + json.dumps(name) + ', ' + dump({'pages': pages_}) + (
+            ', {\n' + ',\n'.join(f'  {json.dumps(i)}: function () {{\n{runs[i]}\n  }}' for i in own_runs) + '\n}' if own_runs else '') + ');\n'
+        f = own(name + '.js', f'/* Generated by tools/site.py: the page {name[6:]}, loaded when it is opened from another page. */\n' + tail)
+        for i, p in pages_.items():
+            index[i]['file'] = f
+            if set(p) == {'html'} and i not in runs:
+                index[i]['bare'] = 1  # drawn in its file, the page needs nothing more to work
+
+    colour.close()
+    bundled = bundle_charts(OUT / 'charts.js')  # charts.js and, beside it, the licences of what it holds
+    bundled_code = bundle_code(OUT / 'code.js')  # code.js and its licence
+    for name in ('charts.js', 'code.js'):
+        own(name, (OUT / name).read_bytes())
+        (OUT / name).unlink()
+
+    # the picture a link to each page shows
+    blocks_src = {x['name']: x['source'] for x in blocks}
+    by_comp = {c['id']: c for c in comps}
+    todo = []
+    for ident, meta in index.items():
+        card = dict(cards[ident], path=meta['path'])
+        card.setdefault('title', meta['title'])
+        if card.get('kind') != 'home':
+            line = unmark(meta['summary'])
+            card['line'] = line if len(line) <= 110 else line[:line.rfind(' ', 0, 108)] + '…'
+        todo.append(card)
+    pictures, said = og.make(todo, OUT, blocks_src)
+    for meta in index.values():
+        if meta['path'] in pictures:
+            meta['og'] = pictures[meta['path']]
+
+    def graph(ident, meta, sec):
+        """The page in schema.org terms, for search engines: the site, the code and its author on the home page; elsewhere
+        the page as a technical article and its place in the site as a trail of links."""
+        site = facts['site']
+        author = {'@type': 'Person', '@id': f'{site}/#author', 'name': facts['author'], 'url': facts['author_url']}
+        website = {'@type': 'WebSite', '@id': f'{site}/#website', 'url': f'{site}/', 'name': 'Tray UI', 'description': 'A design system in plain HTML and CSS.', 'inLanguage': 'en'}
+        if ident == 'home':
+            code = {'@type': 'SoftwareSourceCode', '@id': f'{site}/#code', 'name': 'Tray UI', 'description': meta['desc'], 'version': VERSION,
+                    'license': 'https://opensource.org/licenses/MIT', 'programmingLanguage': ['HTML', 'CSS', 'JavaScript'], 'runtimePlatform': 'Web',
+                    'author': {'@id': f'{site}/#author'}, 'isPartOf': {'@id': f'{site}/#website'}}
+            if facts['repo']:
+                code['codeRepository'] = facts['repo']
+            nodes = [dict(website, publisher={'@id': f'{site}/#author'}), code, author]
+        else:
+            url, top = f'{site}/{meta["path"]}', sec['home']
+            trail = [{'@type': 'ListItem', 'position': 1, 'name': 'Tray UI', 'item': f'{site}/'}]
+            if ident == top:
+                trail.append({'@type': 'ListItem', 'position': 2, 'name': sec['title']})
+            else:
+                trail += [{'@type': 'ListItem', 'position': 2, 'name': sec['title'], 'item': f'{site}/{route(top)}'}, {'@type': 'ListItem', 'position': 3, 'name': meta['title']}]
+            nodes = [{'@type': 'BreadcrumbList', 'itemListElement': trail}]
+            if ident != top:
+                article = {'@type': 'TechArticle', 'headline': meta['title'], 'description': meta['desc'], 'url': url, 'mainEntityOfPage': url, 'inLanguage': 'en',
+                           'isPartOf': {'@type': 'WebSite', '@id': f'{site}/#website', 'name': 'Tray UI', 'url': f'{site}/'},
+                           'author': {'@type': 'Person', 'name': facts['author'], 'url': facts['author_url']}}
+                if meta.get('og'):
+                    article['image'] = f'{site}/{meta["og"]}'
+                if meta.get('lastmod'):
+                    article['dateModified'] = meta['lastmod']
+                nodes.insert(0, article)
+        return dump({'@context': 'https://schema.org', '@graph': nodes})
+
+    # data.js: the map of the site, and the names its files are served at
+    slim = {i: {k: v for k, v in m.items() if k not in ('summary', 'group', 'lastmod')} for i, m in index.items()}
+    data = own('data.js', '/* Generated by tools/site.py: the map of the site and the names of its files. */\n'
+               'window.TRAY_SITE = ' + dump({'version': VERSION, 'repo': facts['repo'], 'site': facts['site'], 'files': files, 'sections': sections, 'index': slim,
+                                             'pages': {}, 'themes': themes}) + ';\nwindow.TRAY_SITE.run = {};\n')
+
     # Every page in a file of its own, drawn in it, so a link straight to a page shows it before any script runs; site.js
     # keeps what it finds and only wires it. The host serves components/lightbox.html at /components/lightbox. index.html is
     # the home page, and also the whole site where pages go by hash (framed inside another page): it links its
     # files from where it stands, every other page from the root.
     template = (SRC / 'index.html').read_text(encoding='utf-8')
-    by_id = {sec['id']: sec for sec in sections}
-    own_pages = json.dumps(sorted(i for i, m in index.items() if m['chunk'].startswith('pages/')), separators=(',', ':'))
-    plain = lambda s: html.escape(re.sub(r'\[([^\]]+)\]\([^)]*\)', r'\1', s).replace('`', '').replace('**', ''))
+    hashed = json.dumps({i: index[i]['file'] for i in index if i != 'home'}, separators=(',', ':'))
+    asset = {'f_tokens': files['tokens.css'], 'f_bundle_css': files['components/bundle.css'], 'f_bundle_js': files['components/bundle.js'],
+             'f_site_css': files['site.css'], 'f_site_js': files['site.js'], 'f_data': data}
 
     def nav_html(sec, here):
         """The sidebar of a section, as site.js draws it, with the page shown marked."""
@@ -761,68 +1091,117 @@ def build():
 
     for ident, meta in index.items():
         sec, home, entry = by_id.get(meta['section']), ident == 'home', chunks[meta['chunk']][ident]
-        chunk = meta['chunk']
-        one = {'home': home, 'root': '' if home else '/', 'route': meta['path'], 'page_id': ident, 'section': sec['id'] if sec else '',
-               'page_title': 'Tray UI: a design system in plain HTML and CSS' if home else html.escape(f'{meta["title"]} - Tray UI'),
-               'page_name': html.escape(meta['title']), 'page_description': plain(meta['summary']),
-               'page_url': f'{facts["site"]}/{meta["path"]}' if facts['site'] else '',
-               'nav_html': nav_html(sec, ident) if sec else '', 'view_html': entry['html'], 'wide': entry.get('wide', False),
-               'sections_tabs': ''.join(f'<a class="tray-tab" href="/{route(s["home"])}"' + (' aria-current="page"' if s is sec else '') + f'>{html.escape(s["title"])}</a>' for s in sections),
-               'preload': '' if chunk == 'core' else chunk + '.js' if chunk.startswith('pages/') else f'data-{chunk}.js',
-               'own_pages': own_pages if home else ''}
+        url = f'{facts["site"]}/{meta["path"]}' if facts['site'] else ''
+        one = dict(asset, home=home, root='' if home else '/', route=meta['path'], page_id=ident, section=sec['id'] if sec else '',
+                   page_title=html.escape(meta['head']), og_title=html.escape('Tray UI' if home else meta['title']), page_description=html.escape(meta['desc']),
+                   page_url=url, og_image=f'{facts["site"]}/{meta["og"]}' if meta.get('og') and facts['site'] else '',
+                   og_alt=html.escape(f'Tray UI: {meta["title"]}' if not home else f'Tray UI: {len(comps)} components in plain HTML and CSS'),
+                   md_url='' if home else f'/{meta["path"]}.md', jsonld=graph(ident, meta, sec) if facts['site'] else '',
+                   nav_html=nav_html(sec, ident) if sec else '', view_html=entry['html'], wide=bool(meta.get('wide')),
+                   sections_tabs=''.join(f'<a class="tray-tab" href="/{route(s["home"])}"' + (' aria-current="page"' if s is sec else '') + f'>{html.escape(s["title"])}</a>' for s in sections),
+                   preload='' if meta.get('bare') else meta['file'], own_pages=hashed if home else '{}')
         out = OUT / ('index.html' if home else meta['path'] + '.html')
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(addressed(fill(template, one), index), encoding='utf-8')
-    if facts['site']:  # every address, for a search engine, once the site is open to everyone
-        (OUT / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-                                         + ''.join(f'  <url><loc>{html.escape(facts["site"] + "/" + m["path"])}</loc></url>\n' for m in index.values()) + '</urlset>\n', encoding='utf-8')
-    dump = lambda o: json.dumps(o, ensure_ascii=False).replace('</', '<\\/')
-    (OUT / 'data.js').write_text(
-        '/* Generated by tools/site.py: the map of the site, and the pages every visit may need. */\n'
-        'window.TRAY_SITE = ' + dump({'version': VERSION, 'repo': facts['repo'], 'site': facts['site'], 'sections': sections, 'index': index, 'pages': chunks['core'], 'themes': themes}) + ';\nwindow.TRAY_SITE.run = {};\n', encoding='utf-8')
-    for name, pages_ in chunks.items():
-        if name == 'core':
-            continue
-        more = {'code': {c['id']: colour(c['source'], 'tsx') for c in charts}} if name == 'charts' else {}  # coloured: the sheet shows it as HTML
-        own = [i for i in pages_ if i in runs]  # the preview scripts of the pages in this file
-        tail = 'window.TRAY_SITE.add(' + json.dumps(name) + ', ' + dump(dict({'pages': pages_}, **more)) + (
-            ', {\n' + ',\n'.join(f'  {json.dumps(i)}: function () {{\n{runs[i]}\n  }}' for i in own) + '\n}' if own else '') + ');\n'
-        alone = name.startswith('pages/')
-        out = OUT / (name + '.js' if alone else f'data-{name}.js')
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(f'/* Generated by tools/site.py: {"the page " + name[6:] + ", loaded when it is opened" if alone else "the pages of the " + name + " section, loaded when one of them is opened"}. */\n' + tail, encoding='utf-8')
+    (OUT / '404.html').write_text(addressed(fill((SRC / '404.html').read_text(encoding='utf-8'), dict(asset, search_list=''.join(
+        f'<a class="tray-option" href="/{m["path"]}" role="option" data-value="/{m["path"]}"><span class="tray-option__text">{html.escape(m["title"])}</span>'
+        f'<span class="tray-option__meta">{html.escape(by_id[m["section"]]["title"])}</span></a>' for i, m in index.items() if m['section']))), index), encoding='utf-8')
 
-    colour.close()
-    bundled = bundle_charts(OUT / 'charts.js')  # charts.js and, beside it, the licences of what it holds
-    bundled_code = bundle_code(OUT / 'code.js')  # code.js and its licence
+    # every page as Markdown, beside its file: the same address with .md added. Links go to the other pages' Markdown.
+    base = facts['site']
+    def to_md(text):
+        text = re.sub(r'\]\(#([a-z0-9-]+)\)', lambda m: f']({base}/{"llms.txt" if m.group(1) == "home" else route(m.group(1)) + ".md"})' if m.group(1) in index else m.group(0), text)
+        return re.sub(r'\]\(([A-Za-z0-9./-]+\.(?:zip|txt|css|js|cjs|json))\)', lambda m: f']({base}/{m.group(1)})', text)
+    note = f'> Part of Tray UI {VERSION}, a design system in plain HTML and CSS ({facts["license"]} licence). Every page: {base}/llms.txt'
+    for ident, text in mds.items():
+        if not text or ident == 'home':
+            continue
+        first, _, rest = text.partition('\n')
+        target = OUT / (index[ident]['path'] + '.md')
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(to_md(f'{first}\n\n{note}\n{rest}'), encoding='utf-8')
+
+    if facts['site']:  # for search engines and other readers, once the site is open to everyone
+        (OUT / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+                                         + ''.join(f'  <url><loc>{html.escape(facts["site"] + "/" + m["path"])}</loc>' + (f'<lastmod>{m["lastmod"]}</lastmod>' if m.get('lastmod') else '') + '</url>\n'
+                                                   for m in index.values()) + '</urlset>\n', encoding='utf-8')
+        (OUT / 'robots.txt').write_text('# Tray UI documentation (MIT). Search, AI answers, agent fetches and training are welcome.\n'
+                                        f'User-agent: *\nAllow: /\n\nSitemap: {facts["site"]}/sitemap.xml\n', encoding='utf-8')
+
     # the download: dist/ as one archive, with the blocks beside the three files
     with zipfile.ZipFile(OUT / facts['zip'], 'w', zipfile.ZIP_DEFLATED) as z:
         for f in sorted(DIST.rglob('*')):
             if f.is_file() and not f.name.startswith('.'):
                 z.write(f, f'trayui/{f.relative_to(DIST)}')
-    # llms.txt: the system in one plain file, for an agent to read before it writes with it
-    comp_index = (P / 'guides' / '0-components.md').read_text(encoding='utf-8')
-    comp_index = re.sub(r' \[The component browser\]\([^)]*\) shows them[^\n]*', '', comp_index)
-    parts = [f'# Tray UI {VERSION}\n\n> A design system in plain HTML and CSS: {len(comps)} components, {len(blocks)} blocks, {len(icons)} icons, {len(tok["color"]["themes"])} themes. '
-             'Link tokens.css, components/bundle.css and components/bundle.js; write HTML with tray- classes; behaviours attach with data-tray.\n',
-             '# Rules\n\n' + (P / 'README.md').read_text(encoding='utf-8').strip() + '\n']
-    parts += [(P / 'guides' / f).read_text(encoding='utf-8').strip() + '\n' for f in ('1-grounds.md', '2-behaviour.md', '3-accessibility.md', '4-layouts.md')]
-    parts.append(comp_index.strip() + '\n')
-    parts.append('# Markup of every component\n\nThe guidelines of each component, with its markup, in the order of the index.\n')
-    parts += ['#' + (P / 'components' / c['name'] / 'README.md').read_text(encoding='utf-8').strip() + '\n' for c in order]
-    parts.append('# Tailwind and Figma\n\n' + fill(re.sub(r'^# .*\n', '', (SRC / 'pages' / 'tailwind-figma.md').read_text(encoding='utf-8').strip(), count=1).strip()) + '\n')
-    parts.append('# Charts in React\n\n' + re.sub(r'^# .*\n', '', (SRC / 'pages' / 'charts.md').read_text(encoding='utf-8').strip(), count=1).strip() + '\n')
-    (OUT / 'llms.txt').write_text('\n'.join(parts), encoding='utf-8')
+
+    # llms.txt: the index of the system for an agent, in the form llmstxt.org sets out; llms-full.txt: all of it in one file
+    link = lambda ident: f'{base}/{index[ident]["path"]}.md'
+    install = (f'<link rel="stylesheet" href="{facts["cdn"]}/tokens.css">\n<link rel="stylesheet" href="{facts["cdn"]}/components/bundle.css">\n'
+               f'<script src="{facts["cdn"]}/components/bundle.js" defer></script>')
+    notes = ('- The React package, `trayui-react`, is not published on npm yet. Do not install a package of that name from npm: it would not be this one. '
+             'The React page says where it is.\n'
+             '- Counter and Perly Farm, the brands in the examples, are invented, and so is every name and figure in them.\n'
+             '- Use only classes that exist; where a layout needs a value no class gives, use a token (`var(--space-6)`), never a literal colour or size.\n')
+    intro = (f'# Tray UI\n\n> A design system in plain HTML and CSS: {len(comps)} components, {len(blocks)} blocks, {len(icons)} icons and {len(themes["list"])} themes, '
+             f'with typed React components and {len(charts)} chart examples on Recharts. Version {VERSION}, {facts["license"]} licence'
+             + (f', by {facts["author"]}' if facts['author'] else '') + '.\n\n'
+             'Link three files and write HTML with `tray-` classes; behaviours attach with `data-tray`, and nothing needs a build step:\n\n'
+             f'```html\n{install}\n```\n\n')
+    lines = [intro, f'Every page of {base or "the site"} is also Markdown: add `.md` to its address. [llms-full.txt]({base}/llms-full.txt) holds the whole system in one file.\n\n' + notes]
+    lines.append('\n## Docs\n\n' + ''.join(f'- [{index[d["id"]]["title"]}]({link(d["id"])}): {index[d["id"]]["desc"]}\n' for d in docs + foundations))
+    lines.append('\n## Guides\n\n' + ''.join(f'- [{g["title"]}]({link(g["id"])}): {index[g["id"]]["desc"]}\n' for g in guides))
+    lines.append(f'\n## Components\n\n- [All {len(comps)} components]({link("components")}): each with the sentence that says what it is for\n'
+                 + ''.join(f'- [{c["title"]}]({link(c["id"])})\n' for c in order))
+    lines.append(f'\n## Blocks\n\nWhole screens to copy, each one HTML file.\n\n- [All {len(blocks)} blocks]({link("blocks")}): every block with a sentence on what it holds\n'
+                 f'- [Sign-in and sign-up pages]({link("b-login")})\n- [Sidebars]({link("b-sidebar")})\n')
+    lines.append('\n## Charts\n\n' + f'- [Using the charts]({link("ch-use")}): {index["ch-use"]["desc"]}\n'
+                 + ''.join(f'- [{g["title"]}]({link(g["page"])}): {unmark(g["summary"])}\n' for g in chart_groups))
+    lines.append(f'\n## Optional\n\n- [llms-full.txt]({base}/llms-full.txt): the rules, the guides and the guidelines of every component in one file\n'
+                 f'- [{facts["zip"]}]({base}/{facts["zip"]}): the three files, the font and the {len(blocks)} blocks\n')
+    (OUT / 'llms.txt').write_text(''.join(lines), encoding='utf-8')
+
+    full = [intro + notes + '\nThe sections: installation, the rules (the brand book), the guides, theming, React, Tailwind and Figma, '
+            'coming from Tailwind, for AI agents, the component index, the guidelines of every component, the blocks, charts in React, and the changelog.\n']
+    doc = lambda ident, title=None: headings(f'# {title or index[ident]["title"]}\n\n' + mds[ident].split('\n', 1)[1].strip(), 2)
+    full.append(doc('d-installation'))
+    full.append(doc('g-brand', 'Rules: the brand book'))
+    full += [doc(g['id']) for g in guides if g['id'] != 'g-brand']
+    full += [doc(i) for i in ('d-theming', 'd-themes', 'd-react', 'd-tailwind-figma', 'd-from-tailwind', 'd-agents') if i in mds and mds[i]]
+    full.append(headings('# Component index\n\n' + re.sub(r'^# .*\n', '', (P / 'guides' / '0-components.md').read_text(encoding='utf-8').strip()), 2))
+    full.append('## The guidelines of every component\n\nEach component with its markup, in the order of the index.\n')
+    full += [headings(c['readme'], 3) for c in order]
+    full.append(f'## Blocks\n\n{len(blocks)} whole screens, each one HTML file to copy. The code of each is on its page, as Markdown at the address given.\n\n'
+                + ''.join(f'### {g}\n\n' + ''.join(f'- [{x["title"]}]({link(x["id"])}): {unmark(x["summary"])}\n' for x in its) + '\n' for g, its in block_groups))
+    full.append(doc('ch-use', 'Charts in React'))
+    full.append(doc('d-changelog'))
+    (OUT / 'llms-full.txt').write_text(to_md('\n\n'.join(part.strip() for part in full) + '\n'), encoding='utf-8')
 
     size = sum(f.stat().st_size for f in OUT.rglob('*') if f.is_file())
-    first = sum((OUT / f).stat().st_size for f in ('index.html', 'site.css', 'site.js', 'data.js', 'tokens.css', 'components/bundle.css', 'components/bundle.js'))
+    first = sum((OUT / f).stat().st_size for f in ('index.html', files['site.css'], files['site.js'], data, files['tokens.css'], files['components/bundle.css'], files['components/bundle.js']))
     print(bundled)
     print(bundled_code)
+    print(said)
     print(f'site: {len(plays)} playgrounds')
     print(f'site: {len(index)} pages ({len(comps)} components, {len(blocks)} blocks, {len(charts)} charts, {len(docs) + len(foundations) + len(guides)} docs), '
           f'{len(runs)} preview scripts; first load {first // 1024} KB, all {size // 1024} KB in {len(list(OUT.rglob("*.*")))} files')
     for line in skipped:
         print('LEFT OUT', line)
+
+
+def git_dates():
+    """The day each file was last changed in a commit, from git: {path from the root of the repository: 'YYYY-MM-DD'}.
+    Outside a clone of the repository, nothing."""
+    try:
+        out = subprocess.run(['git', 'log', '--format=@%cI', '--name-only'], cwd=ROOT.parent, capture_output=True, text=True, timeout=60)
+    except (OSError, subprocess.TimeoutExpired):
+        return {}
+    dates, when = {}, None
+    for line in out.stdout.splitlines() if out.returncode == 0 else []:
+        if line.startswith('@'):
+            when = line[1:11]
+        elif line.strip() and when and line not in dates:
+            dates[line] = when
+    return dates
 
 
 if __name__ == '__main__':

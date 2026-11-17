@@ -16,6 +16,9 @@ A context menu opens where something is right-clicked and offers the actions for
 - Use the same items, in the same order, as the row's Dropdown Menu.
 - Leave the browser's own menu alone on text, links and form fields.
 
+## Accessibility
+Give the region `tabindex="0"` so a keyboard can reach it; there the Menu key or `Shift+F10` opens the menu, as a right-click does. The panel becomes a `menu` and focus moves to its first item: `ArrowUp` and `ArrowDown` move between items and wrap, `Home` and `End` jump to the ends, and `Enter` or `Space` runs one. `Escape` closes the menu and returns focus to the region. Items are `role="menuitem"` buttons with `aria-hidden` icons, and the focus ring is drawn inside each one. A destructive item is in `danger` and says what it destroys in words. Under `prefers-reduced-motion: reduce` the menu only fades, in a tenth of a second.
+
 ## Do and don't
 - Do use it in dense working tools: tables, file lists, canvases.
 - Don't use it on a marketing page or a phone-first product.

@@ -1,13 +1,35 @@
-# Headers for the site on Cloudflare Workers. The three files and the font may be linked from other sites.
+# Headers for the site on Cloudflare Workers.
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000
+  X-Frame-Options: SAMEORIGIN
+
+# The three files and the font may be linked from other sites. Their names stay the same from one release to the
+# next, so a browser checks them again after an hour; the font changes less often.
 /tokens.css
   Access-Control-Allow-Origin: *
-/components/*
+  Cache-Control: public, max-age=3600
+/components/bundle.css
   Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=3600
+/components/bundle.js
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=3600
 /fonts/*
   Access-Control-Allow-Origin: *
   Cache-Control: public, max-age=604800
+
+# The site's own files, and its copies of the three files: each name holds a hash of the content, so a new
+# version is a new name, and a browser may keep a copy for a year without asking again.
+/_/*
+  Cache-Control: public, max-age=31536000, immutable
+
 /llms.txt
   Content-Type: text/plain; charset=utf-8
+/llms-full.txt
+  Content-Type: text/plain; charset=utf-8
+
+# The first address of the site still answers; trayui.com is the one to index.
+https://trayui.vladislav-korzh95.workers.dev/*
+  X-Robots-Tag: noindex

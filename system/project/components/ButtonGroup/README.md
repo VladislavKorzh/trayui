@@ -14,10 +14,10 @@ For a choice between options (one stays selected) use Toggle Group instead.
 
 The stepper is the same tray with `data-tray="stepper"`, two buttons carrying `data-step="-1"` and `data-step="1"`, and an `<output class="tray-btn-group__value">`. Set `data-min` and `data-max`; it fires `tray:change` with `detail.value`.
 
+## Accessibility
+The group needs `role="group"` and an `aria-label` that names what its buttons act on. `Tab` reaches each button in turn. The stepper's `<output>` is a live status by default, so its new value is announced when it changes; its buttons need `aria-label`s ("One fewer", "One more"). At `data-min` and `data-max` the button that would pass the limit becomes `disabled`. Under `prefers-reduced-motion: reduce` the number changes without its bump.
+
 ## Do and don't
 - Do keep the tray: buttons are never fused edge to edge, nothing in the system has a hard corner.
 - Don't mix sizes inside one group.
 - Don't put the primary yellow button in a group; set it beside the group.
-
-## Accessibility
-The group needs `role="group"` and a label. The stepper's `<output>` is announced when the value changes; its buttons need `aria-label`s ("One fewer", "One more").

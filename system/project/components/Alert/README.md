@@ -26,6 +26,9 @@ Use `role="alert"` for an error that appears after an action and `role="status"`
 ## Alert, Toast or Field error
 An alert belongs to a page or a card and stays. A Toast confirms something that already happened and leaves by itself. An error about one field goes under that field.
 
+## Accessibility
+`role="alert"` makes a screen reader read the alert at once when it appears, and `role="status"` makes it wait until the reader is free. The icon is decoration, so keep its `<svg>` `aria-hidden`: the title says what happened, and the `danger` and `success` colours only repeat it. The alert never takes focus, and the buttons in `tray-alert__actions` wait in the normal tab order.
+
 ## Do and don't
 - Do say what happened and what to do next, in that order.
 - Do keep the title to one line.

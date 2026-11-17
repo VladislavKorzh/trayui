@@ -12,8 +12,8 @@ Resizable splits a box into two panes with a handle between them that can be dra
 ```
 `data-size` is the first pane's share in percent; `data-min` and `data-max` limit it. `tray-split--v` stacks the panes and drags up and down. The handle is a 12px strip in the colour of the ground with a short pill in `rule-strong` that turns `ink` on hover and focus. It fires `tray:change` with `detail.size`.
 
-## Keyboard
-The handle is a focusable separator: the arrow keys move it by two percent, Home and End jump to the limits. Its `aria-valuenow` follows the size.
+## Accessibility
+The handle is a focusable separator: the behaviour gives it `role="separator"`, `aria-orientation`, `aria-valuemin` and `aria-valuemax` from the limits, and an `aria-valuenow` that follows the size. `ArrowLeft` and `ArrowRight` (`ArrowUp` and `ArrowDown` in `tray-split--v`) move it by two percent, and `Home` and `End` jump to the limits. Focus draws the ring inside the handle and turns its pill `ink`. Name the handle after what it resizes with an `aria-label`. Without one it is called "Resize the panes".
 
 ## Do and don't
 - Do set limits so neither pane can be dragged to nothing.

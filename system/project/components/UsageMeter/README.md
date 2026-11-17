@@ -24,6 +24,9 @@ Each row is a Progress with `role="meter"`: a level, not a task. `data-level="hi
 
 `tray-usage--sm` is the compact block for the foot of the sidebar: one limit and a link to upgrade.
 
+## Accessibility
+Each bar is a `role="meter"` named by its `aria-label`, with `aria-valuemin`, `aria-valuemax` and `aria-valuenow` in the units of its words. Add `aria-valuetext` with those words ("842 of 1,000"), so a screen reader reads what the page shows. A limit that is near shows in the `danger` value and in the note with its icon and words, never in colour alone. The bar stays ink, and with forced colours it is drawn in the system's colours.
+
 ## Do and don't
 - Do print both numbers: "842 of 1,000", not "84%".
 - Do say when the count starts again: "Resets on 1 December".

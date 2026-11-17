@@ -14,6 +14,9 @@ What never mirrors: numbers, charts' time axes, media controls, and the code in 
 ## You provide
 `dir` and `lang` on the document, and for mixed content `dir="auto"` on user-written text so a Latin name inside an Arabic page reads correctly.
 
+## Accessibility
+Set `lang` along with `dir`: a screen reader takes its voice and pronunciation from `lang`, and `dir` says nothing about the language. Reading order and `Tab` order follow the source, so a mirrored page is read in the same order as before. In a right-to-left page `ArrowLeft` and `ArrowRight` swap in Tabs, in the plot of a bar, line or area Chart, and in the Lightbox, so the arrow keys still point the way things move.
+
 ## Do and don't
 - Do test one real screen in a right-to-left language before shipping there.
 - Don't use physical properties (`margin-left`, `text-align: right`) in product styles built on this system.

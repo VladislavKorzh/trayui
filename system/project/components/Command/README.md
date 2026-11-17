@@ -18,11 +18,11 @@ Command is a search field over a list of destinations and actions: type a few le
 ```
 It is a `raised` panel with the float shadow, usually opened inside a Dialog by a shortcut (Ctrl K) and by a visible search button. Typing filters the options; a group with nothing left disappears; the first match is highlighted. The panel fires `tray:select` with `detail.value`.
 
-## Keyboard
-Focus stays in the field. Up and down move the highlight, Enter runs it, Escape closes the dialog around it.
-
 ## You provide
 The list (pages, recent items, actions), one icon per option, shortcuts where they exist, and the sentence for no results.
+
+## Accessibility
+Focus stays in the field. Up and down move the highlight and wrap at the ends, Enter runs it, Escape closes the dialog around it. The field gets `role="combobox"`, `aria-expanded="true"` and `aria-controls` naming the list, which becomes a `listbox`, and the highlight is `aria-activedescendant`, so a screen reader reads each option as it is reached. There is no visible label, so keep the field's `aria-label`. An option's name is all its text, shortcut keys included, and its icon is `aria-hidden`.
 
 ## Do and don't
 - Do put what people do most at the top, before they type.

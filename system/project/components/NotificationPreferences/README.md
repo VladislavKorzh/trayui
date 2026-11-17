@@ -23,6 +23,9 @@ Every checkbox has an `aria-label` that joins its row and its column: "A new ord
 
 Group the rows with `tray-matrix__group`. Three or four channels fit; with more, give each event its own row of Switches in a Settings Section.
 
+## Accessibility
+It is a real `<table>`: `scope="col"` and `scope="row"` tie each box to its channel and its event. Each checkbox also carries an `aria-label` that says both ("A new order arrives, by email"), so it makes sense on its own. `Space` checks it, and the 3px ink ring shows on the box. A box that cannot be turned off is `disabled`: it is announced as unavailable and skipped by `Tab`, and the line under the event says why. Give the table a name with a `<caption>`, or with `aria-labelledby` on the heading above it. A quiet Toast is a `role="status"` region, so the confirmation is read without moving focus.
+
 ## Do and don't
 - Do save each change at once and confirm with a quiet Toast.
 - Do word the rows as events: "A new order arrives".

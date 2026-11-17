@@ -14,6 +14,9 @@ The trigger is `nav` type with the 44px tile beside it; the plus turns into a cr
 ## Collapsible or Accordion
 One block of optional detail is a collapsible. A set of sibling questions is an Accordion.
 
+## Accessibility
+It is the browser's own `<details>`: `Tab` reaches the `<summary>`, `Enter` or `Space` opens and closes it, and screen readers announce it as expanded or collapsed. The trigger's text is its name and the plus tile is `aria-hidden`, so the announced state does the work the tile does for the eye. The trigger is at least 44px tall and takes the 3px `ink` focus ring.
+
 ## Do and don't
 - Do keep the same trigger text open and closed; the tile shows the state.
 - Do make sure what is hidden is optional.

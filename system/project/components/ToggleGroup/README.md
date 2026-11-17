@@ -16,6 +16,9 @@ The inputs are real radios, so the arrow keys and form submission work without s
 
 Modifiers: `tray-seg--fill` (equal columns across the full width), `tray-seg--sm` (44px segments, `nav` type), `tray-seg--icon` (square, icon-only segments; each input needs an `aria-label`).
 
+## Accessibility
+A single choice is a `role="radiogroup"` of real radios, named by its `aria-label` or by `aria-labelledby` on a visible label. `Tab` reaches the group at the chosen segment, and the arrow keys move the choice, passing over a `disabled` one. Several choices are checkboxes in a `role="group"`: `Tab` moves between them and `Space` turns each on or off. Each segment is named by its text, so an icon-only one needs an `aria-label` on its input. Focus draws the 3px ink ring round the segment, the chosen one is solid ink, and with forced colours it takes the system's colours for a chosen item. Under `prefers-reduced-motion: reduce` the pill moves to the new segment at once.
+
 ## Do and don't
 - Do keep every label to one or two words.
 - Do put a second line (a price, a count) inside the segment in weight 400 when it helps the choice.

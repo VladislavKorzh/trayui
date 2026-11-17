@@ -25,6 +25,12 @@ The user menu opens from the avatar at the end of the top bar: who is signed in,
 
 Listen for `tray:select` on the anchor to act on an item. The theme item is a `menuitemcheckbox`: read its `aria-checked` after the click and set `data-theme` on `<html>`.
 
+## Accessibility
+- It is a Dropdown Menu: the avatar button gets `aria-haspopup="menu"` and `aria-expanded`, and since it shows only initials its `aria-label` names the person. The panel is a `menu` of `menuitem` and `menuitemcheckbox` items.
+- `Enter`, `Space` or `ArrowDown` opens the menu with focus on the first item. `ArrowUp` and `ArrowDown` move round the items, `Home` and `End` jump, and `Escape` closes the menu and returns focus to the avatar.
+- Choosing a `menuitem` closes the menu and returns focus too. The theme item flips its `aria-checked` instead, which is announced, and the menu stays open. A check and a semibold label show its state, not a colour.
+- Focus draws the ring inside the item. Under `prefers-reduced-motion: reduce` the menu only fades in.
+
 ## Do and don't
 - Do order the menu: the person, their pages, preferences, help, sign out last.
 - Do show the email, so a person with two accounts can tell them apart.

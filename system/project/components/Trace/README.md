@@ -26,6 +26,9 @@ Each line is a 32px icon tile, a title that starts with a bold verb, and a time.
 
 A step's output goes in `tray-trace__detail` under its line, usually a small Code Block inside a Collapsible. Wrap the whole trace in `tray-trace-group`, a disclosure that reads "Worked for 42 seconds, 5 steps": open while the work runs, closed once the answer is there.
 
+## Accessibility
+The group is the browser's own `<details>`: `Enter` or `Space` on its summary opens and closes it, and a screen reader announces it as expanded or collapsed. The steps are an `<ol>`, so each line is read with its place, and the icons and the spinner in the tiles are `aria-hidden`. The words carry the state: a running step speaks in the present tense and a failed one says what failed, so the `danger` colour is never the only sign. The trace is not a live region, so steps added while it runs are not announced. Under `prefers-reduced-motion: reduce` the group opens at once instead of unfolding.
+
 ## Do and don't
 - Do write each step as verb plus object: "Read orders.csv", "Searched for chilled delivery".
 - Do put a request for permission outside the trace, as an Item with Approve and Deny buttons; it is a question, not activity.

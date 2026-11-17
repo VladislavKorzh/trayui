@@ -26,8 +26,12 @@ A dropdown menu is a short list of actions that opens from a button.
 
 `tray-pop--end` aligns the panel to the end edge, for a "more" button at the end of a row.
 
-## Keyboard
-Enter, Space or the down arrow opens the menu on its first item; up and down move; right opens a submenu and left leaves it; Enter runs the item; Escape closes and returns focus to the button.
+## Accessibility
+- `Enter`, `Space` or `ArrowDown` opens the menu on its first item. `ArrowUp` and `ArrowDown` move and wrap at the ends, `Home` and `End` jump to the first and last item, `ArrowRight` opens a submenu and `ArrowLeft` leaves it, and `Escape` closes the menu and returns focus to the button.
+- `Enter` or `Space` runs an item. On a check or radio item it sets `aria-checked` instead, which also draws the tick, and the menu stays open.
+- The behaviour gives the panel `role="menu"` and the button `aria-haspopup="menu"` and `aria-expanded`. An icon-only trigger needs an `aria-label` ("More actions").
+- The item under focus draws the 3px ink ring inside its edge. Write what a destructive item does in words ("Delete order"): its `danger` colour is not a warning on its own.
+- Under `prefers-reduced-motion: reduce` the panel only fades, in a tenth of a second.
 
 ## Do and don't
 - Do order items by how often they are used, and group them with a rule.

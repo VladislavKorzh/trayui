@@ -33,6 +33,9 @@ A video player is a film with the system's controls under it: play, the place in
 ## You provide
 The film, a poster the size of the film, captions in WebVTT, and the `width` and `height` of the film on the `<video>`, so its box keeps its shape before anything loads. Below the first screen, add `loading="lazy"` to the video.
 
+## Accessibility
+The bar is the way in for a keyboard: once the behaviour turns the browser's controls off, the `<video>` takes no focus, and every part of the bar is a button or a range with a name. `Enter` or `Space` presses a button, and the arrow keys move the seek slider by its `step`. Focus draws the 3px ink ring on the bar's controls, and the large play button has its own ring 4px out. The `<figcaption>` names the figure, and the captions come from your WebVTT `<track>`: the player only shows and hides them.
+
 ## Do and don't
 - Do give every film with speech captions, and say in the caption under it how long it is.
 - Do keep `preload="metadata"`: the film loads when it is played, not when the page opens.

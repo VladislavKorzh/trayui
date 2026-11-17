@@ -22,6 +22,9 @@ The link covers the whole tray, so the card opens the file anywhere it is presse
 | Failed | `data-state="error"` on the attachment: the meta line turns `danger` and says why; the button becomes Retry. |
 | Sent | Name and size; the button is Download in a thread, Remove in a composer. |
 
+## Accessibility
+The file name is a link that covers the tray, so the name is what a screen reader hears for it, and the type and size in the meta line follow in reading order. The tile is decoration: keep its icon `aria-hidden`, and give an `<img>` in it `alt=""`, since the name is written beside it. While a file uploads, its `tray-progress__bar` takes `role="progressbar"`, an `aria-label` and an `aria-valuenow` kept up to date. A failed file says why in words in the meta line, and the `danger` colour only repeats it.
+
 ## Do and don't
 - Do show the real file name, shortened in the middle if it is long, and its type and size.
 - Do give the remove and retry buttons labels that name the file.

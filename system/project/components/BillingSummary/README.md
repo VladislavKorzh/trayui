@@ -27,6 +27,9 @@ It is built from Card, the price of the Pricing Table (`tray-plan__price`), Badg
 
 The badge says the state of the subscription in a word: "Active", "Trial, 5 days left", "Payment failed", "Cancels on 1 December".
 
+## Accessibility
+Each card opens with a heading, so a screen reader can reach it from the page's list of headings. The badge is read as its word, and its yellow adds nothing a screen reader hears. The next invoice is a Description List, so each fact keeps its term. On the ink card every colour takes its on-dark step, the focus ring too, so the ring shows on the dark ground. Name each button for its outcome, as "Change plan" and "Cancel plan" do.
+
 ## Do and don't
 - Do print the renewal date in full, with the year.
 - Do keep "Cancel plan" a ghost button beside the main one: easy to find, hard to hit by accident.

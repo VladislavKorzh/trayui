@@ -21,6 +21,9 @@ The checkout summary is the card beside a payment form: what is being bought, li
 ```
 Each line is a name at the start edge and an amount at the end edge; a `<small>` under the name explains it. The total sits over a hairline in `subtitle` size. The pay button repeats the amount.
 
+## Accessibility
+It is an `<aside>` named by its heading through `aria-labelledby`, so a screen reader lists it as a landmark called "Your plan". Each line reads as its name, the note in `<small>`, then the amount. Write a discount with the minus sign `&minus;`, as the example does, so it is read as minus. The promo code field needs a name: the example's `aria-label` gives one, and its placeholder alone would not. The summary has no live region, so when a code is applied or refused, say so in a status line or a field error.
+
 ## Do and don't
 - Do show tax and discounts as their own lines, so the total can be checked by adding.
 - Do say when the next charge comes and how much it is.

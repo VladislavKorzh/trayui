@@ -34,6 +34,13 @@ A sidebar is the navigation of an application: a tray down the side with groups 
 
 The Sidebar blocks show each of these in a page.
 
+## Accessibility
+- The sidebar is a `<nav>` named by its `aria-label`. The link to the current page carries `aria-current="page"` (`"true"` in a second level).
+- The current item is solid ink, a current second-level item semibold, and with forced colours the current item takes the system's colours for a chosen item. Focus draws the ring inside the row.
+- The collapse button keeps `aria-expanded` in step: `true` while the sidebar is open, `false` while it is a rail.
+- In the rail the labels, counts and group names are `display: none`, so they are not read either: give every link an `aria-label` with its name, and a Tooltip to show it.
+- On a small screen the menu button gets `aria-haspopup="dialog"` and `aria-expanded`, and opens the sidebar in a modal sheet that takes the sidebar's name. Following a link closes the sheet.
+
 ## Do and don't
 - Do keep two levels at most.
 - Do put the most used destinations first, not the alphabet.

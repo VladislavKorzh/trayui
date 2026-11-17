@@ -1,6 +1,6 @@
 # Changelog
 
-What changed in each version of Tray UI.
+What changed in each version of Tray UI, the design system in plain HTML and CSS: its components, blocks, themes and tools, newest first.
 
 ## 0.1.0, November 2026
 

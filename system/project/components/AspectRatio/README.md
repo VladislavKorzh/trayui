@@ -8,6 +8,9 @@ Aspect ratio keeps a box in a fixed proportion while its width changes, so media
 ## You provide
 The media, its alt text, and a ratio that suits the content: 16 to 9 for video, 4 to 3 for product shots, square for avatars and thumbnails in a grid.
 
+## Accessibility
+The box adds nothing for a screen reader: only its child is heard. Give an `<img>` real `alt` text, or `alt=""` when the picture is decoration, and give a `<video>` its captions and controls.
+
 ## Do and don't
 - Do keep one ratio per row of cards.
 - Do set `object-position` when the subject is off-centre.

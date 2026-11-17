@@ -82,7 +82,7 @@ The mark is a Tray Yellow tile with an ink bar set on it: a tray with one thing 
 
 The icons are Lucide's (lucide.dev): strokes with round caps and joins, 20px with a 2px stroke, in the colour of the text beside them. Over a hundred are built in, by Lucide's names (src/icons.json lists them); any other Lucide icon fits beside them. Use `<svg class="tray-icon"><use href="#tray-i-name"/></svg>`; the bundle adds the sprite. The same drawings are in the Icons asset group as single-ink SVG files. An icon never replaces a label except in an icon button, which then carries an `aria-label` and a Tooltip. Icons that point along the reading direction take `tray-icon--flip` so they mirror in right-to-left pages.
 
-There is no logo. Set the product's name in `subtitle`-weight type (`tray-wordmark`) until a mark exists.
+A product built with the system that has no mark of its own sets its name in type with `tray-wordmark`, as the blocks do.
 
 ## Components
 
