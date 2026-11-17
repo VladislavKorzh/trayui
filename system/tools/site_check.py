@@ -78,6 +78,7 @@ def main():
     article_ids = [i for i in by_section.get('articles', []) if i != 'articles']  # the articles, without the page that lists them
     titles = [s['title'] for s in site['sections']]  # Docs, Components, Blocks, Charts, and Articles once there is one
     every = ['home'] + docs + comps + by_section['blocks'] + chart_pages + by_section.get('articles', [])
+    sideless = {'home'} | {i for sec in site['sections'] if sec.get('side') is False for i in by_section[sec['id']]}  # pages shown with no sidebar
     framed = set(block_ids)
     contrast = re.search(r'CONTRAST_JS = r"""(.*?)"""', (ROOT / 'tools' / 'shoot.py').read_text(encoding='utf-8'), re.S).group(1)
     check('every page of the map has a place in a sidebar, or is the home page', sorted(every) == sorted(index), sorted(set(index) ^ set(every))[:6])
@@ -342,7 +343,7 @@ def main():
             state = pg.evaluate('''() => ({ h: document.querySelector('#site-view h1')?.textContent, cur: document.querySelector('#site-nav [aria-current="page"]')?.getAttribute('href') ?? null,
                                       over: document.documentElement.scrollWidth - document.documentElement.clientWidth, stage: document.querySelector('.site-stage')?.children.length ?? -1,
                                       busy: document.querySelector('#site-view').hasAttribute('aria-busy') })''')
-            wrong = not state['h'] or state['over'] > 1 or state['stage'] == 0 or state['busy'] or (i != 'home' and state['cur'] != '/' + index[i]['path'])
+            wrong = not state['h'] or state['over'] > 1 or state['stage'] == 0 or state['busy'] or (i not in sideless and state['cur'] != '/' + index[i]['path'])
             if i in framed:
                 f = pg.evaluate(FRAME_JS)
                 if not f or f['kids'] < 2 or not f['styled'] or not f['wired'] or f['over'] > 1:
@@ -584,6 +585,11 @@ def main():
                   here(pg) == article_ids[0] and pg.url.endswith(mark) and 40 < top < 160 and 0 < sticky < 160, (here(pg), pg.url, top, sticky))
             pg.go_back(); pg.wait_for_timeout(300)
             check('going back from a heading stays on the article', here(pg) == article_ids[0] and '#' not in pg.url, pg.url)
+            no_side = pg.locator('.tray-app__side').is_hidden() and pg.locator('#site-sections [aria-current="page"]').inner_text() == 'Articles'
+            go(pg, 'c-button'); pg.wait_for_timeout(300)
+            check('the Articles have no sidebar, their topics being tabs, and the next section has its sidebar again',
+                  no_side and pg.locator('.tray-app__side').is_visible() and pg.locator('#site-nav [aria-current="page"]').count() == 1, no_side)
+        check('the foot of a page says what Tray UI is and its licence, and names no one', 'Maintained by' not in page_of('c-button') and 'MIT licence.' in page_of('c-button'))
 
         # ---------- themes ----------
         for theme in ('light', 'dark'):
@@ -636,7 +642,7 @@ def main():
               and pg.input_value('[data-maker-base]') == 'mint' and pg.input_value('[data-seed-hex="accent"]') == '#68efaf', theme_now())
         check('the mark and the icon of the tab take the accent of the theme', pg.evaluate("getComputedStyle(document.querySelector('.site-top .site-mark__tile')).fill") == 'rgb(104, 239, 175)'
               and pg.evaluate("decodeURIComponent(document.querySelector('link[rel=icon]').href).includes('fill=\"#68efaf\"')"))
-        pg.fill('[data-seed-hex="accent"]', '#ff7ad9'); pg.wait_for_timeout(200)
+        pg.fill('[data-seed-hex="accent"]', '#ff7ad9'); pg.wait_for_timeout(200); settled(pg)  # the button's fill moves to the new colour: read it where it stops
         check('a colour typed into the maker redraws its preview, and the rules still hold', pg.evaluate("getComputedStyle(document.querySelector('[data-maker-preview] .tray-btn')).backgroundColor") == 'rgb(255, 122, 217)'
               and 'All 66 rules hold' in pg.inner_text('[data-maker-verdict]'), pg.inner_text('[data-maker-verdict]')[:60])
         pg.fill('[data-seed-hex="ink"]', '#7a8a80'); pg.wait_for_timeout(200)

@@ -152,16 +152,18 @@
   }
 
   /* The section a page belongs to decides which sidebar is shown and which link in the header is current. The home page has
-     neither. A page that came drawn in its file came with them: they are kept. */
+     neither, and a section marked side: false (the Articles) has no sidebar. A page that came drawn in its file came with
+     them: they are kept. */
   function showSection(sec) {
     if (sec === section) return;
     section = sec;
-    var key = sec ? sec.id : '';
+    var key = sec ? sec.id : '', side = !!sec && sec.side !== false;
     navs.forEach(function (nav) {
       if (nav.getAttribute('data-section') === key) return;
-      nav.innerHTML = sec ? navHtml(sec) : '';
+      nav.innerHTML = side ? navHtml(sec) : '';
       nav.setAttribute('data-section', key);
     });
+    if (sec && !side) document.documentElement.setAttribute('data-noside', ''); else document.documentElement.removeAttribute('data-noside');
     switches.forEach(function (n) {
       if (n.getAttribute('data-section') === key) return;
       n.innerHTML = S.sections.map(function (s) { return '<a class="tray-tab" href="' + href(s.home) + '"' + (s === sec ? ' aria-current="page"' : '') + '>' + esc(s.title) + '</a>'; }).join('');

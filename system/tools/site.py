@@ -836,7 +836,9 @@ def build():
                 {'id': 'blocks', 'title': 'Blocks', 'home': 'blocks', 'nav': block_nav},
                 {'id': 'charts', 'title': 'Charts', 'home': 'charts', 'nav': chart_nav}]
     if articles:
-        sections.append({'id': 'articles', 'title': 'Articles', 'home': 'articles', 'nav': article_nav})
+        # No sidebar: the Articles page shows its topics as tabs and its articles as cards, and an article has its own contents.
+        # Its list of pages still names every article for the search and the map of the site.
+        sections.append({'id': 'articles', 'title': 'Articles', 'home': 'articles', 'nav': article_nav, 'side': False})
 
     # Where a page's content travels: 'pages/<id>' is a file of its own, loaded when the page is opened from another one,
     # so a visit loads only what it shows. data.js, loaded on every visit, holds only the map of the site.
@@ -1147,14 +1149,13 @@ def build():
     facts['theme_menu'] = addressed(facts['theme_menu'], index)
 
     def foot(ident):
-        """The foot of every page but the home page, which has a footer of its own: what this is, its licence, who keeps it."""
+        """The foot of every page but the home page, which has a footer of its own: what this is, and its licence."""
         md = f'/{route(ident)}.md'
         source = ''
         if facts['repo'] and ident.startswith('c-'):
             name = next(c['name'] for c in comps if c['id'] == ident)
             source = f'<li><a href="{facts["repo"]}/blob/main/system/project/components/{name}/README.md">Source of this page</a></li>'
-        by = f' Maintained by <a href="{facts["author_url"]}">{html.escape(facts["author"])}</a>.' if facts['author'] else ''
-        return (f'<footer class="site-foot"><p>Tray UI {VERSION}, a design system in plain HTML and CSS, released under the {facts["license"]} licence.{by}</p>'
+        return (f'<footer class="site-foot"><p>Tray UI {VERSION}, a design system in plain HTML and CSS, released under the {facts["license"]} licence.</p>'
                 '<ul class="tray-footer__legal"><li><a href="/docs/changelog">Changelog</a></li>'
                 f'<li><a href="{md}">This page in Markdown</a></li><li><a href="/llms.txt">llms.txt</a></li>{source}</ul></footer>')
     for ident in index:
@@ -1302,7 +1303,8 @@ def build():
                    page_url=url, og_image=f'{facts["site"]}/{meta["og"]}' if meta.get('og') and facts['site'] else '',
                    og_alt=html.escape(f'Tray UI: {meta["title"]}' if not home else f'Tray UI: {len(comps)} components in plain HTML and CSS'),
                    md_url='' if home else f'/{meta["path"]}.md', jsonld=graph(ident, meta, sec) if facts['site'] else '',
-                   nav_html=nav_html(sec, ident) if sec else '', view_html=entry['html'], wide=bool(meta.get('wide')),
+                   nav_html=nav_html(sec, ident) if sec and sec.get('side', True) else '', noside=bool(sec and sec.get('side') is False),
+                   view_html=entry['html'], wide=bool(meta.get('wide')),
                    sections_tabs=''.join(f'<a class="tray-tab" href="/{route(s["home"])}"' + (' aria-current="page"' if s is sec else '') + f'>{html.escape(s["title"])}</a>' for s in sections),
                    preload='' if meta.get('bare') else meta['file'], own_pages=hashed if home else '{}', feed=bool(articles and facts['site']))
         out = OUT / ('index.html' if home else meta['path'] + '.html')

@@ -40,6 +40,11 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 :root[data-home] .site { grid-template-columns: minmax(0, 1fr); }
 :root[data-home] .site > .tray-app__side { display: none; }
 :root[data-home] .site .tray-app__content { inline-size: min(100%, var(--container)); }
+/* A section with no sidebar (the Articles, whose topics are tabs on its page) has one column too; its pages keep their own width. */
+:root[data-noside] .site { grid-template-columns: minmax(0, 1fr); }
+:root[data-noside] .site > .tray-app__side { display: none; }
+/* A list of pages with nothing in it (on the home page, or in such a section) is not shown in the menu of a phone. */
+.site-nav:empty { display: none; }
 /* The home page is drawn in index.html. Opened there at another page (by its hash), it stays out of sight until that
    page is drawn. Every other page is drawn in its own file, and shows at once, script or none. */
 :root:not([data-home]) #site-view[data-prerendered="home"] > * { display: none; }
