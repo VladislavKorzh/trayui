@@ -3,7 +3,7 @@
 //   node scripts/build.mjs
 // Run `python3 ../tools/build.py` first when the system's CSS, behaviours or icons changed: it regenerates src/runtime.ts, src/icons.ts and styles/.
 import { execFileSync } from 'node:child_process';
-import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -24,6 +24,26 @@ try {
   console.error('build: the TypeScript compile failed');
   process.exit(1);
 }
+/* The package is an ES module, and Node, webpack (Next.js) and every other resolver that follows the standard want each
+   relative import to name its file: './components/Button' becomes './components/Button.js', a folder its index.js. The
+   types get the same, which TypeScript reads as the .d.ts beside it. */
+function specify(dir) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) { specify(path); continue; }
+    if (!/\.(js|d\.ts)$/.test(entry.name)) continue;
+    const text = readFileSync(path, 'utf8');
+    const out = text.replace(/(\bfrom\s*|\bimport\s*\(\s*|\bimport\s+)(['"])(\.{1,2}\/[^'"]+?)\2/g, (whole, lead, q, spec) => {
+      if (/\.(m?js|json|css)$/.test(spec)) return whole;
+      const at = join(dirname(path), spec);
+      if (existsSync(at + '.js')) return lead + q + spec + '.js' + q;
+      if (existsSync(join(at, 'index.js'))) return lead + q + spec + '/index.js' + q;
+      return whole;
+    });
+    if (out !== text) writeFileSync(path, out);
+  }
+}
+specify(join(root, 'dist'));
 if (!existsSync(join(root, 'styles/styles.css'))) {
   console.error('build: styles/styles.css is missing; run `python3 ../tools/build.py` first');
   process.exit(1);
