@@ -26,7 +26,7 @@ files also stay at their plain addresses, for other sites to link. For readers t
 comes as Markdown at its address with .md added, llms.txt is the index of them, and llms-full.txt holds the whole
 system in one file. tools/og.py draws the picture a link to each page shows.
 """
-import gzip, hashlib, html, json, pathlib, re, shutil, subprocess, sys, zipfile
+import gzip, hashlib, html, json, pathlib, re, shutil, subprocess, sys, urllib.parse, zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 P, SRC, DIST, OUT = ROOT / 'project', ROOT / 'tools' / 'site', ROOT / 'dist', ROOT / 'site'
@@ -89,6 +89,28 @@ def icon(name, cls=''):
 def unmark(text):
     """Inline Markdown as plain text: a link keeps its words, code and bold lose their marks."""
     return ' '.join(re.sub(r'\[([^\]]+)\]\([^)]*\)', r'\1', text).replace('`', '').replace('**', '').split())
+
+
+def anchor(text):
+    """The id a heading of an article takes, from its words: 'The events a script listens to' -> the-events-a-script-listens-to."""
+    return re.sub(r'[^a-z0-9]+', '-', unmark(text).lower()).strip('-')
+
+
+def contents(md):
+    """The h2 and h3 of an article, outside its code: (level, words, id) for its list of contents."""
+    out, fence = [], False
+    for line in md.split('\n'):
+        if line.startswith('```'):
+            fence = not fence
+        elif not fence and re.match(r'#{2,3} ', line):
+            level, _, words = line.partition(' ')
+            out.append((len(level), words.strip(), anchor(words)))
+    return out
+
+
+def minutes(md):
+    """How long an article takes to read, its code left out: 220 words a minute."""
+    return max(1, round(len(re.sub(r'```.*?```', ' ', md, flags=re.S).split()) / 220))
 
 
 def fit(text, tail=''):
@@ -183,9 +205,11 @@ def code_block(text, lang, ident):
             f'<pre tabindex="0"><code id="{ident}">{colour(text, lang)}</code></pre></div>')
 
 
-def markdown(text, prefix):
-    """The Markdown the guidelines and the site's pages use: h2, h3, paragraphs, bullet and numbered lists, pipe tables, fenced code."""
+def markdown(text, prefix, anchors=False):
+    """The Markdown the guidelines and the site's pages use: h2, h3, paragraphs, bullet and numbered lists, pipe tables, fenced code.
+    With anchors, each h2 and h3 has an id from its words, for an article's list of contents to link to."""
     out, lines, i, n = [], text.strip('\n').split('\n'), 0, 0
+    at = lambda words: f' id="{anchor(words)}"' if anchors else ''
     while i < len(lines):
         line = lines[i]
         if not line.strip():
@@ -198,9 +222,9 @@ def markdown(text, prefix):
             i += 1; n += 1
             out.append(code_block('\n'.join(body), lang, f'{prefix}-code-{n}'))
         elif line.startswith('### '):
-            out.append(f'<h3 class="site-h3">{inline(line[4:])}</h3>'); i += 1
+            out.append(f'<h3 class="site-h3"{at(line[4:])}>{inline(line[4:])}</h3>'); i += 1
         elif line.startswith('## '):
-            out.append(f'<h2 class="subtitle">{inline(line[3:])}</h2>'); i += 1
+            out.append(f'<h2 class="subtitle"{at(line[3:])}>{inline(line[3:])}</h2>'); i += 1
         elif line.startswith('# '):
             out.append(f'<h2 class="subtitle">{inline(line[2:])}</h2>'); i += 1
         elif line.startswith('|'):
@@ -276,7 +300,8 @@ def read_page(f, ident, group):
 
 def read_articles():
     """The articles, newest first: tools/site/articles/<name>.md, each listed in articles.json with the day it was published,
-    its topic, which groups it in the sidebar, and the short name the sidebar gives it. An article the list leaves out, or a name with no file, stops the build."""
+    its topic, which groups it in the sidebar, and the short name the sidebar gives it. An article the list leaves out, or a name with no file, stops the build.
+    Each has a picture beside it, <name>.svg, drawn in the colour tokens so it wears the theme of the site; an article without one stops the build too."""
     folder = SRC / 'articles'
     if not folder.exists():
         return []
@@ -289,7 +314,15 @@ def read_articles():
         p = read_page(folder / f'{a["name"]}.md', 'a-' + a['name'], a['topic'])
         if not re.fullmatch(r'\d{4}-\d\d-\d\d', a['published']):
             sys.exit(f'tools/site/articles/articles.json: {a["name"]} was published on {a["published"]!r}, not a day as 2026-11-17')
-        p.update(published=a['published'], nav=a.get('nav') or p['title'], src=[f'system/tools/site/articles/{a["name"]}.md'])
+        art = folder / f'{a["name"]}.svg'
+        if not art.exists():
+            sys.exit(f'tools/site/articles: {a["name"]} has no picture: draw {a["name"]}.svg (a 480 by 270 viewBox, its colours the tokens of the theme)')
+        svg = re.sub(r'>\s+<', '><', re.sub(r'<!--.*?-->', '', art.read_text(encoding='utf-8'), flags=re.S).strip())
+        if not svg.startswith('<svg ') or ' id="' in svg:  # the list shows a picture more than once: an id inside it would not be one
+            sys.exit(f'tools/site/articles/{a["name"]}.svg: one <svg> with no id inside')
+        p.update(published=a['published'], nav=a.get('nav') or p['title'], minutes=minutes(p['guide']), contents=contents(p['guide']),
+                 art=svg.replace('<svg ', '<svg aria-hidden="true" focusable="false" ', 1),
+                 src=[f'system/tools/site/articles/{a["name"]}.md', f'system/tools/site/articles/{a["name"]}.svg'])
         out.append(p)
     return sorted(out, key=lambda p: p['published'], reverse=True)  # the same day keeps the order of the list
 
@@ -934,21 +967,95 @@ def build():
         page(g['page'], g['title'], group, 'charts', body + pager(chart_seq[i - 1], chart_seq[i + 1] if i + 1 < len(chart_seq) else None), g['summary'], wide=True,
              md=md, card={'kind': 'Charts'}, src=chart_files([g]))
 
-    # articles: how to build a part of an interface in plain HTML, CSS and JavaScript, worked through with the code of the system
+    # articles: how to build a part of an interface in plain HTML, CSS and JavaScript, worked through with the code of the system.
+    # The list is laid out as the journal block lays out a journal (articles-01), and an article as the long read does (article-01), without its wide picture.
     if articles:
-        byline = lambda a: ('<p class="site-byline">' + (f'By <a href="{html.escape(facts["author_url"])}">{html.escape(facts["author"])}</a>, ' if facts['author'] else '')
-                            + f'<time datetime="{a["published"]}">{day(a["published"])}</time>.</p>')
+        esc, author, author_url = html.escape, facts['author'], facts['author_url']
         article_summary = 'How to build the parts of an interface in plain HTML, CSS and JavaScript, accessible from the start, worked through with the code of Tray UI.'
-        listing = ''.join(f'<article class="site-teaser"><h2 class="subtitle"><a href="#{a["id"]}">{html.escape(a["title"])}</a></h2><p>{inline(a["summary"])}</p>'
-                          f'<p class="site-byline"><time datetime="{a["published"]}">{day(a["published"])}</time>, {html.escape(a["group"].lower())}</p></article>' for a in articles)
         art_seq = [{'id': 'articles', 'title': 'All articles'}] + articles
-        page('articles', 'Articles', '', 'articles', head('Articles', article_summary) + f'<section class="site-prose site-teasers">{listing}</section>' + pager(None, art_seq[1]),
+        when = lambda a: f'<time datetime="{a["published"]}">{day(a["published"])}</time>'
+        about = lambda a: esc(unmark(a['summary']))  # plain words: a card is a link, and a link may not hold another
+        thumb = lambda a, span='': f'<div class="site-thumb{" " + span if span else ""}">{a["art"]}</div>'
+        numbers = ('No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine')
+
+        def person(small=False, link=True):
+            """The author as the blocks show one: initials in an avatar, the name, and what they do here."""
+            if not author:
+                return ''
+            name = f'<a href="{esc(author_url)}">{esc(author)}</a>' if link and author_url else esc(author)
+            return (f'<span class="tray-person"><span class="tray-avatar{" tray-avatar--sm" if small else ""}" aria-hidden="true">{"".join(w[0] for w in author.split()[:2]).upper()}</span>'
+                    f'<span class="tray-person__text"><b>{name}</b><small>Maintains Tray UI</small></span></span>')
+
+        def featured(a):
+            return (f'<a class="tray-card site-lead" href="#{a["id"]}" aria-labelledby="art-lead"><div class="tray-bento">{thumb(a, "tray-span-7")}'
+                    f'<div class="tray-feature tray-span-5"><div class="tray-row tray-row--sm"><span class="tray-badge">{esc(a["group"])}</span><span class="caption tray-muted">{when(a)}</span></div>'
+                    f'<h2 class="title" id="art-lead">{esc(a["title"])}</h2><p>{about(a)}</p>'
+                    f'<div class="tray-feature__end tray-row tray-row--between">{person(small=True, link=False)}'
+                    f'<span class="tray-row tray-row--sm caption tray-muted">{icon("clock", "tray-icon--sm")}{a["minutes"]} minutes to read</span></div></div></div></a>')
+
+        def teasers(items, key, level):
+            span = 'tray-span-6' if len(items) < 3 else 'tray-span-4'  # two to a row while there are two, then three
+            return '<div class="tray-bento">' + ''.join(
+                f'<a class="tray-card {span}" href="#{a["id"]}" aria-labelledby="{key}-{a["id"]}"><div class="tray-stack">{thumb(a)}'
+                f'<div class="tray-row tray-row--sm"><span class="tray-badge">{esc(a["group"])}</span><span class="caption tray-muted">{when(a)}, {a["minutes"]} minutes</span></div>'
+                f'<{level} class="subtitle" id="{key}-{a["id"]}">{esc(a["title"])}</{level}><p class="tray-soft">{about(a)}</p></div></a>' for a in items) + '</div>'
+
+        # the list: a tab for every topic with its count, the newest article large, the others in a grid, then the feed
+        rest = articles[1:]
+        more = (f'<section class="tray-stack tray-stack--lg" aria-labelledby="art-more"><div class="tray-stack tray-stack--sm"><h2 class="subtitle" id="art-more">More articles</h2>'
+                f'<p class="tray-soft">{numbers[len(rest)] if len(rest) < 10 else len(rest)} more, newest first.</p></div>{teasers(rest, "art-all", "h3")}</section>') if rest else ''
+        sets = [('all', 'All', articles)] + [(anchor(t), t, [a for a in articles if a['group'] == t]) for t in topics]
+        chosen = ' aria-selected="true"'
+        tablist = ''.join(f'<button class="tray-tab" role="tab"{chosen if k == "all" else ""} aria-controls="art-{k}" id="art-tab-{k}" type="button">'
+                          f'{esc(name)}<span class="tray-badge tray-badge--count">{len(items)}</span></button>' for k, name, items in sets)
+        panels = ''.join(f'<div class="tray-tabpanel tray-stack site-articles__panel" role="tabpanel" id="art-{k}" aria-labelledby="art-tab-{k}"{"" if k == "all" else " hidden"}>'
+                         + (featured(articles[0]) + more if k == 'all' else teasers(items, f'art-{k}', 'h2')) + '</div>' for k, _, items in sets)
+        follow = (f'<section class="tray-card tray-cta" aria-labelledby="art-follow"><div class="tray-cta__text"><h2 class="subtitle" id="art-follow">New articles in a feed</h2>'
+                  f'<p class="tray-soft">Add the Atom feed to a feed reader, and each new article comes to you whole, with its code.</p></div>'
+                  f'<div class="tray-cta__actions"><button class="tray-btn" type="button" data-tray="copy" data-target="#art-feed">{icon("copy")}<span data-label>Copy the feed address</span></button>'
+                  f'<a class="tray-btn tray-btn--quiet" href="/articles/feed.xml">Open the feed</a><span id="art-feed" hidden>{facts["site"]}/articles/feed.xml</span></div></section>'
+                  ) if facts['site'] else ''  # the feed is written only for a site with an address
+        page('articles', 'Articles', '', 'articles',
+             head('Articles', article_summary) + f'<div class="site-articles" data-tray="tabs"><div class="tray-tabs" role="tablist" aria-label="Topics" data-tray="strip">{tablist}</div>{panels}</div>'
+             + follow + pager(None, art_seq[1]),
              article_summary, md=md_page('Articles', article_summary, ''.join(f'- [{a["title"]}](#{a["id"]}), {day(a["published"])}: {unmark(a["summary"])}\n' for a in articles)),
              card={'kind': 'Articles'}, src=[s for a in articles for s in a['src']])
+
+        # an article: the way back, its head with who wrote it, when and for how long, its contents beside it, then the pages it uses and a way to share it
         for i, a in enumerate(articles, 1):
-            a['prose'] = markdown(a['guide'], a['id'])  # also the content of its entry in the feed
+            marks = [c[2] for c in a['contents']]
+            taken = [m for m in marks if marks.count(m) > 1 or m in index or m.startswith(('site-', 'tray-', 'art-'))]  # a page's id, or one the site or the system uses
+            if taken:
+                sys.exit(f'tools/site/articles/{a["id"][2:]}.md: these headings make an id that is taken: {sorted(set(taken))}')
+            a['prose'] = markdown(a['guide'], a['id'], anchors=True)  # also the content of its entry in the feed
+            links, subs = '', ''
+            for level, words, mark in a['contents'] + [(2, '', '')]:  # the last, empty, closes a list of h3s still open
+                if level == 3:
+                    subs += f'<li><a class="tray-sidebar__item" href="#{mark}">{esc(unmark(words))}</a></li>'
+                    continue
+                links += (f'<ul class="tray-sidebar__sub tray-sidebar__sub--text">{subs}</ul>' if subs else '') + (f'<a class="tray-sidebar__item" href="#{mark}"><span>{esc(unmark(words))}</span></a>' if mark else '')
+                subs = ''
+            # beside the article on a wide screen, folded above it on a narrow one: one or the other is shown
+            side = (f'<nav class="tray-sidebar tray-sidebar--plain site-toc" aria-label="Contents" data-anchors><div class="tray-sidebar__group">'
+                    f'<p class="tray-sidebar__label">Contents</p>{links}</div></nav>')
+            fold = (f'<details class="tray-collapsible site-toc-fold"><summary><span>Contents</span><span class="tray-tile" aria-hidden="true">{icon("plus")}</span></summary>'
+                    f'<nav class="tray-sidebar tray-sidebar--plain tray-collapsible__body" aria-label="Contents" data-anchors><div class="tray-sidebar__group">{links}</div></nav></details>')
+            meta = (f'<div class="tray-row site-post__meta">{person()}<span class="tray-badge">{esc(a["group"])}</span>'
+                    f'<span class="tray-row tray-row--sm caption tray-muted">{icon("calendar", "tray-icon--sm")}{when(a)}</span>'
+                    f'<span class="tray-row tray-row--sm caption tray-muted">{icon("clock", "tray-icon--sm")}{a["minutes"]} minutes to read</span></div>')
+            used = [u for u in dict.fromkeys(re.findall(r'\]\(#([a-z0-9-]+)\)', a['guide'])) if u in index]  # the pages of the site it links to, in its order
+            link = f'{facts["site"]}/{route(a["id"])}'
+            foot = (('<div><dt>In Tray UI</dt><dd>' + ''.join(f'<a class="tray-btn tray-btn--quiet tray-btn--sm" href="#{u}">{esc(index[u]["title"])}</a>' for u in used) + '</dd></div>' if used else '')
+                    + (f'<div><dt>Share</dt><dd><button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" data-tray="copy" data-target="#art-link">{icon("link")}<span data-label>Copy the link</span></button>'
+                       f'<a class="tray-btn tray-btn--quiet tray-btn--sm" href="mailto:?subject={urllib.parse.quote(a["title"])}&amp;body={urllib.parse.quote(link, safe="")}">{icon("mail")}Send by email</a>'
+                       f'<span id="art-link" hidden>{link}</span></dd></div>' if facts['site'] else ''))
             page(a['id'], a['title'], a['group'], 'articles',
-                 head(a['title'], a['summary']) + byline(a) + f'<article class="site-prose">{a["prose"]}</article>' + pager(art_seq[i - 1], art_seq[i + 1] if i + 1 < len(art_seq) else None),
+                 f'<article class="site-post" aria-labelledby="art-title"><header class="site-post__head"><nav aria-label="Breadcrumb"><ol class="tray-crumbs"><li><a href="#articles">Articles</a></li>'
+                 f'<li><span aria-current="page">{esc(a["nav"])}</span></li></ol></nav>'
+                 f'<div class="site-post__words"><h1 class="headline" id="art-title" tabindex="-1">{esc(a["title"])}</h1><p class="lead tray-soft">{inline(a["summary"])}</p></div>{meta}</header>'
+                 f'<div class="site-post__body">{side}<div class="site-post__main">{fold}<div class="site-prose">{a["prose"]}</div>'
+                 + (f'<footer class="site-post__foot"><dl class="tray-dl tray-dl--stack">{foot}</dl></footer>' if foot else '') + '</div></div></article>'
+                 + pager(art_seq[i - 1], art_seq[i + 1] if i + 1 < len(art_seq) else None),
                  a['summary'], md=md_page(a['title'], a['summary'], (f'By {facts["author"]}, ' if facts['author'] else '') + f'{day(a["published"])}.\n\n{a["guide"]}'),
                  card={'kind': 'Article'}, src=a['src'])
             index[a['id']]['published'] = a['published']

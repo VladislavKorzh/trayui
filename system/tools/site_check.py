@@ -128,7 +128,21 @@ def main():
         listing = page_of('articles')
         lds = {i: json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', page_of(i), re.S).group(1)) for i in article_ids}
         kinds = {i: next(n for n in ld['@graph'] if n['@type'] != 'BreadcrumbList') for i, ld in lds.items()}
-        check('the Articles page lists every article, each with the day it came out', all(f'href="/{index[i]["path"]}"' in listing for i in article_ids) and listing.count('<time datetime=') == len(article_ids))
+        every_one = listing.split('id="art-all"', 1)[-1].split('role="tabpanel"', 1)[0]  # the panel of the tab All
+        topics = [g['group'] for s in site['sections'] if s['id'] == 'articles' for g in s['nav'] if g['group']]  # the sidebar groups the articles by topic
+        check('the Articles page is laid out as the journal block: a tab for each topic with its count, the newest article large, then the others, each with its picture and day',
+              listing.count('role="tab"') == 1 + len(topics) and f'class="tray-card site-lead" href="/{index[article_ids[0]]["path"]}"' in listing
+              and all(f'href="/{index[i]["path"]}"' in every_one for i in article_ids) and every_one.count('<time datetime=') == len(article_ids)
+              and every_one.count('<div class="site-thumb') == len(article_ids) and every_one.count('<svg aria-hidden="true" focusable="false"') == len(article_ids),
+              (listing.count('role="tab"'), every_one.count('<div class="site-thumb')))
+        unread = []
+        for i in article_ids:
+            text = page_of(i)
+            marks = re.findall(r'<a class="tray-sidebar__item" href="#([a-z0-9-]+)"', text.split('class="tray-sidebar tray-sidebar--plain site-toc"', 1)[-1].split('</nav>', 1)[0])
+            if not (marks and all(f' id="{m}"' in text for m in marks) and 'class="tray-crumbs"' in text and 'class="tray-person"' in text
+                    and 'minutes to read' in text and '<time datetime=' in text and 'data-target="#art-link"' in text):
+                unread.append(i)
+        check('each article is laid out as the long read: the way back, who wrote it, its day and how long it takes, contents that lead to its headings, and a way to share it', not unread, unread)
         check('each article is an Article for search engines, with its author and the days it came out and changed',
               all(k['@type'] == 'Article' and re.fullmatch(r'\d{4}-\d\d-\d\d', k.get('datePublished', '')) and k.get('dateModified') and k['author'].get('name') and k.get('image') for k in kinds.values()),
               {i: k['@type'] for i, k in kinds.items()})
@@ -552,6 +566,24 @@ def main():
         go(pg, 'c-chart'); pg.wait_for_timeout(300)
         check('leaving the section takes its charts off the page; the plain-HTML chart still draws', pg.evaluate('window.TrayCharts && document.querySelectorAll(".recharts-wrapper").length') == 0
               and pg.locator('.site-stage .tray-chart svg').count() >= 4)
+
+        # ---------- articles ----------
+        if article_ids:
+            go(pg, 'articles'); pg.wait_for_timeout(200)
+            shown = lambda: [p.get_attribute('id') for p in pg.locator('.site-articles [role="tabpanel"]').all() if p.is_visible()]
+            pg.locator('.site-articles [role="tab"]').nth(1).click(); pg.wait_for_timeout(150)
+            one_topic = shown(), pg.locator('.site-articles [role="tabpanel"]:visible a.tray-card').count()
+            pg.locator('.site-articles [role="tab"]').first.click(); pg.wait_for_timeout(150)
+            check('the tabs of the Articles page show one topic, and All again', len(one_topic[0]) == 1 and one_topic[1] >= 1 and shown() == ['art-all'], (one_topic, shown()))
+            pg.locator('a.site-lead').click(); pg.wait_for_timeout(500)
+            mark = pg.locator('.site-toc a').nth(2).get_attribute('href')
+            pg.locator('.site-toc a').nth(2).click(); pg.wait_for_timeout(400)
+            top = pg.evaluate(f"Math.round(document.getElementById('{mark[1:]}').getBoundingClientRect().top)")
+            sticky = pg.evaluate("Math.round(document.querySelector('.site-toc').getBoundingClientRect().top)")
+            check('a card opens its article, and its contents take the reader to a heading, below the header, with the contents still in sight',
+                  here(pg) == article_ids[0] and pg.url.endswith(mark) and 40 < top < 160 and 0 < sticky < 160, (here(pg), pg.url, top, sticky))
+            pg.go_back(); pg.wait_for_timeout(300)
+            check('going back from a heading stays on the article', here(pg) == article_ids[0] and '#' not in pg.url, pg.url)
 
         # ---------- themes ----------
         for theme in ('light', 'dark'):

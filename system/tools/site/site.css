@@ -101,14 +101,36 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 .site-prose .tray-code-inline { color: var(--ink); overflow-wrap: anywhere; }
 .site-prose pre, #site-src pre { overflow-x: auto; }
 
-/* Articles: the list of them, and the line under a title that says who wrote it and when. */
-.site-byline { color: var(--ink-muted); font: 400 .9375rem/1.5 var(--font-sans); }
-.site-byline a { color: var(--ink-soft); }
-.site-teasers { gap: var(--space-8); }
-.site-teaser { display: grid; gap: var(--space-2); max-inline-size: 46rem; }
-.site-teaser h2 a { color: var(--ink); text-decoration: none; }
-.site-teaser h2 a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .2em; }
-.site-teaser > p:not(.site-byline) { color: var(--ink-soft); font: 400 1.0625rem/1.5 var(--font-sans); }
+/* ---------- Articles: the list laid out as the journal block lays one out, an article as the long read does ---------- */
+
+/* The picture of an article: drawn in the colour tokens, so it wears the theme, on the fill and in the shape of a 16:9 slot. */
+.site-thumb { display: block; aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--radius-panel); background: var(--tray-fill); }
+.site-thumb > svg { display: block; inline-size: 100%; block-size: 100%; }
+.site-articles { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); margin-block: var(--space-6) calc(var(--section-gap) / 2); }
+.site-articles > .tray-tabs { justify-self: start; max-inline-size: 100%; }
+.site-articles__panel { gap: calc(var(--section-gap) / 2); }
+
+/* An article: the head over the whole width; then the words, with the contents beside them where there is room for both,
+   and folded above them where there is not. */
+.site-post { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); container-type: inline-size; }
+.site-post__head { display: grid; justify-items: start; gap: var(--space-5); }
+.site-post__words { display: grid; gap: var(--space-4); max-inline-size: 50rem; }
+.site-post__meta { gap: var(--space-3) var(--space-5); }
+.site-post__body, .site-post__main { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); min-inline-size: 0; }
+.site-toc { display: none; }
+/* A heading is read whole: a long one wraps rather than being cut. */
+.site-toc .tray-sidebar__item, .site-toc-fold .tray-sidebar__item { min-block-size: 36px; padding-block: var(--space-2); white-space: normal; }
+.site-toc .tray-sidebar__item > span, .site-toc-fold .tray-sidebar__item > span { overflow: visible; }
+.site-toc-fold { max-inline-size: 46rem; padding-block: var(--space-1) var(--space-2); border-block: 1px solid var(--hairline); }
+.site-post__foot { max-inline-size: 46rem; }
+.site-post__foot dd { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+@container (min-width: 60rem) {
+  .site-post__body { grid-template-columns: minmax(0, 46rem) minmax(12rem, 16rem); justify-content: space-between; column-gap: var(--space-10); }
+  .site-post__main { grid-column: 1; grid-row: 1; }
+  .site-toc { display: block; grid-column: 2; grid-row: 1; position: sticky; inset-block-start: calc(var(--size-lg) + var(--space-8)); align-self: start;
+              max-block-size: calc(100dvh - var(--size-lg) - var(--space-12)); overflow-y: auto; }
+  .site-toc-fold { display: none; }
+}
 
 /* The live example of a component: a hairline frame as tall as the preview needs for its floating parts. */
 .site-stage { position: relative; border-radius: var(--radius-panel); box-shadow: inset 0 0 0 1px var(--hairline); }

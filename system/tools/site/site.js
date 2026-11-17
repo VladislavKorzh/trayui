@@ -491,8 +491,15 @@
     var raw = a.getAttribute('href');
     if (a.hasAttribute('data-retry')) { e.preventDefault(); render(); return; }
     if (PATHS ? idOf(raw) !== null : raw.charAt(0) === '#' && has(S.index, raw.slice(1))) return;  /* another page: the address changes */
-    if (/^https?:\/\//.test(raw)) return;
-    if (/\.(zip|txt|md|css|js|cjs|json)$/.test(raw) && a.closest('.site-prose, .tray-footer, .site-foot')) {
+    if (/^(https?:\/\/|mailto:)/.test(raw)) return;
+    /* the contents of an article: a heading on this page. With addresses the browser goes there and the address keeps it;
+       with hashes the hash names the page, so the heading is scrolled to instead. */
+    var to = raw.charAt(0) === '#' && a.closest('[data-anchors]') ? document.getElementById(raw.slice(1)) : null;
+    if (to && view.contains(to)) {
+      if (!PATHS) { e.preventDefault(); to.scrollIntoView(); }
+      return;
+    }
+    if (/\.(zip|txt|md|css|js|cjs|json|xml)$/.test(raw) && a.closest('.site-prose, .tray-footer, .site-foot, .tray-cta')) {
       /* a file of the site: a download cannot start inside another page's frame, so say where it works */
       if (framed) { e.preventDefault(); UI.toast({ title: 'This file opens on the published site', text: 'This preview runs inside another page, which cannot open or download a file.' }); }
       return;
@@ -508,7 +515,7 @@
     var a = e.target.closest ? e.target.closest('a[href]') : null;
     if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
     var u = new URL(a.href), id = u.origin === location.origin ? idOf(u.pathname) : null;
-    if (id === null) return;
+    if (id === null || (u.hash && u.pathname === location.pathname)) return;  /* a place on this page: the browser goes there */
     e.preventDefault();
     go(id, u.search.slice(1));
   });

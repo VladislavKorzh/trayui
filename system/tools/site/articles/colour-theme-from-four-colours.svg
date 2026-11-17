@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site:
+       the four colours on the left are the four of the theme you are looking at, and the grid is what they became. -->
+  <g style="stroke:var(--rule-strong);stroke-width:2">
+    <circle cx="72" cy="63" r="21" style="fill:var(--page)"/>
+    <circle cx="72" cy="111" r="21" style="fill:var(--surface)"/>
+    <circle cx="72" cy="159" r="21" style="fill:var(--ink)"/>
+    <circle cx="72" cy="207" r="21" style="fill:var(--accent)"/>
+  </g>
+  <g style="fill:var(--ink-muted);font:500 13px var(--font-mono)">
+    <text x="104" y="68">page</text>
+    <text x="104" y="116">tray</text>
+    <text x="104" y="164">ink</text>
+    <text x="104" y="212">accent</text>
+  </g>
+  <path d="M170 135h24m-7-7 7 7-7 7" style="fill:none;stroke:var(--ink-muted);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"/>
+  <!-- The theme: every colour token, four to a row -->
+  <g style="stroke:var(--hairline);stroke-width:1.5">
+    <rect x="212" y="31" width="56" height="46" rx="10" style="fill:var(--page)"/>
+    <rect x="276" y="31" width="56" height="46" rx="10" style="fill:var(--surface)"/>
+    <rect x="340" y="31" width="56" height="46" rx="10" style="fill:var(--raised)"/>
+    <rect x="404" y="31" width="56" height="46" rx="10" style="fill:var(--inverse)"/>
+    <rect x="212" y="85" width="56" height="46" rx="10" style="fill:var(--ink)"/>
+    <rect x="276" y="85" width="56" height="46" rx="10" style="fill:var(--ink-soft)"/>
+    <rect x="340" y="85" width="56" height="46" rx="10" style="fill:var(--ink-muted)"/>
+    <rect x="404" y="85" width="56" height="46" rx="10" style="fill:var(--ink-hint)"/>
+    <rect x="212" y="139" width="56" height="46" rx="10" style="fill:var(--hairline)"/>
+    <rect x="276" y="139" width="56" height="46" rx="10" style="fill:var(--track)"/>
+    <rect x="340" y="139" width="56" height="46" rx="10" style="fill:var(--rule-strong)"/>
+    <rect x="404" y="139" width="56" height="46" rx="10" style="fill:var(--control-off)"/>
+    <rect x="212" y="193" width="56" height="46" rx="10" style="fill:var(--accent)"/>
+    <rect x="276" y="193" width="56" height="46" rx="10" style="fill:var(--danger)"/>
+    <rect x="340" y="193" width="56" height="46" rx="10" style="fill:var(--success)"/>
+    <rect x="404" y="193" width="56" height="46" rx="10" style="fill:var(--leaf)"/>
+  </g>
+  <!-- Text on the colours it is checked against -->
+  <g text-anchor="middle" style="font:600 16px var(--font-sans)">
+    <text x="240" y="60" style="fill:var(--ink)">Aa</text>
+    <text x="432" y="60" style="fill:var(--on-inverse)">Aa</text>
+    <text x="240" y="114" style="fill:var(--page)">Aa</text>
+    <text x="240" y="222" style="fill:var(--on-accent)">Aa</text>
+    <text x="304" y="222" style="fill:var(--on-danger)">Aa</text>
+  </g>
+</svg>
