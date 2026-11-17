@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Open the built site/ in a browser over http and check it: the home page, every page of the four sections, the search,
+"""Open the built site/ in a browser over http and check it: the home page, every page of every section, the search,
 the playgrounds of the components, the frames that show blocks, the charts drawn by Recharts, the
 foundations, the ten themes, the maker of another and a theme sent as a link, a phone, and the files for Tailwind and Figma.
 
@@ -75,7 +75,9 @@ def main():
     docs, comps = by_section['docs'], by_section['components']
     block_ids = [i for i in by_section['blocks'] if i not in ('blocks', 'b-login', 'b-sidebar')]  # the blocks, without the pages that gather them
     chart_pages = by_section['charts']
-    every = ['home'] + docs + comps + by_section['blocks'] + chart_pages
+    article_ids = [i for i in by_section.get('articles', []) if i != 'articles']  # the articles, without the page that lists them
+    titles = [s['title'] for s in site['sections']]  # Docs, Components, Blocks, Charts, and Articles once there is one
+    every = ['home'] + docs + comps + by_section['blocks'] + chart_pages + by_section.get('articles', [])
     framed = set(block_ids)
     contrast = re.search(r'CONTRAST_JS = r"""(.*?)"""', (ROOT / 'tools' / 'shoot.py').read_text(encoding='utf-8'), re.S).group(1)
     check('every page of the map has a place in a sidebar, or is the home page', sorted(every) == sorted(index), sorted(set(index) ^ set(every))[:6])
@@ -106,6 +108,38 @@ def main():
     tw = (SITE / 'tailwind' / 'theme.css').read_text(encoding='utf-8')
     check('the Tailwind theme maps the tokens without declaring them again', '@theme inline reference {' in tw and '--color-page: var(--page);' in tw and '--radius-card: var(--radius-card);' in tw and '@custom-variant dark' in tw)
     check('llms-full.txt says how to use the tokens with Tailwind and Figma', '## Tailwind and Figma' in llms and 'tailwind/theme.css' in llms)
+    # what each page says to a search: the names people use, a note on every block, the articles and their feed
+    search = json.loads((ROOT / 'tools' / 'site' / 'search.json').read_text(encoding='utf-8'))
+    slug = lambda n: re.sub(r'(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])', '-', n).lower()
+    page_of = lambda ident: (SITE / (index[ident]['path'] + '.html')).read_text(encoding='utf-8')
+    title_of = lambda text: html.unescape(re.search(r'<title>([^<]*)</title>', text).group(1))
+    named = {n: (s, also) for n, (s, also) in search['components'].items()}
+    wrong = [n for n, (s, also) in named.items() if (s and not title_of(page_of('c-' + slug(n))).startswith(s + ':') and not title_of(page_of('c-' + slug(n))).startswith(s + ' '))
+             or (also and f'Also called {also}.' not in html.unescape(page_of('c-' + slug(n))))]
+    check('a component known by another name has that name first in its title and says what else it is called', not wrong and len(named) > 80, wrong[:5])
+    notes = ROOT / 'tools' / 'site' / 'block-notes'
+    plain = lambda md: ' '.join(re.sub(r'\[([^\]]+)\]\([^)]*\)', r'\1', md).replace('`', '').replace('**', '').split())
+    unsaid = [i for i in block_ids if not (notes / f'{i[2:]}.md').exists()
+              or ' '.join(plain((notes / f'{i[2:]}.md').read_text(encoding='utf-8')).split()[:8]) not in ' '.join(html.unescape(re.sub(r'<[^>]+>', ' ', page_of(i))).split())]
+    check('every block page says what the screen is for and when to choose it, from its note', not unsaid, unsaid[:5])
+    heads = [title_of(page_of(i)) for i in comps + block_ids]
+    check('every component and block title names HTML and CSS and fits a search result', all('HTML' in h and len(h) <= 60 for h in heads), [h for h in heads if 'HTML' not in h or len(h) > 60][:4])
+    if article_ids:
+        listing = page_of('articles')
+        lds = {i: json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', page_of(i), re.S).group(1)) for i in article_ids}
+        kinds = {i: next(n for n in ld['@graph'] if n['@type'] != 'BreadcrumbList') for i, ld in lds.items()}
+        check('the Articles page lists every article, each with the day it came out', all(f'href="/{index[i]["path"]}"' in listing for i in article_ids) and listing.count('<time datetime=') == len(article_ids))
+        check('each article is an Article for search engines, with its author and the days it came out and changed',
+              all(k['@type'] == 'Article' and re.fullmatch(r'\d{4}-\d\d-\d\d', k.get('datePublished', '')) and k.get('dateModified') and k['author'].get('name') and k.get('image') for k in kinds.values()),
+              {i: k['@type'] for i, k in kinds.items()})
+        import xml.etree.ElementTree as ET
+        feed = ET.parse(SITE / 'articles' / 'feed.xml').getroot() if (SITE / 'articles' / 'feed.xml').exists() else None
+        A = '{http://www.w3.org/2005/Atom}'
+        entries = feed.findall(A + 'entry') if feed is not None else []
+        check('the Atom feed holds every article whole, its links on this site, and every page names it',
+              len(entries) == len(article_ids) and all(f'href="{site["site"]}/' in e.find(A + 'content').text and 'tray-code__head' not in e.find(A + 'content').text for e in entries)
+              and all('type="application/atom+xml"' in text for text in (listing, (SITE / 'index.html').read_text(encoding='utf-8'), page_of('c-button'))), len(entries))
+        check('llms.txt lists the articles', '## Articles' in index_txt and all(f'/{index[i]["path"]}.md' in index_txt for i in article_ids))
     notice = (SITE / 'charts.licenses.txt').read_text(encoding='utf-8') if (SITE / 'charts.licenses.txt').exists() else ''
     check('the script that draws the charts comes with the licences of what it holds', any((SITE / '_').glob('charts.*.js')) and all(f'\n{n} ' in notice for n in ('recharts', 'react', 'react-dom')) and 'MIT License' in notice, len(notice))
 
@@ -142,8 +176,9 @@ def main():
         check('opening the site, or a link straight to a component, a doc or a block, moves nothing on the page, at 1440 and at 390 wide', all(v < 0.01 for v in shifts.values()), shifts)
         check('the font loads from the site\'s own file', pg.evaluate('document.fonts.check("16px Onest")'))
         check('the site opens on the home page', pg.locator('#site-view h1').inner_text().endswith('components in plain HTML and CSS') and pg.title().startswith('Tray UI'), pg.title())
-        check('the home page has no sidebar and the header links the four sections, none of them current',
-              pg.locator('.tray-app__side').is_hidden() and pg.locator('#site-sections .tray-tab').all_inner_texts() == ['Docs', 'Components', 'Blocks', 'Charts']
+        check('the home page has no sidebar and the header links every section, none of them current',
+              pg.locator('.tray-app__side').is_hidden() and pg.locator('#site-sections .tray-tab').all_inner_texts() == titles
+              and titles[:4] == ['Docs', 'Components', 'Blocks', 'Charts']
               and pg.locator('#site-sections [aria-current]').count() == 0, pg.locator('#site-sections .tray-tab').all_inner_texts())
         mark = pg.evaluate("(() => { const m = document.querySelector('.site-top a.site-logo .site-mark'); if (!m) return null; const cs = getComputedStyle(document.documentElement); "
                            "return [getComputedStyle(m.querySelector('.site-mark__tile')).fill, getComputedStyle(m.querySelector('.site-mark__bar')).fill, Math.round(m.getBoundingClientRect().width), m.getAttribute('aria-hidden'), "
@@ -220,7 +255,7 @@ def main():
         lightbox = (SITE / 'components' / 'lightbox.html').read_text(encoding='utf-8')
         lb = index['c-lightbox']
         check('a page\'s file names it: its title, its description, its one address, its picture, its Markdown and its place in the site', f'<title>{lb["head"]}</title>' in lightbox
-              and lb['head'] == 'Lightbox: HTML and CSS component - Tray UI' and '<meta name="description" content="' + html.escape(lb['desc'])[:30] in lightbox
+              and lb['head'] == 'Lightbox (image gallery): HTML and CSS component - Tray UI' and '<meta name="description" content="' + html.escape(lb['desc'])[:30] in lightbox
               and f'<link rel="canonical" href="{site["site"]}/components/lightbox">' in lightbox and (lb.get('bare') or f'rel="preload" href="/{lb["file"]}"' in lightbox)
               and f'<meta property="og:image" content="{site["site"]}/{lb["og"]}">' in lightbox and '<link rel="alternate" type="text/markdown" href="/components/lightbox.md">' in lightbox
               and '"@type":"BreadcrumbList"' in lightbox)
@@ -642,7 +677,7 @@ def main():
         go(pg, 'home'); pg.wait_for_timeout(500)
         pg.screenshot(path=str(SHOTS / 'phone-home.png'))
         pg.click('.tray-app__menu'); pg.wait_for_timeout(250)
-        check('the menu button opens the four sections in a sheet', pg.locator('#site-sheet').evaluate('d => d.open') and pg.locator('#site-sections-sheet .tray-tab').count() == 4)
+        check('the menu button opens every section in a sheet', pg.locator('#site-sheet').evaluate('d => d.open') and pg.locator('#site-sections-sheet .tray-tab').count() == len(titles))
         pg.locator('#site-sections-sheet .tray-tab', has_text='Components').click(); pg.wait_for_timeout(300)
         check('choosing a section closes the sheet and opens it', not pg.locator('#site-sheet').evaluate('d => d.open') and pg.inner_text('#site-view h1') == 'Components')
         pg.click('.tray-app__menu'); pg.wait_for_timeout(250)

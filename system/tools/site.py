@@ -54,14 +54,23 @@ def slug(name):
 # section's own address. These are the pages whose address is not their id without its prefix.
 ADDRESSES = {'home': '', 'd-introduction': 'docs', 'f-type': 'docs/typography', 'f-scale': 'docs/space-and-shape',
              'g-brand': 'docs/brand-book', 'ch-use': 'charts/usage', 'ch-ready': 'charts/chart-component'}
-SECTION_OF = {'d': 'docs', 'f': 'docs', 'g': 'docs', 'c': 'components', 'b': 'blocks', 'ch': 'charts'}
+SECTION_OF = {'d': 'docs', 'f': 'docs', 'g': 'docs', 'c': 'components', 'b': 'blocks', 'ch': 'charts', 'a': 'articles'}
+# The words people search with: the name a page's title starts with, and what else a component is called (tools/site/search.json)
+SEARCH = json.loads((SRC / 'search.json').read_text(encoding='utf-8'))
+MONTHS = ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
+
+
+def day(iso):
+    """'2026-11-17' as people read it: 17 November 2026."""
+    y, m, d = (int(x) for x in iso.split('-'))
+    return f'{d} {MONTHS[m - 1]} {y}'
 
 
 def route(ident):
     """The address of a page with no slash at either end: '' is the home page, 'components/lightbox' a component."""
     if ident in ADDRESSES:
         return ADDRESSES[ident]
-    if ident in ('components', 'blocks', 'charts'):
+    if ident in ('components', 'blocks', 'charts', 'articles'):
         return ident
     prefix, _, rest = ident.partition('-')
     return f'{SECTION_OF[prefix]}/{rest}'
@@ -265,6 +274,26 @@ def read_page(f, ident, group):
     return {'id': ident, 'title': title, 'summary': summary.replace('\n', ' '), 'guide': body, 'group': group}
 
 
+def read_articles():
+    """The articles, newest first: tools/site/articles/<name>.md, each listed in articles.json with the day it was published,
+    its topic, which groups it in the sidebar, and the short name the sidebar gives it. An article the list leaves out, or a name with no file, stops the build."""
+    folder = SRC / 'articles'
+    if not folder.exists():
+        return []
+    listed = json.loads((folder / 'articles.json').read_text(encoding='utf-8'))
+    names, on_disk = sorted(a['name'] for a in listed), sorted(f.stem for f in folder.glob('*.md'))
+    if names != on_disk:
+        sys.exit(f'tools/site/articles: articles.json lists {names}, the folder holds {on_disk}')
+    out = []
+    for a in listed:
+        p = read_page(folder / f'{a["name"]}.md', 'a-' + a['name'], a['topic'])
+        if not re.fullmatch(r'\d{4}-\d\d-\d\d', a['published']):
+            sys.exit(f'tools/site/articles/articles.json: {a["name"]} was published on {a["published"]!r}, not a day as 2026-11-17')
+        p.update(published=a['published'], nav=a.get('nav') or p['title'], src=[f'system/tools/site/articles/{a["name"]}.md'])
+        out.append(p)
+    return sorted(out, key=lambda p: p['published'], reverse=True)  # the same day keeps the order of the list
+
+
 def head(title, summary, actions=''):
     return ('<div class="tray-pagehead"><div class="tray-pagehead__row"><div class="tray-pagehead__text">'
             f'<h1 class="title" tabindex="-1">{html.escape(title)}</h1><p>{inline(summary)}</p></div>'
@@ -323,14 +352,16 @@ def built_from(source, comps):
     return seen
 
 
-def viewer(p, parts):
-    """The page of one block: the live frame at a chosen width, and its code, which is in the page as it comes."""
+def viewer(p, parts, about=''):
+    """The page of one block: the live frame at a chosen width, and its code, which is in the page as it comes.
+    about: what the screen is for and when to choose it, in Markdown (tools/site/block-notes/<name>.md)."""
     uses = ' '.join(f'<code class="tray-code-inline">{b}</code>' for b in p['behaviours'])
     named = lambda t: t.lower() if t[1:] == t[1:].lower() else t  # "Button" reads as "button" in a sentence; "Input OTP" stays
     links = [f'<a href="#{c["id"]}">{html.escape(named(c["title"]))}</a>' for c in parts]
     made = (f'<p>It is made of {", ".join(links[:-1]) + " and " + links[-1] if len(links) > 1 else links[0]}: '
             'each component has a page with its markup and its rules.</p>') if links else ''
-    note = (made + '<p>Copy the page, or the part of it you need, into a project that links <code class="tray-code-inline">tokens.css</code>, '
+    note = ((markdown(about, p['id'] + '-about') if about else '') + made
+            + '<p>Copy the page, or the part of it you need, into a project that links <code class="tray-code-inline">tokens.css</code>, '
             '<code class="tray-code-inline">components/bundle.css</code> and <code class="tray-code-inline">components/bundle.js</code>; the paths in its '
             '<code class="tray-code-inline">&lt;head&gt;</code> assume the page sits one folder below them, as it does in the <a href="#d-installation">download</a>. '
             + ('The grey trays stand in for your content. ' if p['slots'] else '')
@@ -678,6 +709,16 @@ def build():
     all_blocks = read_blocks()
     blocks = [x for x in all_blocks if not x['problems']]
     skipped = [f'blocks/{x["name"]}.html: {"; ".join(x["problems"])}' for x in all_blocks if x['problems']]
+    strays = (sorted(set(SEARCH['components']) - {c['name'] for c in comps}) + sorted(set(SEARCH['blocks']) - {x['name'] for x in all_blocks})
+              + sorted(f'block-notes/{f.name}' for f in (SRC / 'block-notes').glob('*.md') if f.stem not in {x['name'] for x in all_blocks}))
+    if strays:
+        sys.exit(f'tools/site/search.json or tools/site/block-notes/ names what the system does not have: {strays}')
+    for c in comps:
+        c['search'], c['also'] = SEARCH['components'].get(c['name'], [None, None])
+    for x in blocks:
+        about = SRC / 'block-notes' / f'{x["name"]}.md'
+        x['about'] = about.read_text(encoding='utf-8').strip() if about.exists() else ''  # site_check asks for one on every block
+    articles = read_articles()
     chart_groups = read_charts()
     charts = [c for g in chart_groups for c in g['charts']]
     sizes = {f: len(gzip.compress((DIST / f).read_bytes(), 9)) for f in ('tokens.css', 'components/bundle.css', 'components/bundle.js')}
@@ -691,7 +732,7 @@ def build():
              'cdn': CDN, 'jsdelivr': CDN.startswith('https://cdn.jsdelivr.net/'),
              'site': site_url, 'author': LINKS.get('author', ''), 'author_url': LINKS.get('author_url', ''),
              'icon_wall': ''.join(icon(n) for n in sorted(icons)), 'themes': len(tok['color']['themes']),
-             'theme_menu': theme_menu(theme_data(tok)['list']), 'mark': MARK, 'plays': len(plays)}
+             'theme_menu': theme_menu(theme_data(tok)['list']), 'mark': MARK, 'plays': len(plays), 'articles': len(articles)}
     at = site_url or facts['cdn'] or 'trayui'  # the home page's lines are short: the site's own copies of the current release; the docs give jsDelivr by version
     facts['install'] = code_block(f'<link rel="stylesheet"\n  href="{at}/tokens.css">\n<link rel="stylesheet"\n  href="{at}/components/bundle.css">\n'
                                   f'<script defer\n  src="{at}/components/bundle.js"></script>', 'html', 'home-install-code')  # the lines the home page starts with, each tag on two to fit the card
@@ -754,10 +795,15 @@ def build():
     chart_nav = [{'group': '', 'items': [{'id': 'charts', 'title': 'All charts'}, entry(chart_use)]},
                  {'group': 'By form', 'items': [{'id': g['page'], 'title': g['nav']} for g in forms]},
                  {'group': 'Ready-made', 'items': [{'id': g['page'], 'title': g['nav']} for g in ready]}]
+    topics = list(dict.fromkeys(a['group'] for a in articles))  # in the order their newest article comes
+    article_nav = ([{'group': '', 'items': [{'id': 'articles', 'title': 'All articles'}]}]
+                   + [{'group': t, 'items': [{'id': a['id'], 'title': a['nav']} for a in articles if a['group'] == t]} for t in topics])  # a short name: the sidebar is narrow
     sections = [{'id': 'docs', 'title': 'Docs', 'home': 'd-introduction', 'nav': doc_nav},
                 {'id': 'components', 'title': 'Components', 'home': 'components', 'nav': comp_nav},
                 {'id': 'blocks', 'title': 'Blocks', 'home': 'blocks', 'nav': block_nav},
                 {'id': 'charts', 'title': 'Charts', 'home': 'charts', 'nav': chart_nav}]
+    if articles:
+        sections.append({'id': 'articles', 'title': 'Articles', 'home': 'articles', 'nav': article_nav})
 
     # Where a page's content travels: 'pages/<id>' is a file of its own, loaded when the page is opened from another one,
     # so a visit loads only what it shows. data.js, loaded on every visit, holds only the map of the site.
@@ -811,10 +857,14 @@ def build():
                    f'<div class="tray-tabpanel" role="tabpanel" id="site-live" aria-labelledby="site-t1"><div class="site-stage" style="min-block-size: {p["height"]}px">{p["stage"]}</div></div>'
                    f'<div class="tray-tabpanel" role="tabpanel" id="site-src" aria-labelledby="site-t2" tabindex="0" hidden>{code_block(pretty(p["body"]), "html", "site-src-code")}</div></section>')
         spec = plays.get(p['name'])
+        also = f' Also called {p["also"]}.' if p['also'] else ''  # the other names people search for it by
+        title_line, _, readme_rest = p['readme'].partition('\n\n')
+        lead_para, _, readme_body = readme_rest.partition('\n\n')
         page(ident, p['title'], p['group'], 'components',
-             head(p['title'], p['summary']) + example + (play_section(p, spec) if spec else '') + f'<article class="site-prose">{markdown(p["guide"], ident)}</article>' + pager(prev, nxt),
-             p['summary'], md=p['readme'] + '\n', card={'kind': 'Component', 'show': p['stage'], 'script': p['script'], 'width': p['width'] or 760},
+             head(p['title'], p['summary'] + also) + example + (play_section(p, spec) if spec else '') + f'<article class="site-prose">{markdown(p["guide"], ident)}</article>' + pager(prev, nxt),
+             p['summary'], md=f'{title_line}\n\n{lead_para}{also}\n\n{readme_body}\n', card={'kind': 'Component', 'show': p['stage'], 'script': p['script'], 'width': p['width'] or 760},
              src=[f'system/project/components/{p["name"]}/README.md', f'system/project/components/{p["name"]}/preview.html'], **({'play': spec} if spec else {}))
+        index[ident]['also'], index[ident]['search'] = p['also'], p['search']
         if p['script']:
             runs[ident] = p['script']
 
@@ -843,11 +893,14 @@ def build():
         parts = built_from(x['source'], comps)
         made = ', '.join(f'[{c["title"]}](#{c["id"]})' for c in parts)
         uses = ', '.join(f'`{b}`' for b in x['behaviours'])
-        md = md_page(x['title'], x['summary'], (f'It is made of these components: {made}.\n\n' if made else '') + (f'Behaviours it uses: {uses}.\n\n' if uses else '')
+        md = md_page(x['title'], x['summary'], (f'{x["about"]}\n\n' if x['about'] else '')
+                     + (f'It is made of these components: {made}.\n\n' if made else '') + (f'Behaviours it uses: {uses}.\n\n' if uses else '')
                      + 'Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.\n\n'
                      + f'```html\n{x["source"].strip()}\n```')
-        page(x['id'], x['title'], x['group'], 'blocks', head(x['title'], x['summary']) + viewer(x, parts) + pager(seq[i - 1], seq[i + 1] if i + 1 < len(seq) else None),
-             x['summary'], wide=True, md=md, card={'kind': 'Block', 'block': x['name']}, src=[f'system/project/blocks/{x["name"]}.html'], source=x['source'])
+        page(x['id'], x['title'], x['group'], 'blocks', head(x['title'], x['summary']) + viewer(x, parts, x['about']) + pager(seq[i - 1], seq[i + 1] if i + 1 < len(seq) else None),
+             x['summary'], wide=True, md=md, card={'kind': 'Block', 'block': x['name']},
+             src=[f'system/project/blocks/{x["name"]}.html'] + ([f'system/tools/site/block-notes/{x["name"]}.md'] if x['about'] else []), source=x['source'])
+        index[x['id']]['search'] = SEARCH['blocks'].get(x['name'])
 
     # charts: an overview with two of each form, how to use them, then a page for each form with every example drawn live
     count = lambda g: f'{len(g["charts"])} {g["title"].lower()}' if g['id'] != 'ready' else f'{len(g["charts"])} examples'
@@ -881,6 +934,25 @@ def build():
         page(g['page'], g['title'], group, 'charts', body + pager(chart_seq[i - 1], chart_seq[i + 1] if i + 1 < len(chart_seq) else None), g['summary'], wide=True,
              md=md, card={'kind': 'Charts'}, src=chart_files([g]))
 
+    # articles: how to build a part of an interface in plain HTML, CSS and JavaScript, worked through with the code of the system
+    if articles:
+        byline = lambda a: ('<p class="site-byline">' + (f'By <a href="{html.escape(facts["author_url"])}">{html.escape(facts["author"])}</a>, ' if facts['author'] else '')
+                            + f'<time datetime="{a["published"]}">{day(a["published"])}</time>.</p>')
+        article_summary = 'How to build the parts of an interface in plain HTML, CSS and JavaScript, accessible from the start, worked through with the code of Tray UI.'
+        listing = ''.join(f'<article class="site-teaser"><h2 class="subtitle"><a href="#{a["id"]}">{html.escape(a["title"])}</a></h2><p>{inline(a["summary"])}</p>'
+                          f'<p class="site-byline"><time datetime="{a["published"]}">{day(a["published"])}</time>, {html.escape(a["group"].lower())}</p></article>' for a in articles)
+        art_seq = [{'id': 'articles', 'title': 'All articles'}] + articles
+        page('articles', 'Articles', '', 'articles', head('Articles', article_summary) + f'<section class="site-prose site-teasers">{listing}</section>' + pager(None, art_seq[1]),
+             article_summary, md=md_page('Articles', article_summary, ''.join(f'- [{a["title"]}](#{a["id"]}), {day(a["published"])}: {unmark(a["summary"])}\n' for a in articles)),
+             card={'kind': 'Articles'}, src=[s for a in articles for s in a['src']])
+        for i, a in enumerate(articles, 1):
+            a['prose'] = markdown(a['guide'], a['id'])  # also the content of its entry in the feed
+            page(a['id'], a['title'], a['group'], 'articles',
+                 head(a['title'], a['summary']) + byline(a) + f'<article class="site-prose">{a["prose"]}</article>' + pager(art_seq[i - 1], art_seq[i + 1] if i + 1 < len(art_seq) else None),
+                 a['summary'], md=md_page(a['title'], a['summary'], (f'By {facts["author"]}, ' if facts['author'] else '') + f'{day(a["published"])}.\n\n{a["guide"]}'),
+                 card={'kind': 'Article'}, src=a['src'])
+            index[a['id']]['published'] = a['published']
+
     # the foundations and the themes have no Markdown source: their tables, written out
     cell = lambda s: str(s).replace('|', '\\|').replace('\n', ' ')
     pick = lambda t, th: t['value'] if isinstance(t['value'], str) else t['value'].get(th, list(t['value'].values())[0])
@@ -910,6 +982,10 @@ def build():
             sys.exit(f'two pages have the address /{meta["path"]}: {taken[meta["path"]]} and {ident}')
         taken[meta['path']] = ident
     by_id = {sec['id']: sec for sec in sections}
+    written = [(f'tools/site/block-notes/{x["name"]}.md', x['about']) for x in blocks] + [(f'tools/site/articles/{a["id"][2:]}.md', a['summary'] + a['guide']) for a in articles]
+    dead = [f'{where} links #{m}' for where, text in written for m in re.findall(r'\]\(#([a-z0-9-]+)\)', text) if m not in index]
+    if dead:
+        sys.exit('links to pages the site does not have:\n  ' + '\n  '.join(dead))
 
     # ---------- what each page says about itself: its title and description in a search, its picture, its place ----------
     HEADS = {'home': 'Tray UI: a design system in plain HTML and CSS',
@@ -921,35 +997,41 @@ def build():
              'd-react': 'Tray UI in React: typed components and charts', 'd-themes': f'{len(themes["list"])} themes and a theme maker - Tray UI',
              'd-theming': 'Theming with CSS custom properties - Tray UI', 'f-type': 'Typography: type styles and the Onest font - Tray UI',
              'f-colours': 'Colour tokens in the light and dark theme - Tray UI', 'f-icons': f'{len(icons)} Lucide icons, built in - Tray UI',
-             'g-accessibility': 'Accessibility: WCAG 2.2 AA in every theme - Tray UI', 'ch-use': 'Using the charts in React - Tray UI'}
+             'g-accessibility': 'Accessibility: WCAG 2.2 AA in every theme - Tray UI', 'ch-use': 'Using the charts in React - Tray UI',
+             'articles': 'Articles on HTML, CSS and accessibility - Tray UI'}
     TAILS = {'components': 'A Tray UI component in plain HTML and CSS.', 'blocks': 'A Tray UI block in plain HTML and CSS, to copy.', 'charts': 'React and Recharts, from Tray UI.'}
     home_desc = (f'Tray UI is a design system in plain HTML and CSS: {len(comps)} components, {len(blocks)} blocks and {len(icons)} icons, in {len(themes["list"])} themes. '
                  'Three files, no framework, no build step.')
     seen = {}
     for ident, meta in index.items():
-        t = meta['title']
+        t, name = meta['title'], meta.get('search') or meta['title']  # the name people search with comes first in the title
         if ident in HEADS:
             options = [HEADS[ident]]
         elif ident.startswith('c-'):
-            options = [f'{t}: HTML and CSS component - Tray UI', f'{t}: HTML and CSS - Tray UI']
+            options = [f'{name}: HTML and CSS component - Tray UI', f'{name}: HTML and CSS - Tray UI', f'{name} - Tray UI']
         elif ident.startswith('b-'):
-            options = [f'{t}: HTML and CSS block - Tray UI', f'{t}: HTML block - Tray UI']
+            options = [f'{name}: HTML and CSS block - Tray UI', f'{name} in HTML and CSS - Tray UI', f'{name}: HTML block - Tray UI', f'{name} - Tray UI']
         elif ident.startswith('ch-'):
             options = [f'{t} in React with Recharts - Tray UI']
+        elif ident.startswith('a-'):
+            options = [f'{t} - Tray UI', t]  # an article's title is already the phrase people search
         else:
             options = []
-        meta['head'] = next((o for o in options if len(o) <= 60), f'{t} - Tray UI')
+        meta['head'] = next((o for o in options if len(o) <= 60), options[-1] if options else f'{t} - Tray UI')
         if meta['head'] in seen:
             sys.exit(f'two pages have the title "{meta["head"]}": {seen[meta["head"]]} and {ident}')
         seen[meta['head']] = ident
         own_home = ident == (by_id[meta['section']]['home'] if meta['section'] else 'home')
-        meta['desc'] = home_desc if ident == 'home' else fit(meta['summary'], '' if own_home else TAILS.get(meta['section'], ''))
+        tail = '' if own_home else TAILS.get(meta['section'], '')
+        said = f'{meta["summary"]} Also called {meta["also"]}.' if meta.get('also') else ''
+        meta['desc'] = (home_desc if ident == 'home' else fit(said, tail) if said and len(unmark(said)) <= 160
+                        else fit(meta['summary'], tail))
 
     dates = git_dates()
     for ident, meta in index.items():
         found = [dates[s] for s in srcs[ident] if s in dates]
-        if found:
-            meta['lastmod'] = max(found)
+        if found or meta.get('published'):
+            meta['lastmod'] = max(found + ([meta['published']] if meta.get('published') else []))  # an article not yet committed: the day it came out
 
     # every link between pages by its address, in the pages and in the theme menu
     for pages_ in chunks.values():
@@ -1065,18 +1147,23 @@ def build():
                 trail += [{'@type': 'ListItem', 'position': 2, 'name': sec['title'], 'item': f'{site}/{route(top)}'}, {'@type': 'ListItem', 'position': 3, 'name': meta['title']}]
             nodes = [{'@type': 'BreadcrumbList', 'itemListElement': trail}]
             if ident != top:
-                article = {'@type': 'TechArticle', 'headline': meta['title'], 'description': meta['desc'], 'url': url, 'mainEntityOfPage': url, 'inLanguage': 'en',
+                # a page of the docs is a technical article; an article of the Articles section is an article, with the day it came out
+                article = {'@type': 'Article' if meta.get('published') else 'TechArticle', 'headline': meta['title'], 'description': meta['desc'], 'url': url,
+                           'mainEntityOfPage': url, 'inLanguage': 'en',
                            'isPartOf': {'@type': 'WebSite', '@id': f'{site}/#website', 'name': 'Tray UI', 'url': f'{site}/'},
                            'author': {'@type': 'Person', 'name': facts['author'], 'url': facts['author_url']}}
                 if meta.get('og'):
                     article['image'] = f'{site}/{meta["og"]}'
-                if meta.get('lastmod'):
-                    article['dateModified'] = meta['lastmod']
+                if meta.get('published'):
+                    article['datePublished'] = meta['published']
+                    article['publisher'] = {'@type': 'Person', 'name': facts['author'], 'url': facts['author_url']}
+                if meta.get('lastmod') or meta.get('published'):
+                    article['dateModified'] = max(d for d in (meta.get('lastmod'), meta.get('published')) if d)
                 nodes.insert(0, article)
         return dump({'@context': 'https://schema.org', '@graph': nodes})
 
     # data.js: the map of the site, and the names its files are served at
-    slim = {i: {k: v for k, v in m.items() if k not in ('summary', 'group', 'lastmod')} for i, m in index.items()}
+    slim = {i: {k: v for k, v in m.items() if k not in ('summary', 'group', 'lastmod', 'also', 'search', 'published')} for i, m in index.items()}
     data = own('data.js', '/* Generated by tools/site.py: the map of the site and the names of its files. */\n'
                'window.TRAY_SITE = ' + dump({'version': VERSION, 'repo': facts['repo'], 'site': facts['site'], 'files': files, 'sections': sections, 'index': slim,
                                              'pages': {}, 'themes': themes}) + ';\nwindow.TRAY_SITE.run = {};\n')
@@ -1110,7 +1197,7 @@ def build():
                    md_url='' if home else f'/{meta["path"]}.md', jsonld=graph(ident, meta, sec) if facts['site'] else '',
                    nav_html=nav_html(sec, ident) if sec else '', view_html=entry['html'], wide=bool(meta.get('wide')),
                    sections_tabs=''.join(f'<a class="tray-tab" href="/{route(s["home"])}"' + (' aria-current="page"' if s is sec else '') + f'>{html.escape(s["title"])}</a>' for s in sections),
-                   preload='' if meta.get('bare') else meta['file'], own_pages=hashed if home else '{}')
+                   preload='' if meta.get('bare') else meta['file'], own_pages=hashed if home else '{}', feed=bool(articles and facts['site']))
         out = OUT / ('index.html' if home else meta['path'] + '.html')
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(addressed(fill(template, one), index), encoding='utf-8')
@@ -1138,6 +1225,23 @@ def build():
                                                    for m in index.values()) + '</urlset>\n', encoding='utf-8')
         (OUT / 'robots.txt').write_text('# Tray UI documentation (MIT). Search, AI answers, agent fetches and training are welcome.\n'
                                         f'User-agent: *\nAllow: /\n\nSitemap: {facts["site"]}/sitemap.xml\n', encoding='utf-8')
+        if articles:  # the articles as an Atom feed, whole, for readers and for sites that take a feed (with the address here as the original)
+            site, esc = facts['site'], lambda s: html.escape(s, quote=False)
+            stamp = lambda a: max(d for d in (index[a['id']].get('lastmod'), a['published']) if d) + 'T00:00:00Z'
+            def content(a):
+                prose = re.sub(r'<div class="tray-code__head">.*?</div>', '', addressed(a['prose'], index), flags=re.S)  # the label and the copy button: page furniture
+                return re.sub(r'(href|src)="/(?!/)', rf'\1="{site}/', prose)
+            who = f'<author><name>{esc(facts["author"])}</name><uri>{esc(facts["author_url"])}</uri></author>' if facts['author'] else ''
+            (OUT / 'articles').mkdir(exist_ok=True)
+            (OUT / 'articles' / 'feed.xml').write_text(
+                '<?xml version="1.0" encoding="utf-8"?>\n<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">\n'
+                f'<title>Tray UI articles</title>\n<subtitle>{esc(index["articles"]["summary"])}</subtitle>\n'
+                f'<link rel="self" href="{site}/articles/feed.xml"/>\n<link rel="alternate" type="text/html" href="{site}/articles"/>\n'
+                f'<id>{site}/articles</id>\n<updated>{max(stamp(a) for a in articles)}</updated>\n{who}\n'
+                + ''.join(f'<entry>\n<title>{esc(a["title"])}</title>\n<link rel="alternate" type="text/html" href="{site}/{route(a["id"])}"/>\n<id>{site}/{route(a["id"])}</id>\n'
+                          f'<published>{a["published"]}T00:00:00Z</published>\n<updated>{stamp(a)}</updated>\n<category term="{html.escape(a["group"])}"/>\n'
+                          f'<summary>{esc(unmark(a["summary"]))}</summary>\n<content type="html">{esc(content(a))}</content>\n</entry>\n' for a in articles)
+                + '</feed>\n', encoding='utf-8')
 
     # the download: dist/ as one archive, with the blocks beside the three files
     with zipfile.ZipFile(OUT / facts['zip'], 'w', zipfile.ZIP_DEFLATED) as z:
@@ -1168,6 +1272,9 @@ def build():
                  f'- [Sign-in and sign-up pages]({link("b-login")})\n- [Sidebars]({link("b-sidebar")})\n')
     lines.append('\n## Charts\n\n' + f'- [Using the charts]({link("ch-use")}): {index["ch-use"]["desc"]}\n'
                  + ''.join(f'- [{g["title"]}]({link(g["page"])}): {unmark(g["summary"])}\n' for g in chart_groups))
+    if articles:
+        lines.append('\n## Articles\n\nHow to build parts of an interface in plain HTML, CSS and JavaScript, worked through with the code of Tray UI.\n\n'
+                     + ''.join(f'- [{a["title"]}]({link(a["id"])}): {index[a["id"]]["desc"]}\n' for a in articles))
     lines.append(f'\n## Optional\n\n- [llms-full.txt]({base}/llms-full.txt): the rules, the guides and the guidelines of every component in one file\n'
                  f'- [{facts["zip"]}]({base}/{facts["zip"]}): the three files, the font and the {len(blocks)} blocks\n')
     (OUT / 'llms.txt').write_text(''.join(lines), encoding='utf-8')

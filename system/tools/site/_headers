@@ -29,6 +29,8 @@
   Content-Type: text/plain; charset=utf-8
 /llms-full.txt
   Content-Type: text/plain; charset=utf-8
+/articles/feed.xml
+  Content-Type: application/atom+xml; charset=utf-8
 
 # The first address of the site still answers; trayui.com is the one to index.
 https://trayui.vladislav-korzh95.workers.dev/*
