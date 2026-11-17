@@ -1,10 +1,11 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "repo": "https://github.com/VladislavKorzh/trayui",
   "public": false,
   "site": "https://trayui.com",
-  "cdn": "https://cdn.jsdelivr.net/gh/VladislavKorzh/trayui@v0.1.0/system/dist",
+  "cdn": "https://cdn.jsdelivr.net/gh/VladislavKorzh/trayui@v{version}/system/dist",
   "license": "MIT",
   "author": "Vladyslav Korzh",
-  "author_url": "https://github.com/VladislavKorzh"
+  "author_url": "https://github.com/VladislavKorzh",
+  "npm": false
 }

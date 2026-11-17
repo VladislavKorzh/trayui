@@ -1,9 +1,8 @@
 {
   "name": "trayui-react",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Tray UI for React: typed components over the system's own stylesheet and behaviours, and charts drawn with Recharts.",
   "license": "MIT",
-  "private": true,
   "author": "Vladyslav Korzh (https://github.com/VladislavKorzh)",
   "homepage": "https://trayui.com/docs/react",
   "repository": {

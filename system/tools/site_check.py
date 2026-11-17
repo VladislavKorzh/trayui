@@ -284,7 +284,7 @@ def main():
         fr.evaluate('location.hash = "c-lightbox"'); fr.wait_for_timeout(1000)
         pics = fr.evaluate("[...document.querySelectorAll('.tray-gallery img')].map(i => [i.getAttribute('src').startsWith('assets/'), i.complete && i.naturalWidth > 0])")
         check('framed inside another page, pages go by #: links say #id, a link opens its page, and files and pictures are found',
-              links == [False, '#home', '#d-introduction'] and opened == ['#d-installation', 'Installation', 'trayui-0.1.0.zip'] and len(pics) == 6 and all(p[0] for p in pics) and pics[0][1], (links, opened, pics))
+              links == [False, '#home', '#d-introduction'] and opened == ['#d-installation', 'Installation', f'trayui-{site["version"]}.zip'] and len(pics) == 6 and all(p[0] for p in pics) and pics[0][1], (links, opened, pics))
         fp.close()
 
         # ---------- every page ----------

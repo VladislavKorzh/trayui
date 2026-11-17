@@ -12,12 +12,28 @@ The quickest start: put these lines in the `<head>` of a page, the script before
 <script src="{{cdn}}/components/bundle.js" defer></script>
 ```
 {{#jsdelivr}}
-jsDelivr serves the files of every release of the repository, and the address names the release, so a page keeps the version it was built with. For production, copy the files into your project or pin the release you tested.
+jsDelivr serves every release{{#npm}} of the `trayui` package on npm{{/npm}}{{^npm}} of the repository{{/npm}}, and the address names the release, so a page keeps the version it was built with. For production, copy the files into your project or pin the release you tested.
 {{/jsdelivr}}{{^jsdelivr}}
 This site serves the files of the current release, with the font. The addresses do not name a version, so a page that links them gets each new release as it comes out. For production, download the files below and serve them yourself.
 {{/jsdelivr}}{{/cdn}}
 
-## Or get the files
+{{#npm}}## Or install them from npm
+
+In a project with a bundler, install the package and import the three files once, at the entry of the app:
+
+```sh
+npm install trayui
+```
+
+```js
+import 'trayui/tokens.css';
+import 'trayui/components/bundle.css';
+import 'trayui/components/bundle.js';
+```
+
+The package also holds the font, the blocks and the tokens for Tailwind and Figma. For React, see [React](#d-react).
+
+{{/npm}}## Or get the files
 
 Download [trayui-{{version}}.zip]({{zip}}) and unpack it beside your pages.{{#repo}} The same files are in the `system/dist` folder of [the repository]({{repo}}).{{/repo}}
 

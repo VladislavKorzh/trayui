@@ -70,6 +70,69 @@ def read_blocks():
     return sorted(out, key=lambda x: (BLOCK_GROUPS.index(x['group']) if x['group'] in BLOCK_GROUPS else 99, x['name']))
 
 
+def npm_package(dist, tok, icons):
+    """dist/package.json and dist/README.md: dist/ as it is is the npm package trayui, so the files keep their paths
+    (trayui/tokens.css) and jsDelivr serves each release by its version. Publish it with `npm publish` from dist/."""
+    links = json.loads((ROOT / 'tools' / 'links.json').read_text(encoding='utf-8'))
+    version, site = links.get('version', '0.0.0'), links.get('site', '').rstrip('/')
+    blocks, themes = len(list((P / 'blocks').glob('*.html'))), len(tok['color']['themes'])
+    pkg = {'name': 'trayui', 'version': version,
+           'description': f'A design system in plain HTML and CSS: {len(EXPECTED)} components, {blocks} blocks, {themes} themes. Three files, no build step.',
+           'license': links.get('license', 'MIT'), 'author': f'{links.get("author", "")} ({links.get("author_url", "")})', 'homepage': site,
+           'repository': {'type': 'git', 'url': f'git+{links.get("repo", "")}.git', 'directory': 'system/dist'},
+           'keywords': ['design-system', 'css', 'html', 'ui-components', 'component-library', 'accessibility', 'no-build', 'dark-mode', 'tailwind', 'figma'],
+           'style': 'components/bundle.css', 'unpkg': 'components/bundle.js', 'jsdelivr': 'components/bundle.js', 'sideEffects': True}
+    (dist / 'package.json').write_text(json.dumps(pkg, indent=2) + '\n', encoding='utf-8')
+    cdn = f'https://cdn.jsdelivr.net/npm/trayui@{version}'
+    (dist / 'README.md').write_text(f"""# Tray UI
+
+A design system in plain HTML and CSS: {len(EXPECTED)} components, {blocks} blocks, {len(icons)} icons and {themes} themes. Three files, no framework, no build step.
+
+Docs, live examples and a playground for each component: {site}
+
+## Link it from a CDN
+
+```html
+<link rel="stylesheet" href="{cdn}/tokens.css">
+<link rel="stylesheet" href="{cdn}/components/bundle.css">
+<script src="{cdn}/components/bundle.js" defer></script>
+```
+
+Then write HTML with `tray-` classes. A button is one class; a menu, a calendar or a chart is one attribute more:
+
+```html
+<button class="tray-btn" type="button">Order a jar</button>
+```
+
+## Or install it
+
+```sh
+npm install trayui
+```
+
+```js
+import 'trayui/tokens.css';
+import 'trayui/components/bundle.css';
+import 'trayui/components/bundle.js';
+```
+
+## What is in it
+
+- `tokens.css`: every token as a custom property, the type classes and the font.
+- `components/bundle.css`: the `tray-` classes of every component.
+- `components/bundle.js`: one classic script, `window.TrayUI`, that wires every element with a `data-tray` attribute and adds the icons. It loads nothing.
+- `fonts/`: Onest, with its licence.
+- `blocks/`: {blocks} whole screens, each one HTML file to copy.
+- `tailwind/` and `figma/`: the tokens as a Tailwind theme and as Figma variables.
+
+For React, there is [trayui-react](https://www.npmjs.com/package/trayui-react). For an AI agent, {site}/llms.txt lists every page as Markdown.
+
+## Licence
+
+MIT. The typeface, Onest, is under the SIL Open Font License 1.1 (`fonts/OFL.txt`); the icons are Lucide's, under the ISC licence (`components/LUCIDE-LICENSE.txt`). The name Tray UI and its logo are not covered by the licence.
+""", encoding='utf-8')
+
+
 def dark_themes(tok):
     """The themes whose page is dark: white reads better on it than black does."""
     def lum(value):
@@ -223,6 +286,7 @@ def build():
             (folder / 'OFL.txt').write_text((SRC / 'OFL.txt').read_text(encoding='utf-8'), encoding='utf-8')
     if (ROOT.parent / 'LICENSE').exists():  # the licence of the system itself
         (dist / 'LICENSE').write_text((ROOT.parent / 'LICENSE').read_text(encoding='utf-8'), encoding='utf-8')
+    npm_package(dist, tok, icons)  # dist/ is also the package trayui on npm
     # the tokens for other tools: a theme for Tailwind 4, a preset for Tailwind 3, and Figma variables (tools/exports.py)
     import exports
     exports.write(tok, dist, dark_themes(tok))

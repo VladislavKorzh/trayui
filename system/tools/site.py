@@ -34,6 +34,9 @@ REACT, CHARTS = ROOT / 'react', ROOT / 'react' / 'examples' / 'charts'
 LINKS = json.loads((ROOT / 'tools' / 'links.json').read_text(encoding='utf-8'))
 VERSION = LINKS.get('version', '0.1.0')
 PUBLIC = bool(LINKS.get('public'))  # the repository is open: the site may link it, and jsDelivr serves its releases
+NPM = bool(LINKS.get('npm'))  # trayui and trayui-react are on npm: the site says to install them, and jsDelivr serves the files from there
+CDN = (f'https://cdn.jsdelivr.net/npm/trayui@{VERSION}' if NPM else LINKS.get('cdn', '').replace('{version}', VERSION) if PUBLIC
+       else LINKS.get('site', '')).rstrip('/')
 from build import BLOCK_GROUPS, GROUPS, dark_themes, read_blocks  # the order of the groups, the blocks, and which themes are dark
 import og
 
@@ -682,9 +685,10 @@ def build():
     facts = {'components': len(comps), 'blocks': len(blocks), 'icons': len(icons), 'charts': len(charts), 'version': VERSION,
              'tokens': sum(len(v['tokens']) for v in tok.values() if isinstance(v, dict) and 'tokens' in v), 'kb': round(sum(sizes.values()) / 1024),
              'css_kb': round(sizes['components/bundle.css'] / 1024), 'js_kb': round(sizes['components/bundle.js'] / 1024), 'zip': f'trayui-{VERSION}.zip',
-             'repo': LINKS.get('repo', '') if PUBLIC else '', 'license': LINKS.get('license', ''),
-             # where the three files can be linked from: jsDelivr, by release, once the repository is open; until then this site
-             'cdn': (LINKS.get('cdn', '') if PUBLIC else site_url).rstrip('/'), 'jsdelivr': PUBLIC and bool(LINKS.get('cdn')),
+             'repo': LINKS.get('repo', '') if PUBLIC else '', 'license': LINKS.get('license', ''), 'npm': NPM,
+             # where the three files can be linked from: jsDelivr, by release, once the package is on npm or the repository is
+             # open; until then this site
+             'cdn': CDN, 'jsdelivr': CDN.startswith('https://cdn.jsdelivr.net/'),
              'site': site_url, 'author': LINKS.get('author', ''), 'author_url': LINKS.get('author_url', ''),
              'icon_wall': ''.join(icon(n) for n in sorted(icons)), 'themes': len(tok['color']['themes']),
              'theme_menu': theme_menu(theme_data(tok)['list']), 'mark': MARK, 'plays': len(plays)}
@@ -695,9 +699,16 @@ def build():
     def fill(text, more=None):
         """{{name}} in the site's own pages stands for a fact about this build; more holds the facts of one page."""
         known = dict(facts, **(more or {}))
-        text = re.sub(r'\{\{#(\w+)\}\}(.*?)\{\{/\1\}\}', lambda m: m.group(2) if known.get(m.group(1)) else '', text, flags=re.S)
-        text = re.sub(r'\{\{\^(\w+)\}\}(.*?)\{\{/\1\}\}', lambda m: '' if known.get(m.group(1)) else m.group(2), text, flags=re.S)
-        return re.sub(r'\{\{(\w+)\}\}', lambda m: str(known[m.group(1)]), text)
+        was = None
+        while was != text:  # a section inside another is opened once the one around it is: go round until none is left
+            was = text
+            text = re.sub(r'\{\{#(\w+)\}\}(.*?)\{\{/\1\}\}', lambda m: m.group(2) if known.get(m.group(1)) else '', text, flags=re.S)
+            text = re.sub(r'\{\{\^(\w+)\}\}(.*?)\{\{/\1\}\}', lambda m: '' if known.get(m.group(1)) else m.group(2), text, flags=re.S)
+        text = re.sub(r'\{\{(\w+)\}\}', lambda m: str(known[m.group(1)]), text)
+        left = re.search(r'\{\{[#^/]?\w+\}\}', text)
+        if left:
+            sys.exit(f'a mark of the templates is left unfilled: {left.group(0)} in ...{text[max(0, left.start() - 60):left.start()]}')
+        return text
 
     # ---------- the docs section: the site's own pages, the foundations, the guides of the system ----------
     doc_names = [n for n in ('introduction', 'installation', 'theming', 'react', 'tailwind-figma', 'from-tailwind', 'agents') if (SRC / 'pages' / f'{n}.md').exists()]
@@ -1138,9 +1149,10 @@ def build():
     link = lambda ident: f'{base}/{index[ident]["path"]}.md'
     install = (f'<link rel="stylesheet" href="{facts["cdn"]}/tokens.css">\n<link rel="stylesheet" href="{facts["cdn"]}/components/bundle.css">\n'
                f'<script src="{facts["cdn"]}/components/bundle.js" defer></script>')
-    notes = ('- The React package, `trayui-react`, is not published on npm yet. Do not install a package of that name from npm: it would not be this one. '
-             'The React page says where it is.\n'
-             '- Counter and Perly Farm, the brands in the examples, are invented, and so is every name and figure in them.\n'
+    notes = (('- From npm: `npm install trayui` for the three files, `npm install trayui-react` for React (it needs `react` and `react-dom`, and `recharts` for the charts).\n'
+              if NPM else '- The React package, `trayui-react`, is not published on npm yet. Do not install a package of that name from npm: it would not be this one. '
+              'The React page says where it is.\n')
+             + '- Counter and Perly Farm, the brands in the examples, are invented, and so is every name and figure in them.\n'
              '- Use only classes that exist; where a layout needs a value no class gives, use a token (`var(--space-6)`), never a literal colour or size.\n')
     intro = (f'# Tray UI\n\n> A design system in plain HTML and CSS: {len(comps)} components, {len(blocks)} blocks, {len(icons)} icons and {len(themes["list"])} themes, '
              f'with typed React components and {len(charts)} chart examples on Recharts. Version {VERSION}, {facts["license"]} licence'

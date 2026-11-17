@@ -23,7 +23,7 @@ An agent that can fetch pages needs only the address of llms.txt. One that canno
 - Follow the brand book: one yellow per view, depth by fill, selected is solid ink, sentence case, buttons that start with a verb.
 - Use only classes that exist. If a layout needs a value that no class gives, use a token (`var(--space-6)`), never a literal colour or size.
 - Check the result at 1280, 768 and 390 pixels in a light and a dark theme.
-- The React package, `trayui-react`, is not on npm yet. An agent should not install a package of that name from npm: it would not be this one.
+{{#npm}}- From npm, the files are `trayui` and React is `trayui-react`; an agent that installs them needs nothing else from the system.{{/npm}}{{^npm}}- The React package, `trayui-react`, is not on npm yet. An agent should not install a package of that name from npm: it would not be this one.{{/npm}}
 
 ## A prompt to start from
 

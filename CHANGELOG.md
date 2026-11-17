@@ -2,7 +2,7 @@
 
 What changed in each version of Tray UI, the design system in plain HTML and CSS: its components, blocks, themes and tools, newest first.
 
-## Not released yet
+## 0.2.0, November 2026
 
 Accessibility, after every component was given a section on it. Each change below was checked in Chrome and its accessibility tree; none was tested in a screen reader.
 
