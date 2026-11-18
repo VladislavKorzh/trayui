@@ -6,13 +6,26 @@ large" in words as well as in danger; tray:change with { files }, the real File 
 edge turns solid ink (data-over); when a row is removed focus moves to the next file's remove button, or the one before, or
 back to the tray once the list is empty."""
 
+import atexit, os, shutil, tempfile
+
 DROP = '[data-tray="dropzone"] >> nth=0'
 INPUT = '[data-tray="dropzone"] >> nth=0 >> input[type="file"]'
 LIST = '#fu-list'
 
 
 def files(*specs):
-    return [{'name': n, 'mimeType': m, 'buffer': b'x' * size} for n, m, size in specs]
+    """The files as paths on disk, each of its size but holding nothing (sparse), so Playwright hands Chrome the path instead
+    of sending the bytes: 11 MB sent took more than the 3 s a step may take on a busy CI runner. The type comes from the
+    extension, as it does for a file a person picks."""
+    folder = tempfile.mkdtemp(prefix='fileupload-')
+    atexit.register(shutil.rmtree, folder, True)
+    out = []
+    for name, _type, size in specs:
+        path = os.path.join(folder, name)
+        with open(path, 'wb') as f:
+            f.truncate(size)
+        out.append(path)
+    return out
 
 
 def rows(pg):
