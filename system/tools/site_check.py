@@ -120,8 +120,10 @@ def registry_and_skill(site, index, url):
     index_txt = (SITE / 'llms.txt').read_text(encoding='utf-8')
     check('llms.txt names the CLI, the registry and the skill', f'{site["site"]}/r/registry.json' in index_txt and f'{site["site"]}/skills/trayui.zip' in index_txt and '/docs/cli.md' in index_txt)
     cli = (SITE / 'docs' / 'cli.html').read_text(encoding='utf-8') if (SITE / 'docs' / 'cli.html').exists() else ''
-    check('the CLI has a page of its own in the docs, and the agents page says how to install the skill', 'd-cli' in index and 'npx trayui init' in cli
-          and 'skills/marketplace.json' in (SITE / 'docs' / 'agents.html').read_text(encoding='utf-8'))
+    skill_page = (SITE / 'docs' / 'skill.html').read_text(encoding='utf-8') if (SITE / 'docs' / 'skill.html').exists() else ''
+    check('the CLI and the skill have pages of their own in the docs, and the agents page leads to the skill', 'd-cli' in index and 'npx trayui init' in cli
+          and 'd-skill' in index and all(s in skill_page for s in ('skills/marketplace.json', 'npx trayui skill', 'skills/trayui.zip', 'scripts/check.mjs'))
+          and 'skills/marketplace.json' in (SITE / 'docs' / 'agents.html').read_text(encoding='utf-8') and '/docs/skill' in (SITE / 'docs' / 'agents.html').read_text(encoding='utf-8'))
 
 
 FRAME_JS = '''() => { const f = document.querySelector('.site-frame iframe'); if (!f || !f.contentDocument || !f.contentDocument.body) return null; const d = f.contentDocument;

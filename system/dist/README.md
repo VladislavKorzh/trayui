@@ -57,7 +57,7 @@ It needs Node 18 or later and nothing else. It works in a folder of plain HTML p
 
 ## For AI agents
 
-Copy `skills/trayui` into your project's `.claude/skills/` (or `.agents/skills/`), or install it from https://trayui.com/docs/agents. It tells an agent how to build with the system and has it check what it wrote with `node scripts/check.mjs page.html`.
+Copy `skills/trayui` into your project's `.claude/skills/` (or `.agents/skills/`), or install it as https://trayui.com/docs/skill says. It tells an agent how to build with the system and has it check what it wrote with `node scripts/check.mjs page.html`.
 
 ## Licence
 

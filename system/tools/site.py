@@ -1039,7 +1039,7 @@ def build():
         return text
 
     # ---------- the docs section: the site's own pages, the foundations, the guides of the system ----------
-    doc_names = [n for n in ('introduction', 'installation', 'cli', 'theming', 'react', 'tailwind-figma', 'from-tailwind', 'agents') if (SRC / 'pages' / f'{n}.md').exists()]
+    doc_names = [n for n in ('introduction', 'installation', 'cli', 'theming', 'react', 'tailwind-figma', 'from-tailwind', 'agents', 'skill') if (SRC / 'pages' / f'{n}.md').exists()]
     docs = [read_page(SRC / 'pages' / f'{n}.md', 'd-' + n, '') for n in doc_names]
     for d in docs:
         d['src'] = [f'system/tools/site/pages/{d["id"][2:]}.md']
@@ -1419,6 +1419,7 @@ def build():
              'd-installation': 'Install Tray UI: link three files, no build step', 'd-cli': 'Add Tray UI with a CLI: npx trayui init, add, check',
              'd-changelog': 'Tray UI changelog: what changed in each version',
              'd-from-tailwind': 'Coming from Tailwind: a plain CSS alternative - Tray UI', 'd-agents': 'Tray UI for AI agents: a skill, llms.txt and Markdown',
+             'd-skill': 'The Tray UI skill for AI agents: install, rules, checker',
              'd-react': 'Tray UI in React: typed components and charts', 'd-themes': f'{len(themes["list"])} themes and a theme maker - Tray UI',
              'd-theming': 'Theming with CSS custom properties - Tray UI', 'f-type': 'Typography: type styles and the Onest font - Tray UI',
              'f-colours': 'Colour tokens in the light and dark theme - Tray UI', 'f-icons': f'{len(icons)} Lucide icons, built in - Tray UI',
@@ -1722,7 +1723,7 @@ def build():
               'The React page says where it is.\n')
              + f'- `npx trayui init` and `npx trayui add <name>` put the files, a block or, in React, the source of a component into a project; `npx trayui check page.html` checks markup against the rules ([the CLI]({base}/docs/cli.md)).\n'
              f'- The same items are a registry in shadcn\'s format: [{base}/r/registry.json]({base}/r/registry.json) (React) and [{base}/r/html/registry.json]({base}/r/html/registry.json) (plain HTML), as in `npx shadcn add {base}/r/login-01.json`.\n'
-             f'- A skill for agents, with the rules, every page as Markdown and the checker: [{base}/skills/trayui.zip]({base}/skills/trayui.zip) ([how to install it]({base}/docs/agents.md)).\n'
+             f'- A skill for agents, with the rules, every page as Markdown and the checker: [{base}/skills/trayui.zip]({base}/skills/trayui.zip) ([how to install it]({base}/docs/skill.md)).\n'
              + '- Counter and Perly Farm, the brands in the examples, are invented, and so is every name and figure in them.\n'
              '- Use only classes that exist; where a layout needs a value no class gives, use a token (`var(--space-6)`), never a literal colour or size.\n')
     intro = (f'# Tray UI\n\n> A design system in plain HTML and CSS: {len(comps)} components, {len(blocks)} blocks, {len(icons)} icons and {len(themes["list"])} themes, '
@@ -1749,13 +1750,13 @@ def build():
     (OUT / 'llms.txt').write_text(''.join(lines), encoding='utf-8')
 
     full = [intro + notes + '\nThe sections: installation, the CLI, the rules (the brand book), the guides, theming, React, Tailwind and Figma, '
-            'coming from Tailwind, for AI agents, the component index, the guidelines of every component, the blocks, charts in React, and the changelog.\n']
+            'coming from Tailwind, for AI agents, the agent skill, the component index, the guidelines of every component, the blocks, charts in React, and the changelog.\n']
     doc = lambda ident, title=None: headings(f'# {title or index[ident]["title"]}\n\n' + mds[ident].split('\n', 1)[1].strip(), 2)
     full.append(doc('d-installation'))
     full.append(doc('d-cli'))
     full.append(doc('g-brand', 'Rules: the brand book'))
     full += [doc(g['id']) for g in guides if g['id'] != 'g-brand']
-    full += [doc(i) for i in ('d-theming', 'd-themes', 'd-react', 'd-tailwind-figma', 'd-from-tailwind', 'd-agents') if i in mds and mds[i]]
+    full += [doc(i) for i in ('d-theming', 'd-themes', 'd-react', 'd-tailwind-figma', 'd-from-tailwind', 'd-agents', 'd-skill') if i in mds and mds[i]]
     full.append(headings('# Component index\n\n' + re.sub(r'^# .*\n', '', (P / 'guides' / '0-components.md').read_text(encoding='utf-8').strip()), 2))
     full.append('## The guidelines of every component\n\nEach component with its markup, in the order of the index.\n')
     full += [headings(c['readme'], 3) for c in order]

@@ -27,7 +27,7 @@ SOURCE = ROOT / 'skill'                       # SKILL.md and the plugin's README
 NOTE = re.compile(r'^> Part of Tray UI [^\n]*\n\n?', re.M)  # the line every Markdown page of the site carries under its title
 SECTIONS = ('components', 'blocks', 'docs', 'charts')       # the site's folders of pages the skill carries
 LISTS = ('components.md', 'blocks.md', 'docs.md', 'charts.md')
-LEAVE_OUT = {'docs/changelog.md', 'docs/agents.md'}          # the history, and the page about this skill itself
+LEAVE_OUT = {'docs/changelog.md', 'docs/agents.md', 'docs/skill.md'}  # the history, and the pages about agents and this skill itself
 STAMP = (1980, 1, 1, 0, 0, 0)                                # the one date of every entry in the zip
 
 
@@ -156,7 +156,7 @@ def write(site, dist, facts=None, cli=None, out=None):
                 'description': f'Build screens with Tray UI, the design system in plain HTML and CSS: the markup and rules of its {facts["components"]} components, '
                                f'its {facts["blocks"]} blocks as whole pages, the tokens, and a checker for the markup.',
                 'author': {'name': facts['author'] or 'Tray UI', **({'url': facts['author_url']} if facts['author_url'] else {})},
-                'homepage': f'{site_url}/docs/agents', **({'repository': facts['repo']} if facts['repo'] else {}),
+                'homepage': f'{site_url}/docs/skill', **({'repository': facts['repo']} if facts['repo'] else {}),
                 'license': facts['license'], 'keywords': ['design-system', 'html', 'css', 'ui', 'accessibility', 'tray-ui'], 'icon': './icon.png'}
     plugin = {f'trayui/{rel}': data for rel, data in files.items()}
     plugin['trayui/.claude-plugin/plugin.json'] = (json.dumps(manifest, indent=2, ensure_ascii=False) + '\n').encode('utf-8')
@@ -170,7 +170,7 @@ def write(site, dist, facts=None, cli=None, out=None):
               'description': 'Tray UI for AI agents: a skill to build screens with the design system in plain HTML and CSS.',
               'plugins': [{'name': 'trayui', 'source': {'source': 'archive', 'url': f'{site_url}/skills/trayui.zip', 'sha256': digest},
                            'description': manifest['description'], 'category': 'design', 'tags': ['design-system', 'html', 'css', 'accessibility'],
-                           'homepage': f'{site_url}/docs/agents'}]}
+                           'homepage': f'{site_url}/docs/skill'}]}
     (out / 'skills' / 'marketplace.json').write_text(json.dumps(market, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     return {'folder': str(folder), 'files': len(files), 'references': len(refs), 'kb': sum(map(len, files.values())) // 1024,
             'zip_kb': len(archive) // 1024, 'sha256': digest}

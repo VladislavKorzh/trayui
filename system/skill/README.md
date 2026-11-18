@@ -18,7 +18,7 @@ It reads nothing from the network and runs nothing by itself.
 - **claude.ai:** download [trayui.zip]({{site}}/skills/trayui.zip) and upload it under Settings, Capabilities, Skills.
 - **Any agent that reads skills:** copy the `trayui` folder of the zip, or `node_modules/trayui/skills/trayui` after `npm install trayui`, into the project's `.claude/skills/` or `.agents/skills/`.
 
-{{site}}/docs/agents says more.
+{{site}}/docs/skill says more.
 
 ## Licence
 

@@ -82,4 +82,4 @@ The shadcn CLI cannot bring the font of the plain HTML files, which is not text:
 
 ## For an agent
 
-An agent can run the same commands, and check what it wrote with `npx trayui check`. [For AI agents](https://trayui.com/docs/agents.md) says how to give it the skill, which holds the rules, a page for every component and block, and the checker.
+An agent can run the same commands, and check what it wrote with `npx trayui check`. `npx trayui skill` gives it the skill, which holds the rules, a page for every component and block, and the checker; [The agent skill](https://trayui.com/docs/skill.md) says more.

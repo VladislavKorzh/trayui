@@ -4,13 +4,14 @@ The system is written to be read by an agent as well as by a person: short rules
 
 ## Give it the skill
 
-The skill is a folder an agent reads when a task touches Tray UI: `SKILL.md` with the rules it breaks most, every page of this site as Markdown, and a checker it runs on the HTML it writes. It works offline. Install it once, in one of these ways.
+The skill is a folder an agent reads when a task touches Tray UI: `SKILL.md` with the rules it breaks most, every page of this site as Markdown, and a checker it runs on the HTML it writes. It works offline. In Claude Code, install it as a plugin:
 
-- **Claude Code**, as a plugin that updates with the site: run `claude plugin marketplace add {{site}}/skills/marketplace.json`, then `claude plugin install trayui@trayui`. For one session only: `claude --plugin-dir trayui.zip`.
-- **claude.ai**: download [trayui.zip](skills/trayui.zip) and upload it as a skill, under Skills in the settings.
-- **In a project**, for Claude Code and the other agents that read `SKILL.md` from a folder: run `npx trayui skill`, which copies it into `.claude/skills/trayui`, or `npx trayui skill --agents` for `.agents/skills/trayui`. Unzipping `trayui.zip` into the same place does the same. The `trayui` package on npm also carries it, in `skills/trayui`.
+```sh
+claude plugin marketplace add {{site}}/skills/marketplace.json
+claude plugin install trayui@trayui
+```
 
-The skill names the release it was made from. Once it is installed, ask for a screen as you would ask anyone: "Build the order history page of a shop with Tray UI". The agent starts from the nearest block, reads the pages of the components it uses, and runs `node scripts/check.mjs` (or `npx trayui check`) on its page before it hands it over.
+[The agent skill](#d-skill) says how to install it in claude.ai, in one project and in other agents, what is in it, and how to keep it current. Once it is installed, ask for a screen as you would ask anyone: "Build the order history page of a shop with Tray UI". The agent starts from the nearest block, reads the pages of the components it uses, and runs `node scripts/check.mjs` (or `npx trayui check`) on its page before it hands it over.
 
 ## Or give it the pages
 
