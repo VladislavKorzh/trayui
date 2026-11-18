@@ -11,23 +11,26 @@
         <a class="tray-btn" href="#d-installation">Get started</a>
         <a class="tray-btn tray-btn--quiet" href="#components">Browse the components</a>
       </div>
-      <p class="tray-hero__note">{{kb}} KB compressed, {{license}} licence, built to WCAG 2.2 AA. {{themes}} themes, or one of your own. Building with an AI tool? <a href="#d-agents">Give it llms.txt</a>.</p>
+      <p class="tray-hero__note">{{kb}} KB compressed, {{license}} licence, built to WCAG 2.2 AA. {{themes}} themes, or one of your own.</p>
     </div>
   </div>
   <div class="tray-card tray-card--accent tray-hero__media">
     <div class="tray-row tray-row--between">
-      <h2 class="title">Three files</h2>
+      <h2 class="title">Three ways in</h2>
       <span class="tray-badge tray-badge--ink">Version {{version}}</span>
     </div>
-    {{install}}
     <div class="tray-stack">
-      <ul class="tray-items">
-        <li class="tray-item tray-item--sm"><span class="tray-item__body"><span class="tray-item__title">tokens.css</span><span class="tray-item__text">Every colour, size and type style</span></span><span class="tray-item__end tray-num">{{tokens_kb}} KB</span></li>
-        <li class="tray-item tray-item--sm"><span class="tray-item__body"><span class="tray-item__title">components/bundle.css</span><span class="tray-item__text">The classes of every component</span></span><span class="tray-item__end tray-num">{{css_kb}} KB</span></li>
-        <li class="tray-item tray-item--sm"><span class="tray-item__body"><span class="tray-item__title">components/bundle.js</span><span class="tray-item__text">Behaviour and the icons</span></span><span class="tray-item__end tray-num">{{js_kb}} KB</span></li>
+      <ul class="tray-items site-ways" role="list">
+        <li class="tray-item"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-sparkle"/></svg></span><span class="tray-item__body"><span class="tray-item__title">Ask an agent</span><span class="tray-item__text">One prompt does it</span></span><span class="tray-item__end"><button class="tray-btn tray-btn--dark tray-btn--sm" type="button" data-tray="copy" data-target="#home-prompt"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-copy"/></svg><span data-label>Copy the prompt</span></button></span></li>
+        <li class="tray-item"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-terminal"/></svg></span><span class="tray-item__body"><span class="tray-item__title">Run the CLI</span><span class="tray-item__text">npx trayui init</span></span><span class="tray-item__end"><button class="tray-btn tray-btn--ghost tray-btn--sm" type="button" data-tray="copy" data-target="#home-cli"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-copy"/></svg><span data-label>Copy the command</span></button></span></li>
+        <li class="tray-item"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-code"/></svg></span><span class="tray-item__body"><span class="tray-item__title">Link three files</span><span class="tray-item__text">From {{install_from}}, {{kb}} KB</span></span><span class="tray-item__end"><button class="tray-btn tray-btn--ghost tray-btn--sm" type="button" data-tray="copy" data-target="#home-install"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-copy"/></svg><span data-label>Copy the lines</span></button></span></li>
       </ul>
-      <p>Link them as above, or <a href="#d-installation">download them</a>, and write HTML. A button is one class; a menu, a calendar or a chart is one attribute more.</p>
+      <p><a class="tray-btn tray-btn--quiet tray-btn--sm" href="#d-agents">Read the prompt<svg class="tray-icon tray-icon--sm tray-icon--flip" aria-hidden="true"><use href="#tray-i-arrow-right"/></svg></a></p>
     </div>
+    <p>{{#repo}}<a href="{{repo}}">Source on GitHub</a>{{#npm}}, <a href="https://www.npmjs.com/package/trayui">package on npm</a>{{/npm}}. {{/repo}}An agent that only reads needs <a href="/llms.txt">llms.txt</a>.</p>
+    <pre hidden id="home-prompt">{{prompt_html}}</pre>
+    <pre hidden id="home-cli">npx trayui init</pre>
+    <pre hidden id="home-install">{{install}}</pre>
   </div>
 </section>
 

@@ -98,8 +98,15 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 .site-iconwall { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); justify-items: center; gap: var(--space-5) var(--space-2); }
 .site-result { display: grid; align-content: center; }
 .site-show { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
-/* The lines that install the system, in the yellow card: a step smaller, so they fit the card on a wide screen. */
-.site-home .tray-hero__media pre { font-size: .8125rem; overflow-x: auto; }
+/* The three ways in, on the yellow card. A narrower card drops the icons of the rows, so the words keep their width; on a
+   phone each row's copy button goes under its words, as wide as the row, and the icons come back. */
+.site-ways { container-type: inline-size; }
+@container (max-width: 28rem) { .site-ways .tray-item__media { display: none; } }
+@container (max-width: 24rem) {
+  .site-ways .tray-item { flex-wrap: wrap; }
+  .site-ways .tray-item__media { display: grid; }
+  .site-ways .tray-item__end, .site-ways .tray-item__end .tray-btn { flex: 1 0 100%; }
+}
 
 /* ---------- A page of words: guidelines, docs, the foundations ---------- */
 

@@ -1085,8 +1085,20 @@ def build():
     facts['github'] = github_link(facts['repo'], count, 'tray-topbar__wide') if facts['repo'] else ''  # in the header, and in the sheet on a phone
     facts['github_sheet'] = github_link(facts['repo'], count) if facts['repo'] else ''
     at = site_url or facts['cdn'] or 'trayui'  # the home page's lines are short: the site's own copies of the current release; the docs give jsDelivr by version
-    facts['install'] = code_block(f'<link rel="stylesheet"\n  href="{at}/tokens.css">\n<link rel="stylesheet"\n  href="{at}/components/bundle.css">\n'
-                                  f'<script defer\n  src="{at}/components/bundle.js"></script>', 'html', 'home-install-code')  # the lines the home page starts with, each tag on two to fit the card
+    # the three ways in that the home page copies: the lines that link the files, from where they come, and a prompt that has
+    # an agent set the system up in the project it works in (the agents page shows the same words)
+    facts['install'] = html.escape(f'<link rel="stylesheet" href="{at}/tokens.css">\n<link rel="stylesheet" href="{at}/components/bundle.css">\n'
+                                   f'<script defer src="{at}/components/bundle.js"></script>', quote=False)
+    facts['install_from'] = urllib.parse.urlsplit(at).netloc or at
+    facts['prompt'] = (f'Add Tray UI to this project. Read {site_url or "https://trayui.com"}/llms.txt first.\n'  # lines that fit the docs' code box
+                       'Run npx trayui init, then npx trayui skill (add --agents if you are\n'
+                       "not Claude Code), and follow the skill's SKILL.md.\n"
+                       'In plain HTML, link tokens.css, components/bundle.css and\n'
+                       'components/bundle.js on every page, in that order, with lang and\n'
+                       'data-theme on <html>. With no shell, link them from the CDN that\n'
+                       'llms.txt names.\n'
+                       'Run npx trayui check on each page before you hand it over.')
+    facts['prompt_html'] = html.escape(facts['prompt'], quote=False)
 
     def fill(text, more=None):
         """{{name}} in the site's own pages stands for a fact about this build; more holds the facts of one page."""

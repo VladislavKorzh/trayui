@@ -2,6 +2,20 @@
 
 The system is written to be read by an agent as well as by a person: short rules, exact names, and markup that can be copied. This page says what to give an agent, and what to ask of it.
 
+## A prompt that sets it up
+
+Paste it into an agent that runs commands in your project, such as Claude Code, Cursor or Codex. It is the prompt the home page copies.
+
+```text
+{{prompt}}
+```
+
+- `llms.txt` gives the agent the map of the system and the pages to read.
+- `npx trayui init` puts the three files and the font into `trayui/`, and prints the lines that link them. In a React app it copies the core and imports the stylesheet instead, as [Add with a CLI](#d-cli) says.
+- `npx trayui skill` copies the skill into `.claude/skills/trayui`, and `--agents` into `.agents/skills/trayui`, for other agents. Its `SKILL.md` holds the rules agents break most.
+- `npx trayui check` reports a page without its language, its theme or the three files in order, and classes that do not exist, a second yellow button in a view, buttons and fields without a name. The agent fixes them before you see the page.
+- An agent with no shell, as in a chat, cannot run the CLI. It links the files from {{#jsdelivr}}jsDelivr{{/jsdelivr}}{{^jsdelivr}}this site{{/jsdelivr}}, as llms.txt shows, and writes the markup itself.
+
 ## Give it the skill
 
 The skill is a folder an agent reads when a task touches Tray UI: `SKILL.md` with the rules it breaks most, every page of the docs, the components, the blocks and the charts as Markdown, and a checker it runs on the HTML it writes. It works offline. In Claude Code, install it as a plugin:
@@ -36,7 +50,7 @@ An agent that can fetch pages needs only the address of llms.txt. One that canno
 - Check the result at 1280, 768 and 390 pixels in a light and a dark theme.
 {{#npm}}- From npm, the files are `trayui` and React is `trayui-react`; an agent that installs them needs nothing else from the system.{{/npm}}{{^npm}}- The React package, `trayui-react`, is not on npm yet. An agent should not install a package of that name from npm: it would not be this one.{{/npm}}
 
-## A prompt to start from
+## A prompt for a first screen
 
 ```text
 Build the order history page of a shop with Tray UI.

@@ -514,8 +514,10 @@
     if (k === 'home') {
       return said + '<div class="site-home site-sk" inert><section class="tray-hero"><div class="tray-card tray-hero__text"><div class="tray-hero__copy">' + ink(42, 'h1', 'display') + ink(170, 'p') + '</div>' +
         '<div class="tray-stack tray-stack--sm"><div class="tray-hero__actions"><span class="tray-btn site-sk-pill">' + filler(11) + '</span><span class="tray-btn tray-btn--quiet site-sk-pill">' + filler(21) + '</span></div>' + ink(140, 'p', 'tray-hero__note') + '</div></div>' +
-        '<div class="tray-card tray-card--accent tray-hero__media"><div class="tray-row tray-row--between">' + ink(11, 'h2', 'title') + '<span class="tray-badge site-sk-pill">' + filler(13) + '</span></div>' + codeBox(6) +
-        '<div class="tray-stack"><ul class="tray-items">' + times(3, function () { return '<li class="tray-item tray-item--sm"><span class="tray-item__body">' + ink(20, 'span', 'tray-item__title') + ink(40, 'span', 'tray-item__text') + '</span></li>'; }) + '</ul>' + ink(150, 'p') + '</div></div></section></div>';
+        '<div class="tray-card tray-card--accent tray-hero__media"><div class="tray-row tray-row--between">' + ink(13, 'h2', 'title') + '<span class="tray-badge site-sk-pill">' + filler(13) + '</span></div>' +
+        '<div class="tray-stack"><ul class="tray-items site-ways">' + times(3, function () { return '<li class="tray-item"><span class="tray-item__media site-sk-pill"></span><span class="tray-item__body">' + ink(14, 'span', 'tray-item__title') + ink(24, 'span', 'tray-item__text') +
+          '</span><span class="tray-item__end"><span class="tray-btn tray-btn--sm site-sk-pill">' + filler(16) + '</span></span></li>'; }) + '</ul>' +
+        '<p><span class="tray-btn tray-btn--quiet tray-btn--sm site-sk-pill">' + filler(17) + '</span></p></div>' + ink(90, 'p') + '</div></section></div>';
     }
     if (k === 'a') {
       return said + '<article class="site-post"><header class="site-post__head"><div class="site-sk" inert><ol class="tray-crumbs">' + (sk[3] || [8, 12, 16]).map(function (n) { return ink(n, 'li'); }).join('') + '</ol></div>' +
