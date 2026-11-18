@@ -26,7 +26,7 @@ files also stay at their plain addresses, for other sites to link. For readers t
 comes as Markdown at its address with .md added, llms.txt is the index of them, and llms-full.txt holds the whole
 system in one file. tools/og.py draws the picture a link to each page shows.
 """
-import gzip, hashlib, html, json, pathlib, re, shutil, subprocess, sys, urllib.parse, zipfile
+import gzip, hashlib, html, html.parser, json, pathlib, re, shutil, subprocess, sys, urllib.parse, zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 P, SRC, DIST, OUT = ROOT / 'project', ROOT / 'tools' / 'site', ROOT / 'dist', ROOT / 'site'
@@ -507,8 +507,9 @@ SAMPLER = '''<div class="site-sampler">
 </div>'''
 
 
-def themes_page(data):
-    """The Themes page: every theme as a card to choose, then the maker: a few colours in, a whole theme out."""
+def themes_page(data, first_css=''):
+    """The Themes page: every theme as a card to choose, then the maker: a few colours in, a whole theme out. first_css: the rule the
+    maker starts from (Light, as theme.js writes it), in the page before the maker's script runs, so the page keeps its length when it comes."""
     themes = data['list']
     def card(th):
         mini = ('<span class="site-mini"><span class="site-mini__text"><b>Aa</b><i></i><i></i></span><span class="site-mini__tray"><i></i><i></i></span>'
@@ -516,7 +517,7 @@ def themes_page(data):
         return (f'<label class="site-themecard"><input class="tray-vh" type="radio" name="site-theme-pick" value="{th["id"]}">'
                 f'<span class="site-themecard__frame"><span class="site-themecard__view" data-theme="{th["id"]}">{mini}</span></span>'
                 f'<span class="site-themecard__text"><b>{html.escape(th["name"])}</b><small>{"Dark" if th["mode"] == "dark" else "Light"}</small></span></label>')
-    def colour(key, label, hint):
+    def well(key, label, hint):
         return (f'<div class="tray-field site-colour"><label class="tray-label" for="maker-{key}-hex">{label}</label>'
                 f'<div class="site-colour__row"><input type="color" id="maker-{key}" data-seed="{key}" aria-label="{label}: pick a colour">'
                 f'<input class="tray-input" id="maker-{key}-hex" data-seed-hex="{key}" inputmode="text" autocomplete="off" spellcheck="false" maxlength="7" aria-describedby="maker-{key}-hint"></div>'
@@ -527,10 +528,10 @@ def themes_page(data):
         '<form class="tray-card site-maker__controls" data-maker novalidate><div class="tray-stack">'
         '<div class="tray-field"><label class="tray-label" for="maker-base">Start from</label><span class="tray-select"><select id="maker-base" data-maker-base>' + options + '</select></span></div>'
         '<div class="tray-field"><label class="tray-label" for="maker-name">Name</label><input class="tray-input" id="maker-name" data-maker-name-input value="My theme" maxlength="32" autocomplete="off"></div>'
-        + colour('page', 'Page', 'The ground. A pale page makes a light theme, a dark page a dark one.')
-        + colour('surface', 'Tray', 'Cards and the fill of controls. It follows the page until you set it.')
-        + colour('ink', 'Ink', 'Text. It needs 10:1 on the page and the tray.')
-        + colour('accent', 'Accent', 'The one loud colour. Ink text goes on it, so keep it bright.')
+        + well('page', 'Page', 'The ground. A pale page makes a light theme, a dark page a dark one.')
+        + well('surface', 'Tray', 'Cards and the fill of controls. It follows the page until you set it.')
+        + well('ink', 'Ink', 'Text. It needs 10:1 on the page and the tray.')
+        + well('accent', 'Accent', 'The one loud colour. Ink text goes on it, so keep it bright.')
         + '<div class="tray-slider-field"><div class="tray-slider-field__head"><label class="tray-label tray-label--inline" for="maker-round">Corners</label><output for="maker-round"></output></div>'
           '<input class="tray-slider" id="maker-round" type="range" min="0" max="150" step="10" value="100" data-unit="%" data-tray="slider" data-maker-round>'
           '<div class="tray-slider-field__scale"><span>Square</span><span>As the system</span><span>Rounder</span></div></div>'
@@ -555,18 +556,22 @@ def themes_page(data):
         '<div data-maker-shared></div>'
         f'<div class="site-maker">{maker}<div class="site-maker__stage"><div class="site-maker__preview" data-maker-preview data-theme="site-draft" role="group" aria-label="The theme on real components">{sample}</div></div></div>'
         '<h2 class="subtitle" id="themes-check">Does it hold?</h2>'
-        '<div data-maker-verdict></div><details class="tray-collapsible"><summary><span>Show every pair</span><span class="tray-tile" aria-hidden="true">' + icon('plus') + '</span></summary>'
+        # until the maker says whether the theme holds, a skeleton of what it will say, so nothing under it moves when it does
+        '<div data-maker-verdict><div class="tray-alert site-sk" aria-hidden="true"><span class="tray-alert__icon site-sk-pill">' + icon('circle-check') + '</span>'
+        '<div class="tray-alert__body"><p class="tray-alert__title"><span class="site-sk-ink">All the pairs hold their contrast</span></p><p class="tray-alert__text">'
+        '<span class="site-sk-ink">Text keeps its contrast on every ground of this light theme, and ink reads on the accent.</span></p></div></div></div>'
+        '<details class="tray-collapsible"><summary><span>Show every pair</span><span class="tray-tile" aria-hidden="true">' + icon('plus') + '</span></summary>'
         '<div class="tray-collapsible__body"><div class="tray-table-wrap"><table class="tray-table tray-table--compact"><thead><tr><th scope="col">What</th><th scope="col">Tokens</th>'
         '<th scope="col" data-num>Contrast</th><th scope="col" data-num>Needs</th><th scope="col">Holds</th></tr></thead><tbody data-maker-report></tbody></table></div></div></details>'
         '<h2 class="subtitle" id="themes-css">Take it with you</h2>'
         '<p>The theme is one rule. Save it as a stylesheet and link it after the system, or paste it into a stylesheet of your own, then name it on <code class="tray-code-inline">&lt;html&gt;</code>.</p>'
         '<div class="tray-code" dir="ltr"><div class="tray-code__head"><span>CSS</span><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button" data-tray="copy" data-target="#site-theme-css">'
-        + icon('copy', 'tray-icon--sm') + '<span data-label>Copy</span></button></div><pre tabindex="0"><code id="site-theme-css"></code></pre></div>'
+        + icon('copy', 'tray-icon--sm') + f'<span data-label>Copy</span></button></div><pre tabindex="0"><code id="site-theme-css">{colour(first_css, "css") if first_css else ""}</code></pre></div>'
         + code_block('<link rel="stylesheet" href="tokens.css">\n<link rel="stylesheet" href="components/bundle.css">\n<link rel="stylesheet" href="my-theme.css">', 'html', 'd-themes-code-2')
-        + '<div class="tray-code" dir="ltr"><div class="tray-code__head"><span>HTML</span></div><pre tabindex="0"><code id="site-theme-html"></code></pre></div>'
+        + '<div class="tray-code" dir="ltr"><div class="tray-code__head"><span>HTML</span></div><pre tabindex="0"><code id="site-theme-html">' + colour('<html lang="en" data-theme="my-theme">', 'html') + '</code></pre></div>'
         '<p>Or send it as a link. Whoever opens it finds the theme here in the maker, checked the same way, and can wear it on this site with one press.</p>'
         '<div class="tray-code" dir="ltr"><div class="tray-code__head"><span>Link</span><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button" data-tray="copy" data-target="#site-theme-link">'
-        + icon('copy', 'tray-icon--sm') + '<span data-label>Copy</span></button></div><pre tabindex="0"><code id="site-theme-link"></code></pre></div>'
+        + icon('copy', 'tray-icon--sm') + '<span data-label>Copy</span></button></div><pre tabindex="0"><code id="site-theme-link"> </code></pre></div>'
         '<p>The link holds the colours themselves. The theme lives in this browser and in the links you copy: nothing is sent anywhere.</p></article>')
 
 
@@ -604,16 +609,42 @@ def read_plays(names):
     return plays, problems
 
 
-def play_section(c, spec):
-    """The playground under the example: the stage, the controls beside it, the markup under both."""
-    ident, width = c['id'], spec.get('width')
+def play_section(c, spec, drawn=None):
+    """The playground under the example: the stage, the controls beside it, the markup under both. drawn: the playground at its
+    first choice, as playground.js draws it (first()), so the page comes with it and keeps its length when the script arrives."""
+    ident, width, drawn = c['id'], spec.get('width'), drawn or {}
     lead = spec.get('lead') or f'Choose how the {c["title"].lower()} looks and behaves, and copy its markup.'
     return (f'<section class="site-play" data-play="{ident}" aria-labelledby="{ident}-play"{f" style=\"--play-w: {width}\"" if width else ""}>'
             f'<div class="site-play__head"><h2 class="subtitle" id="{ident}-play">Playground</h2><p>{inline(lead)}</p></div>'
-            '<div class="site-play__box"><div class="site-play__stage" data-play-stage role="group" aria-label="The example, as chosen"></div>'
-            '<form class="tray-card site-play__controls" data-play-controls aria-label="Choices" novalidate></form></div>'
+            f'<div class="site-play__box"><div class="site-play__stage" data-play-stage{" data-ground=" + chr(34) + drawn["ground"] + chr(34) if drawn else ""} role="group" aria-label="The example, as chosen">{drawn.get("stage", "")}</div>'
+            f'<form class="tray-card site-play__controls" data-play-controls aria-label="Choices" autocomplete="off" novalidate>{drawn.get("controls", "")}</form></div>'
             f'<div class="tray-code" dir="ltr"><div class="tray-code__head"><span>HTML</span><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button" data-tray="copy" data-target="#{ident}-play-code">'
-            f'{icon("copy", "tray-icon--sm")}<span data-label>Copy</span></button></div><pre tabindex="0"><code id="{ident}-play-code" data-play-code></code></pre></div></section>')
+            f'{icon("copy", "tray-icon--sm")}<span data-label>Copy</span></button></div><pre tabindex="0"><code id="{ident}-play-code" data-play-code>{colour(drawn["code"], "html") if drawn else ""}</code></pre></div></section>')
+
+
+# What a page's own script draws when it opens, drawn while the site is built by the same script in node: the page comes with
+# it, so nothing below it moves when the script arrives.
+FIRST_DRAW = r"""
+const [play, engine] = process.argv.slice(1);
+const P = require(play), T = require(engine);
+const input = JSON.parse(require('fs').readFileSync(0, 'utf8'));
+const plays = {};
+for (const name in input.plays) plays[name] = P.first(input.plays[name]);
+const light = input.themes.list.find((t) => t.id === 'light');
+process.stdout.write(JSON.stringify({ plays, css: T.css('my-theme', light.tokens, input.themes.themed, light.more) }));
+"""
+
+
+def first_draw(plays, themes):
+    """Each playground at its first choice (playground.js) and the rule the theme maker starts from (theme.js): {plays, css}."""
+    try:
+        done = subprocess.run(['node', '-e', FIRST_DRAW, str(SRC / 'playground.js'), str(SRC / 'theme.js')], input=json.dumps({'plays': plays, 'themes': themes}),
+                              capture_output=True, text=True, encoding='utf-8')
+    except FileNotFoundError:
+        sys.exit('site: node was not found; the playgrounds and the theme maker are drawn with it')
+    if done.returncode:
+        sys.exit('site: drawing the playgrounds in node failed:\n' + done.stderr)
+    return json.loads(done.stdout)
 
 
 # ---------- Charts: the examples of the React package ----------
@@ -639,6 +670,195 @@ def chart_card(c, group, level='h2', code=True):
     return (f'<article class="site-chart{" site-chart--wide" if c.get("wide") else ""}"><div class="site-chart__bar"><div><{level} class="site-chart__name">{html.escape(c["title"])}</{level}>'
             f'<p>{html.escape(c["note"])}</p></div></div>'
             f'<div class="site-chart__view" data-rechart="{c["id"]}"></div>{src}</article>')
+
+
+def opening_tag(src, name):
+    """The attributes of the first <name ...> in a React file, braces and all, or None."""
+    m = re.search(r'<' + name + r'(?![\w.])', src)
+    if not m:
+        return None
+    depth, i = 0, m.end()
+    while i < len(src):
+        ch = src[i]
+        if ch in '{':
+            depth += 1
+        elif ch == '}':
+            depth -= 1
+        elif ch == '>' and depth == 0:
+            return src[m.end():i]
+        i += 1
+    return None
+
+
+def chart_shape(source):
+    """How an example lays out, read from its file: the head of its card, the title and caption of the chart, the height of
+    the plot, the names in its key and whether the figures fold under it. None for one this cannot read: a plain Chart that
+    is round, set beside its key or on its side."""
+    box = opening_tag(source, 'ChartContainer')
+    plain = opening_tag(source, 'Chart') if box is None else None
+    if box is None and (plain is None or not re.search(r'type="(bar|line|area)"', plain) or re.search(r'(?<![\w.-])(horizontal|side)(?![\w=-])', plain)):
+        return None
+    def text(attrs, key):
+        """A prop given as a string, or as a template whose ${…} parts stand in at about the length they print."""
+        m = re.search(key + r'=(?:"([^"]*)"|\{`([^`]*)`\})', attrs or '')
+        return re.sub(r'\$\{[^}]*\}', '0000', (m.group(1) or m.group(2) or '') if m else '')
+    if plain is not None:  # the plain Chart: a key when it draws more than one series, the figures unless table={false}
+        names = re.findall(r"name: '([^']*)'", plain)
+        tall = re.search(r'height=\{(\d+)\}', plain)
+        return {'head': None, 'title': text(plain, 'title'), 'caption': text(plain, 'caption'), 'plot': int(tall.group(1)) if tall else 192,
+                'key': names if len(names) > 1 else [], 'figures': 'table={false}' not in plain}
+    flag = lambda key: re.search(r'(?<![\w.-])' + key + r'(?![\w=-])', box) is not None
+    tall = re.search(r'height=\{(\d+)\}', box)
+    config = re.search(r'const config = \{(.*?)\}\s*satisfies', source, re.S)
+    card = opening_tag(source, 'Card')
+    items = re.search(r'items=\{(\w+)\}', card or '')  # the choices of a switch in the head of the card
+    choices = re.search(r'const ' + items.group(1) + r' = \[(.*?)\];', source, re.S) if items else None
+    return {'head': (text(card, 'title'), text(card, 'description'), re.findall(r"label: '([^']*)'", choices.group(1)) if choices else []) if text(card, 'title') else None,
+            'title': text(box, 'title'), 'caption': text(box, 'caption'), 'plot': int(tall.group(1)) if tall else 224 if flag('round') else 192,
+            'key': re.findall(r"label: '([^']*)'", config.group(1)) if config and flag('legend') else [], 'figures': 'footer=' in box}
+
+
+def chart_skeleton(shape):
+    """The card of a chart before charts.js draws it, laid out with the classes the chart is drawn with and its own words,
+    hidden: it holds the chart's height at every width, and React takes its place in one step."""
+    ink = lambda words: f'<span class="site-sk-ink">{html.escape(words) or "&nbsp;"}</span>'
+    head = ''
+    if shape['head']:
+        title, about, choices = shape['head']
+        head = (f'<div class="tray-card__head"><div><h3 class="subtitle">{ink(title)}</h3><p class="tray-soft">{ink(about)}</p></div>'
+                + (f'<div class="tray-seg tray-seg--sm site-sk-pill">' + ''.join(f'<span class="tray-seg__item"><span>{html.escape(c)}</span></span>' for c in choices) + '</div>' if choices else '')
+                + '</div>')
+    return (f'<div class="tray-card site-sk" aria-hidden="true" inert>{head}<figure class="tray-chart">'
+            + (f'<figcaption class="tray-chart__title">{ink(shape["title"])}</figcaption>' if shape['title'] else '')
+            + (f'<p class="tray-chart__caption">{ink(shape["caption"])}</p>' if shape['caption'] else '')
+            + f'<div class="tray-chart__canvas site-sk-area" style="--tray-h: {shape["plot"]}px"></div>'
+            + ('<ul class="tray-chart__legend">' + ''.join(f'<li><span class="tray-swatch"></span>{ink(k)}</li>' for k in shape['key']) + '</ul>' if shape['key'] else '')
+            + (f'<details class="tray-collapsible"><summary>{ink("Show the figures")}<span class="tray-tile site-sk-pill"></span></summary></details>' if shape['figures'] else '')
+            + '</figure></div>')
+
+
+# ---------- Skeletons: the shape of a page while its file is on its way ----------
+# A page opened from another page comes in a file of its own. When that takes longer than a moment, site.js draws the page's
+# skeleton: its title and summary as they will be, and grey shapes laid out with the page's own classes where the rest will
+# come. index[id]['sk'] says what to draw, from the page as it was built: its kind, then what its first screens hold.
+
+class Blocks(html.parser.HTMLParser):
+    """The blocks directly inside the first element with a class (site-prose by default), with the length of their words."""
+    VOID = {'br', 'img', 'input', 'meta', 'link', 'hr', 'source', 'wbr', 'col', 'use', 'path', 'rect', 'circle', 'line', 'polyline', 'polygon'}
+
+    def __init__(self, cls='site-prose'):
+        super().__init__(convert_charrefs=True)
+        self.cls, self.depth, self.at, self.blocks, self.inline = cls, 0, None, [], 0
+
+    def handle_starttag(self, tag, attrs):
+        if tag in self.VOID:
+            return
+        cls = (dict(attrs).get('class') or '').split()
+        self.depth += 1
+        if self.at is None and self.cls in cls:
+            self.at = self.depth
+        elif self.at is not None and self.at > 0:
+            if self.depth == self.at + 1:
+                self.blocks.append({'tag': tag, 'cls': cls, 'text': 0, 'kids': 0, 'lines': 1, 'rows': 0, 'cols': 0})
+            elif self.blocks and self.depth > self.at + 1:
+                b = self.blocks[-1]
+                b['kids'] += self.depth == self.at + 2
+                b['rows'] += tag == 'tr'
+                b['cols'] += tag in ('th', 'td') and b['rows'] == 1
+                self.inline += 'tray-code-inline' in cls
+
+    def handle_endtag(self, tag):
+        if tag in self.VOID:
+            return
+        if self.at is not None and self.at > 0 and self.blocks and self.depth > self.at + 1 and self.inline:
+            self.inline -= 1
+        if self.at == self.depth:
+            self.at = -1  # the first one only
+        self.depth -= 1
+
+    def handle_data(self, data):
+        if self.at is not None and self.at > 0 and self.blocks and self.depth > self.at:
+            b = self.blocks[-1]
+            b['text'] += len(data.strip() and ' '.join(data.split())) * (1.3 if self.inline else 1)  # code is set wider than words
+            b['lines'] += data.count('\n') if b['tag'] == 'div' and 'tray-code' in b['cls'] else 0
+
+
+def outline(markup, cls='site-prose', most=9):
+    """The first blocks of a column of words, as the skeleton draws them, in one string: h<len> a heading, i<len> a smaller
+    one, p<len> a paragraph, l<items>:<len> a list, c<lines> a block of code, t<rows>:<cols>:<len> a table, d a fold, m<n> the list
+    of themes. It stops at a block of any other kind: what the skeleton cannot draw it leaves out."""
+    parser = Blocks(cls)
+    parser.feed(markup)
+    out = []
+    for b in parser.blocks[:most]:
+        n, tag, kind = round(b['text']), b['tag'], b['cls'][0] if b['cls'] else ''
+        if tag == 'h2':
+            out.append(f'h{n}')
+        elif tag == 'h3':
+            out.append(f'i{n}')
+        elif tag == 'p' and 'tray-list__empty' not in b['cls']:
+            out.append(f'p{n}')
+        elif tag in ('ul', 'ol') and b['kids']:
+            out.append(f'l{b["kids"]}:{round(n / b["kids"])}')
+        elif kind == 'tray-code':
+            out.append(f'c{max(1, b["lines"])}')
+        elif kind == 'tray-table-wrap' and b['rows']:
+            out.append(f't{b["rows"]}:{b["cols"] or 2}:{round(n / (b["rows"] * (b["cols"] or 2)))}')
+        elif tag == 'details':
+            out.append('d')
+        elif kind == 'site-themelist':
+            out.append(f'm{b["kids"]}')
+        else:
+            break
+    return ' '.join(out)
+
+
+def chart_code(shape):
+    """A chart in the skeleton of a page, in a few letters: the height of its plot, k and the names in its key, f when its figures
+    fold under it, h when its card has a head, n when it has no caption. '' for one the build cannot read."""
+    if not shape:
+        return ''
+    return (f'{shape["plot"]}' + (f'k{len(shape["key"])}' if shape['key'] else '') + ('f' if shape['figures'] else '') + ('h' if shape['head'] else '')
+            + ('n' if not shape['caption'] else ''))
+
+
+def skeleton_of(ident, page, shapes):
+    """What the skeleton of a page draws: its kind first, then what its kind needs. shape() in tools/site/site.js draws it."""
+    def lens(pattern, part=page):
+        return [len(' '.join(html.unescape(re.sub(r'<[^>]+>', '', m)).split())) for m in re.findall(pattern, part, re.S)]
+    def charts(part):
+        return [chart_code(shapes.get(i)) + ('w' if 'site-chart--wide' in a else '')
+                for a, i in re.findall(r'<article class="(site-chart[^"]*)">.*?data-rechart="([a-z0-9-]+)"', part, re.S)]
+    if ident == 'home':
+        return ['home']
+    if 'data-viewer=' in page:
+        return ['b', outline(page)]
+    stage = re.search(r'class="site-stage" style="min-block-size: (\d+)px"', page)
+    if stage:
+        # the controls of its playground, by kind: g segments, l a list, t a text, s a switch, r a slider
+        form = re.search(r'data-play-controls[^>]*>(.*?)</form>', page, re.S)
+        form = form.group(1) if form else ''
+        kinds = ('g' * form.count('class="tray-seg ') + 'l' * form.count('<select') + 't' * form.count('class="tray-input')
+                 + 's' * form.count('class="tray-switch"') + 'r' * form.count('class="tray-slider-field"'))
+        code = re.search(r'data-play-code>(.*?)</code>', page, re.S)  # and the lines of its markup
+        return ['c', int(stage.group(1)), kinds if 'data-play=' in page else '', outline(page), code.group(1).count('\n') + 1 if code else 0]
+    if 'class="site-gallery"' in page:
+        groups = re.findall(r'<h2 class="subtitle">(.*?)</h2><div class="site-gallery">(.*?)</div></section>', page, re.S)
+        return ['g', outline(page), [[lens('(.*)', g)[0], cards.count('class="site-thumb"')] for g, cards in groups]]
+    if 'class="site-groups"' in page:
+        return ['i', [[lens('(.*)', g)[0], items.count('<li>')] for g, items in re.findall(r'<section class="tray-card site-group"><h2>(.*?)</h2><ul>(.*?)</ul>', page, re.S)]]
+    if 'site-chartrow' in page:
+        rows = re.findall(r'<section class="site-prose site-chartrow">(.*?)</section>', page, re.S)
+        return ['o', outline(page), [[(lens(r'<h2 class="subtitle">(.*?)</h2>', r) or [12])[0], (lens(r'<div class="site-chartrow__head"><div>.*?<p>(.*?)</p>', r) or [60])[0], charts(r)]
+                                     for r in rows]]
+    if 'class="site-charts"' in page:
+        return ['h', [list(x) for x in zip(lens(r'class="site-chart__name">(.*?)</h2>'), lens(r'<div class="site-chart__bar"><div><h2[^>]*>.*?</h2><p>(.*?)</p>'), charts(page))]]
+    if 'class="site-articles"' in page:
+        return ['l', int('site-lead' in page), page.count('class="tray-card tray-span-4"')]
+    if 'class="site-post"' in page:
+        crumbs = re.search(r'<ol class="tray-crumbs">(.*?)</ol>', page, re.S)
+        return ['a', page.count('class="tray-sidebar__item"') // 2, outline(page), lens(r'<li>(.*?)</li>', crumbs.group(1)) if crumbs else [8, 12, 16]]
+    return ['p', outline(page)]
 
 
 def react_ready():
@@ -827,7 +1047,8 @@ def build():
     for d in docs:
         d['summary'], d['guide'] = fill(d['summary']), fill(d['guide'])
     themes = theme_data(tok)
-    docs.insert(next(i for i, d in enumerate(docs) if d['id'] == 'd-theming') + 1, {'id': 'd-themes', 'title': 'Themes', 'group': '', 'html': themes_page(themes), 'wide': True, 'src': ['system/project/tokens.json'],
+    opening = first_draw(plays, themes)  # what the playgrounds and the theme maker show as they open
+    docs.insert(next(i for i, d in enumerate(docs) if d['id'] == 'd-theming') + 1, {'id': 'd-themes', 'title': 'Themes', 'group': '', 'html': themes_page(themes, opening['css']), 'wide': True, 'src': ['system/project/tokens.json'],
                     'summary': f'{len(themes["list"])} themes to choose from, and a maker for your own: four colours in, a whole theme out.'})
     foundations = [{'id': 'f-colours', 'title': 'Colours', 'summary': f'The {len(tok["color"]["tokens"])} colour tokens in the Light and the Dark theme, and what each is for.', 'html': colours_page(tok)},
                    {'id': 'f-type', 'title': 'Typography', 'summary': 'The type styles of the system: one family, Onest, in two voices, and the size, line height and weight of every class.', 'html': type_page(tok)},
@@ -935,7 +1156,7 @@ def build():
         title_line, _, readme_rest = p['readme'].partition('\n\n')
         lead_para, _, readme_body = readme_rest.partition('\n\n')
         page(ident, p['title'], p['group'], 'components',
-             head(p['title'], p['summary'] + also) + example + (play_section(p, spec) if spec else '') + f'<article class="site-prose">{markdown(p["guide"], ident)}</article>' + pager(prev, nxt),
+             head(p['title'], p['summary'] + also) + example + (play_section(p, spec, opening['plays'].get(p['name'])) if spec else '') + f'<article class="site-prose">{markdown(p["guide"], ident)}</article>' + pager(prev, nxt),
              p['summary'], md=f'{title_line}\n\n{lead_para}{also}\n\n{readme_body}\n', card={'kind': 'Component', 'show': p['stage'], 'script': p['script'], 'width': p['width'] or 760},
              src=[f'system/project/components/{p["name"]}/README.md', f'system/project/components/{p["name"]}/preview.html'], **({'play': spec} if spec else {}))
         index[ident]['also'], index[ident]['search'] = p['also'], p['search']
@@ -1237,6 +1458,13 @@ def build():
         if found or meta.get('published'):
             meta['lastmod'] = max(found + ([meta['published']] if meta.get('published') else []))  # an article not yet committed: the day it came out
 
+    # every chart's place holds the skeleton of its card until charts.js draws it there
+    shapes = {c['id']: chart_shape(c['source']) for c in charts}
+    for pages_ in chunks.values():
+        for p in pages_.values():
+            p['html'] = re.sub(r'(<div class="site-chart__view" data-rechart="([a-z0-9-]+)">)(</div>)',
+                               lambda m: m.group(1) + (chart_skeleton(shapes[m.group(2)]) if shapes.get(m.group(2)) else '') + m.group(3), p['html'])
+
     # every link between pages by its address, in the pages and in the theme menu
     for pages_ in chunks.values():
         for p in pages_.values():
@@ -1256,6 +1484,37 @@ def build():
     for ident in index:
         if ident != 'home':
             chunks['pages/' + ident][ident]['html'] += foot(ident)
+
+    def pills(markup):
+        """A bar of the page for a skeleton: its controls grey pills of their own size, with nothing to follow or name."""
+        markup = re.sub(r'\s(?:id|for|aria-controls|aria-labelledby|aria-selected|aria-current|data-tray|data-target|data-full|href)="[^"]*"', '', markup)
+        return re.sub(r'class="(tray-tabs|tray-btn|tray-seg)\b', r'class="\1 site-sk-pill', markup)
+
+    # the skeleton of every page, its summary as its head shows it (when that differs from its description), and the buttons
+    # of its head; and the bars that the skeletons copy, controls turned into grey pills of their own size
+    for ident, meta in index.items():
+        built = chunks['pages/' + ident][ident]['html']
+        meta['sk'] = skeleton_of(ident, built, shapes)
+        if ident == 'home':
+            continue
+        lead = re.search(r'<div class="tray-pagehead__text"><h1[^>]*>.*?</h1><p>(.*?)</p></div>', built, re.S) or re.search(r'<p class="lead tray-soft">(.*?)</p>', built, re.S)
+        if lead and (re.search(r'<[a-z]', lead.group(1)) or html.unescape(lead.group(1)) != meta['desc']):
+            words = html.unescape(lead.group(1))
+            # the summary is most often the start of the description (which adds a sentence to it): then its length is enough
+            meta['lead'] = len(words) if not re.search(r'<[a-z]', lead.group(1)) and meta['desc'].startswith(words) else lead.group(1)
+        acts = re.search(r'<div class="tray-pagehead__actions">(.*?)</div></div></div>', built, re.S)
+        if acts:
+            meta['acts'] = pills(acts.group(1))
+    def part(ident, start, stop):
+        built = chunks['pages/' + ident][ident]['html']
+        at = built.find(start)
+        return pills(built[at:built.index(stop, at)]) if at >= 0 else ''
+    parts = {'example': part(next(i for i in index if i.startswith('c-')), '<div class="site-viewer__bar">', '<div class="tray-tabpanel"'),
+             'viewer': part(next(i for i in index if 'data-viewer=' in chunks['pages/' + i][i]['html']), '<div class="site-viewer__bar">', '<div class="tray-tabpanel"'),
+             'topics': part('articles', '<nav class="tray-tabs" aria-label="Topics"', '</nav>') + '</nav>' if 'articles' in index else '',
+             'theme': re.sub(r'<b>([^<]*)</b><small>([^<]*)</small>', r'<b><span class="site-sk-ink">\1</span></b><small><span class="site-sk-ink">\2</span></small>',
+                             re.sub(r'<input[^>]*>| data-theme="[^"]*"', '', part('d-themes', '<label class="site-themecard">', '</label>'))
+                             .replace('class="site-themecard__frame"', 'class="site-themecard__frame site-sk-pill"')) + '</label>'}
 
     # ---------- write the site ----------
     if OUT.exists():
@@ -1369,7 +1628,7 @@ def build():
     slim = {i: {k: v for k, v in m.items() if k not in ('summary', 'group', 'lastmod', 'also', 'search', 'published')} for i, m in index.items()}
     data = own('data.js', '/* Generated by tools/site.py: the map of the site and the names of its files. */\n'
                'window.TRAY_SITE = ' + dump({'version': VERSION, 'repo': facts['repo'], 'site': facts['site'], 'files': files, 'sections': sections, 'index': slim,
-                                             'pages': {}, 'themes': themes}) + ';\nwindow.TRAY_SITE.run = {};\n')
+                                             'pages': {}, 'themes': themes, 'parts': parts}) + ';\nwindow.TRAY_SITE.run = {};\n')
 
     # Every page in a file of its own, drawn in it, so a link straight to a page shows it before any script runs; site.js
     # keeps what it finds and only wires it. The host serves components/lightbox.html at /components/lightbox. index.html is

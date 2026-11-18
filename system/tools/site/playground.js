@@ -103,35 +103,62 @@
       c.options.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (String(o[0]) === value ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select></span></div>';
   }
 
-  /* mount(host, spec, UI): the controls, the stage and the code inside host, which holds [data-play-controls],
-     [data-play-stage] and [data-play-code]. */
-  function mount(host, spec, UI) {
-    var values = defaults(spec), ground = 'page';
-    var controls = host.querySelector('[data-play-controls]'), stage = host.querySelector('[data-play-stage]'), code = host.querySelector('[data-play-code]');
+  /* The controls of a spec, set to these values and this ground. */
+  function controlsHtml(spec, values, ground) {
     var rows = spec.controls.map(function (c, i) { return control(c, 'play-' + i, values[c.name]); });
     var grounds = GROUNDS.filter(function (g) { return !Array.isArray(spec.grounds) || spec.grounds.indexOf(g[0]) >= 0; });
     if (spec.grounds !== false && grounds.length > 1) {
       rows.push(control({ name: '__ground', label: 'On', options: grounds.map(function (g) { return [g[0], g[1]]; }) }, 'play-ground', ground));
     }
-    controls.innerHTML = '<div class="tray-stack">' + rows.join('') + '<button class="tray-btn tray-btn--ghost tray-btn--sm" type="button" data-play-reset>Start again</button></div>';
-    UI.init(controls);
+    return '<div class="tray-stack">' + rows.join('') + '<button class="tray-btn tray-btn--ghost tray-btn--sm" type="button" data-play-reset>Start again</button></div>';
+  }
+  /* What the stage holds for these values on this ground. */
+  function stageHtml(spec, values, ground) {
+    var g = GROUNDS.filter(function (x) { return x[0] === ground; })[0];
+    return '<div class="site-play__ground ' + g[2] + '">' + render(spec, values) + '</div>';
+  }
+  /* first(spec): the playground as it opens, for tools/site.py to write into the page, so the page arrives with it drawn
+     and nothing moves when this file comes: { controls, stage, ground, code }. */
+  function first(spec) {
+    var values = defaults(spec);
+    return { controls: controlsHtml(spec, values, 'page'), stage: stageHtml(spec, values, 'page'), ground: 'page', code: pretty(render(spec, values)) };
+  }
+
+  /* mount(host, spec, UI): the controls, the stage and the code inside host, which holds [data-play-controls],
+     [data-play-stage] and [data-play-code]. A playground the page came with, drawn at its first choice by the build
+     (first()), is kept as it is and only wired. */
+  function mount(host, spec, UI) {
+    var values = defaults(spec), ground = 'page';
+    var controls = host.querySelector('[data-play-controls]'), stage = host.querySelector('[data-play-stage]'), code = host.querySelector('[data-play-code]');
+    var drawn = !!controls.firstElementChild && !!stage.firstElementChild;
+    if (!drawn) {
+      controls.innerHTML = controlsHtml(spec, values, ground);
+      UI.init(controls);
+    }
 
     function draw() {
-      var html = render(spec, values), g = GROUNDS.filter(function (x) { return x[0] === ground; })[0];
-      stage.innerHTML = '<div class="site-play__ground ' + g[2] + '">' + html + '</div>';
+      var html = render(spec, values);
+      stage.innerHTML = stageHtml(spec, values, ground);
       stage.setAttribute('data-ground', ground);
       UI.init(stage);
       var text = pretty(html), site = typeof window !== 'undefined' && window.TRAY_SITE;
       if (site && site.paint) site.paint(code, text, 'html'); else code.textContent = text;
     }
-    function read(el) {
+    function take(el) {
       var name = el.getAttribute('data-play-name');
-      if (!name) return;
+      if (!name) return false;
       if (name === '__ground') { if (el.checked || el.tagName === 'SELECT') ground = el.value; }
       else if (el.type === 'checkbox') values[name] = el.checked ? 'on' : '';
       else if (el.type === 'radio') { if (el.checked) values[name] = el.value; }
       else values[name] = el.value;
-      draw();
+      return true;
+    }
+    function read(el) { if (take(el)) draw(); }
+    /* a browser that kept what was chosen before a reload has set the controls the page came with: the stage follows them */
+    if (drawn) {
+      var was = JSON.stringify(values) + ground;
+      [].forEach.call(controls.querySelectorAll('[data-play-name]'), take);
+      if (JSON.stringify(values) + ground !== was) draw();
     }
     controls.addEventListener('input', function (e) { read(e.target); });
     controls.addEventListener('change', function (e) { read(e.target); });
@@ -153,10 +180,10 @@
     /* a form in the stage posts nowhere and a link goes nowhere: it is an example */
     stage.addEventListener('submit', function (e) { e.preventDefault(); });
     stage.addEventListener('click', function (e) { var a = e.target.closest ? e.target.closest('a[href]') : null; if (a) e.preventDefault(); });
-    draw();
+    if (!drawn) draw();
     return { values: values, draw: draw };
   }
 
-  var api = { render: render, mount: mount, GROUNDS: GROUNDS };
+  var api = { render: render, first: first, mount: mount, GROUNDS: GROUNDS };
   if (typeof module === 'object' && module.exports) module.exports = api; else window.TrayPlay = api;
 })();

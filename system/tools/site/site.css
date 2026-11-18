@@ -53,7 +53,13 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 :root[data-home] .site #site-view[data-wide] { inline-size: min(100%, var(--container)); }
 /* The title takes focus after a page change so a screen reader starts there; it is not a control and draws no ring. */
 #site-view h1:focus { outline: none; }
-.site-wait { block-size: 20rem; border-radius: var(--radius-panel); }
+
+/* ---------- Moving between pages ----------
+   The next page is drawn in one step: the one that goes fades out quicker than the next fades in, as everything that leaves
+   and comes does in the system. site.js asks for it only where the visitor has not asked for less motion. */
+::view-transition-group(root) { animation-duration: var(--duration-in); }
+::view-transition-old(root) { animation-duration: var(--duration-out); animation-timing-function: var(--ease-exit); }
+::view-transition-new(root) { animation-duration: var(--duration-in); animation-timing-function: var(--ease); }
 
 /* ---------- The page for an address with no page: a search of every page, and the sections ---------- */
 .site-lost__find { inline-size: 100%; }
@@ -114,8 +120,6 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 .site-articles { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); margin-block: var(--space-6) calc(var(--section-gap) / 2); }
 .site-articles > .tray-tabs { justify-self: start; max-inline-size: 100%; }
 .site-articles > section { margin-block-start: calc(var(--section-gap) / 2 - var(--space-6)); }
-/* A long list draws only the cards near the window; each keeps the height it last had, so the page does not jump. */
-.site-articles a.tray-card { content-visibility: auto; contain-intrinsic-size: auto 30rem; }
 
 /* An article: the head over the whole width; then the words, with the contents beside them where there is room for both,
    and folded above them where there is not. */
@@ -277,7 +281,8 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 .site-chart__bar { display: flex; align-items: end; justify-content: space-between; gap: var(--space-4); padding-inline: var(--space-2); }
 .site-chart__name { font: 600 1.0625rem/1.3 var(--font-sans); }
 .site-chart__bar p { color: var(--ink-muted); font: 400 .9375rem/1.4 var(--font-sans); }
-/* Until its chart is drawn, the place it will take. */
+/* Until its chart is drawn, the place it will take: the build puts the skeleton of its card there (chart_skeleton() in
+   tools/site.py); one it cannot read keeps a tray of about its height. */
 .site-chart__view:empty { min-block-size: 22rem; border-radius: var(--radius-card); background: var(--surface); }
 .site-chart--wide .site-chart__view:empty { min-block-size: 26rem; }
 .site-chartrow { margin-block-start: var(--space-8); }
@@ -344,3 +349,24 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 .site-play__controls > .tray-stack { gap: var(--space-4); }
 .site-play__controls .tray-field { margin: 0; }
 .site-play__controls [data-play-reset] { justify-self: start; }
+
+/* ---------- Skeletons: a page, a chart or a playground on its way, in the shape of what will come ----------
+   Each is laid out with the classes of what it stands for, so what arrives takes the place it held. Words stand in as grey
+   bars, one to a line, over filler of the same length that is not shown; controls and pictures as grey shapes of their own
+   size. The bars pulse slowly while something is on its way: not for a visitor who asks for less motion, nor without scripts,
+   when nothing will come. These rules come last, so a grey shape wins over the fill of what it stands for. */
+.site-sk-ink { color: transparent; background: linear-gradient(var(--track), var(--track)) 0 50% / 100% .8em no-repeat;
+               -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.site-sk-area, .site-sk-pill { background: var(--track); }
+.site-sk-pill { color: transparent !important; border-color: transparent !important; box-shadow: none !important; }
+.site-sk-pill > * { visibility: hidden; }
+.site-sk .tray-swatch, .site-sk .tray-list-plain li::marker { background: var(--track); color: transparent; }
+.site-sk-chart { min-block-size: 22rem; }
+.site-sk-frame::before { border-radius: var(--radius-button); background: var(--track); }
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  .site-sk-ink, .site-sk-area, .site-sk-pill, .site-sk-frame::before { animation: tray-pulse 1.4s ease-in-out infinite; }
+}
+@media (forced-colors: active) {
+  .site-sk-ink { forced-color-adjust: none; background: none; box-shadow: inset 0 0 0 1px CanvasText; }
+  .site-sk-area, .site-sk-pill { border: 1px solid CanvasText; }
+}

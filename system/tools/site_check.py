@@ -500,13 +500,16 @@ def main():
         play = lambda: pg.evaluate("[document.querySelector('[data-play-stage] .tray-btn').className, document.querySelector('[data-play-code]').textContent]")
         first = play()
         pg.locator('[data-play-code]').scroll_into_view_if_needed(); pg.wait_for_timeout(500)
-        check('the markup of a playground is coloured once it comes into view and code.js arrives', 'code.js' in asked and pg.locator('[data-play-code] .hljs-name').count() >= 1, pg.inner_html('[data-play-code]')[:120])
+        check('the playground comes drawn with the page, its markup coloured by the build', pg.locator('[data-play-code] .hljs-name').count() >= 1, pg.inner_html('[data-play-code]')[:120])
         check('the playground draws the button as it starts, with its markup under it', first[0] == 'tray-btn tray-btn--md' and first[1].startswith('<button class="tray-btn tray-btn--md" type="button">'), first)
         pg.locator('.site-play__controls select').first.select_option(' tray-btn--quiet')
         pg.locator('.site-play__controls label:has-text("Only")').click()
         pg.locator('.site-play__controls input.tray-input').fill('Find <b>'); pg.wait_for_timeout(100)
         after = play()
         check('choosing changes the button and its markup together, and a text is written as text', 'tray-btn--quiet' in after[0] and 'tray-btn--icon' in after[0] and 'aria-label="Find &lt;b&gt;"' in after[1], after)
+        try: pg.wait_for_selector('[data-play-code] .hljs-name', timeout=5000)
+        except Exception: pass
+        check('the markup a choice writes is coloured once code.js arrives', 'code.js' in asked and pg.locator('[data-play-code] .hljs-name').count() >= 1, pg.inner_html('[data-play-code]')[:120])
         pg.locator('.site-play__controls label:has-text("Ink")').click(); pg.wait_for_timeout(80)
         check('the ground changes the stage and leaves the markup as it was', pg.locator('[data-play-stage] .tray-card--inverse .tray-btn').count() == 1 and pg.inner_text('[data-play-code]') == after[1])
         pg.locator('.site-play [data-tray="copy"]').click(); pg.wait_for_timeout(200)
@@ -842,6 +845,37 @@ def main():
         pg.locator('[data-maker-reset]').click(); pg.wait_for_timeout(200)
         check('"Start again" goes back to the theme of the site', pg.input_value('[data-seed-hex="accent"]') == '#ffd426' and pg.input_value('[data-maker-base]') == 'light')
         check('no script errors while changing themes', not errors, errors[:4])
+        ctx.close()
+
+        # ---------- a page on its way: the last one stays a moment, then the skeleton of this one, in its own shape ----------
+        # This browser lets things move, so pages change through a view transition; the network is slowed to see the wait.
+        ctx = b.new_context(viewport={'width': 1440, 'height': 900}, color_scheme='light'); pg = ctx.new_page(); serr, sasked = [], []
+        pg.on('pageerror', lambda e: serr.append(str(e)[:200]))
+        pg.on('request', lambda r: sasked.append(plain_name(r.url)))
+        net = ctx.new_cdp_session(pg)
+        pg.goto(url + 'docs'); pg.wait_for_load_state('networkidle')
+        net.send('Network.emulateNetworkConditions', {'offline': False, 'latency': 1500, 'downloadThroughput': 200000, 'uploadThroughput': 200000})
+        go(pg, 'c-button'); pg.wait_for_timeout(120)
+        kept = pg.evaluate("[document.querySelector('#site-view h1').textContent, document.getElementById('site-view').getAttribute('aria-busy')]")
+        check('for a moment the page shown stays, while the next one is on its way', kept == ['Introduction', 'true'], kept)
+        try: pg.wait_for_selector('#site-view .site-sk', timeout=3000)
+        except Exception: pass
+        BOX = "s => { const n = document.querySelector('#site-view ' + s); if (!n) return null; const r = n.getBoundingClientRect(); return [Math.round(r.top + scrollY), Math.round(r.height)]; }"
+        sk = [pg.evaluate(BOX, s) for s in ('h1', '.tray-pagehead p', '.site-viewer__bar', '.site-stage')]
+        check('then the skeleton of the page takes its place: its own title and summary, its bar and a stage of its height, and a status for a screen reader',
+              pg.inner_text('#site-view h1') == 'Button' and pg.locator('#site-view .site-stage.site-sk-area').count() == 1 and pg.locator('#site-view .site-sk-pill').count() >= 2
+              and pg.inner_text('#site-view [role="status"]') == 'Loading the page' and all(sk), sk)
+        net.send('Network.emulateNetworkConditions', {'offline': False, 'latency': 0, 'downloadThroughput': -1, 'uploadThroughput': -1})
+        pg.wait_for_function("document.getElementById('site-view').dataset.page === 'c-button'", timeout=15000); pg.wait_for_timeout(400)
+        done = [pg.evaluate(BOX, s) for s in ('h1', '.tray-pagehead p', '.site-viewer__bar', '.site-stage')]
+        check('the page takes the place its skeleton held: its title, summary, bar and stage do not move', done == sk and pg.locator('#site-view .site-sk').count() == 0, (sk, done))
+        check('the page arrives with its playground drawn and keeps its length when the playground script comes',
+              pg.evaluate("document.querySelector('[data-play-controls]').children.length") > 0 and 'playground.js' in sasked)
+        pg.hover('#site-nav a[href="/components/tabs"]'); pg.wait_for_timeout(300)
+        check('a page is fetched while the pointer rests on a link to it, before it is opened', 'pages/c-tabs.js' in sasked and here(pg) == 'c-button', [a for a in sasked if a.startswith('pages/')])
+        go(pg, 'c-tabs'); pg.wait_for_timeout(250)
+        check('so it is drawn at once, with no skeleton', pg.inner_text('#site-view h1') == 'Tabs' and pg.locator('#site-view .site-sk').count() == 0)
+        check('no script errors while pages change through a view transition', not serr, serr[:3])
         ctx.close()
 
         # ---------- a phone ----------

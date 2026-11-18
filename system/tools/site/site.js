@@ -418,6 +418,138 @@
     if (md && id !== 'home') md.setAttribute('href', ROOT + m.path + '.md');
   }
 
+  /* ---------- The skeleton of a page on its way ----------
+     S.index[id].sk, written by the build (skeleton_of() in tools/site.py), says what the page holds: its kind, then what its
+     first screens hold. The skeleton is laid out with the page's own classes and takes its own title and summary, so the
+     page takes the place the skeleton held when it comes. Words stand in as grey bars, line by line: under each bar is filler
+     of the same length, hidden, so its lines break about where the page's will. Controls stand in as grey pills of their own
+     size (S.parts: the bars of the page, copied by the build). Nothing in it can be reached but the title. */
+  var FILL = 'tray page card with each form list that row one from into its when line and stays for the all of'.split(' ');
+  function filler(n) {
+    var out = '', i = 0;
+    n = Math.round(n * 1.12);  /* these words are narrower than most: so many more letters take the width of the page's */
+    while (out.length < n) { out += (out ? ' ' : '') + FILL[i]; i = (i + 7) % FILL.length; }
+    return out.slice(0, n).trim();
+  }
+  function times(n, f) { var h = ''; for (var i = 0; i < n; i++) h += f(i); return h; }
+  function bar(n) { return '<span class="site-sk-ink">' + (n > 0 ? filler(n) : '&nbsp;') + '</span>'; }
+  function ink(n, tag, cls) { return '<' + tag + (cls ? ' class="' + cls + '"' : '') + '>' + bar(n) + '</' + tag + '>'; }
+  function fold(words) { return '<details class="tray-collapsible"><summary>' + bar(words) + '<span class="tray-tile site-sk-pill"></span></summary></details>'; }
+  function codeBox(lines) {
+    return '<div class="tray-code"><div class="tray-code__head">' + bar(4) + '<span class="tray-btn tray-btn--ghost tray-btn--xs site-sk-pill">' + UI.icon('copy', 'tray-icon--sm') + '<span>Copy</span></span></div>' +
+      '<pre><code>' + new Array(Math.min(lines, 24)).join('\n') + ' </code></pre></div>';
+  }
+  /* A column of words: h a heading, i a smaller one, p a paragraph, l a list, c code, t a table, d a fold, m the list of themes. */
+  function words(outline) {
+    return (outline || '').split(' ').filter(Boolean).map(function (t) {
+      var a = t.slice(1).split(':').map(Number);
+      switch (t.charAt(0)) {
+        case 'h': return ink(a[0], 'h2', 'subtitle');
+        case 'i': return ink(a[0], 'h3', 'site-h3');
+        case 'p': return ink(a[0], 'p');
+        case 'l': return '<ul class="tray-list-plain">' + times(Math.min(a[0], 8), function () { return ink(a[1], 'li'); }) + '</ul>';
+        case 'c': return codeBox(a[0]);
+        case 't': return '<div class="tray-table-wrap"><table class="tray-table"><thead><tr>' + times(a[1], function () { return ink(8, 'th'); }) + '</tr></thead><tbody>' +
+          times(Math.min(a[0] - 1, 16), function () { return '<tr>' + times(a[1], function (j) { return ink(j ? a[2] || 30 : Math.min(a[2] || 12, 16), 'td'); }) + '</tr>'; }) + '</tbody></table></div>';
+        case 'd': return fold(14);
+        case 'm': return '<div class="site-themelist">' + times(a[0], function () { return S.parts.theme || ''; }) + '</div>';
+      }
+      return '';
+    }).join('');
+  }
+  function prose(outline, tag) { return outline ? '<' + (tag || 'article') + ' class="site-prose site-sk" inert>' + words(outline) + '</' + (tag || 'article') + '>' : ''; }
+  /* A chart: the height of its plot, k and the names in its key, f when its figures fold under it, h when its card has a head,
+     n when it has no caption. */
+  function chartCard(code) {
+    var m = /^(\d+)(?:k(\d+))?(f?)(h?)(n?)/.exec(code || '');
+    if (!m) return '<div class="tray-card site-sk-area site-sk-chart"></div>';
+    return '<div class="tray-card">' + (m[4] ? '<div class="tray-card__head"><div>' + ink(14, 'h3', 'subtitle') + ink(46, 'p', 'tray-soft') + '</div>' +
+      '<div class="tray-seg tray-seg--sm site-sk-pill">' + times(2, function () { return '<span class="tray-seg__item"><span>' + filler(10) + '</span></span>'; }) + '</div></div>' : '') +
+      '<figure class="tray-chart">' + (m[4] ? '' : ink(26, 'figcaption', 'tray-chart__title')) + (m[4] || m[5] ? '' : ink(30, 'p', 'tray-chart__caption')) +
+      '<div class="tray-chart__canvas site-sk-area" style="--tray-h: ' + m[1] + 'px"></div>' +
+      (m[2] ? '<ul class="tray-chart__legend">' + times(+m[2], function () { return '<li><span class="tray-swatch"></span>' + bar(6) + '</li>'; }) + '</ul>' : '') +
+      (m[3] ? fold(16) : '') + '</figure></div>';
+  }
+  function chart(name, note, code, folded) {
+    return '<article class="site-chart' + (/w$/.test(code) ? ' site-chart--wide' : '') + '"><div class="site-chart__bar"><div>' + ink(name, 'h2', 'site-chart__name') + ink(note, 'p') + '</div></div>' +
+      '<div class="site-chart__view">' + chartCard(code) + '</div>' +
+      (folded ? '<details class="site-chart__code"><summary class="site-sk-pill">' + UI.icon('code', 'tray-icon--sm') + '<span>Code</span></summary></details>' : '') + '</article>';
+  }
+  /* A control of a playground: g segments, l a list, t a text, s a switch, r a slider. */
+  function control(k) {
+    var label = '<span class="tray-label">' + bar(7) + '</span>';
+    if (k === 's') return '<span class="tray-switch"><span class="tray-switch__track site-sk-pill"></span>' + bar(8) + '</span>';
+    if (k === 'r') return '<div class="tray-slider-field"><div class="tray-slider-field__head"><span class="tray-label tray-label--inline">' + bar(7) + '</span><output>&nbsp;</output></div><input class="tray-slider site-sk-pill" type="range"></div>';
+    if (k === 'l') return '<div class="tray-field">' + label + '<span class="tray-select tray-select--sm site-sk-pill"><select></select></span></div>';
+    if (k === 't') return '<div class="tray-field">' + label + '<input class="tray-input tray-input--sm site-sk-pill"></div>';
+    return '<div class="tray-field">' + label + '<span class="tray-seg tray-seg--sm tray-seg--fill site-sk-pill"><span class="tray-seg__item"><span>&nbsp;</span></span></span></div>';
+  }
+  function article(n) {
+    return '<div class="tray-row tray-row--sm"><span class="tray-badge site-sk-pill">' + filler(10) + '</span>' + ink(n || 26, 'span', 'caption') + '</div>';
+  }
+  function person(cls) {
+    return '<span class="tray-person"><span class="tray-avatar' + cls + ' site-sk-pill">VK</span><span class="tray-person__text"><b>' + bar(15) + '</b><small>' + bar(17) + '</small></span></span>';
+  }
+  /* The summary under a title as the page shows it: its own markup, or, where it is the start of the description, its length. */
+  function leadOf(m) { return typeof m.lead === 'number' ? esc(m.desc.slice(0, m.lead)) : m.lead || esc(m.desc || ''); }
+  function headOf(m) {
+    return '<div class="tray-pagehead"><div class="tray-pagehead__row"><div class="tray-pagehead__text"><h1 class="title" tabindex="-1">' + esc(m.title) + '</h1><p>' + leadOf(m) + '</p></div>' +
+      (m.acts ? '<div class="tray-pagehead__actions site-sk" inert>' + m.acts + '</div>' : '') + '</div></div>';
+  }
+  function shape(id) {
+    var m = S.index[id], sk = m.sk || ['p', ''], P = S.parts || {}, k = sk[0], said = '<p class="tray-vh" role="status">Loading the page</p>';
+    if (k === 'home') {
+      return said + '<div class="site-home site-sk" inert><section class="tray-hero"><div class="tray-card tray-hero__text"><div class="tray-hero__copy">' + ink(42, 'h1', 'display') + ink(170, 'p') + '</div>' +
+        '<div class="tray-stack tray-stack--sm"><div class="tray-hero__actions"><span class="tray-btn site-sk-pill">' + filler(11) + '</span><span class="tray-btn tray-btn--quiet site-sk-pill">' + filler(21) + '</span></div>' + ink(140, 'p', 'tray-hero__note') + '</div></div>' +
+        '<div class="tray-card tray-card--accent tray-hero__media"><div class="tray-row tray-row--between">' + ink(11, 'h2', 'title') + '<span class="tray-badge site-sk-pill">' + filler(13) + '</span></div>' + codeBox(6) +
+        '<div class="tray-stack"><ul class="tray-items">' + times(3, function () { return '<li class="tray-item tray-item--sm"><span class="tray-item__body">' + ink(20, 'span', 'tray-item__title') + ink(40, 'span', 'tray-item__text') + '</span></li>'; }) + '</ul>' + ink(150, 'p') + '</div></div></section></div>';
+    }
+    if (k === 'a') {
+      return said + '<article class="site-post"><header class="site-post__head"><div class="site-sk" inert><ol class="tray-crumbs">' + (sk[3] || [8, 12, 16]).map(function (n) { return ink(n, 'li'); }).join('') + '</ol></div>' +
+        '<div class="site-post__words"><h1 class="headline" tabindex="-1">' + esc(m.title) + '</h1><p class="lead tray-soft">' + leadOf(m) + '</p></div>' +
+        '<div class="tray-row site-post__meta site-sk" inert>' + person('') + '<span class="tray-badge site-sk-pill">' + filler(12) + '</span>' + ink(16, 'span', 'caption') + ink(18, 'span', 'caption') + '</div></header>' +
+        '<div class="site-post__body"><nav class="tray-sidebar tray-sidebar--plain site-toc site-sk" inert><div class="tray-sidebar__group">' + ink(8, 'p', 'tray-sidebar__label') +
+        times(sk[1], function () { return ink(26, 'span', 'tray-sidebar__item'); }) + '</div></nav><div class="site-post__main"><div class="site-toc-fold site-sk" inert>' + fold(8) + '</div>' + prose(sk[2], 'div') + '</div></div></article>';
+    }
+    var h = said + headOf(m);
+    if (k === 'c') {
+      return h + '<section class="site-example site-sk" inert>' + (P.example || '') + '<div class="tray-tabpanel"><div class="site-stage site-sk-area" style="min-block-size: ' + sk[1] + 'px"></div></div></section>' +
+        (sk[2] ? '<section class="site-play site-sk" inert><div class="site-play__head">' + ink(10, 'h2', 'subtitle') + ink(90, 'p') + '</div>' +
+          '<div class="site-play__box"><div class="site-play__stage site-sk-area"></div><div class="tray-card site-play__controls"><div class="tray-stack">' +
+          sk[2].split('').map(control).join('') + '<span class="tray-btn tray-btn--ghost tray-btn--sm site-sk-pill">' + filler(10) + '</span></div></div></div>' + codeBox(sk[4] || 1) + '</section>' : '') + prose(sk[3]);
+    }
+    if (k === 'b') return h + '<section class="site-viewer site-sk" inert>' + (P.viewer || '') + '<div class="tray-tabpanel"><div class="site-frame site-sk-frame"></div></div></section>' + prose(sk[1]);
+    if (k === 'g') {
+      return h + prose(sk[1], 'section') + sk[2].slice(0, 4).map(function (g) {
+        return '<section class="site-prose site-sk" inert>' + ink(g[0], 'h2', 'subtitle') + '<div class="site-gallery">' + times(g[1], function () {
+          return '<span class="site-thumb"><span class="site-thumb__view site-sk-area"></span><span class="site-thumb__text"><b>' + bar(30) + '</b><small>' + bar(84) + '</small></span></span>';
+        }) + '</div></section>';
+      }).join('');
+    }
+    if (k === 'i') {
+      return h + '<div class="site-groups site-sk" inert>' + sk[1].map(function (g) {
+        return '<section class="tray-card site-group">' + ink(g[0], 'h2') + '<ul>' + times(g[1], function () { return '<li><a>' + bar(11) + '</a></li>'; }) + '</ul></section>';
+      }).join('') + '</div>';
+    }
+    if (k === 'o') {
+      return h + prose(sk[1], 'section') + sk[2].map(function (r) {
+        return '<section class="site-prose site-chartrow site-sk" inert><div class="site-chartrow__head"><div>' + ink(r[0], 'h2', 'subtitle') + ink(r[1], 'p') + '</div>' +
+          '<span class="tray-btn tray-btn--quiet tray-btn--sm site-sk-pill">' + filler(13) + '</span></div><div class="site-charts site-charts--pair">' +
+          r[2].map(function (code) { return chart(10, 28, code, false); }).join('') + '</div></section>';
+      }).join('');
+    }
+    if (k === 'h') return h + '<div class="site-charts site-sk" inert>' + sk[1].map(function (c) { return chart(c[0], c[1], c[2], true); }).join('') + '</div>';
+    if (k === 'l') {
+      return h + '<div class="site-articles site-sk" inert>' + (P.topics || '') +
+        (sk[1] ? '<div class="tray-card site-lead"><div class="tray-bento"><div class="site-thumb tray-span-7 site-sk-area"></div><div class="tray-feature tray-span-5">' + article() +
+          ink(44, 'h2', 'title') + ink(170, 'p') + '<div class="tray-feature__end tray-row tray-row--between">' + person(' tray-avatar--sm') + ink(16, 'span', 'caption') + '</div></div></div></div>' : '') +
+        '<section class="tray-stack tray-stack--lg"><div class="tray-stack tray-stack--sm">' + ink(13, 'h2', 'subtitle') + ink(34, 'p', 'tray-soft') + '</div><div class="tray-bento">' +
+        times(sk[2], function () { return '<div class="tray-card tray-span-4"><div class="tray-stack"><div class="site-thumb site-sk-area"></div>' + article(28) + ink(48, 'h3', 'subtitle') + ink(170, 'p', 'tray-soft') + '</div></div>'; }) +
+        '</div></section></div>';
+    }
+    return h + prose(sk[1]);
+  }
+
   /* ---------- One view for the page the address names ---------- */
   /* paint(id, y, first): the page drawn and wired. y is where to scroll to: the place it was left, on the way back; else the
      top. The first page of a visit stays where the browser put it. */
@@ -444,9 +576,24 @@
     view.removeAttribute('aria-busy');
   }
 
+  /* swap(update): the view changes in one step. Where the browser can, and the visitor has not asked for less motion, the
+     page that goes fades out as the next fades in (a view transition: site.css gives it the system's timing); else at once. */
+  var still = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  function swap(update) {
+    if (!document.startViewTransition || (still && still.matches) || document.hidden) { update(); return; }
+    var t;
+    try { t = document.startViewTransition(update); } catch (e) { update(); return; }
+    /* a transition cut short by the next change of page is no error: the page it was for is drawn all the same */
+    t.ready.catch(function () {}); t.finished.catch(function () {});
+  }
+  /* How long the page shown stays while the next one is on its way, before the skeleton takes its place: a page that comes
+     sooner replaces it at once, and no grey flashes (the Skeleton's own rule). */
+  var WAIT = 300, waiting = 0;
+
   function render(y) {
     var id = current(), meta = S.index[id], first = shown === null;
     shown = id;
+    clearTimeout(waiting);
     var sec = S.sections.filter(function (s) { return s.id === meta.section; })[0] || null;
     if (full.open) full.close();
     if (search.open) search.close();
@@ -463,27 +610,44 @@
       if (item.top < box.top + 8 || item.bottom > box.bottom - 8) navs[0].scrollTop += item.top - box.top - box.height / 2;
     }
     if (sheet.open) sheet.close();
-    if (loaded[meta.chunk] || (meta.bare && view.getAttribute('data-prerendered') === id)) { paint(id, y, first); return; }
+    /* the first page of a visit stays where the browser put it; another is drawn in one step, the last one fading out */
+    function draw() {
+      if (first) { paint(id, y, true); return; }
+      swap(function () { if (current() === id) paint(id, y, false); });
+    }
+    if (loaded[meta.chunk] || (meta.bare && view.getAttribute('data-prerendered') === id)) { draw(); return; }
     if (view.getAttribute('data-prerendered') === id) {
       /* the page came drawn in its file: it stays as it is, readable, while the script that wires it arrives */
       if (typeof y === 'number') window.scrollTo(0, y);
       need(id).then(function () { if (current() === id) paint(id, null, true); }, function () { /* it stays readable; its examples wait for a reload */ });
       return;
     }
-    /* the page is on its way: say so, in the place it will take */
-    clearCharts();
-    view.removeAttribute('data-prerendered');
+    /* the page is on its way. The page shown stays for a moment; if the next has not come by then, its skeleton takes the
+       place, at the top of the window. The first page of a visit has none to keep: its skeleton is drawn at once. */
     view.setAttribute('aria-busy', 'true');
-    view.innerHTML = '<div class="tray-pagehead"><div class="tray-pagehead__row"><div class="tray-pagehead__text"><h1 class="title" tabindex="-1">' + esc(meta.title) + '</h1><p>' + esc(meta.desc || '') + '</p></div></div></div>' +
-      '<div class="tray-skeleton site-wait" role="status" aria-label="Loading the page"></div>';
-    need(id).then(function () { if (current() === id) paint(id, y, first); }, function () {
+    function wait() {
+      if (current() !== id || view.getAttribute('data-page') === id) return;
+      clearCharts();
+      view.removeAttribute('data-prerendered');
+      view.removeAttribute('data-page');
+      if (meta.wide) view.setAttribute('data-wide', ''); else view.removeAttribute('data-wide');
+      put(view, shape(id));
+      window.scrollTo(0, 0);
+    }
+    if (first) wait(); else waiting = setTimeout(function () { swap(wait); }, WAIT);
+    need(id).then(function () { if (current() === id) { clearTimeout(waiting); draw(); } }, function () {
       if (current() !== id) return;
+      clearTimeout(waiting);
       /* a new version of the site came out while this one was open, and the file of the page has another name now:
          the page itself, loaded afresh, knows it */
       if (PATHS && navigator.onLine !== false && !first) { location.assign(href(id)); return; }
+      clearCharts();
       view.removeAttribute('aria-busy');
-      $('.site-wait', view).outerHTML = '<div class="tray-alert tray-alert--danger" role="alert"><span class="tray-alert__icon">' + UI.icon('circle-alert') + '</span><div class="tray-alert__body">' +
-        '<p class="tray-alert__title">This page did not load</p><p class="tray-alert__text">Check the connection and <a href="' + href(id) + '" data-retry>try again</a>.</p></div></div>';
+      view.removeAttribute('data-prerendered');
+      put(view, (meta.sk && meta.sk[0] === 'a' ? '<h1 class="title" tabindex="-1">' + esc(meta.title) + '</h1>' : headOf(meta)) +
+        '<div class="tray-alert tray-alert--danger" role="alert"><span class="tray-alert__icon">' + UI.icon('circle-alert') + '</span><div class="tray-alert__body">' +
+        '<p class="tray-alert__title">This page did not load</p><p class="tray-alert__text">Check the connection and <a href="' + href(id) + '" data-retry>try again</a>.</p></div></div>');
+      window.scrollTo(0, 0);
     });
   }
 
@@ -522,6 +686,28 @@
     e.preventDefault();
     go(id, u.search.slice(1));
   });
+
+  /* ---------- A page is fetched when a link to it is about to be followed ----------
+     A moment under the pointer, focus, or a press: by the time the click lands the file of the page has usually come, so it
+     is drawn at once and its skeleton is never seen. For a visitor who asked to save data, only a press fetches. */
+  var saving = !!(navigator.connection && navigator.connection.saveData), soon = 0;
+  function aimed(el) {
+    var a = el && el.closest ? el.closest('a[href], [role="option"][data-value]') : null, id = null;
+    if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download')) return null;
+    if (a.tagName !== 'A') id = a.getAttribute('data-value');
+    else if (PATHS) { var u = new URL(a.href, location.href); id = u.origin === location.origin ? idOf(u.pathname) : null; }
+    else id = a.getAttribute('href').charAt(0) === '#' ? a.getAttribute('href').slice(1).split('?')[0] : null;
+    return id !== null && has(S.index, id) && id !== current() && !loaded[S.index[id].chunk] ? id : null;
+  }
+  function fetchPage(id) { if (id !== null) need(id).catch(function () { /* fetched again when it is opened */ }); }
+  function fetchSoon(id, delay) {
+    clearTimeout(soon);
+    if (id !== null) soon = setTimeout(function () { fetchPage(id); }, delay);
+  }
+  document.addEventListener('pointerover', function (e) { if (!saving && e.pointerType === 'mouse') fetchSoon(aimed(e.target), 80); });
+  document.addEventListener('pointerout', function () { clearTimeout(soon); });
+  document.addEventListener('focusin', function (e) { if (!saving) fetchSoon(aimed(e.target), 150); });
+  document.addEventListener('pointerdown', function (e) { fetchPage(aimed(e.target)); });
 
   /* ---------- Theme: this page, every frame on it, and the menu that chooses ---------- */
   function paintThemeMenu() {
