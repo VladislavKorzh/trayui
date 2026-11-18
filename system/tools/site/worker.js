@@ -1,9 +1,11 @@
-/* The door of the site while it is private. Every request passes here before the static files (run_worker_first).
-   A visitor without the cookie gets a page that asks for the password; the right password sets the cookie for 30 days.
+/* A door for the site, to make it private again. It is kept here but not deployed: the site is open, and wrangler.jsonc
+   names no script. Put it back as system/README.md says, and every request passes here before the static files
+   (run_worker_first). A visitor without the cookie gets a page that asks for the password; the right password sets the
+   cookie for 30 days.
 
    The password is the secret SITE_PASSWORD:   npx wrangler secret put SITE_PASSWORD
    With no secret set, nobody gets in. Changing the secret signs everyone out.
-   To open the site to everyone, take this script out of wrangler.jsonc (see the README). */
+   To open the site to everyone again, take this script out of wrangler.jsonc. */
 
 const COOKIE = 'tray_site';
 const MAX_AGE = 60 * 60 * 24 * 30;

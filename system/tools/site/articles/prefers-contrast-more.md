@@ -42,7 +42,7 @@ Tray UI's greys are steps on a line from the tray to the ink, each placed at a c
 | `hairline` | `#dedcd6`, 1.37:1 | `#8a8882`, 3.54:1 | `control-off` |
 | `track` | `#d9d7d0`, 1.44:1 | `#b5b3ac`, 2.1:1 | `rule-strong` |
 
-Three more move on the ink card: `on-dark-soft` takes `on-inverse`, `on-dark-muted` takes `on-dark-soft`, and the rule colour `dark-rule` takes `on-dark-muted`.
+Three more move on the ink card: `on-dark-soft` takes `on-inverse`, `on-dark-muted` takes `on-dark-soft`, and the rule colour `dark-rule` takes `on-dark-muted`. Two move on the yellow card, whose greys are its own: `paper-hairline` and `paper-track` take `paper-soft`.
 
 Most steps move by one. Two move further, on purpose. The hairline jumps past `track` and `rule-strong` to the value of `control-off`, so a dividing line and the edge of a field reach 3:1: across the ten themes, 3.17:1 or more on the page and on the tray. On a floating panel of a dark theme `control-off` reaches only 2.86:1, so in Dark, Midnight, Forest and Espresso the hairline goes one step further, to `ink-hint`, 4.53:1 or more there; the build checks each theme and takes the next step where a rule falls short. `rule-strong` then moves two steps, to `ink-hint`, and stays stronger than the hairline. The yellow card has greys of its own, and its hairline and track take `paper-soft`, which reads 4.6:1 or more on the accent of every theme.
 
@@ -64,7 +64,7 @@ The short way to write this is a chain of aliases:
 
 In Chrome, all three come out as `#141414`. Custom properties on one element resolve against each other, so `--ink-muted: var(--ink-soft)` reads the new `--ink-soft`, which is already the ink, and the whole scale collapses into one colour. Each step has to point at a value the media rule leaves alone.
 
-Tray UI writes the values themselves. `tools/build.py` has the list of ten pairs above, and for each of the ten themes writes the value that theme gives the step a grey moves to:
+Tray UI writes the values themselves. `tools/build.py` has the list of twelve pairs above, and for each of the ten themes writes the value that theme gives the step a grey moves to:
 
 ```css
 @media (prefers-contrast: more) {

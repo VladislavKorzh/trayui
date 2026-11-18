@@ -312,7 +312,8 @@ export async function loadRules(path) {
 }
 
 /** The command: check files, folders (every .html in them) or stdin (-). Returns the exit code. */
-export async function main(argv, { print = console.log, name = 'check.mjs' } = {}) {
+export async function main(argv, { name = 'check.mjs' } = {}) {
+  const print = console.log;
   const { readFileSync, readdirSync, statSync } = await import('node:fs');
   const { join } = await import('node:path');
   const json = argv.includes('--json');

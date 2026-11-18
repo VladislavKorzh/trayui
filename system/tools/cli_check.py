@@ -7,7 +7,7 @@ Chrome at 1440 and 390 pixels wide.
     python3 tools/cli_check.py --site DIR      serve another folder that holds r/ and fonts/ (registry.py --out DIR)
     python3 tools/cli_check.py --skip compare,shadcn     leave steps out (registry plain updates skill vite next types compare shadcn)
 
-It needs Node 18 or later, npm and the network (it creates the apps with npm and installs Vite and Next.js once; they
+It needs Node 20.19 or later (what the current Vite and Next.js ask for), npm and the network (it creates the apps with npm and installs Vite and Next.js once; they
 are kept in .cache/cli-check/ and reused), Google Chrome and Pillow. The steps:
 
   registry  every item valid against shadcn's schemas (registry.validate, and the jsonschema library when present)

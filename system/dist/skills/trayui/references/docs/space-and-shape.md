@@ -90,7 +90,7 @@ Space, corners, sizes, the one shadow and the rest of the scale: each a token, w
 | --- | --- | --- |
 | `--z-sticky` | `20` | The pinned header. |
 | `--z-float` | `40` | Popovers, menus, tooltips. |
-| `--z-overlay` | `60` | Scrim, dialog, drawer, sheet. |
+| `--z-overlay` | `60` | An overlay of your own that is not a <dialog>: the system's dialogs, drawers and sheets open in the top layer and need none. |
 | `--z-toast` | `80` | Toasts, above everything. |
 
 ## Breakpoint

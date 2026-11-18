@@ -12,10 +12,6 @@ COLLAPSE = '[data-tray="sidebar-toggle"]'
 MENU = '[data-tray="sidebar-sheet"]'
 
 
-def names(pg, root):
-    return root.locator('a.tray-sidebar__item, .tray-switcher').evaluate_all('es => es.map(e => e.getAttribute("aria-label") || e.textContent)')
-
-
 def test_tree(t):
     pg = t.open()
     t.eq('one main, one banner, the sidebar a nav named "Main"', pg.evaluate('''[document.querySelectorAll('main').length, document.querySelectorAll('.tray-app__main > header').length,

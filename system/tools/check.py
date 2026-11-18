@@ -4,7 +4,7 @@
     python3 tools/check.py           everything: what CI runs
     python3 tools/check.py --fast    the build and the checks that need no browser
 
-It needs Python 3.12 with system/requirements.txt, Node 18 or later, and Google Chrome (the browser checks drive it
+It needs Python 3.12 with system/requirements.txt, Node 20.19 or later (the CLI check builds Vite and Next.js apps), and Google Chrome (the browser checks drive it
 through Playwright). Each step is one of the tools in this folder; their own docstrings say what they look at.
 """
 import pathlib, subprocess, sys, time

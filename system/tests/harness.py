@@ -42,7 +42,7 @@ port): /project/components/<Name>/preview.html?theme=dark gets <html data-theme>
 as guides/2-behaviour.md says (dist/tokens.css, dist/components/bundle.css, dist/components/bundle.js); /react/<Name>
 draws the React preview bundled by tests/react.mjs over react/styles/styles.css. Every `tray:*` event is recorded.
 """
-import importlib.util, json, math, mimetypes, os, pathlib, re, time, traceback
+import importlib.util, mimetypes, os, pathlib, re, time
 from urllib.parse import urlsplit, parse_qs
 
 SYSTEM = pathlib.Path(__file__).resolve().parent.parent
@@ -667,7 +667,6 @@ def generic_react(t):
         pg.close()
     for w in (NARROW, WIDE):
         pg = t.open_react(width=w)
-        h = pg.evaluate('() => document.documentElement.scrollHeight')
         m = pg.evaluate('() => ({ s: document.documentElement.scrollWidth, c: document.documentElement.clientWidth })')
         t.check(f'react: no sideways scroll at {w}px', m['s'] <= m['c'] + 1, f"{m['s']}px in {m['c']}px")
         pg.close()
@@ -723,6 +722,8 @@ def run_block(browser, name, only=None):
                                    'AXE_EXCLUDE': getattr(mod, 'AXE_EXCLUDE', {}).get(name, {})})
     t = T(browser, name, BLOCKS, own)
     t.kind, t.fn = 'block', 'block'
+    if only and not any(o in 'block' for o in only):  # -k names steps: a block's checks are its one step, "block"
+        return t.results, time.time() - start
     try:
         for w in (NARROW, WIDE):
             for theme in ('light', 'dark'):

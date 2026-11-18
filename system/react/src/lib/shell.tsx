@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTrayEvent, useBehaviour } from './util';
-import { useMergedRef, useTick } from './menus';
+import { useMergedRef, useTick, type PopHandle } from './menus';
 
 /* Shared by the app shell (AppShell, TopBar, WorkspaceSwitcher, UserMenu, NotificationCenter). Not exported from the package. */
 
@@ -24,12 +24,6 @@ export function initialsOf(name: string): string {
     .slice(0, 2)
     .map((w) => w[0]!.toUpperCase())
     .join('');
-}
-
-interface PopHandle {
-  open(): void;
-  close(focusBack?: boolean): void;
-  isOpen(): boolean;
 }
 
 type Anchor = HTMLElement & { __menu?: PopHandle; __popover?: PopHandle };

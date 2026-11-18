@@ -66,7 +66,7 @@ Each copy starts with its title and a line that says where it belongs, so an age
 ```text
 # Button
 
-> Part of Tray UI 0.2.0, a design system in plain HTML and CSS (MIT licence). Every page: https://trayui.com/llms.txt
+> Part of Tray UI 0.3.0, a design system in plain HTML and CSS (MIT licence). Every page: https://trayui.com/llms.txt
 
 A button starts an action; the yellow one is the single most important action in view.
 ```
@@ -128,7 +128,7 @@ Every page of Tray UI but the home page carries the first in its head, and the h
 
 People get the same links at the foot of every other page, "This page in Markdown" and "llms.txt", and the home page's footer links `llms.txt`. The site has no `rel="describedby"` and sends no `Link` header; a site starting now can add `<link rel="describedby" href="/llms.txt">` to the same head.
 
-The type the server sends matters too. Tray UI's `_headers` file, which its host reads, gives the two text files `Content-Type: text/plain; charset=utf-8`. The `.md` copies take the host's default, `text/markdown`, with no charset. RFC 7763, which registers that type, says "charset is REQUIRED", and the copies hold characters beyond ASCII, so send `text/markdown; charset=utf-8`.
+The type the server sends matters too. Tray UI's `_headers` file, which its host reads, gives the two text files `Content-Type: text/plain; charset=utf-8`. The `.md` copies go out as `text/markdown; charset=utf-8`: RFC 7763, which registers that type, says "charset is REQUIRED", and the copies hold characters beyond ASCII, while the host's default for them names no charset.
 
 ## Who reads them
 

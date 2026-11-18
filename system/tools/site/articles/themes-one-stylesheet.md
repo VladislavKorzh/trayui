@@ -87,7 +87,7 @@ This script goes in the `<head>`, before the stylesheets, so the first paint is 
 - **The try.** `localStorage` throws when the browser blocks storage. The page then follows the system, and a choice lasts until the page is left.
 - **A way back.** `chooseTheme('system')` forgets the choice, so a theme menu can offer "As the system" beside the ten themes.
 
-Tray UI's site runs the first half of this before its stylesheets, with its own storage key, and the [Theming](#d-theming) page gives the same three lines for your pages. Neither listens for a later change: a page that is open when the system turns dark stays as it was until it is loaded again.
+Tray UI's site runs the first half of this before its stylesheets, with its own storage key, and the [Theming](#d-theming) page gives the same three lines for your pages. Both keep following the system setting while no theme is chosen: a page that is open when the system turns dark turns dark with it.
 
 A page can follow the setting in CSS alone, by repeating the dark values inside `@media (prefers-color-scheme: dark)` for a `:root` with no `data-theme`. That puts a second copy of a theme in the file, and a menu with ten themes needs the script all the same.
 

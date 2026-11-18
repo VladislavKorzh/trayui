@@ -4,7 +4,7 @@ The system is written to be read by an agent as well as by a person: short rules
 
 ## Give it the skill
 
-The skill is a folder an agent reads when a task touches Tray UI: `SKILL.md` with the rules it breaks most, every page of this site as Markdown, and a checker it runs on the HTML it writes. It works offline. In Claude Code, install it as a plugin:
+The skill is a folder an agent reads when a task touches Tray UI: `SKILL.md` with the rules it breaks most, every page of the docs, the components, the blocks and the charts as Markdown, and a checker it runs on the HTML it writes. It works offline. In Claude Code, install it as a plugin:
 
 ```sh
 claude plugin marketplace add {{site}}/skills/marketplace.json
@@ -15,7 +15,7 @@ claude plugin install trayui@trayui
 
 ## Or give it the pages
 
-- [llms.txt](llms.txt) is the index: what Tray UI is, the three lines that install it, and a link to every page. It is short enough to paste into a prompt.
+- [llms.txt](llms.txt) is the index: what Tray UI is, the three lines that install it, and links to the docs, the guides, every component, and the lists of the blocks and the articles. It is short enough to paste into a prompt.
 - [llms-full.txt](llms-full.txt) holds the whole system in one file: the rules of the brand book, the guides (grounds, behaviour, accessibility, page layouts), theming, React, the index of components and the guidelines of every component with its markup.
 - Every page of this site is also Markdown at its own address with `.md` added: the page of the button is at `/components/button`, its Markdown at `/components/button.md`. A block's Markdown holds its whole page of HTML, and a chart's holds its React file. Each page names its Markdown in its head, as `<link rel="alternate" type="text/markdown">`.
 

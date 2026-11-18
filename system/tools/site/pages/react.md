@@ -10,7 +10,7 @@ The same {{components}} components as typed React components, over the same styl
 npm install trayui-react
 ```
 
-Its source is the `system/react` folder of the repository{{#repo}} ([open it]({{repo}})){{/repo}}.{{/npm}}{{^npm}}The package is called `trayui-react`. It is not on npm yet: it is the `system/react` folder of the repository{{#repo}} ([open it]({{repo}})){{/repo}}.{{^repo}} The repository is not public yet, so for now the package cannot be downloaded from here.{{/repo}} Build it there with `npm install` and `npm run build`, then add it to a project as a local package.{{/npm}}
+{{#repo}}Its source is the `system/react` folder of the repository ([open it]({{repo}})).{{/repo}}{{/npm}}{{^npm}}The package is called `trayui-react`. It is not on npm yet: it is the `system/react` folder of the repository{{#repo}} ([open it]({{repo}})){{/repo}}.{{^repo}} The repository is not public yet, so for now the package cannot be downloaded from here.{{/repo}} Build it there with `npm install` and `npm run build`, then add it to a project as a local package.{{/npm}}
 
 ## Use it
 
@@ -52,7 +52,7 @@ The {{blocks}} blocks exist in React too, as components with the same markup and
 
 A block keeps the script of its HTML page, if it has one (a filter that narrows a table, a total that follows the quantities), as plain DOM code that runs once it is mounted: rewrite it with React state when you make the screen yours.
 
-In Next.js, the components that keep state start with `'use client'`, in the package and in the copies, so a Server Component can render them as they are.
+In Next.js, every component file that needs the browser (state, effects, an event handler, a behaviour) starts with `'use client'`, in the package and in the copies, so a Server Component can render them as they are.
 
 ## What it does not have yet
 

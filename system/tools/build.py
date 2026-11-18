@@ -9,7 +9,7 @@ Sources:  project/tokens.json -> dist/tokens.css                 (and .preview/t
           src/icons.json      -> project/assets/Icons/*.svg and the sprite inside bundle.js
           project/blocks/*.html -> dist/blocks/, and their list in project/guides/5-blocks.md
 """
-import json, pathlib, re, sys
+import json, os, pathlib, re, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 P, SRC, PREV = ROOT / 'project', ROOT / 'src', ROOT / '.preview'
@@ -44,30 +44,59 @@ PAGE_HEAD = ['<!doctype html>', '<html lang="en" data-theme="light">', '<head>',
 PAGE_LINKS = ['<link rel="stylesheet" href="../tokens.css">', '<link rel="stylesheet" href="../components/bundle.css">', '</head>']
 
 
+def read_screen(f, groups, prefix):
+    """One whole page, a block or a template: id, title, summary, group, the file's text, problems."""
+    text = f.read_text(encoding='utf-8')
+    get = lambda name: (re.search(rf'<meta name="{name}" content="([^"]*)"', text) or [None, ''])[1]
+    title = re.search(r'<title>([^<]*)</title>', text)
+    page = {'name': f.stem, 'id': prefix + f.stem, 'title': title.group(1).strip() if title else '',
+            'summary': get('description'), 'group': get('tray-category'), 'source': text, 'problems': [],
+            'behaviours': sorted({b for v in re.findall(r'data-tray="([^"]+)"', text) for b in v.split()}), 'slots': 'tray-slot' in text}
+    lines = text.split('\n')
+    if lines[:5] != PAGE_HEAD or [l for l in lines[5:14] if l.startswith('<link') or l == '</head>'] != PAGE_LINKS:
+        page['problems'].append('its <head> is not the one every page shares')
+    for key in ('title', 'summary', 'group'):
+        if not page[key]:
+            page['problems'].append(f'no {key}')
+    if page['group'] and page['group'] not in groups:
+        page['problems'].append(f'its category {page["group"]!r} has no place in the list')
+    if '<script src="../components/bundle.js"></script>' not in text:
+        page['problems'].append('it does not load ../components/bundle.js at the end of the body')
+    if re.search(r'<style[\s>]', text):
+        page['problems'].append('it carries a <style> element: styles belong to the system')
+    return page
+
+
 def read_blocks():
-    """The blocks, in the order they are listed: id, title, summary, group, the file's text, problems."""
-    out = []
-    for f in sorted((P / 'blocks').glob('*.html')):
-        text = f.read_text(encoding='utf-8')
-        get = lambda name: (re.search(rf'<meta name="{name}" content="([^"]*)"', text) or [None, ''])[1]
-        title = re.search(r'<title>([^<]*)</title>', text)
-        page = {'name': f.stem, 'id': 'b-' + f.stem, 'title': title.group(1).strip() if title else '',
-                'summary': get('description'), 'group': get('tray-category'), 'source': text, 'problems': [],
-                'behaviours': sorted({b for v in re.findall(r'data-tray="([^"]+)"', text) for b in v.split()}), 'slots': 'tray-slot' in text}
-        lines = text.split('\n')
-        if lines[:5] != PAGE_HEAD or [l for l in lines[5:14] if l.startswith('<link') or l == '</head>'] != PAGE_LINKS:
-            page['problems'].append('its <head> is not the one every page shares')
-        for key in ('title', 'summary', 'group'):
-            if not page[key]:
-                page['problems'].append(f'no {key}')
-        if page['group'] and page['group'] not in BLOCK_GROUPS:
-            page['problems'].append(f'its category {page["group"]!r} has no place in the list')
-        if '<script src="../components/bundle.js"></script>' not in text:
-            page['problems'].append('it does not load ../components/bundle.js at the end of the body')
-        if re.search(r'<style[\s>]', text):
-            page['problems'].append('it carries a <style> element: styles belong to the system')
-        out.append(page)
+    """The blocks, in the order they are listed."""
+    out = [read_screen(f, BLOCK_GROUPS, 'b-') for f in sorted((P / 'blocks').glob('*.html'))]
     return sorted(out, key=lambda x: (BLOCK_GROUPS.index(x['group']) if x['group'] in BLOCK_GROUPS else 99, x['name']))
+
+
+# Templates: whole pages of a product (a landing page, a dashboard, an inbox, settings...). They are not part of this
+# repository and not under its licence: they keep all rights reserved, in a repository of their own, and the site shows
+# them to look at when their folder is beside this repository (../trayui-templates) or where TRAYUI_TEMPLATES says
+# (TRAYUI_TEMPLATES= with nothing after it builds the site without them, as CI does). That folder holds templates/*.html
+# and order.json: the groups in their order, and the templates in their order. Nothing puts them in dist/.
+def templates_folder():
+    at = os.environ.get('TRAYUI_TEMPLATES')
+    folder = pathlib.Path(at).expanduser() if at else None if at is not None else ROOT.parent.parent / 'trayui-templates'
+    return folder if folder and (folder / 'order.json').exists() and (folder / 'templates').is_dir() else None
+
+
+def read_templates():
+    """The templates and their groups, in the order they are listed; ([], []) when their folder is not there."""
+    folder = templates_folder()
+    if not folder:
+        return [], []
+    order = json.loads((folder / 'order.json').read_text(encoding='utf-8'))
+    groups, names = order.get('groups', []), order.get('order', [])
+    out = [read_screen(f, groups, 't-') for f in sorted((folder / 'templates').glob('*.html'))]
+    for x in out:
+        if x['name'] not in names:
+            x['problems'].append('it has no place in order.json')
+    rank = lambda x: (groups.index(x['group']) if x['group'] in groups else 99, names.index(x['name']) if x['name'] in names else 99, x['name'])
+    return sorted(out, key=rank), groups
 
 
 def npm_package(dist, tok, icons):
@@ -76,10 +105,12 @@ def npm_package(dist, tok, icons):
     links = json.loads((ROOT / 'tools' / 'links.json').read_text(encoding='utf-8'))
     version, site = links.get('version', '0.0.0'), links.get('site', '').rstrip('/')
     blocks, themes = len(list((P / 'blocks').glob('*.html'))), len(tok['color']['themes'])
+    plays = len(list((ROOT / 'tools' / 'site' / 'play').glob('*.json')))  # the components whose page has a playground
     pkg = {'name': 'trayui', 'version': version,
            'description': f'A design system in plain HTML and CSS: {len(EXPECTED)} components, {blocks} blocks, {themes} themes. Three files, no build step.',
            'license': links.get('license', 'MIT'), 'author': f'{links.get("author", "")} ({links.get("author_url", "")})', 'homepage': site,
-           'repository': {'type': 'git', 'url': f'git+{links.get("repo", "")}.git', 'directory': 'system/dist'},
+           # the repository only once it is open: npm would link a page nobody can see
+           **({'repository': {'type': 'git', 'url': f'git+{links.get("repo", "")}.git', 'directory': 'system/dist'}} if links.get('public') else {}),
            'keywords': ['design-system', 'css', 'html', 'ui-components', 'component-library', 'accessibility', 'no-build', 'dark-mode', 'tailwind', 'figma',
                         'cli', 'shadcn-registry', 'agent-skills'],
            'style': 'components/bundle.css', 'unpkg': 'components/bundle.js', 'jsdelivr': 'components/bundle.js', 'sideEffects': True,
@@ -91,7 +122,7 @@ def npm_package(dist, tok, icons):
 
 A design system in plain HTML and CSS: {len(EXPECTED)} components, {blocks} blocks, {len(icons)} icons and {themes} themes. Three files, no framework, no build step.
 
-Docs, live examples and a playground for each component: {site}
+Docs and live examples of every component, with a playground for {plays} of them: {site}
 
 ## Link it from a CDN
 
@@ -128,9 +159,9 @@ import 'trayui/components/bundle.js';
 - `blocks/`: {blocks} whole screens, each one HTML file to copy.
 - `tailwind/` and `figma/`: the tokens as a Tailwind theme and as Figma variables.
 - `cli/`: the `trayui` command (below) and the markup checker it runs.
-- `skills/trayui/`: a skill for AI agents (Claude Code, and any tool that reads `SKILL.md`): the rules, a page for every component and block, and the checker.
+- `skills/trayui/`: a skill for AI agents (Claude Code, and any tool that reads `SKILL.md`): the rules, a page for every component and block, and the checker. It is in the npm package; the zip on the site leaves it out, as the skill has an archive of its own, {site}/skills/trayui.zip.
 
-For React, there is [trayui-react](https://www.npmjs.com/package/trayui-react). For an AI agent, {site}/llms.txt lists every page as Markdown.
+For React, there is [trayui-react](https://www.npmjs.com/package/trayui-react). For an AI agent, {site}/llms.txt is the index of the site in Markdown.
 
 ## Add it with the CLI
 
@@ -146,7 +177,7 @@ It needs Node 18 or later and nothing else. It works in a folder of plain HTML p
 
 ## For AI agents
 
-Copy `skills/trayui` into your project's `.claude/skills/` (or `.agents/skills/`), or install it as {site}/docs/skill says. It tells an agent how to build with the system and has it check what it wrote with `node scripts/check.mjs page.html`.
+Copy `skills/trayui` from the npm package into your project's `.claude/skills/` (or `.agents/skills/`), run `npx trayui skill`, or install it as {site}/docs/skill says. It tells an agent how to build with the system and has it check what it wrote with `node scripts/check.mjs page.html`.
 
 ## Licence
 
@@ -356,6 +387,12 @@ def build():
         (dist / 'LICENSE').write_text((ROOT.parent / 'LICENSE').read_text(encoding='utf-8'), encoding='utf-8')
     npm_package(dist, tok, icons)  # dist/ is also the package trayui on npm
     cli_files(dist, css, js, tok, icons)  # with the trayui command and the markup checker in cli/
+    listed = set(re.findall(r'^\| `([a-z0-9-]+)` \|', (P / 'guides' / '2-behaviour.md').read_text(encoding='utf-8'), re.M))
+    registered = set(re.findall(r"UI\.register\('([a-z0-9-]+)'", js))
+    if registered - listed:
+        problems.append(f'project/guides/2-behaviour.md does not list the behaviours {sorted(registered - listed)}')
+    if listed - registered - {'data-tray'}:
+        problems.append(f'project/guides/2-behaviour.md lists behaviours the script does not have: {sorted(listed - registered - {"data-tray"})}')
     # the tokens for other tools: a theme for Tailwind 4, a preset for Tailwind 3, and Figma variables (tools/exports.py)
     import exports
     exports.write(tok, dist, dark_themes(tok))
@@ -370,9 +407,10 @@ def build():
     for old in (dist / kind).glob('*.html'):
         if not (P / kind / old.name).exists():
             old.unlink()
-    for page in pages:
+    def check_page(kind, page):
+        """What a whole page of the system may hold: nothing loaded from elsewhere, no picture, only icons, classes and
+        values that exist. Returns the custom properties it reads."""
         text = page['source']
-        (dist / kind / f'{page["name"]}.html').write_text(text, encoding='utf-8')
         for pr in page['problems']:
             problems.append(f'{kind}/{page["name"]}.html: {pr}')
         for tag in ('iframe', 'frame', 'object', 'embed', 'portal', 'img', 'picture', 'video'):
@@ -389,7 +427,13 @@ def build():
         for st in re.findall(r'style="([^"]*)"', text):
             if re.search(r'#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(|(?<![-\w])(?:color|background(?:-color)?|font(?:-family|-size|-weight)?|border(?:-[a-z-]+)?|box-shadow)\s*:', st):
                 problems.append(f'{kind}/{page["name"]}.html: an inline style sets a colour, a font, a border or a shadow: {st[:60]}')
-        page_used |= set(re.findall(r'var\(--([A-Za-z0-9_.-]+)', text))
+        return set(re.findall(r'var\(--([A-Za-z0-9_.-]+)', text))
+
+    for page in pages:
+        (dist / kind / f'{page["name"]}.html').write_text(page['source'], encoding='utf-8')
+        page_used |= check_page(kind, page)
+    for page in read_templates()[0]:  # the templates, when their folder is there: checked as the blocks are, and never copied into dist/
+        page_used |= check_page('templates', page)
     lines = ['# Blocks', '', intro + f' There are {len(pages)}; each is one file in `{kind}/`.', '',
              'A page links `../tokens.css`, `../components/bundle.css` and `../components/bundle.js`, so it works as it is one folder below those three files. '
              'The grey trays (`tray-slot`) in a block stand in for your content.']

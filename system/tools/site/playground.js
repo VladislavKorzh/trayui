@@ -181,7 +181,6 @@
     stage.addEventListener('submit', function (e) { e.preventDefault(); });
     stage.addEventListener('click', function (e) { var a = e.target.closest ? e.target.closest('a[href]') : null; if (a) e.preventDefault(); });
     if (!drawn) draw();
-    return { values: values, draw: draw };
   }
 
   var api = { render: render, first: first, mount: mount, GROUNDS: GROUNDS };

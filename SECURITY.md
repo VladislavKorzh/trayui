@@ -12,6 +12,8 @@ Say what the problem is, which file and version it is in, and how to reproduce i
 
 - `components/bundle.js`: for example, markup or `data-` attributes that let a page's content run script, or a behaviour that writes untrusted text as HTML.
 - `trayui-react`.
+- The `trayui` command (`npx trayui`), which writes files into a project, runs its package manager and reads the registry, and the markup checker (`cli/check.mjs`) that it and the skill run.
+- The registry at `https://trayui.com/r/` and the agent skill, as they reach a project.
 - The tools in `system/tools` that build the files people link.
 
 The documentation site's own pages and the example content in previews and blocks are out of scope, unless they show a flaw in one of the above.

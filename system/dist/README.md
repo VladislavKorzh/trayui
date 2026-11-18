@@ -2,7 +2,7 @@
 
 A design system in plain HTML and CSS: 108 components, 64 blocks, 118 icons and 10 themes. Three files, no framework, no build step.
 
-Docs, live examples and a playground for each component: https://trayui.com
+Docs and live examples of every component, with a playground for 52 of them: https://trayui.com
 
 ## Link it from a CDN
 
@@ -39,9 +39,9 @@ import 'trayui/components/bundle.js';
 - `blocks/`: 64 whole screens, each one HTML file to copy.
 - `tailwind/` and `figma/`: the tokens as a Tailwind theme and as Figma variables.
 - `cli/`: the `trayui` command (below) and the markup checker it runs.
-- `skills/trayui/`: a skill for AI agents (Claude Code, and any tool that reads `SKILL.md`): the rules, a page for every component and block, and the checker.
+- `skills/trayui/`: a skill for AI agents (Claude Code, and any tool that reads `SKILL.md`): the rules, a page for every component and block, and the checker. It is in the npm package; the zip on the site leaves it out, as the skill has an archive of its own, https://trayui.com/skills/trayui.zip.
 
-For React, there is [trayui-react](https://www.npmjs.com/package/trayui-react). For an AI agent, https://trayui.com/llms.txt lists every page as Markdown.
+For React, there is [trayui-react](https://www.npmjs.com/package/trayui-react). For an AI agent, https://trayui.com/llms.txt is the index of the site in Markdown.
 
 ## Add it with the CLI
 
@@ -57,7 +57,7 @@ It needs Node 18 or later and nothing else. It works in a folder of plain HTML p
 
 ## For AI agents
 
-Copy `skills/trayui` into your project's `.claude/skills/` (or `.agents/skills/`), or install it as https://trayui.com/docs/skill says. It tells an agent how to build with the system and has it check what it wrote with `node scripts/check.mjs page.html`.
+Copy `skills/trayui` from the npm package into your project's `.claude/skills/` (or `.agents/skills/`), run `npx trayui skill`, or install it as https://trayui.com/docs/skill says. It tells an agent how to build with the system and has it check what it wrote with `node scripts/check.mjs page.html`.
 
 ## Licence
 

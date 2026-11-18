@@ -75,6 +75,10 @@ Options
   --overwrite              replace files you changed (without it they are kept, and diff shows them)
   --dry-run                say what would be written, write nothing
   --no-install             do not run the package manager for the packages an item needs
+  --json                   list, check: the result as JSON
+  --stat                   diff: the names of the files that differ, without the diff
+  --rules <file>           check: rules of your own in place of the system's (rules.json)
+  --yes, -y                accepted and ignored, for scripts written for other CLIs: nothing here asks a question
   --version, --help
 
 Examples
@@ -150,7 +154,7 @@ function version() {
 }
 
 /** A line diff (Myers' algorithm) of two texts as a unified diff with three lines of context; null when they are the same. */
-export function unifiedDiff(a, b, nameA, nameB) {
+function unifiedDiff(a, b, nameA, nameB) {
   if (a === b) return null;
   const x = a.split('\n'), y = b.split('\n');
   const n = x.length, m = y.length, max = n + m, off = max + 1;
@@ -218,7 +222,6 @@ class Project {
     this.deps = deps;
     this.framework = flags.react ? 'react' : flags.html ? 'html' : this.config.framework || (deps.react ? 'react' : 'html');
     if (flags.react && flags.html) throw new UsageError('--react and --html cannot go together');
-    this.next = !!deps.next;
     // the folders recorded in trayui.json hold for the kind of project recorded there (a React app with a plain page
     // added once with --html keeps its React folders)
     this.same = !this.config.framework || this.config.framework === this.framework;
@@ -419,7 +422,6 @@ async function install(project, names, { init = false } = {}) {
     const at = project.dir;
     say(`\nLink the three files in every page, in this order:\n  <link rel="stylesheet" href="${at}/tokens.css">\n  <link rel="stylesheet" href="${at}/components/bundle.css">\n  <script src="${at}/components/bundle.js" defer></script>\nThen add a whole page: npx trayui add login-01 (npx trayui list shows them).`);
   } else if (init) say('\nThen add components and blocks: npx trayui add button tabs login-01 (npx trayui list shows them).');
-  return kept.length;
 }
 
 function packageManager(project) {
@@ -632,7 +634,7 @@ async function main(argv) {
   return 2;
 }
 
-// run as the command (npx trayui, node trayui.mjs), not when a test imports unifiedDiff
+// run as the command (npx trayui, node trayui.mjs), not when the file is imported
 let self = '';
 try { self = pathToFileURL(realpathSync(process.argv[1])).href; } catch (e) { /* not a file */ }
 if (self === import.meta.url) {

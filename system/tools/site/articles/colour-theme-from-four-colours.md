@@ -174,7 +174,7 @@ The four colours stay as you gave them. What moves depends on the token.
 
 1. **A derived grey moves towards the ink.** A step is placed against the page but read on other grounds too. Give a white page a darker tray, `#e0ddd5`, and `ink-hint` at 5.25:1 on the page reads 3.87:1 on the tray. The engine mixes it towards the ink, with the same halving search, until its weakest ground holds: `#62625f`, 4.5:1 on the tray. `control-off` goes from 2.61:1 to 3.02:1. Only the four steps with rules move: `ink-soft`, `ink-muted`, `ink-hint`, `control-off`.
 2. **The system's own colours move towards the text of their ground.** The status colours of the yellow and the ink card, and the code colours, keep their hue in every theme. Where a ground is too close to one, it moves towards `paper-ink`, `on-inverse` or `ink`, whichever is read there, until it reads 4.5:1. On the darker tray, the red of code keywords goes from 4.08:1 to `#bc232c` at 4.53:1.
-3. **Anything else is reported.** Give Linen a deep blue accent, `#1d4ed8`, and the ink text on it reads 2.74:1. `on-accent` is the same in every theme, so nothing moves. The maker says 3 of 66 rules are missed, names up to three with their ratio and need, and advises moving the ink and the page further apart or making the accent brighter.
+3. **Anything else is reported.** Give Linen a deep blue accent, `#1d4ed8`, and the ink text on it reads 2.74:1. `on-accent` is the same in every theme, so nothing moves. The maker says 3 of 66 pairs miss their contrast, names up to three with their ratio and need, and advises moving the ink and the page further apart or making the accent brighter.
 
 The maker still writes the CSS of a theme that misses a rule; the choice is yours. `tools/themes.py`, which writes the built-in themes, is stricter: if any theme misses a rule, it writes nothing.
 
@@ -188,7 +188,7 @@ The accent stays bright in a dark theme too. Accent surfaces keep the light pale
 
 ## More contrast and forced colours
 
-A theme's CSS carries a second rule inside `@media (prefers-contrast: more)`. Each grey takes the value its theme gives the next step towards the ink: `ink-soft` becomes `ink`, `ink-muted` becomes `ink-soft`, and so on down to `hairline` and `track`: ten tokens, three of them on the ink card. The values already belong to the theme, so the greys keep its tint and need no new search. `tokens.css` does the same for the built-in themes, and since version 0.3.0 goes two steps further: the yellow card's own greys step too, and a rule that would stay under 3:1 on a ground it is drawn on (the hairline on a raised panel in the dark themes) takes the step after. In that mode the stylesheet adds a 1px edge to trays, fields and quiet controls.
+A theme's CSS carries a second rule inside `@media (prefers-contrast: more)`. Each grey takes the value its theme gives the next step towards the ink: `ink-soft` becomes `ink`, `ink-muted` becomes `ink-soft`, and so on down to `hairline` and `track`: twelve tokens, three of them on the ink card and two on the yellow card. The values already belong to the theme, so the greys keep its tint and need no new search. A rule that would stay under 3:1 on a ground it is drawn on (the hairline on a raised panel in the dark themes) takes the step after. `tokens.css` does the same for the built-in themes, since version 0.3.0. In that mode the stylesheet adds a 1px edge to trays, fields and quiet controls.
 
 Forced colours, such as Windows high contrast, need nothing from a theme: the browser replaces the theme's colours with the person's own, and the stylesheet draws an edge where a fill was. [Accessibility](#g-accessibility) has the details.
 
@@ -242,7 +242,7 @@ Open [Themes](#d-themes) and go to **Make your own**. It runs the engine above a
 2. Set **Page**, **Tray**, **Ink** and **Accent**, with the colour picker or as hex. The tray follows the page until you set it.
 3. Move **Corners** for squarer or rounder corners.
 4. Open **Every colour** to set one token by hand; it wins over the derived value.
-5. Read **Does it hold?**, and open **Show every rule** for all 66 pairs.
+5. Read **Does it hold?**, and open **Show every pair** for all 66 of them.
 6. Under **Take it with you**, copy the CSS, save it as a stylesheet and link it after the system.
 
 ```html

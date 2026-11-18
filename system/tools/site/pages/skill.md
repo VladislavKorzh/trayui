@@ -1,6 +1,6 @@
 # The agent skill
 
-The skill is a folder an agent reads when a task touches Tray UI: the rules it breaks most, every page of this site as Markdown, and a checker it runs on the HTML it writes. It holds Tray UI {{version}}, works offline, and runs nothing by itself.
+The skill is a folder an agent reads when a task touches Tray UI: the rules it breaks most, every page of the docs, the components, the blocks and the charts as Markdown, and a checker it runs on the HTML it writes. It holds Tray UI {{version}}, works offline, and runs nothing by itself.
 
 ## In Claude Code
 
@@ -31,11 +31,11 @@ An agent that reads no skills can still use it: say in its rules file (`AGENTS.m
 ## What is in it
 
 - `SKILL.md`: when to use the skill, and how to build with the system on one page: the three files, the conventions, the rules agents break most, the accessibility the markup must carry, and the check before handing a page over.
-- `references/`: every page of this site as Markdown, by the same path as its address, so the page at `/components/button` is `references/components/button.md`. The {{components}} components with their markup and Accessibility sections, the {{blocks}} blocks each as a whole page of HTML, the docs, the foundations, the guides and the charts.
+- `references/`: the pages of the docs, the components, the blocks and the charts as Markdown, each by the same path as its address, so the page at `/components/button` is `references/components/button.md`. The {{components}} components with their markup and Accessibility sections, the {{blocks}} blocks each as a whole page of HTML, the docs, the foundations, the guides and the charts.
 - `scripts/check.mjs`: the markup checker, one file with no dependencies (Node 18 or later).
 - `scripts/rules.json`: its rules, the classes, behaviours and icons of this release.
 
-The zip puts a manifest, a README and an icon around the same folder, which make it a Claude Code plugin. The changelog and the pages about agents stay out: the skill holds how to build, not the story of the system.
+The zip puts a manifest, a README and an icon around the same folder, which make it a Claude Code plugin. The changelog, the pages about agents, the articles and the templates stay out: the skill holds how to build, not the story of the system.
 
 ## How an agent uses it
 

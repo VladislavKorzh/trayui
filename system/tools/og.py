@@ -83,7 +83,7 @@ FIT = '''() => {
 }'''
 
 
-def card_doc(card, files):
+def card_doc(card):
     """The card as a page of its own, linking the three files from the fake origin the browser is given."""
     head = ''.join(f'<link rel="stylesheet" href="/{f}">' for f in ('tokens.css', 'components/bundle.css'))
     esc = lambda s: html.escape(s, quote=False)
@@ -134,7 +134,7 @@ async def draw(cards, site, blocks):
         room = asyncio.Semaphore(6)
 
         async def one(key, card, out):
-            docs[key] = card_doc(card, None)
+            docs[key] = card_doc(card)
             async with room:
                 pg = await ctx.new_page()
                 try:

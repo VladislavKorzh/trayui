@@ -4,10 +4,11 @@
     python3 tools/site.py
 
 It reads what the design system publishes (project/README.md, tokens.json, guides/*.md, components/<Name>/preview.html and
-README.md, blocks/*.html), the icons, and the site's own pages (tools/site/home.html, tools/site/pages/*.md),
+README.md, blocks/*.html), the icons, the site's own pages (tools/site/home.html, tools/site/pages/*.md), and the templates
+when their folder is there (templates_folder() in tools/build.py: they are not part of this repository),
 and writes one static site: a file for every page, drawn in it, at the page's address (index.html, docs/installation.html,
 components/lightbox.html: the host serves it at /components/lightbox), site.css, site.js, data.js (the map of the site), one
-pages/<id>.js per page (a doc, a component, a block: moving to a page loads that page alone), data-charts.js,
+pages/<id>.js per page (a doc, a component, a block, a template: moving to a page loads that page alone), charts.js,
 sitemap.xml, the files of dist/
 (so the site is also where the three files can be linked or downloaded from), a zip of dist/ and llms.txt.
 
@@ -37,7 +38,7 @@ PUBLIC = bool(LINKS.get('public'))  # the repository is open: the site may link 
 NPM = bool(LINKS.get('npm'))  # trayui and trayui-react are on npm: the site says to install them, and jsDelivr serves the files from there
 CDN = (f'https://cdn.jsdelivr.net/npm/trayui@{VERSION}' if NPM else LINKS.get('cdn', '').replace('{version}', VERSION) if PUBLIC
        else LINKS.get('site', '')).rstrip('/')
-from build import BLOCK_GROUPS, GROUPS, dark_themes, read_blocks  # the order of the groups, the blocks, and which themes are dark
+from build import BLOCK_GROUPS, GROUPS, dark_themes, read_blocks, read_templates  # the order of the groups, the blocks, the templates, and which themes are dark
 import og
 
 BLOCK = 'div|ul|ol|li|section|article|aside|nav|header|main|footer|form|fieldset|table|thead|tbody|tr|dl|dialog|figure|details|p|h1|h2|h3|label|button'
@@ -54,7 +55,7 @@ def slug(name):
 # section's own address. These are the pages whose address is not their id without its prefix.
 ADDRESSES = {'home': '', 'd-introduction': 'docs', 'f-type': 'docs/typography', 'f-scale': 'docs/space-and-shape',
              'g-brand': 'docs/brand-book', 'ch-use': 'charts/usage', 'ch-ready': 'charts/chart-component'}
-SECTION_OF = {'d': 'docs', 'f': 'docs', 'g': 'docs', 'c': 'components', 'b': 'blocks', 'ch': 'charts', 'a': 'articles'}
+SECTION_OF = {'d': 'docs', 'f': 'docs', 'g': 'docs', 'c': 'components', 'b': 'blocks', 't': 'templates', 'ch': 'charts', 'a': 'articles'}
 # The words people search with: the name a page's title starts with, and what else a component is called (tools/site/search.json)
 SEARCH = json.loads((SRC / 'search.json').read_text(encoding='utf-8'))
 MONTHS = ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
@@ -70,7 +71,7 @@ def route(ident):
     """The address of a page with no slash at either end: '' is the home page, 'components/lightbox' a component."""
     if ident in ADDRESSES:
         return ADDRESSES[ident]
-    if ident in ('components', 'blocks', 'charts', 'articles'):
+    if ident in ('components', 'blocks', 'templates', 'charts', 'articles'):
         return ident
     prefix, _, rest = ident.partition('-')
     if prefix == 'at':  # a topic of the articles: the articles on it, newest first
@@ -419,14 +420,20 @@ def built_from(source, comps):
     return seen
 
 
+def made_of(parts, tail):
+    """The sentence that names the components a page is made of, each linked to its page."""
+    named = lambda t: t.lower() if t[1:] == t[1:].lower() else t  # "Button" reads as "button" in a sentence; "Input OTP" stays
+    links = [f'<a href="#{c["id"]}">{html.escape(named(c["title"]))}</a>' for c in parts]
+    return f'<p>It is made of {", ".join(links[:-1]) + " and " + links[-1] if len(links) > 1 else links[0]}: {tail}</p>' if links else ''
+
+
 def viewer(p, parts, about=''):
     """The page of one block: the live frame at a chosen width, and its code, which is in the page as it comes.
     about: what the screen is for and when to choose it, in Markdown (tools/site/block-notes/<name>.md)."""
+    if p['id'].startswith('t-'):
+        return look(p, parts)
     uses = ' '.join(f'<code class="tray-code-inline">{b}</code>' for b in p['behaviours'])
-    named = lambda t: t.lower() if t[1:] == t[1:].lower() else t  # "Button" reads as "button" in a sentence; "Input OTP" stays
-    links = [f'<a href="#{c["id"]}">{html.escape(named(c["title"]))}</a>' for c in parts]
-    made = (f'<p>It is made of {", ".join(links[:-1]) + " and " + links[-1] if len(links) > 1 else links[0]}: '
-            'each component has a page with its markup and its rules.</p>') if links else ''
+    made = made_of(parts, 'each component has a page with its markup and its rules.')
     note = ((markdown(about, p['id'] + '-about') if about else '') + made
             + '<p>Copy the page, or the part of it you need, into a project that links <code class="tray-code-inline">tokens.css</code>, '
             '<code class="tray-code-inline">components/bundle.css</code> and <code class="tray-code-inline">components/bundle.js</code>; the paths in its '
@@ -444,6 +451,20 @@ def viewer(p, parts, about=''):
             '<div class="tray-tabpanel" role="tabpanel" id="site-src" aria-labelledby="site-t2" tabindex="0" hidden>'
             f'<div class="tray-code" dir="ltr"><div class="tray-code__head"><span>HTML</span></div><pre tabindex="0"><code id="site-src-code">{colour(p["source"], "html")}</code></pre></div></div></section>'
             f'<article class="site-prose">{note}</article>')
+
+
+TEMPLATE_TERMS = ('Names, figures and quotes are invented. The templates are here to look at: unlike the components and the blocks, they are '
+                  f'not open source, not under the {LINKS.get("license", "MIT")} licence, and in neither the download nor the npm package. All rights reserved.')
+
+
+def look(p, parts):
+    """The page of one template: the live frame at a chosen width, and no code."""
+    made = made_of(parts, 'each component has a page with its markup and its rules, and the <a href="#blocks">blocks</a> are whole screens of them to copy.')
+    return (f'<section class="site-viewer" data-viewer="{p["id"]}" aria-label="Preview">'
+            f'<div class="site-viewer__bar"><div class="site-viewer__tools"><div class="tray-seg tray-seg--sm site-viewer__sizes" role="radiogroup" aria-label="Width of the preview">{sizes_control("site-size")}</div>'
+            '<button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" data-full>Full size</button></div></div>'
+            f'<div class="tray-tabpanel"><div class="site-frame" data-frame="{p["id"]}"></div></div></section>'
+            f'<article class="site-prose">{made}<p>{TEMPLATE_TERMS}</p></article>')
 
 
 def gallery(title, summary, groups, lead, more=None):
@@ -832,7 +853,7 @@ def skeleton_of(ident, page, shapes):
     if ident == 'home':
         return ['home']
     if 'data-viewer=' in page:
-        return ['b', outline(page)]
+        return ['b', outline(page)] + ([] if 'id="site-src-code"' in page else [1])  # 1: a template, whose bar has no code to show
     stage = re.search(r'class="site-stage" style="min-block-size: (\d+)px"', page)
     if stage:
         # the controls of its playground, by kind: g segments, l a list, t a text, s a switch, r a slider
@@ -996,6 +1017,9 @@ def build():
     all_blocks = read_blocks()
     blocks = [x for x in all_blocks if not x['problems']]
     skipped = [f'blocks/{x["name"]}.html: {"; ".join(x["problems"])}' for x in all_blocks if x['problems']]
+    all_templates, template_order = read_templates()  # none when their folder is not beside this repository
+    templates = [x for x in all_templates if not x['problems']]
+    skipped += [f'templates/{x["name"]}.html: {"; ".join(x["problems"])}' for x in all_templates if x['problems']]
     strays = (sorted(set(SEARCH['components']) - {c['name'] for c in comps}) + sorted(set(SEARCH['blocks']) - {x['name'] for x in all_blocks})
               + sorted(f'block-notes/{f.name}' for f in (SRC / 'block-notes').glob('*.md') if f.stem not in {x['name'] for x in all_blocks}))
     if strays:
@@ -1019,7 +1043,7 @@ def build():
              'cdn': CDN, 'jsdelivr': CDN.startswith('https://cdn.jsdelivr.net/'),
              'site': site_url, 'author': LINKS.get('author', ''), 'author_url': LINKS.get('author_url', ''),
              'icon_wall': ''.join(icon(n) for n in sorted(icons)), 'themes': len(tok['color']['themes']),
-             'theme_menu': theme_menu(theme_data(tok)['list']), 'mark': MARK, 'plays': len(plays), 'articles': len(articles)}
+             'theme_menu': theme_menu(theme_data(tok)['list']), 'mark': MARK, 'plays': len(plays), 'articles': len(articles), 'templates': len(templates)}
     at = site_url or facts['cdn'] or 'trayui'  # the home page's lines are short: the site's own copies of the current release; the docs give jsDelivr by version
     facts['install'] = code_block(f'<link rel="stylesheet"\n  href="{at}/tokens.css">\n<link rel="stylesheet"\n  href="{at}/components/bundle.css">\n'
                                   f'<script defer\n  src="{at}/components/bundle.js"></script>', 'html', 'home-install-code')  # the lines the home page starts with, each tag on two to fit the card
@@ -1075,6 +1099,8 @@ def build():
     block_groups = grouped(blocks, BLOCK_GROUPS)
     block_nav = ([{'group': '', 'items': [{'id': 'blocks', 'title': 'All blocks'}, {'id': 'b-login', 'title': 'Sign-in and sign-up pages'}, {'id': 'b-sidebar', 'title': 'Sidebars'}]}]
                  + [{'group': g, 'items': [entry(x) for x in items]} for g, items in block_groups])
+    template_groups = grouped(templates, template_order)
+    template_nav = [{'group': '', 'items': [{'id': 'templates', 'title': 'All templates'}]}] + [{'group': g, 'items': [entry(x) for x in items]} for g, items in template_groups]
     chart_use = read_page(SRC / 'pages' / 'charts.md', 'ch-use', '')
     chart_use['summary'], chart_use['guide'] = fill(chart_use['summary']), fill(chart_use['guide'])
     for g in chart_groups:
@@ -1092,8 +1118,10 @@ def build():
                    + [{'group': t['name'], 'items': [{'id': a['id'], 'title': a['title']} for a in t['articles']]} for t in topics])  # whole titles: the search shows them
     sections = [{'id': 'docs', 'title': 'Docs', 'home': 'd-introduction', 'nav': doc_nav},
                 {'id': 'components', 'title': 'Components', 'home': 'components', 'nav': comp_nav},
-                {'id': 'blocks', 'title': 'Blocks', 'home': 'blocks', 'nav': block_nav},
-                {'id': 'charts', 'title': 'Charts', 'home': 'charts', 'nav': chart_nav}]
+                {'id': 'blocks', 'title': 'Blocks', 'home': 'blocks', 'nav': block_nav}]
+    if templates:
+        sections.append({'id': 'templates', 'title': 'Templates', 'home': 'templates', 'nav': template_nav})
+    sections.append({'id': 'charts', 'title': 'Charts', 'home': 'charts', 'nav': chart_nav})
     if articles:
         # No sidebar: the Articles page shows its topics as tabs and its articles as cards, and an article has its own contents.
         # No tab in the header either: the foot of every page links the Articles. Its list of pages still names every article
@@ -1196,6 +1224,22 @@ def build():
              x['summary'], wide=True, md=md, card={'kind': 'Block', 'block': x['name']},
              src=[f'system/project/blocks/{x["name"]}.html'] + ([f'system/tools/site/block-notes/{x["name"]}.md'] if x['about'] else []), source=x['source'])
         index[x['id']]['search'] = SEARCH['blocks'].get(x['name'])
+
+    # templates: a gallery first, then a page each, shown live in a frame of its own, with no code
+    if templates:
+        summary = f'{len(templates)} whole pages of a product, with realistic content, built only from the components: to look at, at desktop, tablet and phone width.'
+        lead = ('<p>A template is a finished page of a product: its public pages, the home screen, a list and one record, the inbox, settings, billing and the first-run wizard. '
+                f'Open one to see it at desktop, tablet and phone width, in the theme you chose for this site. {TEMPLATE_TERMS} '
+                'To build a page like these, start from the <a href="#blocks">blocks</a>.</p>')
+        seq = [{'id': 'templates', 'title': 'All templates'}] + templates
+        page('templates', 'Templates', '', 'templates', gallery('Templates', summary, template_groups, lead) + pager(None, seq[1]), summary, wide=True,
+             md=md_page('Templates', summary, f'{TEMPLATE_TERMS}\n\n' + block_md(template_groups)), card={'kind': 'Templates'})
+        for i, x in enumerate(templates, 1):
+            parts = built_from(x['source'], comps)
+            made = ', '.join(f'[{c["title"]}](#{c["id"]})' for c in parts)
+            md = md_page(x['title'], x['summary'], (f'It is made of these components: {made}.\n\n' if made else '') + TEMPLATE_TERMS)
+            page(x['id'], x['title'], x['group'], 'templates', head(x['title'], x['summary']) + viewer(x, parts) + pager(seq[i - 1], seq[i + 1] if i + 1 < len(seq) else None),
+                 x['summary'], wide=True, md=md, card={'kind': 'Template', 'block': x['name']}, source=x['source'])
 
     # charts: an overview with two of each form, how to use them, then a page for each form with every example drawn live
     count = lambda g: f'{len(g["charts"])} {g["title"].lower()}' if g['id'] != 'ready' else f'{len(g["charts"])} examples'
@@ -1424,8 +1468,9 @@ def build():
              'd-theming': 'Theming with CSS custom properties - Tray UI', 'f-type': 'Typography: type styles and the Onest font - Tray UI',
              'f-colours': 'Colour tokens in the light and dark theme - Tray UI', 'f-icons': f'{len(icons)} Lucide icons, built in - Tray UI',
              'g-accessibility': 'Accessibility: WCAG 2.2 AA in every theme - Tray UI', 'ch-use': 'Using the charts in React - Tray UI',
-             'articles': 'Articles on HTML, CSS and accessibility - Tray UI'}
-    TAILS = {'components': 'A Tray UI component in plain HTML and CSS.', 'blocks': 'A Tray UI block in plain HTML and CSS, to copy.', 'charts': 'React and Recharts, from Tray UI.'}
+             'articles': 'Articles on HTML, CSS and accessibility - Tray UI', 'templates': f'{len(templates)} page templates built from the components - Tray UI'}
+    TAILS = {'components': 'A Tray UI component in plain HTML and CSS.', 'blocks': 'A Tray UI block in plain HTML and CSS, to copy.', 'charts': 'React and Recharts, from Tray UI.',
+             'templates': 'A Tray UI page template, built from its components.'}
     home_desc = (f'Tray UI is a design system in plain HTML and CSS: {len(comps)} components, {len(blocks)} blocks and {len(icons)} icons, in {len(themes["list"])} themes. '
                  'Three files, no framework, no build step.')
     seen = {}
@@ -1437,6 +1482,8 @@ def build():
             options = [f'{name}: HTML and CSS component - Tray UI', f'{name}: HTML and CSS - Tray UI', f'{name} - Tray UI']
         elif ident.startswith('b-'):
             options = [f'{name}: HTML and CSS block - Tray UI', f'{name} in HTML and CSS - Tray UI', f'{name}: HTML block - Tray UI', f'{name} - Tray UI']
+        elif ident.startswith('t-'):
+            options = [f'{name} template in HTML and CSS - Tray UI', f'{name} template - Tray UI']
         elif ident.startswith('ch-'):
             options = [f'{t} in React with Recharts - Tray UI']
         elif ident.startswith('a-'):
@@ -1479,7 +1526,9 @@ def build():
         if facts['repo'] and ident.startswith('c-'):
             name = next(c['name'] for c in comps if c['id'] == ident)
             source = f'<li><a href="{facts["repo"]}/blob/main/system/project/components/{name}/README.md">Source of this page</a></li>'
-        return (f'<footer class="site-foot"><p>Tray UI {VERSION}, a design system in plain HTML and CSS, released under the {facts["license"]} licence.</p>'
+        terms = (f'released under the {facts["license"]} licence; the templates are not: all rights reserved.' if index[ident]['section'] == 'templates'
+                 else f'released under the {facts["license"]} licence.')
+        return (f'<footer class="site-foot"><p>Tray UI {VERSION}, a design system in plain HTML and CSS, {terms}</p>'
                 '<ul class="tray-footer__legal">' + ('<li><a href="/articles">Articles</a></li>' if articles else '') + '<li><a href="/docs/changelog">Changelog</a></li>'
                 f'<li><a href="{md}">This page in Markdown</a></li><li><a href="/llms.txt">llms.txt</a></li>{source}</ul></footer>')
     for ident in index:
@@ -1511,7 +1560,8 @@ def build():
         at = built.find(start)
         return pills(built[at:built.index(stop, at)]) if at >= 0 else ''
     parts = {'example': part(next(i for i in index if i.startswith('c-')), '<div class="site-viewer__bar">', '<div class="tray-tabpanel"'),
-             'viewer': part(next(i for i in index if 'data-viewer=' in chunks['pages/' + i][i]['html']), '<div class="site-viewer__bar">', '<div class="tray-tabpanel"'),
+             'viewer': part(next(i for i in index if i.startswith('b-') and 'data-viewer=' in chunks['pages/' + i][i]['html']), '<div class="site-viewer__bar">', '<div class="tray-tabpanel"'),
+             'look': part(next(i for i in index if i.startswith('t-')), '<div class="site-viewer__bar">', '<div class="tray-tabpanel"') if templates else '',
              'topics': part('articles', '<nav class="tray-tabs" aria-label="Topics"', '</nav>') + '</nav>' if 'articles' in index else '',
              'theme': re.sub(r'<b>([^<]*)</b><small>([^<]*)</small>', r'<b><span class="site-sk-ink">\1</span></b><small><span class="site-sk-ink">\2</span></small>',
                              re.sub(r'<input[^>]*>| data-theme="[^"]*"', '', part('d-themes', '<label class="site-themecard">', '</label>'))
@@ -1573,8 +1623,8 @@ def build():
         (OUT / name).unlink()
 
     # the picture a link to each page shows
-    blocks_src = {x['name']: x['source'] for x in blocks}
-    by_comp = {c['id']: c for c in comps}
+    blocks_src = {x['name']: x['source'] for x in blocks + templates}  # a template's name is a word, a block's ends in its number: none is both
+    assert len(blocks_src) == len(blocks) + len(templates), 'a template and a block have the same name'
     todo = []
     for ident, meta in index.items():
         card = dict(cards[ident], path=meta['path'])
@@ -1628,7 +1678,7 @@ def build():
     # data.js: the map of the site, and the names its files are served at
     slim = {i: {k: v for k, v in m.items() if k not in ('summary', 'group', 'lastmod', 'also', 'search', 'published')} for i, m in index.items()}
     data = own('data.js', '/* Generated by tools/site.py: the map of the site and the names of its files. */\n'
-               'window.TRAY_SITE = ' + dump({'version': VERSION, 'repo': facts['repo'], 'site': facts['site'], 'files': files, 'sections': sections, 'index': slim,
+               'window.TRAY_SITE = ' + dump({'version': VERSION, 'site': facts['site'], 'files': files, 'sections': sections, 'index': slim,
                                              'pages': {}, 'themes': themes, 'parts': parts}) + ';\nwindow.TRAY_SITE.run = {};\n')
 
     # Every page in a file of its own, drawn in it, so a link straight to a page shows it before any script runs; site.js
@@ -1682,7 +1732,9 @@ def build():
         first, _, rest = text.partition('\n')
         target = OUT / (index[ident]['path'] + '.md')
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(to_md(f'{first}\n\n{note}\n{rest}'), encoding='utf-8')
+        told = (f'> A template shown on the site of Tray UI {VERSION}. The system is under the {facts["license"]} licence; the templates are not: all rights reserved. '
+                f'Every page: {base}/llms.txt') if index[ident]['section'] == 'templates' else note
+        target.write_text(to_md(f'{first}\n\n{told}\n{rest}'), encoding='utf-8')
 
     if facts['site']:  # for search engines and other readers, once the site is open to everyone
         (OUT / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
@@ -1738,6 +1790,8 @@ def build():
                  + ''.join(f'- [{c["title"]}]({link(c["id"])})\n' for c in order))
     lines.append(f'\n## Blocks\n\nWhole screens to copy, each one HTML file.\n\n- [All {len(blocks)} blocks]({link("blocks")}): every block with a sentence on what it holds\n'
                  f'- [Sign-in and sign-up pages]({link("b-login")})\n- [Sidebars]({link("b-sidebar")})\n')
+    if templates:
+        lines.append(f'\n## Templates\n\n{TEMPLATE_TERMS}\n\n- [All {len(templates)} templates]({link("templates")}): each with a sentence on what it holds\n')
     lines.append('\n## Charts\n\n' + f'- [Using the charts]({link("ch-use")}): {index["ch-use"]["desc"]}\n'
                  + ''.join(f'- [{g["title"]}]({link(g["page"])}): {unmark(g["summary"])}\n' for g in chart_groups))
     if articles:
@@ -1750,7 +1804,8 @@ def build():
     (OUT / 'llms.txt').write_text(''.join(lines), encoding='utf-8')
 
     full = [intro + notes + '\nThe sections: installation, the CLI, the rules (the brand book), the guides, theming, React, Tailwind and Figma, '
-            'coming from Tailwind, for AI agents, the agent skill, the component index, the guidelines of every component, the blocks, charts in React, and the changelog.\n']
+            'coming from Tailwind, for AI agents, the agent skill, the component index, the guidelines of every component, the blocks, '
+            + ('the templates, ' if templates else '') + 'charts in React, and the changelog.\n']
     doc = lambda ident, title=None: headings(f'# {title or index[ident]["title"]}\n\n' + mds[ident].split('\n', 1)[1].strip(), 2)
     full.append(doc('d-installation'))
     full.append(doc('d-cli'))
@@ -1762,6 +1817,9 @@ def build():
     full += [headings(c['readme'], 3) for c in order]
     full.append(f'## Blocks\n\n{len(blocks)} whole screens, each one HTML file to copy. The code of each is on its page, as Markdown at the address given.\n\n'
                 + ''.join(f'### {g}\n\n' + ''.join(f'- [{x["title"]}]({link(x["id"])}): {unmark(x["summary"])}\n' for x in its) + '\n' for g, its in block_groups))
+    if templates:
+        full.append(f'## Templates\n\n{len(templates)} whole pages of a product, to look at on the site. {TEMPLATE_TERMS}\n\n'
+                    + ''.join(f'- [{x["title"]}]({link(x["id"])}): {unmark(x["summary"])}\n' for x in templates))
     full.append(doc('ch-use', 'Charts in React'))
     full.append(doc('d-changelog'))
     (OUT / 'llms-full.txt').write_text(to_md('\n\n'.join(part.strip() for part in full) + '\n'), encoding='utf-8')
@@ -1783,7 +1841,7 @@ def build():
     print(f'site: {len(plays)} playgrounds')
     print(f'site: the registry at r/, {registered["react"]} React items and {registered["html"]} plain HTML ones')
     print(f'site: the skill, {skilled["references"]} pages and the checker in dist/skills/trayui ({skilled["kb"]} KB), skills/trayui.zip ({skilled["zip_kb"]} KB)')
-    print(f'site: {len(index)} pages ({len(comps)} components, {len(blocks)} blocks, {len(charts)} charts, {len(docs) + len(foundations) + len(guides)} docs), '
+    print(f'site: {len(index)} pages ({len(comps)} components, {len(blocks)} blocks, {len(templates)} templates, {len(charts)} charts, {len(docs) + len(foundations) + len(guides)} docs), '
           f'{len(runs)} preview scripts; first load {first // 1024} KB, all {size // 1024} KB in {len(list(OUT.rglob("*.*")))} files')
     for line in skipped:
         print('LEFT OUT', line)

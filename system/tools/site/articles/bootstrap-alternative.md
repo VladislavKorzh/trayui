@@ -2,7 +2,7 @@
 
 Bootstrap 5.3 and Tray UI side by side: the CDN lines and npm, what each one ships, theming with Sass or custom properties, dark mode, accessibility and size.
 
-Bootstrap and Tray UI both work from a CDN with nothing to compile: a stylesheet, a script, and HTML with classes. They differ in what you can change and where. This page compares Bootstrap 5.3.9, the version [its documentation](https://getbootstrap.com/docs/5.3/getting-started/introduction/) installs on 18 November 2026, with Tray UI 0.2.0; Bootstrap's files were taken from jsDelivr and run in Chrome.
+Bootstrap and Tray UI both work from a CDN with nothing to compile: a stylesheet, a script, and HTML with classes. They differ in what you can change and where. This page compares Bootstrap 5.3.9, the version [its documentation](https://getbootstrap.com/docs/5.3/getting-started/introduction/) installs on 18 November 2026, with Tray UI 0.3.0; Bootstrap's files were taken from jsDelivr and run in Chrome.
 
 ## Two pages from a CDN
 
@@ -33,9 +33,9 @@ Tray UI links two stylesheets and one script, in this order: the tokens, the com
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.2.0/tokens.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.2.0/components/bundle.css">
-  <script src="https://cdn.jsdelivr.net/npm/trayui@0.2.0/components/bundle.js" defer></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.3.0/tokens.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.3.0/components/bundle.css">
+  <script src="https://cdn.jsdelivr.net/npm/trayui@0.3.0/components/bundle.js" defer></script>
 </head>
 <body>
   <button class="tray-btn" type="button">Pack the orders</button>
@@ -59,7 +59,7 @@ import 'trayui/components/bundle.js';
 
 ## What each one ships
 
-| | Bootstrap 5.3.9 | Tray UI 0.2.0 |
+| | Bootstrap 5.3.9 | Tray UI 0.3.0 |
 | --- | --- | --- |
 | CSS | `bootstrap.min.css`: layout, content, components and utilities. Smaller builds hold the grid, the utilities or Reboot alone. | `tokens.css`: the tokens, the type classes and the font. `components/bundle.css`: the `tray-` classes. |
 | JavaScript | `bootstrap.bundle.min.js` with Popper, or `bootstrap.min.js` without it, and an ES module build. | `components/bundle.js`, one classic script that assigns `window.TrayUI`. |
@@ -146,30 +146,30 @@ Bootstrap's [accessibility page](https://getbootstrap.com/docs/5.3/getting-start
 
 Tray UI writes its rules in the [Accessibility](#g-accessibility) guide and measures its colours: each of the ten themes holds the system's 66 contrast rules. Focus is a 3px ink ring on every ground, and targets for a finger are at least 44px. The stylesheet answers settings of the person's own too. Under `prefers-contrast: more` every grey moves a step towards the ink and trays get an edge; under forced colours an edge is drawn where a fill was; a printed page takes the light values. Bootstrap 5.3.9's compiled CSS has no rule for `prefers-contrast` or `forced-colors`.
 
-A system's rules do not replace a test of your own pages. The changes in Tray UI 0.2.0 were checked in Chrome and its accessibility tree, and none of them in a screen reader.
+A system's rules do not replace a test of your own pages. The changes in Tray UI 0.3.0 were checked in Chrome and its accessibility tree, and none of them in a screen reader.
 
 ## File sizes
 
-Measured on 18 November 2026 with gzip at level 9, a KB being 1024 bytes. Bootstrap's files were downloaded from jsDelivr, and their hashes match the ones in its docs; Tray UI's are those of release 0.2.0.
+Measured on 18 November 2026 with gzip at level 9, a KB being 1024 bytes. Bootstrap's files were downloaded from jsDelivr, and their hashes match the ones in its docs; Tray UI's are those of release 0.3.0.
 
 | File | Size | Compressed |
 | --- | --- | --- |
 | `bootstrap.min.css` | 226.9 KB | 30.2 KB |
 | `bootstrap.bundle.min.js` | 78.8 KB | 23.2 KB |
-| `tokens.css` | 15.9 KB | 3.0 KB |
-| `components/bundle.css` | 197.5 KB | 36.0 KB |
-| `components/bundle.js` | 155.1 KB | 42.4 KB |
+| `tokens.css` | 16.4 KB | 3.0 KB |
+| `components/bundle.css` | 203.0 KB | 37.7 KB |
+| `components/bundle.js` | 171.0 KB | 47.7 KB |
 
-Bootstrap's two files come to 53.4 KB compressed and Tray UI's three to 81.3 KB, of which the icon sprite is 4.7 KB. Tray UI also loads its font, 82 KB of woff2, where Bootstrap uses the fonts on the device. Bootstrap's Sass route can leave out the parts you do not use; Tray UI always ships its whole stylesheet.
+Bootstrap's two files come to 53.4 KB compressed and Tray UI's three to 88.4 KB, of which the icon sprite is 5.0 KB. Tray UI also loads its font, 82 KB of woff2, where Bootstrap uses the fonts on the device. Bootstrap's Sass route can leave out the parts you do not use; Tray UI always ships its whole stylesheet.
 
 ## When Bootstrap is the better choice
 
 - **A design of your own, compiled.** Sass variables, maps, mixins and the utility API let you rebuild Bootstrap into another look and import only the parts you need. Tray UI's tokens retune one design.
 - **Utilities in the markup.** Spacing, display and flex utilities lay out a one-off section with no CSS of your own. Tray UI has a fixed set of layout classes.
 - **Older browsers.** Bootstrap's browser list reaches back to Chrome 60 and Safari 12. Tray UI targets the current Chrome, Edge, Safari and Firefox, uses `:has()` and dynamic viewport units, and has no fallbacks.
-- **Panels that stay in view.** Popper gives Bootstrap's dropdowns "dynamic positioning and viewport detection". Tray UI places its panels with CSS alone, and nothing moves a panel that would leave the window.
+- **Panels that stay in view.** Popper gives Bootstrap's dropdowns "dynamic positioning and viewport detection". Tray UI places its panels with CSS; its script only moves a panel that would leave the window sideways back inside it, and nothing flips one above its button.
 - **Packages for frameworks.** Bootstrap's docs send React, Vue and Angular projects to React Bootstrap, BootstrapVueNext, ng-bootstrap and ngx-bootstrap, since its own script and those frameworks may change the same element. Tray UI has a React package and nothing for Vue or Angular.
-- **Fewer bytes.** About 28 KB less to download, compressed, and no font file.
+- **Fewer bytes.** About 35 KB less to download, compressed, and no font file.
 - **A site already built on it.** Rewriting screens that work costs more than it gains.
 
 ## Moving a page to Tray UI

@@ -147,7 +147,7 @@ document.addEventListener('pointerdown', (e) => {
 
 ## Positioning
 
-Tray UI places the panel with CSS alone. The anchor is `position: relative`, and the panel is absolutely positioned 8px under it, at least as wide as the button and never wider than the screen. These are its rules for placement:
+Tray UI places the panel with CSS, and its script steps in only when the panel would leave the window sideways: then it moves it back inside, 8px from the edge. The anchor is `position: relative`, and the panel is absolutely positioned 8px under it, at least as wide as the button and never wider than the screen. These are its rules for placement:
 
 ```css
 .tray-anchor { position: relative; display: inline-block; }
@@ -165,7 +165,7 @@ Tray UI places the panel with CSS alone. The anchor is `position: relative`, and
 
 The logical properties (`inset-inline-start` in place of `left`) line the panel up with the right edge under `dir="rtl"`. `tray-pop--end` aligns it with the end edge, for a "more" button at the end of a row; `tray-pop--top` opens it above the button.
 
-Nothing measures the viewport and nothing flips the panel: you choose the side where there is room. An ancestor of the menu with `overflow: hidden` or `overflow: auto` clips the panel, so keep menus out of such boxes, or give the box room for the open panel.
+Nothing flips the panel above its button: you choose the side where there is room. An ancestor of the menu with `overflow: hidden` or `overflow: auto` clips the panel, so keep menus out of such boxes, or give the box room for the open panel.
 
 ## Submenus
 
@@ -197,7 +197,7 @@ Tray UI's menu reports what happened with events on the `data-tray="menu"` eleme
 - `tray:change`, with `detail.value` and `detail.checked`, when a check or radio item changes. The menu stays open. Before 0.2.0 these items fired `tray:select`.
 - `tray:open` and `tray:close`, on the button, when the menu opens and closes.
 
-The events bubble, so one listener on a parent can serve several menus. `detail.value` is the item's `data-value`, or its text when it has none, and that text includes a shortcut hint inside the item: "Duplicate" with "Ctrl D" beside it gives `"DuplicateCtrl D"`. Give each item a `data-value`.
+The events bubble, so one listener on a parent can serve several menus. `detail.value` is the item's `data-value`, or else its words without its icon and its shortcut: "Duplicate", not "DuplicateCtrl D". A `data-value` keeps it the same when the words change or are translated.
 
 ```js
 const menu = document.querySelector('#order-menu');

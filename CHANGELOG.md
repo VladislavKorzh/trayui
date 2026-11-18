@@ -2,6 +2,19 @@
 
 What changed in each version of Tray UI, the design system in plain HTML and CSS: its components, blocks, themes and tools, newest first.
 
+## Not released yet
+
+- **The site moves between pages without a jump.** A link fetches its page when the pointer rests on it, when it is focused and when it is pressed. A page that takes longer than 300 ms shows a skeleton in its own shape, and fades in over it; a page that comes at once is drawn at once, with no flicker. The pill of the header slides to the section you open.
+  - The playgrounds and the theme maker come drawn in their pages, and each chart's place holds a skeleton of its card, so nothing moves when their scripts arrive. A block's frame stays grey until the page in it has loaded.
+- **Templates are back on the site.** Ten whole pages of a product (a landing page, pricing, a help article, a dashboard, orders, one order, an inbox, settings, billing and a first-run wizard), live at desktop, tablet and phone width. They are there to look at: they are not under the MIT licence, and neither the download nor the packages hold them.
+- **The agent skill has a page of its own** in the docs, `/docs/skill`: how to install it in Claude Code, claude.ai or a project, what it holds, and the checker.
+- **The docs:**
+  - The behaviour guide lists every behaviour, `lightbox` and `player` included, and `TrayUI.rescue(el, to)`, which moves focus out of what your script is about to hide.
+  - Video Player: the figure carries `data-playing` while the film plays, a hook for your own styles.
+  - The `z-overlay` token says what it is for: an overlay of your own that is not a `<dialog>`. The system's dialogs, drawers and sheets open in the top layer and need none.
+  - Articles that had fallen behind the code are corrected: where menus are placed, what a menu item reports, the shadcn registry, the 0.3.0 install lines.
+- **The packages:** `npx trayui --help` lists every option. Neither package links the repository on npm while it is private, and the README of `trayui-react` links the site, not files the package does not hold.
+
 ## 0.3.0, November 2026
 
 Both packages, `trayui` and `trayui-react`, are 0.3.0. A CLI, a registry and a skill bring the system into a project; tests for every component, and the bugs they found; React that works in Next.js. Each change was checked in Chrome and its accessibility tree; none was tested in a screen reader.
@@ -10,7 +23,6 @@ Both packages, `trayui` and `trayui-react`, are 0.3.0. A CLI, a registry and a s
   - `npx trayui init` and `npx trayui add <items>` put the three files, the font, components and blocks into a project: a plain folder with no `package.json`, a Vite app or a Next.js app, in HTML or as React source you own (`--react`). It keeps a record of what it wrote, so `trayui diff` shows your edits and `trayui add` never overwrites one without `--overwrite`. `trayui check` checks markup against the system's classes, behaviours and rules.
   - The same components and blocks are a registry in shadcn's format at `https://trayui.com/r/`, so `npx shadcn add https://trayui.com/r/<item>.json` installs them too. Every block exists in React now.
   - A skill teaches an AI agent to build with Tray UI, with the markup checker beside it: `npx trayui skill`, the `trayui` package's `skills/trayui`, or the plugin at `https://trayui.com/skills/marketplace.json`.
-- **Tests for every component.** `python3 system/tools/test_components.py` holds each component, and its React twin, to what its README promises: the accessibility tree, the keys, focus, events, an axe scan in Light and Dark, layout at 390 and 1440px; and scans every block. CI runs it.
 - **Menus have a name.** A dropdown menu is named by the button that opens it (`aria-labelledby`), unless it has a name of its own. Shift+Tab from an item now closes the menu and returns focus to the button, as Tab closes it.
 - **A plan comparison reads its prices.** Switching it between monthly and yearly reads the new price of each plan, as the pricing cards already do.
 - **Escape hides a tooltip wherever focus is.** A bubble the pointer showed goes too, and inside a dialog that Escape hides only the bubble; the next one closes the dialog. Words that the control's name already holds ("Orders" on a link named "Orders, 12 to pack") are no longer read again as its description.
@@ -77,7 +89,7 @@ Both packages, `trayui` and `trayui-react`, are 0.3.0. A CLI, a registry and a s
   - Ctrl+Shift+K and Caps Lock open its search.
   - Its `.md` pages are sent as UTF-8.
 - **trayui-react** no longer ships `dist/all.*`, and its build imports the packed package in Node.
-- **A test for every component.** `python3 system/tools/test_components.py` holds each of the 108 components to what its README promises, in Chrome: the accessibility tree (roles, names, descriptions, states), every key and where focus goes, the events and their `detail`, an axe-core scan against WCAG 2.2 A and AA in Light and Dark, the layout at 390 and 1440px (no sideways scroll, no text cut, targets of 24px and the 44px the guide promises), reduced motion, forced colours and right to left where the README speaks of them, and the React twin against the HTML. These are what it found and what changed:
+- **A test for every component.** `python3 system/tools/test_components.py` holds each of the 108 components to what its README promises, in Chrome: the accessibility tree (roles, names, descriptions, states), every key and where focus goes, the events and their `detail`, an axe-core scan against WCAG 2.2 A and AA in Light and Dark, the layout at 390 and 1440px (no sideways scroll, no text cut, targets of 24px and the 44px the guide promises), reduced motion, forced colours and right to left where the README speaks of them, and the React twin against the HTML. It scans every block too, and CI runs it. These are what it found and what changed:
   - **Floating panels stay in the window.** A menu, a list, a popover or a hover card that would leave the window sideways on a narrow screen moves back inside it, 8px from its edge. Menubar and Hover Card passed the edge of a phone.
   - Tooltip: a bubble whose words only repeat the control's name, with no keys, is hidden from screen readers; it was a tooltip without a name.
   - Menus: `detail.value` of a menu, context menu, menubar, user menu or workspace switcher item without `data-value` is its words alone ("Duplicate", not "DuplicateCtrl D"; "Perly Farm", not "PFPerly Farm").

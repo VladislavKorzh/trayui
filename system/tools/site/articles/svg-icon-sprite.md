@@ -24,7 +24,7 @@ A sprite can also be a file of its own, referenced as `<use href="/icons.svg#i-c
 
 A component library is often linked from a CDN, which is another origin. Its icons cannot live in a separate sprite file then, but the library's script is already on the page, and it can write the sprite into the document. The icons cost no extra request and no build step on the user's side, and the origin rule never applies, since the reference is to the same document.
 
-The price is weight in the script. Tray UI's 118 icons are 17,317 bytes of JSON inside `components/bundle.js`; compressed with gzip, the script is 42.6 KB with them and 37.6 KB without, so the icons cost about 5 KB on the wire.
+The price is weight in the script. Tray UI's 118 icons are 17,317 bytes of JSON inside `components/bundle.js`; compressed with gzip, the script is 47.7 KB with them and 42.7 KB without, so the icons cost about 5 KB on the wire.
 
 ## The script
 

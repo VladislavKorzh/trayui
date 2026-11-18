@@ -24,7 +24,7 @@ A video player is a film with the system's controls under it: play, the place in
 </figure>
 ```
 - The video keeps `controls` in the markup: until the behaviour runs, and on a page without script, it plays with the browser's own controls. The behaviour takes them off and shows the bar.
-- The large yellow button starts the film and goes away; it comes back when the film ends. A press on the film itself plays and pauses it too.
+- The large yellow button starts the film and goes away; it comes back when the film ends. A press on the film itself plays and pauses it too. While the film plays, the figure carries `data-playing`, a hook for styles of your own.
 - The place in the film is the system's slider: drag it, or use the keys on it. Its value reads as "0:07 of 0:13".
 - The play and the sound buttons change their names with the state ("Play" and "Pause", "Mute" and "Turn the sound on"): give both names in the markup, in the page's language. Captions is a toggle (the system's, without its own behaviour: the player turns it) with one name, filled in ink while they show; it is hidden when the video has no `<track>`. A track with `default` starts shown.
 - Full screen takes the whole player, bar and all, on the ink ground. On a phone that only allows the video itself to go full screen, the video goes, with the phone's own controls.

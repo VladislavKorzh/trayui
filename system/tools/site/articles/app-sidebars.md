@@ -106,7 +106,7 @@ Three blocks put pages under pages, and each shows the second level differently.
 
 ## A rail of icons
 
-[Collapses to icons](#b-sidebar-06) adds a button that folds the tray to a rail 76px wide. The labels are hidden from sight only, so every link keeps its name, and each item shows its label in a [Tooltip](#c-tooltip) beside the icon. Orders carries its own `aria-label`, "Orders, 12 to pack", which says what the bare count means. The button keeps `aria-expanded` in step and changes its name from "Collapse the sidebar" to "Expand the sidebar", and the sidebar fires `tray:change` as it folds, so you can store the choice. [An admin dashboard in plain HTML and CSS](#a-admin-dashboard-html-css) has the script and the CSS.
+[Collapses to icons](#b-sidebar-06) adds a button that folds the tray to a rail 76px wide. The labels are hidden from sight only, so every link keeps its name, and each item shows its label in a [Tooltip](#c-tooltip) beside the icon. The Orders link takes its name from its words, with " to pack" hidden after the count, so it is read "Orders 12 to pack" and the bare count means something. The button keeps `aria-expanded` in step and changes its name from "Collapse the sidebar" to "Expand the sidebar", and the sidebar fires `tray:change` as it folds, so you can store the choice. [An admin dashboard in plain HTML and CSS](#a-admin-dashboard-html-css) has the script and the CSS.
 
 Give every item an icon, since the rail shows nothing else. [Two sidebars](#b-sidebar-08) starts its section list as a rail, with `data-collapsed` in the markup and no button to widen it.
 

@@ -32,14 +32,15 @@ LinkedIn's help page gives a minimum of 1200 by 627 pixels, a ratio of 1.91 to 1
 
 ## A template for each kind of page
 
-A card is a small HTML page of its own. Tray UI has four kinds:
+A card is a small HTML page of its own. Tray UI has five kinds:
 
 | Page | What its card shows |
 | --- | --- |
 | The home page | The accent ground, the mark, "108 components in plain HTML and CSS" and a line with the other counts |
 | A component | The mark, the word "Component" and the name on the left; on the right, the component's live preview, scaled to fit |
 | A block | The word "Block" and the name across the top; under it, the top of the whole screen in a frame |
-| Any other page | The kind of page (Docs, Guide, Charts, Article), its name, its summary cut at about 110 characters, and a large mark |
+| An article | The word "Article", its title and its summary, beside the article's own picture, drawn in the colour tokens |
+| Any other page | The kind of page (Docs, Guide, Charts), its name, its summary cut at about 160 characters, and a large mark |
 
 Every card links `tokens.css`, `components/bundle.css` and `components/bundle.js`. The Button card is the Button preview, drawn by the Button's own CSS, and a change to the stylesheet shows in the cards at the next build.
 
@@ -148,11 +149,11 @@ A block is drawn in a frame 1280 pixels wide and 800 high, scaled by the panel's
 
 ## A cache that redraws only what changed
 
-A browser takes a moment for each card, and most cards are the same from one build to the next. The key of a card is a hash of everything that changes how it looks: in Tray UI, a version string for the template, the three built files, the card's data as JSON with its keys sorted, and for a block, its HTML. A card whose key is already in `.cache/og/` is copied, and only new keys are drawn. In the example above, 31 cards were drawn on the first run, none on the second, and one after one title changed.
+A browser takes a moment for each card, and most cards are the same from one build to the next. The key of a card is a hash of everything that changes how it looks: in Tray UI, a version string for the template, the three built files, the font, every picture the card shows, the card's data as JSON with its keys sorted, and for a block, its HTML. A card whose key is already in `.cache/og/` is copied, and only new keys are drawn. In the example above, 31 cards were drawn on the first run, none on the second, and one after one title changed.
 
 Two details make the cache safe:
 
-1. **The template is not in the hash.** Tray UI puts a constant in the key instead, `VERSION = '2'`, and the comment beside it says to change it "to draw every card again after the look of the cards changes". Anything else that alters the picture and is not in the key needs the same treatment.
+1. **The template is not in the hash.** Tray UI puts a constant in the key instead, `VERSION = '3'`, and the comment beside it says to change it "to draw every card again after the look of the cards changes". Anything else that alters the picture and is not in the key needs the same treatment.
 2. **Old cards go.** After a build, every file in the cache that no page uses is deleted, so the cache never holds more than the site shows.
 
 ## Names that change with the picture

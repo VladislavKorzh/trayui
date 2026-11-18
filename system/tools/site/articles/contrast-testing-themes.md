@@ -95,14 +95,14 @@ On Tray UI's `dist/tokens.css` it prints `10 themes, 170 pairs, 0 missed`. Give 
 Tray UI's own check is `python3 tools/themes.py --check`. It runs the report of `theme.js` in Node, over the values in `tokens.json`, for all 66 pairs, and prints one line per theme with its tightest pair:
 
 ```text
-light     66 rules, 0 missed; the tightest: ink-hint on surface 4.73 (needs 4.5)
-dark      66 rules, 0 missed; the tightest: ink-soft on leaf 6.61 (needs 6.6)
-linen     66 rules, 0 missed; the tightest: ink-hint on surface 4.73 (needs 4.5)
-lilac     66 rules, 0 missed; the tightest: paper-danger on accent 4.60 (needs 4.5)
-midnight  66 rules, 0 missed; the tightest: ink-soft on leaf 6.62 (needs 6.6)
+light     66 pairs, 0 missed; the tightest: ink-hint on surface 4.73 (needs 4.5)
+dark      66 pairs, 0 missed; the tightest: ink-soft on leaf 6.61 (needs 6.6)
+linen     66 pairs, 0 missed; the tightest: ink-hint on surface 4.73 (needs 4.5)
+lilac     66 pairs, 0 missed; the tightest: paper-danger on accent 4.60 (needs 4.5)
+midnight  66 pairs, 0 missed; the tightest: ink-soft on leaf 6.62 (needs 6.6)
 ```
 
-The tightest pair is the one to watch: in Dark, secondary text on `leaf` holds its rule by about 0.01. The check is the third step of `tools/check.py`, which CI runs. Without `--check`, the same script derives the eight themes that are not tuned by hand, and writes nothing if any of them misses a rule. The [Themes](#d-themes) page runs the same report as you make a theme, under **Does it hold?**.
+The tightest pair is the one to watch: in Dark, secondary text on `leaf` holds its rule by about 0.01. The check is the fourth step of `tools/check.py`, which CI runs. Without `--check`, the same script derives the eight themes that are not tuned by hand, and writes nothing if any of them misses a rule. The [Themes](#d-themes) page runs the same report as you make a theme, under **Does it hold?**.
 
 ## Measure the text on the page
 

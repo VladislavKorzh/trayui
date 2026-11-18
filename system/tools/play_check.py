@@ -17,7 +17,7 @@ from PIL import Image, ImageDraw
 from shoot import CONTRAST_JS
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-P, DIST, PLAY, OUT = ROOT / 'project', ROOT / 'dist', ROOT / 'tools' / 'site' / 'play', ROOT / '.preview' / 'play'
+DIST, PLAY, OUT = ROOT / 'dist', ROOT / 'tools' / 'site' / 'play', ROOT / '.preview' / 'play'
 ENGINE = ROOT / 'tools' / 'site' / 'playground.js'
 WIDTH = 560  # about the stage's width beside the controls at 1280
 LONG = 'A much longer text than anyone would write here, to see where it wraps'

@@ -200,7 +200,7 @@
 
 <section class="site-section" aria-labelledby="home-icons">
   <div class="tray-section__head">
-    <h2 class="headline" id="home-icons">{{icons}} icons built in, 1,500 more beside them</h2>
+    <h2 class="headline" id="home-icons">{{icons}} icons built in, 1,400 more beside them</h2>
     <p class="lead tray-soft">The icons are Lucide's: a round stroke in the colour of the text beside them. These come with the script; any other Lucide icon fits, and in React it comes from react-icons.</p>
   </div>
   <div class="tray-card site-iconwall" aria-hidden="true">{{icon_wall}}</div>
@@ -277,7 +277,8 @@
     <nav class="tray-footer__col" aria-label="Build">
       <h3>Build</h3>
       <a href="#components">Components</a>
-      <a href="#blocks">Blocks</a>
+      <a href="#blocks">Blocks</a>{{#templates}}
+      <a href="#templates">Templates</a>{{/templates}}
       <a href="#charts">Charts</a>
       <a href="#f-icons">Icons</a>
     </nav>

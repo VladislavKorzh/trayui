@@ -64,7 +64,7 @@ def pick(pg, selector):
 def registry_and_skill(site, index, url):
     """The registry in shadcn's format (r/, r/html/) and the skill (skills/): valid against shadcn's published schemas,
     made of the sources as they are, complete, served with the right headers, and named in llms.txt and on the CLI page."""
-    import hashlib, io
+    import hashlib
     import registry  # tools/registry.py: writes r/ and validates it against tools/shadcn/
     r = SITE / 'r'
     problems = registry.validate(r) if (r / 'registry.json').exists() else ['no r/registry.json']
@@ -139,13 +139,15 @@ def main():
     by_section = {sec['id']: [it['id'] for g in sec['nav'] for it in g['items']] for sec in site['sections']}
     docs, comps = by_section['docs'], by_section['components']
     block_ids = [i for i in by_section['blocks'] if i not in ('blocks', 'b-login', 'b-sidebar')]  # the blocks, without the pages that gather them
+    template_ids = [i for i in by_section.get('templates', []) if i != 'templates']  # none when the site was built without their folder
     chart_pages = by_section['charts']
     article_ids = [i for i in by_section.get('articles', []) if i.startswith('a-')]  # the articles, without the list and the pages of their topics
     topic_ids = [i for i in by_section.get('articles', []) if i.startswith('at-')]
-    titles = [s['title'] for s in site['sections'] if s.get('tab', True)]  # the tabs of the header: Docs, Components, Blocks, Charts
-    every = ['home'] + docs + comps + by_section['blocks'] + chart_pages + by_section.get('articles', [])
+    titles = [s['title'] for s in site['sections'] if s.get('tab', True)]  # the tabs of the header: Docs, Components, Blocks, Templates when there are any, Charts
+    every = ['home'] + docs + comps + by_section['blocks'] + by_section.get('templates', []) + chart_pages + by_section.get('articles', [])
     sideless = {'home'} | {i for sec in site['sections'] if sec.get('side') is False for i in by_section[sec['id']]}  # pages shown with no sidebar
-    framed = set(block_ids)
+    framed = set(block_ids)  # the pages that show a page live in a frame, with its code
+    live = framed | set(template_ids)  # and the ones that show it with no code
     contrast = re.search(r'CONTRAST_JS = r"""(.*?)"""', (ROOT / 'tools' / 'shoot.py').read_text(encoding='utf-8'), re.S).group(1)
     check('every page of the map has a place in a sidebar, or is the home page', sorted(every) == sorted(index), sorted(set(index) ^ set(every))[:6])
 
@@ -157,6 +159,20 @@ def main():
                                    'trayui/fonts/OFL.txt', 'trayui/LICENSE', 'trayui/blocks/sidebar-01.html')) and not any('/templates/' in n for n in names), names[:8])
     index_txt = (SITE / 'llms.txt').read_text(encoding='utf-8')
     llms = (SITE / 'llms-full.txt').read_text(encoding='utf-8')
+    if template_ids:
+        # the templates are shown, never given: no code on their pages or in their Markdown, nothing in the download, the skill or the registry
+        tpl = {i: (SITE / (index[i]['path'] + '.html')).read_text(encoding='utf-8') for i in template_ids}
+        tpl_md = {i: (SITE / (index[i]['path'] + '.md')).read_text(encoding='utf-8') for i in template_ids}
+        given = [i for i in template_ids if 'id="site-src-code"' in tpl[i] or 'data-tray="copy"' in tpl[i] or 'data-viewer="' + i + '"' not in tpl[i]
+                 or 'all rights reserved' not in tpl[i].lower() or '```' in tpl_md[i] or 'all rights reserved' not in tpl_md[i].lower()]
+        check('a template\'s page shows it live with no code to copy, its Markdown has none either, and both say all rights are reserved', not given, given[:4])
+        tnames = {i[2:] for i in template_ids}
+        skill_files = {str(f.relative_to(ROOT / 'dist')) for f in (ROOT / 'dist' / 'skills').rglob('*') if f.is_file()} if (ROOT / 'dist' / 'skills').exists() else set()
+        registered = {f.stem for f in (SITE / 'r').rglob('*.json')}
+        check('no template is in the download, the npm package, the skill or the registry', not any('/templates/' in n for n in names) and not (ROOT / 'dist' / 'templates').exists()
+              and not any('/templates/' in f for f in skill_files) and not (tnames & registered), sorted(tnames & registered)[:4])
+        check('llms.txt and llms-full.txt name the templates and say they are not under the licence', '## Templates' in index_txt and '## Templates' in llms
+              and 'All rights reserved' in index_txt and f'{site["site"]}/templates.md' in index_txt)
     check('llms.txt is a short index: what Tray UI is, how to install it, and a link to the Markdown of every component', index_txt.startswith('# Tray UI\n\n> ') and len(index_txt) < 16000
           and index_txt.count('/components/') >= len(comps) and '.md)' in index_txt and 'tokens.css' in index_txt, len(index_txt))
     check('llms-full.txt holds the rules, the guides and every component, each heading under its component', llms.startswith('# Tray UI') and '### Button' in llms and '### Footer' in llms
@@ -315,7 +331,7 @@ def main():
               followed == 'dark' and pg.evaluate('document.documentElement.dataset.theme') == 'light' and pg.evaluate("localStorage.getItem('tray-site-theme')") is None, followed)
         check('the home page has no sidebar and the header links every section, none of them current',
               pg.locator('.tray-app__side').is_hidden() and pg.locator('#site-sections .tray-tab').all_inner_texts() == titles
-              and titles[:4] == ['Docs', 'Components', 'Blocks', 'Charts']
+              and titles == ['Docs', 'Components', 'Blocks'] + (['Templates'] if template_ids else []) + ['Charts']
               and pg.locator('#site-sections [aria-current]').count() == 0, pg.locator('#site-sections .tray-tab').all_inner_texts())
         mark = pg.evaluate("(() => { const m = document.querySelector('.site-top a.site-logo .site-mark'); if (!m) return null; const cs = getComputedStyle(document.documentElement); "
                            "return [getComputedStyle(m.querySelector('.site-mark__tile')).fill, getComputedStyle(m.querySelector('.site-mark__bar')).fill, Math.round(m.getBoundingClientRect().width), m.getAttribute('aria-hidden'), "
@@ -476,19 +492,19 @@ def main():
                                       over: document.documentElement.scrollWidth - document.documentElement.clientWidth, stage: document.querySelector('.site-stage')?.children.length ?? -1,
                                       busy: document.querySelector('#site-view').hasAttribute('aria-busy') })''')
             wrong = not state['h'] or state['over'] > 1 or state['stage'] == 0 or state['busy'] or (i not in sideless and state['cur'] != '/' + index[i]['path'])
-            if i in framed:
+            if i in live:
                 f = pg.evaluate(FRAME_JS)
                 if not f or f['kids'] < 2 or not f['styled'] or not f['wired'] or f['over'] > 1:
                     wrong = True; state['frame'] = f
             return wrong, state
         for i in every:
-            go(pg, i); pg.wait_for_timeout(450 if i in framed else 250 if i in chart_pages else 70)
+            go(pg, i); pg.wait_for_timeout(450 if i in live else 250 if i in chart_pages else 70)
             wrong, state = looks(i)
             if wrong:  # a page still on its way on a busy machine gets one more look
                 pg.wait_for_timeout(1500); wrong, state = looks(i)
             if wrong:
                 bad.append((i, state))
-        check(f'all {len(every)} pages render at 1440px without sideways scroll, and every block is live in its frame', not bad, bad[:4])
+        check(f'all {len(every)} pages render at 1440px without sideways scroll, and every block and template is live in its frame', not bad, bad[:4])
         check('no script errors or failed requests while visiting every page', not errors, errors[:4])
 
         # ---------- a component page ----------
@@ -624,6 +640,22 @@ def main():
         pg.click('#site-t1')
         pg.locator('.site-pager__next').click(); pg.wait_for_timeout(500)
         check('"Next" goes to the following block', here(pg) == block_ids[block_ids.index('b-sidebar-01') + 1], here(pg))
+
+        # ---------- templates, when the site was built with them ----------
+        if template_ids:
+            go(pg, 'templates'); pg.wait_for_timeout(700)
+            check('the Templates link opens their gallery, with a picture for each, and the sidebar lists them after it',
+                  pg.inner_text('#site-view h1') == 'Templates' and pg.locator('[data-thumb]').count() == len(template_ids)
+                  and pg.locator('#site-nav .tray-sidebar__item').count() == len(template_ids) + 1
+                  and pg.locator('#site-sections [aria-current="page"]').inner_text() == 'Templates', pg.locator('[data-thumb]').count())
+            pg.locator('.site-thumb').first.click(); pg.wait_for_timeout(700)
+            f = pg.evaluate(FRAME_JS)
+            check('a picture opens its template, live in a frame at desktop width, with the widths and Full size but no Code tab and nothing to copy',
+                  here(pg) == template_ids[0] and f and f['kids'] >= 2 and f['wired'] and f['width'] >= 1280 and pg.locator('.site-viewer__sizes').is_visible()
+                  and pg.locator('[data-full]').is_visible() and pg.locator('#site-t2, #site-src-code, .site-viewer [data-tray="copy"]').count() == 0, f)
+            pick(pg, '.site-viewer__sizes input[value="phone"]'); pg.wait_for_timeout(250)
+            check('Phone lays the template out at 390', pg.evaluate("document.querySelector('.site-frame iframe').contentWindow.innerWidth") == 390)
+            check('the foot of a template\'s page says the templates are not under the licence', 'all rights reserved' in pg.inner_text('.site-foot').lower())
 
 
         # ---------- charts ----------
@@ -891,13 +923,13 @@ def main():
               and pg.locator('#site-find').is_visible() and pg.locator('#site-find').bounding_box()['width'] <= 52, pg.locator('#site-find').bounding_box())
         wide = []
         for i in every:
-            go(pg, i); pg.wait_for_timeout(350 if i in framed else 60)
+            go(pg, i); pg.wait_for_timeout(350 if i in live else 60)
             over = pg.evaluate('document.documentElement.scrollWidth - document.documentElement.clientWidth')
             if over > 1: wide.append((i, over))
-            if i in framed:
+            if i in live:
                 f = pg.evaluate(FRAME_JS)
                 if not f or f['width'] != 390 or f['over'] > 1: wide.append((i, 'frame', f))
-        check('no page scrolls sideways at 390px, and every block is shown as a phone would show it', not wide, wide[:8])
+        check('no page scrolls sideways at 390px, and every block and template is shown as a phone would show it', not wide, wide[:8])
         go(pg, 'home'); pg.wait_for_timeout(500)
         pg.screenshot(path=str(SHOTS / 'phone-home.png'))
         pg.click('.tray-app__menu'); pg.wait_for_timeout(250)

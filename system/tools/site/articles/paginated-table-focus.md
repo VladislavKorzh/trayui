@@ -89,7 +89,7 @@ The person who pressed a button is still on it, and the rows that changed are so
 - **The sort.** `aria-sort` is a state of the column head; MDN says it is there "to inform assistive technology users which column or row is sorted". Nothing in ARIA asks for a change to it to be announced while focus stays on the button. Write the sort into the status as well: "Sorted by Total, ascending. Rows 1 to 5 of 7". It also makes the status change when a sort leaves the page number as it was.
 - **The selection.** A count such as "2 of 8 selected" in its own status says what a click on a checkbox did to the whole.
 
-Tray UI's behaviour writes the counts into `data-page-status` and `data-selected-count` and announces nothing by itself. Its README says to give them `role="status"`. The dashboard block gives it to both, the table of batches to its selection count, and the changelog lists this under the coming version: "The dashboard and the batches table read their selection and page counts aloud as they change."
+Tray UI's behaviour writes the counts into `data-page-status` and `data-selected-count` and announces nothing by itself. Its README says to give them `role="status"`. The dashboard block gives it to both, the table of batches to its selection count, and the changelog lists this under version 0.3.0: "The dashboard and the batches table read their selection and page counts aloud as they change."
 
 ## Selecting rows
 

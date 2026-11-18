@@ -133,7 +133,7 @@ Go through the page and look for four things: every control and card has an edge
 
 ## Forced colours in Tray UI
 
-Tray UI draws most things as fills with no edge, so it is the case above at scale. Its answer is one block in `95-modes.css`, 51 rules inside `@media (forced-colors: active)`:
+Tray UI draws most things as fills with no edge, so it is the case above at scale. Its answer is one block in `95-modes.css`, 52 rules inside `@media (forced-colors: active)`:
 
 - buttons and controls get a 1px `ButtonText` edge, fields a `FieldText` edge, and trays, cards and everything that floats a `CanvasText` edge; a disabled control is `GrayText`;
 - what is chosen takes `forced-color-adjust: none` and the selected pair: a tab, a segment, a pressed toggle, the current page, a picked day, a done task;

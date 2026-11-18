@@ -66,6 +66,8 @@ A behaviour is attached with `data-tray="name"` on the element named below. Call
 | `consent` | a cookie consent panel | closes it and reports the choice |
 | `notices` | a notification panel | marks as read, counts the unread |
 | `filterbar` | a filter bar | keeps the chips and the menu items in step |
+| `lightbox` | a `tray-gallery` list, with `data-target` naming its lightbox `<dialog>` | opens a picture as large as the window allows, previous and next |
+| `player` | the `tray-player` figure around a `<video>` | takes the browser's controls off and runs the system's bar: play, the place in the film, captions, sound, full screen |
 
 ## Events
 
@@ -82,6 +84,7 @@ Behaviours report with bubbling custom events on their own element: `tray:change
 | `TrayUI.formatDate(value, locale)` | "14 Nov 2026", or a range. |
 | `TrayUI.icon(name, className)` | The markup of an icon. |
 | `TrayUI.register(name, fn)` | Add your own `data-tray` behaviour. |
+| `TrayUI.rescue(el, to)` | Before your script hides, removes or turns off `el`: if focus is inside it, move focus to `to` (an element, or a function that gives one), so a keyboard user is not dropped to the top of the page. |
 | `TrayUI.upgrade(selector, fn)` | Run `fn` once for every element that matches, with no `data-tray` of its own (the system gives every `.tray-seg` and `.tray-tabs` its sliding pill this way). |
 
 ## Motion

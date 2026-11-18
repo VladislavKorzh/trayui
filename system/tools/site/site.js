@@ -12,7 +12,7 @@
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function has(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
 
-  var site = $('#site'), view = $('#site-view'), sheet = $('#site-sheet'), themeList = $('#site-theme-list');
+  var view = $('#site-view'), sheet = $('#site-sheet'), themeList = $('#site-theme-list');
   var navs = [$('#site-nav'), $('#site-nav-sheet')], switches = [$('#site-sections'), $('#site-sections-sheet')];
   var full = $('#site-full'), fullStage = $('#site-full-stage'), fullTitle = $('#site-full-title');
   var search = $('#site-search'), command = $('#site-command'), commandList = $('#site-command-list');
@@ -338,7 +338,7 @@
     if (!v) return;
     var id = v.getAttribute('data-viewer'), size = window.innerWidth < 640 ? 'phone' : 'desktop';
     var src = $('#site-src-code', v);
-    if (!src.textContent.trim()) S.paint(src, S.pages[id].source, 'html');  /* the build writes it in the page, coloured */
+    if (src && !src.textContent.trim()) S.paint(src, S.pages[id].source, 'html');  /* the build writes it in the page, coloured; a template has none */
     var fr = mount($('[data-frame]', v), id, { size: size });
     $$('.site-viewer__sizes input', v).forEach(function (i) {
       i.checked = i.value === size;
@@ -531,7 +531,7 @@
           '<div class="site-play__box"><div class="site-play__stage site-sk-area"></div><div class="tray-card site-play__controls"><div class="tray-stack">' +
           sk[2].split('').map(control).join('') + '<span class="tray-btn tray-btn--ghost tray-btn--sm site-sk-pill">' + filler(10) + '</span></div></div></div>' + codeBox(sk[4] || 1) + '</section>' : '') + prose(sk[3]);
     }
-    if (k === 'b') return h + '<section class="site-viewer site-sk" inert>' + (P.viewer || '') + '<div class="tray-tabpanel"><div class="site-frame site-sk-frame"></div></div></section>' + prose(sk[1]);
+    if (k === 'b') return h + '<section class="site-viewer site-sk" inert>' + ((sk[2] ? P.look : P.viewer) || '') + '<div class="tray-tabpanel"><div class="site-frame site-sk-frame"></div></div></section>' + prose(sk[1]);
     if (k === 'g') {
       return h + prose(sk[1], 'section') + sk[2].slice(0, 4).map(function (g) {
         return '<section class="site-prose site-sk" inert>' + ink(g[0], 'h2', 'subtitle') + '<div class="site-gallery">' + times(g[1], function () {
@@ -782,7 +782,7 @@
     try { saved = localStorage.getItem('tray-site-theme'); } catch (e) { /* nothing kept */ }
     if (!chosen && !saved) setTheme(scheme.matches ? 'dark' : 'light', true);
   });
-  S.theme = { list: THEMES, current: pageTheme, set: setTheme, own: ownTheme, setOwn: setOwnTheme };
+  S.theme = { current: pageTheme, set: setTheme, own: ownTheme, setOwn: setOwnTheme };
 
   /* ---------- The Themes page: its script arrives with the page ---------- */
   var themesLib = null;
@@ -830,7 +830,7 @@
   $('#site-skip').addEventListener('click', function () { view.focus(); });
 
   /* For tests, and for the pages that make links (the Themes page). */
-  S.go = go; S.here = current; S.href = href; S.urlOf = urlOf; S.query = query; S.paths = PATHS;
+  S.go = go; S.here = current; S.urlOf = urlOf; S.query = query; S.paths = PATHS;
 
   if (PATHS) {
     /* Back and forward: the page of that step, at the place it was left. A step within one page (a #part of it) stays put. */

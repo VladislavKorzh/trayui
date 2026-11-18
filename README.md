@@ -13,7 +13,7 @@ It is a white page, ink type in Onest, and goods set out in soft grey trays with
 - **Icons from [Lucide](https://lucide.dev)**: 118 built into the script, and in React any other from `react-icons/lu`.
 - **React**, as `trayui-react`: the same components, typed, over the same stylesheet. Its charts are drawn with [Recharts](https://recharts.github.io), with 58 examples.
 - **Tailwind and Figma**: the tokens as a Tailwind 4 theme, a Tailwind 3 preset and Figma variables with a mode for each theme.
-- **Three files**, about 82 KB with gzip. No framework, no build step.
+- **Three files**, about 88 KB with gzip. No framework, no build step.
 
 ## Install
 
@@ -29,7 +29,7 @@ Link the three files, in this order:
 </head>
 ```
 
-With a bundler, install them from npm (`npm install trayui`) and import `trayui/tokens.css`, `trayui/components/bundle.css` and `trayui/components/bundle.js`. You can also copy the [`system/dist`](system/dist) folder into your project and link the same files from there. The folder also holds the font, the blocks and the tokens for Tailwind and Figma. Each release on the [releases page](https://github.com/VladislavKorzh/trayui/releases) carries the same folder as a zip.
+With a bundler, install them from npm (`npm install trayui`) and import `trayui/tokens.css`, `trayui/components/bundle.css` and `trayui/components/bundle.js`. You can also copy the [`system/dist`](system/dist) folder into your project and link the same files from there. The folder also holds the font, the blocks and the tokens for Tailwind and Figma. [The Installation page](https://trayui.com/docs/installation) has the same folder as a zip.
 
 ## Write a first screen
 
@@ -103,9 +103,9 @@ The rules of the system live in the repository:
 - [the guides](system/project/guides): grounds, behaviour, accessibility, page layouts, and the lists of components and blocks;
 - the guidelines and the markup of each component, in `system/project/components/<Name>/README.md`.
 
-The documentation site, [trayui.com](https://trayui.com), has a live example of every component and block and a playground for most. It is built from this repository, and anyone can build and run it locally; [CONTRIBUTING.md](CONTRIBUTING.md) says how.
+The documentation site, [trayui.com](https://trayui.com), has a live example of every component and block, and a playground for about half of the components. It is built from this repository, and anyone can build and run it locally; [CONTRIBUTING.md](CONTRIBUTING.md) says how.
 
-For an AI agent, there is a skill: `SKILL.md` with the rules, every page of the site as Markdown, and a checker the agent runs on what it writes. Install it in Claude Code with `claude plugin marketplace add https://trayui.com/skills/marketplace.json` and `claude plugin install trayui@trayui`, upload [trayui.zip](https://trayui.com/skills/trayui.zip) to claude.ai, or copy it into a project with `npx trayui skill`; [the agents page](https://trayui.com/docs/agents) says more. The site also has [llms.txt](https://trayui.com/llms.txt), an index of every page, and `llms-full.txt`, the rules, the guides and the markup of every component in one plain file. Every page is also Markdown at its address with `.md` added.
+For an AI agent, there is a skill: `SKILL.md` with the rules, every page of the docs, the components, the blocks and the charts as Markdown, and a checker the agent runs on what it writes. Install it in Claude Code with `claude plugin marketplace add https://trayui.com/skills/marketplace.json` and `claude plugin install trayui@trayui`, upload [trayui.zip](https://trayui.com/skills/trayui.zip) to claude.ai, or copy it into a project with `npx trayui skill`; [the agents page](https://trayui.com/docs/agents) says more. The site also has [llms.txt](https://trayui.com/llms.txt), an index of its Markdown pages, and `llms-full.txt`, the rules, the guides and the markup of every component in one plain file. Every page is also Markdown at its address with `.md` added.
 
 ## What is where
 
@@ -117,6 +117,7 @@ For an AI agent, there is a skill: `SKILL.md` with the rules, every page of the 
 | `system/react/` | `trayui-react`: the components for React, and the charts (`trayui-react/charts`). |
 | `system/cli/` | The `trayui` command (`npx trayui`) and the markup checker it and the skill run. |
 | `system/skill/` | The skill for agents, as it is written: the build adds every page of the site and the checker. |
+| `system/tests/` | The component tests: a module for each component (`components/<Name>.py`), the harness they run in, and what a block is excused (`blocks.py`). |
 | `system/tools/` | The build, the documentation site and the checks. |
 
 ## Contributing

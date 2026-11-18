@@ -13,7 +13,7 @@ Thank you for helping. A bug report with a small example, a fix, a missing compo
 You need:
 
 - Python 3.12;
-- Node 18 or later (CI uses 22);
+- Node 20.19 or later (CI uses 22): the checks build Vite and Next.js apps, which ask for it. The `trayui` CLI itself runs on Node 18;
 - Google Chrome, which the browser checks drive through Playwright;
 - `ffmpeg`, only to rebuild the media previews.
 
@@ -46,11 +46,11 @@ python3 tools/check.py      # every check, as CI runs them; --fast skips the bro
 | A behaviour | `system/src/js/*.js` | `system/dist/`, `system/react/src/runtime.ts` |
 | A token or a theme | `system/project/tokens.json` (themes after Light and Dark: `system/tools/themes.py`) | `tokens.css` |
 | An icon | the list in `system/tools/lucide.py`, then run it | `system/src/icons.json` by hand |
-| A component | `system/project/components/<Name>/preview.html` and `README.md`, its React twin in `system/react/src/components/`, `system/react/previews/` and `system/react/docs/` | |
+| A component | `system/project/components/<Name>/preview.html` and `README.md`, its React twin in `system/react/src/components/`, `system/react/previews/` and `system/react/docs/`, and its test, `system/tests/components/<Name>.py` (a component without one fails `test_components.py`) | |
 | A block | `system/project/blocks/<name>.html` | `system/dist/blocks/` |
 | The site | `system/tools/site/` and `system/tools/site.py` | `system/site/` (not kept in git) |
 
-Built files are kept in the repository: `system/dist/`, `system/project/guides/0-components.md` and `5-blocks.md`, `system/project/assets/Icons/`, and `system/react/styles/`, `src/runtime.ts`, `src/icons.ts` and `src/index.ts`. `system/dist/skills/` is written by the site's build. Rebuild with `python3 system/tools/build.py` and `python3 system/tools/site.py`, and commit what they changed with your change. CI fails when they are out of date.
+Built files are kept in the repository: `system/dist/`, `system/project/guides/0-components.md` and `5-blocks.md`, `system/project/assets/Icons/`, and `system/react/styles/`, `src/runtime.ts` and `src/icons.ts` (written by `build.py`) and `src/index.ts` (written by `npm run build` in `system/react`). `system/dist/skills/` is written by the site's build. Rebuild with `python3 system/tools/build.py`, `python3 system/tools/site.py` and `npm run build` in `system/react`, and commit what they changed with your change. CI fails when they are out of date.
 
 ## How the system is written
 

@@ -113,7 +113,7 @@ shadcn/ui pairs each surface with a foreground: `primary` and `primary-foregroun
 | `ring` | `ink`: the focus ring is 3px of ink |
 | `destructive` | `danger` |
 | `chart-1` to `chart-5` | `data-1` to `data-4` |
-| `radius` | eight radii, from `--radius-card` down to `--radius-mark`, and `--radius-pill` |
+| `radius` | seven radii, from `--radius-card` down to `--radius-mark`, and `--radius-pill` |
 
 Watch the word accent: in shadcn/ui it is a quiet hover fill, in Tray UI the loudest colour on the page.
 
@@ -134,14 +134,14 @@ import 'trayui-react/styles.css';
 </Dialog>
 ```
 
-It differs from shadcn/ui in kind. It is a package from npm, installed and updated as one, and its source does not live in your repository. Each component renders the markup and classes of its HTML original over the same stylesheet, and the same behaviours wire it, so a React page and a hand-written page look and act alike. Parts are props more than children: `title`, `trigger` and `footer` on a dialog, an `items` array on a dropdown menu. It needs React 18 or later and no provider. Its charts are drawn with Recharts, from `trayui-react/charts`, as shadcn/ui's Chart is.
+It differs from shadcn/ui in kind. It is a package from npm, installed and updated as one; or, since 0.3.0, `npx trayui add` and the shadcn CLI (from the registry at https://trayui.com/r/) copy a component's source into your app, where it is yours to change. Each component renders the markup and classes of its HTML original over the same stylesheet, and the same behaviours wire it, so a React page and a hand-written page look and act alike. Parts are props more than children: `title`, `trigger` and `footer` on a dialog, an `items` array on a dropdown menu. It needs React 18 or later and no provider. Its charts are drawn with Recharts, from `trayui-react/charts`, as shadcn/ui's Chart is.
 
 ## When each fits
 
 shadcn/ui fits when:
 
 - the app is React with Tailwind, or will be;
-- you want each component's source in your repository, to change any line of it;
+- you want to restyle a component line by line, with Tailwind classes in its source, rather than through one shared stylesheet;
 - the design is your own: it ships eight styles and a maker of presets, and nothing in a component is fixed;
 - you want to choose the headless library, or publish your own components through a registry.
 

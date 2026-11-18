@@ -8,8 +8,6 @@ ArrowLeft or Escape closes it and returns focus to its item (the arrows swap rig
 and down in the menu step over its items. The focus ring is drawn inside the item; under reduced motion the panel only
 fades, in 0.1s."""
 
-FIRST = '[data-tray="menu"]:nth-of-type(1)'
-
 
 def menus(pg, scope=None):
     root = scope or pg

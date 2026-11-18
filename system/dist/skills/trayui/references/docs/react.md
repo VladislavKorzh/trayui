@@ -10,7 +10,7 @@ The package is called `trayui-react`, and it is on npm. It needs `react` and `re
 npm install trayui-react
 ```
 
-Its source is the `system/react` folder of the repository.
+
 
 ## Use it
 
@@ -52,7 +52,7 @@ The 64 blocks exist in React too, as components with the same markup and classes
 
 A block keeps the script of its HTML page, if it has one (a filter that narrows a table, a total that follows the quantities), as plain DOM code that runs once it is mounted: rewrite it with React state when you make the screen yours.
 
-In Next.js, the components that keep state start with `'use client'`, in the package and in the copies, so a Server Component can render them as they are.
+In Next.js, every component file that needs the browser (state, effects, an event handler, a behaviour) starts with `'use client'`, in the package and in the copies, so a Server Component can render them as they are.
 
 ## What it does not have yet
 

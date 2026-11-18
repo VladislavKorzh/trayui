@@ -13,7 +13,7 @@ Tray UI {{version}} is plain HTML with `tray-` classes, styled by two stylesheet
 
 ## Where the pages are
 
-Every page of {{site}} is also Markdown, and this skill holds the same files under `references/`, by the same path: `{{site}}/components/button.md` is `references/components/button.md`, `{{site}}/docs/accessibility.md` is `references/docs/accessibility.md`. A link in one of them to another page of the site is a file here. Fetch from the site only for a page that is not here.
+Every page of {{site}} is also Markdown, and this skill holds those of the docs, the components, the blocks and the charts under `references/`, by the same path: `{{site}}/components/button.md` is `references/components/button.md`, `{{site}}/docs/accessibility.md` is `references/docs/accessibility.md`. A link in one of them to another page of the site is a file here. Fetch from the site only for a page that is not here.
 
 - `references/blocks.md`: the {{blocks}} blocks, group by group, a line on each. `references/blocks/<id>.md`: when to choose it, what it is made of, and the whole page of HTML.
 - `references/components.md`: the {{components}} components. `references/components/<id>.md`: the markup to copy, the classes and variants, the behaviour, the Accessibility section.

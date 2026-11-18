@@ -2,7 +2,7 @@
 
 A sidebar that a button in the top bar folds to a rail of icons with tooltips, with a workspace switcher, a meter of orders and an account menu.
 
-In an app of wide tables and boards, a collapsible sidebar gives the width back. The panel button at the start of the top bar folds the tray to a rail 76px wide: each item shows its name in a [Tooltip](https://trayui.com/components/tooltip.md) beside the icon, the workspace switcher and the account shrink to their avatars, and the usage meter steps out. A tooltip that only repeats its link's name is drawn for the eye alone, so it is not read twice; the Orders link has its own `aria-label`, "Orders, 12 to pack", which says what the bare count means.
+In an app of wide tables and boards, a collapsible sidebar gives the width back. The panel button at the start of the top bar folds the tray to a rail 76px wide: each item shows its name in a [Tooltip](https://trayui.com/components/tooltip.md) beside the icon, the workspace switcher and the account shrink to their avatars, and the usage meter steps out. A tooltip that only repeats its link's name is drawn for the eye alone, so it is not read twice; the Orders link takes its name from its words, with " to pack" hidden after the count, which says what the bare count means.
 
 Pick it over [the base sidebar](https://trayui.com/blocks/sidebar-01.md) when screens need room more than labels. The button keeps `aria-expanded` in step and changes its name from "Collapse the sidebar" to "Expand the sidebar". Nothing remembers the rail between pages: the sidebar fires `tray:change` as it folds, so store the choice there. Below 56rem the button goes, and the sheet shows the labels even if the sidebar was a rail.
 

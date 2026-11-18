@@ -7,7 +7,7 @@ With it an agent starts a screen from the nearest block, copies each component's
 ## What is in it
 
 - `SKILL.md`: how to build with the system, in one page.
-- `references/`: every page of {{site}} as Markdown, by the same path (`references/components/button.md` is {{site}}/components/button.md): the guidelines and markup of every component, every block as a whole page of HTML with a note on when to choose it, the brand book, the layouts, the behaviours, accessibility and the tokens.
+- `references/`: the pages of the docs, the components, the blocks and the charts of {{site}} as Markdown, by the same path (`references/components/button.md` is {{site}}/components/button.md): the guidelines and markup of every component, every block as a whole page of HTML with a note on when to choose it, the brand book, the layouts, the behaviours, accessibility and the tokens.
 - `scripts/check.mjs`: the markup checker, with no dependencies (Node 18 or later): `node scripts/check.mjs page.html`. Its rules, `scripts/rules.json`, are written from the same release of the stylesheet and the script.
 
 It reads nothing from the network and runs nothing by itself.

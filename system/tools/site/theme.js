@@ -235,5 +235,5 @@
   }
 
   return { oklch: oklch, normal: normal, valid: valid, modeOf: modeOf, along: along, derive: derive, report: report, corners: corners, css: css,
-           more: moreContrast, slug: slug, STEPS: STEPS, CARDS: CARDS, MORE: MORE, RULES: RULES };
+           slug: slug, STEPS: STEPS, CARDS: CARDS };
 });

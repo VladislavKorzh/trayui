@@ -74,13 +74,13 @@ export function Pasted() {
 import { Chart } from 'trayui-react/charts';
 ```
 
-`Chart` draws the six usual forms. `ChartContainer` and the parts around it frame a Recharts chart you compose yourself, with the system's title, colours, tooltip, key and table of figures. [`examples/charts`](examples/charts) holds 58 examples, one file each, to copy.
+`Chart` draws the six usual forms. `ChartContainer` and the parts around it frame a Recharts chart you compose yourself, with the system's title, colours, tooltip, key and table of figures. [The Charts section of the site](https://trayui.com/charts) shows 58 examples, each with its code to copy.
 
 ## Documentation
 
-- [`docs/`](docs): the guide of each component, with its props and an example.
-- [`previews/`](previews): one usage example per component.
-- [The system's guides](../project/guides): grounds, accessibility and page layouts hold for React as well.
+- [Tray UI in React](https://trayui.com/docs/react): installing the package, Next.js, and the parts every component shares.
+- [The components](https://trayui.com/components): a page for each, with a live example, its markup and when to use it. The props of each React component are in its types (`dist/components/<Name>.d.ts`).
+- The guides: [grounds](https://trayui.com/docs/grounds), [accessibility](https://trayui.com/docs/accessibility) and [page layouts](https://trayui.com/docs/layouts) hold for React as well.
 
 ## Develop
 
@@ -94,4 +94,4 @@ npm run try -- Button    # render a component's preview in Chrome and save a pic
 
 ## Licence
 
-MIT, like the rest of Tray UI: see [LICENSE](../../LICENSE). The font (Onest, SIL Open Font License 1.1) and the icons (Lucide, ISC) travel with the package under their own licences, in `dist/fonts/OFL.txt` and `dist/LUCIDE-LICENSE.txt`.
+MIT, like the rest of Tray UI: see `dist/LICENSE`. The font (Onest, SIL Open Font License 1.1) and the icons (Lucide, ISC) travel with the package under their own licences, in `dist/fonts/OFL.txt` and `dist/LUCIDE-LICENSE.txt`.
