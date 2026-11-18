@@ -55,8 +55,9 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 #site-view h1:focus { outline: none; }
 
 /* ---------- Moving between pages ----------
-   The next page is drawn in one step: the one that goes fades out quicker than the next fades in, as everything that leaves
-   and comes does in the system. site.js asks for it only where the visitor has not asked for less motion. */
+   A page that comes over its skeleton fades in, its skeleton fading out quicker, as everything that leaves and comes does in
+   the system. site.js asks for it only there (a page over another page is drawn at once: faded one through the other, two
+   different pages show both at once), and only where the visitor has not asked for less motion. */
 ::view-transition-group(root) { animation-duration: var(--duration-in); }
 ::view-transition-old(root) { animation-duration: var(--duration-out); animation-timing-function: var(--ease-exit); }
 ::view-transition-new(root) { animation-duration: var(--duration-in); animation-timing-function: var(--ease); }
@@ -363,8 +364,11 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 .site-sk .tray-swatch, .site-sk .tray-list-plain li::marker { background: var(--track); color: transparent; }
 .site-sk-chart { min-block-size: 22rem; }
 .site-sk-frame::before { border-radius: var(--radius-button); background: var(--track); }
+/* A frame is a grey shape too until the page in it has loaded with its styles (site.js marks it data-loading). */
+.site-frame__box[data-loading] { background: var(--track); }
+.site-frame__box[data-loading] iframe { visibility: hidden; }
 @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
-  .site-sk-ink, .site-sk-area, .site-sk-pill, .site-sk-frame::before { animation: tray-pulse 1.4s ease-in-out infinite; }
+  .site-sk-ink, .site-sk-area, .site-sk-pill, .site-sk-frame::before, .site-frame__box[data-loading] { animation: tray-pulse 1.4s ease-in-out infinite; }
 }
 @media (forced-colors: active) {
   .site-sk-ink { forced-color-adjust: none; background: none; box-shadow: inset 0 0 0 1px CanvasText; }

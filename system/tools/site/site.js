@@ -164,9 +164,17 @@
       nav.setAttribute('data-section', key);
     });
     if (sec && !side) document.documentElement.setAttribute('data-noside', ''); else document.documentElement.removeAttribute('data-noside');
+    /* The strip of sections keeps its links and only moves its mark, as any strip of tabs does: its pill slides while the
+       words of the two links change colour with it. Written anew, the links would take their new colour at once, and both
+       words would vanish against the pill on its way. */
     switches.forEach(function (n) {
       if (n.getAttribute('data-section') === key) return;
-      n.innerHTML = S.sections.filter(function (s) { return s.tab !== false; }).map(function (s) { return '<a class="tray-tab" href="' + href(s.home) + '"' + (s === sec ? ' aria-current="page"' : '') + '>' + esc(s.title) + '</a>'; }).join('');
+      var tabs = S.sections.filter(function (s) { return s.tab !== false; });
+      if ($$('.tray-tab', n).length !== tabs.length) n.innerHTML = tabs.map(function (s) { return '<a class="tray-tab" href="' + href(s.home) + '">' + esc(s.title) + '</a>'; }).join('');
+      tabs.forEach(function (s, i) {
+        var a = $$('.tray-tab', n)[i];
+        if (s === sec) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+      });
       n.setAttribute('data-section', key);
     });
     if (sec) document.documentElement.removeAttribute('data-home'); else document.documentElement.setAttribute('data-home', '');
@@ -256,6 +264,11 @@
   function mount(host, id, opts) {
     var box = document.createElement('div'), f = document.createElement('iframe');
     box.className = 'site-frame__box';
+    /* the frame is a grey shape until the page in it has loaded with its styles, so no bare page flashes there */
+    box.setAttribute('data-loading', '');
+    function ready() { box.removeAttribute('data-loading'); }
+    f.addEventListener('load', function () { try { if (f.contentWindow.location.href === 'about:srcdoc') ready(); } catch (e) { ready(); } });
+    setTimeout(ready, 6000);
     f.title = 'Preview: ' + S.index[id].title;
     if (opts.thumb) { f.setAttribute('inert', ''); f.setAttribute('aria-hidden', 'true'); f.tabIndex = -1; }
     box.appendChild(f);
@@ -573,11 +586,13 @@
       window.scrollTo(0, typeof y === 'number' ? y : 0);
     }
     view.setAttribute('data-page', id);
+    view.removeAttribute('data-skeleton');
     view.removeAttribute('aria-busy');
   }
 
-  /* swap(update): the view changes in one step. Where the browser can, and the visitor has not asked for less motion, the
-     page that goes fades out as the next fades in (a view transition: site.css gives it the system's timing); else at once. */
+  /* swap(update): the view changes in one step. Where the browser can, and the visitor has not asked for less motion, what
+     goes fades out as what comes fades in (a view transition: site.css gives it the system's timing); else at once. Only a
+     page coming over its skeleton is drawn so. */
   var still = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   function swap(update) {
     if (!document.startViewTransition || (still && still.matches) || document.hidden) { update(); return; }
@@ -610,10 +625,12 @@
       if (item.top < box.top + 8 || item.bottom > box.bottom - 8) navs[0].scrollTop += item.top - box.top - box.height / 2;
     }
     if (sheet.open) sheet.close();
-    /* the first page of a visit stays where the browser put it; another is drawn in one step, the last one fading out */
+    /* the first page of a visit stays where the browser put it. Another is drawn at once over the last page, as two different
+       pages faded one through the other show both at once; over its own skeleton it fades in, the two being alike. */
     function draw() {
       if (first) { paint(id, y, true); return; }
-      swap(function () { if (current() === id) paint(id, y, false); });
+      if (view.hasAttribute('data-skeleton')) swap(function () { if (current() === id) paint(id, y, false); });
+      else paint(id, y, false);
     }
     if (loaded[meta.chunk] || (meta.bare && view.getAttribute('data-prerendered') === id)) { draw(); return; }
     if (view.getAttribute('data-prerendered') === id) {
@@ -632,9 +649,10 @@
       view.removeAttribute('data-page');
       if (meta.wide) view.setAttribute('data-wide', ''); else view.removeAttribute('data-wide');
       put(view, shape(id));
+      view.setAttribute('data-skeleton', '');
       window.scrollTo(0, 0);
     }
-    if (first) wait(); else waiting = setTimeout(function () { swap(wait); }, WAIT);
+    if (first) wait(); else waiting = setTimeout(wait, WAIT);
     need(id).then(function () { if (current() === id) { clearTimeout(waiting); draw(); } }, function () {
       if (current() !== id) return;
       clearTimeout(waiting);
@@ -644,6 +662,7 @@
       clearCharts();
       view.removeAttribute('aria-busy');
       view.removeAttribute('data-prerendered');
+      view.removeAttribute('data-skeleton');
       put(view, (meta.sk && meta.sk[0] === 'a' ? '<h1 class="title" tabindex="-1">' + esc(meta.title) + '</h1>' : headOf(meta)) +
         '<div class="tray-alert tray-alert--danger" role="alert"><span class="tray-alert__icon">' + UI.icon('circle-alert') + '</span><div class="tray-alert__body">' +
         '<p class="tray-alert__title">This page did not load</p><p class="tray-alert__text">Check the connection and <a href="' + href(id) + '" data-retry>try again</a>.</p></div></div>');
