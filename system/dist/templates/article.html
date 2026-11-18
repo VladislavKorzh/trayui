@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Help article</title>
+<meta name="description" content="A help centre article: a readable column, its contents at the side, and what to read next.">
+<meta name="tray-category" content="Public pages">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<header class="tray-nav tray-container">
+  <a class="tray-wordmark" href="landing.html">Counter</a>
+  <nav class="tray-nav__strip" aria-label="Main">
+    <ul class="tray-nav__links tray-tabs" data-tray="strip">
+      <li><a class="tray-tab" href="landing.html">Product</a></li>
+      <li><a class="tray-tab" href="pricing.html">Pricing</a></li>
+      <li><a class="tray-tab" href="article.html" aria-current="true">Help</a></li>
+      <li><a class="tray-tab" href="#">Changelog</a></li>
+    </ul>
+  </nav>
+  <div class="tray-nav__actions" style="gap: var(--space-4)">
+    <a class="tray-btn tray-btn--link" href="#">Sign in</a>
+    <a class="tray-btn tray-btn--sm" href="#">Start free</a>
+  </div>
+</header>
+
+<main>
+  <div class="tray-container">
+    <nav aria-label="Breadcrumb">
+      <ol class="tray-crumbs">
+        <li><a href="#">Help</a></li>
+        <li><a href="#">Orders</a></li>
+        <li><span aria-current="page">Print labels for a batch</span></li>
+      </ol>
+    </nav>
+    <div class="tray-with-aside tray-with-aside--narrow" style="padding-block-start: var(--space-6)">
+      <article class="tray-stack" style="gap: var(--space-12)">
+        <div class="tray-prose">
+          <h1 class="title">Print labels for a batch of orders</h1>
+          <p class="lead tray-soft">Select the orders that leave with the next courier and print one label for every box in a single run.</p>
+          <p class="caption tray-muted">Updated on 12 November 2026. Four minutes to read.</p>
+
+          <h2 class="subtitle" id="before">Before you start</h2>
+          <p>Batch printing is in every plan. It works from the Orders page on a computer; the packing screen on a phone prints one label at a time.</p>
+          <ul class="tray-list-plain">
+            <li>Every order in the batch has a full delivery address and a courier.</li>
+            <li>The printer is on and holds the right labels. If you have not printed before, <a href="#sizes">choose the label size</a> first.</li>
+            <li>Your browser lets Counter open its print window. Allow pop-ups for the site if it asks.</li>
+          </ul>
+
+          <h2 class="subtitle" id="print">Print the labels</h2>
+          <ol class="tray-list-plain">
+            <li>Open <b>Orders</b> and choose the filter <b>To pack</b>.</li>
+            <li>Tick the orders that leave with the next courier. To take every order in the list, press <span class="tray-keys"><kbd class="tray-kbd">Ctrl</kbd><kbd class="tray-kbd">A</kbd></span>.</li>
+            <li>Choose <b>Print labels</b> in the bar over the list, or press <kbd class="tray-kbd">P</kbd>.</li>
+            <li>Check the count in the preview. Counter prints one label for each box, so 12 orders in 14 boxes give 14 labels.</li>
+            <li>Press <b>Print 14 labels</b>. To leave without printing, press <kbd class="tray-kbd">Esc</kbd>.</li>
+          </ol>
+          <p>Counter marks each order as labelled and adds its boxes to the next pickup, at 14:00 on courier days.</p>
+          <div class="tray-alert" role="note">
+            <span class="tray-alert__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-info"/></svg></span>
+            <div class="tray-alert__body">
+              <p class="tray-alert__title">Printing again does not book a second pickup</p>
+              <p class="tray-alert__text">A reprint replaces the first label and keeps the courier's code. Reprints are counted on the order, not charged.</p>
+            </div>
+          </div>
+
+          <h2 class="subtitle" id="sizes">Choose the label size</h2>
+          <p>Counter prints two sizes. Set yours once in <b>Settings</b>, under <b>Delivery</b>, and every batch uses it.</p>
+          <div class="tray-table-wrap">
+            <table class="tray-table" aria-label="Label sizes">
+              <thead>
+                <tr>
+                  <th scope="col">Label</th>
+                  <th scope="col">Printer</th>
+                  <th scope="col">Paper</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">100 by 150 mm</th>
+                  <td>Label printer</td>
+                  <td>Roll of 500 labels</td>
+                </tr>
+                <tr>
+                  <th scope="row">105 by 148 mm</th>
+                  <td>Any office printer</td>
+                  <td>A4 sheet of four labels</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h3 class="action">On a label printer</h3>
+          <p>Choose 100 by 150 mm. The labels come out in the order of the list, so you can fill the boxes along the roll.</p>
+          <h3 class="action">On A4 sheets</h3>
+          <p>Choose 105 by 148 mm. When a batch does not fill its last sheet, put that sheet back in the tray: the preview of the next batch asks which label to start from.</p>
+
+          <h2 class="subtitle" id="wrong">If a label is wrong</h2>
+          <p>Most wrong labels come from the order, not from the printer. Mend the order, then print that one label again from the order's own page.</p>
+          <h3 class="action">The address is cut off</h3>
+          <p>A label has room for five lines of address. Shorten the address in the order, then print that label again.</p>
+          <h3 class="action">The courier's code is missing</h3>
+          <p>The order has no courier yet. Open it, choose one under <b>Delivery</b>, and print the label again.</p>
+          <h3 class="action">Nothing prints</h3>
+          <p>Counter hands the labels to the print window of your browser. Check that the printer chosen there is the one with the labels in it, not the one for invoices.</p>
+        </div>
+
+        <form class="tray-card tray-feedback" data-tray="feedback" action="/feedback" method="post">
+          <div class="tray-stack tray-stack--sm" data-feedback="ask">
+            <fieldset class="tray-scale">
+              <legend class="tray-legend subtitle">Was this useful?</legend>
+              <label><input type="radio" name="rating" value="1"><span>1</span></label>
+              <label><input type="radio" name="rating" value="2"><span>2</span></label>
+              <label><input type="radio" name="rating" value="3"><span>3</span></label>
+              <label><input type="radio" name="rating" value="4"><span>4</span></label>
+              <label><input type="radio" name="rating" value="5"><span>5</span></label>
+            </fieldset>
+            <p class="tray-scale__ends"><span>Not at all</span><span>Very</span></p>
+          </div>
+          <div class="tray-stack" data-feedback="more" hidden>
+            <div class="tray-field">
+              <label class="tray-label" for="feedback-why">What was missing? <span class="tray-label__opt">Optional</span></label>
+              <textarea class="tray-textarea" id="feedback-why" name="comment"></textarea>
+            </div>
+            <div>
+              <button class="tray-btn tray-btn--sm" type="submit">Send the answer</button>
+            </div>
+          </div>
+          <p data-feedback="thanks" hidden>Thank you. We read every answer and mend the article.</p>
+        </form>
+      </article>
+
+      <aside class="tray-with-aside__aside" aria-label="About this article" style="max-inline-size: var(--measure)">
+        <nav class="tray-sidebar tray-sidebar--plain" aria-label="On this page">
+          <div class="tray-sidebar__group">
+            <p class="tray-sidebar__label">On this page</p>
+            <a class="tray-sidebar__item" href="#before"><span>Before you start</span></a>
+            <a class="tray-sidebar__item" href="#print"><span>Print the labels</span></a>
+            <a class="tray-sidebar__item" href="#sizes"><span>Choose the label size</span></a>
+            <a class="tray-sidebar__item" href="#wrong"><span>If a label is wrong</span></a>
+          </div>
+        </nav>
+        <div class="tray-card tray-stack" style="padding: var(--space-6)">
+          <h2 class="subtitle">Still stuck?</h2>
+          <p class="caption tray-soft">Write to us. A person answers on weekdays from 8:00 to 18:00.</p>
+          <div>
+            <a class="tray-btn tray-btn--quiet tray-btn--sm" href="mailto:help@counter.example">Write to support</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <section class="tray-section" aria-labelledby="next-title">
+    <div class="tray-container">
+      <div class="tray-stack" style="max-inline-size: var(--measure)">
+        <h2 class="subtitle" id="next-title">Read next</h2>
+        <ul class="tray-items">
+          <li>
+            <a class="tray-item" href="#">
+              <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plug"/></svg></span>
+              <span class="tray-item__body"><span class="tray-item__title">Connect a label printer</span><span class="tray-item__text">Orders, three minutes to read</span></span>
+              <span class="tray-item__end"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></span>
+            </a>
+          </li>
+          <li>
+            <a class="tray-item" href="#">
+              <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg></span>
+              <span class="tray-item__body"><span class="tray-item__title">Split an order in two</span><span class="tray-item__text">Orders, two minutes to read</span></span>
+              <span class="tray-item__end"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></span>
+            </a>
+          </li>
+          <li>
+            <a class="tray-item" href="#">
+              <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg></span>
+              <span class="tray-item__body"><span class="tray-item__title">Change the pickup time</span><span class="tray-item__text">Delivery, four minutes to read</span></span>
+              <span class="tray-item__end"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="tray-footer tray-container">
+  <div class="tray-footer__top">
+    <div class="tray-footer__brand">
+      <a class="tray-wordmark" href="landing.html">Counter</a>
+      <p>The order desk for small farms and food makers.</p>
+    </div>
+    <nav class="tray-footer__col" aria-label="Product">
+      <h3>Product</h3>
+      <a href="landing.html">Features</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="#">Changelog</a>
+      <a href="#">Status</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="Help">
+      <h3>Help</h3>
+      <a href="#">Getting started</a>
+      <a href="article.html">Guides</a>
+      <a href="#">Contact us</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="Company">
+      <h3>Company</h3>
+      <a href="#">About</a>
+      <a href="#">Field notes</a>
+      <a href="#">Work with us</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="Developers">
+      <h3>Developers</h3>
+      <a href="#">API reference</a>
+      <a href="#">Webhooks</a>
+    </nav>
+  </div>
+  <div class="tray-footer__bottom">
+    <p>&copy; 2026 Counter. The product, Perly Farm and every figure and quote on this page are invented for the template.</p>
+    <ul class="tray-footer__legal">
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms</a></li>
+      <li><a href="#">Cookies</a></li>
+    </ul>
+  </div>
+</footer>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

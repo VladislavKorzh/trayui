@@ -8,6 +8,7 @@ It is a white page, ink type in Onest, and goods set out in soft grey trays with
 
 - **108 components**, from a button to a data table: forms, navigation, overlays, data, conversation, and media (a lightbox, a video player). They also cover the frame of a product: app shell, billing, account, onboarding and public pages.
 - **64 blocks**: whole screens to copy, from a dashboard and settings to a shop, a checkout, articles, a blog and a wiki, plus fifteen sidebars and sign-in pages.
+- **10 templates**: whole pages of a product with realistic content, from a landing page and pricing to a dashboard, orders, an inbox, settings, billing and a first-run wizard.
 - **10 themes**, six light and four dark, each measured against the system's 32 contrast rules, which pair a colour with each ground it is read on: 66 pairs. A theme maker derives your own from four colours.
 - **Accessibility built in.** Keyboard support and accessible names follow [the accessibility guide](system/project/guides/3-accessibility.md), and the system answers more contrast, forced colours, print and reduced motion.
 - **Icons from [Lucide](https://lucide.dev)**: 118 built into the script, and in React any other from `react-icons/lu`.
@@ -29,7 +30,7 @@ Link the three files, in this order:
 </head>
 ```
 
-With a bundler, install them from npm (`npm install trayui`) and import `trayui/tokens.css`, `trayui/components/bundle.css` and `trayui/components/bundle.js`. You can also copy the [`system/dist`](system/dist) folder into your project and link the same files from there. The folder also holds the font, the blocks and the tokens for Tailwind and Figma. [The Installation page](https://trayui.com/docs/installation) has the same folder as a zip.
+With a bundler, install them from npm (`npm install trayui`) and import `trayui/tokens.css`, `trayui/components/bundle.css` and `trayui/components/bundle.js`. You can also copy the [`system/dist`](system/dist) folder into your project and link the same files from there. The folder also holds the font, the blocks, the templates and the tokens for Tailwind and Figma. [The Installation page](https://trayui.com/docs/installation) has the same folder as a zip.
 
 ## Write a first screen
 
@@ -48,7 +49,7 @@ With a bundler, install them from npm (`npm install trayui`) and import `trayui/
 
 That is a grey tray on the white page, a white field in it, and the one yellow button. Components that need a script take `data-tray`, as in `<div data-tray="tabs">`, and wire themselves. If you add markup after the page has loaded, call `TrayUI.init(root)` on it.
 
-The files in `system/dist/blocks/` open as they are: start a screen from the nearest one.
+The files in `system/dist/blocks/` and `system/dist/templates/` open as they are: start a screen from the nearest block, or a whole page from a template.
 
 ## Add with the CLI
 

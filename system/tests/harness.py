@@ -70,12 +70,17 @@ def components():
     return out
 
 
-BLOCKS = 'Blocks'  # the group the runner gives the blocks
+BLOCKS = 'Blocks'  # the group the runner gives the blocks, and the templates, which are tested as the blocks are
 
 
 def blocks():
-    """Every block: the names of project/blocks/*.html."""
-    return sorted(f.stem for f in (P / 'blocks').glob('*.html'))
+    """Every block and every template: the names of project/blocks/*.html and project/templates/*.html."""
+    return sorted(f.stem for kind in ('blocks', 'templates') for f in (P / kind).glob('*.html'))
+
+
+def page_file(name):
+    """Where a block or a template is: project/templates/<name>.html for a template, project/blocks/<name>.html for a block."""
+    return P / ('templates' if (P / 'templates' / f'{name}.html').exists() else 'blocks') / f'{name}.html'
 
 
 def marker(name):
@@ -286,9 +291,9 @@ class Server:
             return route.fulfill(status=200, content_type='text/html; charset=utf-8', body=REACT_PAGE.format(theme=theme, name=name, dir=rtl, out=REACT_OUT.relative_to(SYSTEM).as_posix()))
         if path.startswith('media/'):  # the React previews name their pictures and film as the site serves them
             path = 'project/assets/Media/' + path[6:]
-        block = re.fullmatch(r'dist/blocks/([a-z0-9-]+)\.html', path)
-        if block:  # a block, from its source in project/blocks, at the place it is published (it links ../tokens.css)
-            path = f'project/blocks/{block.group(1)}.html'
+        block = re.fullmatch(r'dist/(blocks|templates)/([a-z0-9-]+)\.html', path)
+        if block:  # a block or a template, from its source in project/, at the place it is published (it links ../tokens.css)
+            path = f'project/{block.group(1)}/{block.group(2)}.html'
         body = self.file(path)
         if body is None:
             return route.fulfill(status=404, content_type='text/plain', body='not found: ' + path)
@@ -394,7 +399,7 @@ class T:
         pg.on('pageerror', lambda e: errs.append(str(e).split('\n')[0][:200]))
         pg.on('console', lambda m: errs.append(m.text.split('\n')[0][:200]) if m.type == 'error' and 'Download the React DevTools' not in m.text else None)
         q = f'?theme={theme}' + ('&dir=rtl' if rtl else '')
-        url = (f'{ORIGIN}/react/{self.name}{q}' if react else f'{ORIGIN}/dist/blocks/{self.name}.html{q}' if self.block
+        url = (f'{ORIGIN}/react/{self.name}{q}' if react else f'{ORIGIN}/dist/{page_file(self.name).parent.name}/{self.name}.html{q}' if self.block
                else f'{ORIGIN}/project/components/{self.name}/preview.html{q}')
         pg.goto(url, wait_until='load')
         if react:

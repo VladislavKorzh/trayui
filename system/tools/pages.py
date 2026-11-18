@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Render the blocks as the pages they are, at three window widths in both themes, and report problems.
+"""Render the blocks and the templates as the pages they are, at three window widths in both themes, and report problems.
 
-    python3 tools/pages.py                      every block
-    python3 tools/pages.py sidebar-03 shop-01   only these (file names without .html)
+    python3 tools/pages.py                      every block and template
+    python3 tools/pages.py sidebar-03 inbox     only these (file names without .html)
     python3 tools/pages.py --sheet NAME ...     also write .preview/pages/sheets/NAME-*.png: every page, all its pictures side by side
     python3 tools/pages.py --open ID ...        click the first thing that opens something before the picture (a block shown open)
 
-It copies project/blocks/*.html into dist/ and serves dist/ on a local port, so a page loads
+It copies project/blocks/*.html and project/templates/*.html into dist/ and serves dist/ on a local port, so a page loads
 tokens.css, the bundle and the font exactly as it will in a project. Pictures go to .preview/pages/<id>.<width>.<theme>.png
 (whole page). Reports script errors, files that do not load, sideways scroll, text under 4.5:1, a missing title,
 description or category, ids used twice, and a page with no h1 or more than one.
@@ -18,7 +18,7 @@ from shoot import CONTRAST_JS
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 P, DIST, OUT = ROOT / 'project', ROOT / 'dist', ROOT / '.preview' / 'pages'
-KINDS = ('blocks',)
+KINDS = ('blocks', 'templates')
 SIZES = [(1280, 800), (768, 1024), (390, 844)]
 
 FACTS_JS = r"""

@@ -53,6 +53,7 @@ trayui/
   components/bundle.js       behaviours and the icons
   fonts/                     the typeface (Onest-Variable.ttf and .woff2), with its licence (OFL.txt)
   blocks/                    {{blocks}} screens to copy
+  templates/                 {{templates}} whole pages of a product to copy
   tailwind/                  the tokens as a Tailwind theme (version 4) and a preset (version 3)
   figma/                     the tokens as Figma variables, a mode for each theme
 ```
@@ -96,7 +97,7 @@ The script is one classic file. It assigns `window.TrayUI`, adds the icon sprite
 </main>
 ```
 
-That is a grey tray on the white page, a white field in it, and the one yellow button. From here, copy a [block](#blocks) (the files in `blocks/` open as they are) or look up a [component](#components).
+That is a grey tray on the white page, a white field in it, and the one yellow button. From here, copy a [block](#blocks) or a [template](#templates) (the files in `blocks/` and `templates/` open as they are) or look up a [component](#components).
 
 ## Sizes
 

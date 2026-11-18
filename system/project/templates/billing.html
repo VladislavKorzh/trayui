@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Billing</title>
+<meta name="description" content="The plan, this month's usage, the payment method and past invoices.">
+<meta name="tray-category" content="Account">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app">
+  <div class="tray-app__side">
+    <nav class="tray-sidebar" id="nav" aria-label="Main">
+      <div class="tray-sidebar__head" style="padding-inline: 0">
+        <div class="tray-anchor tray-anchor--block" data-tray="menu">
+          <button class="tray-switcher" type="button"><span class="tray-avatar tray-avatar--sm tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-person__text"><b>Perly Farm</b><small>Shop plan</small></span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chevrons-up-down"/></svg></button>
+          <div class="tray-pop">
+            <div class="tray-list">
+              <p class="tray-list__label">Workspaces</p>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="true"><span class="tray-avatar tray-avatar--xs tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-option__text">Perly Farm</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">MB</span><span class="tray-option__text">Meadow Bakery</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">HC</span><span class="tray-option__text">Hill Cheese</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <hr class="tray-list__rule">
+              <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New workspace</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tray-sidebar__group">
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg><span>Orders</span><span class="tray-badge tray-badge--count">12</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-users"/></svg><span>Customers</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span>Batches</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chart-column"/></svg><span>Reports</span></a>
+      </div>
+      <div class="tray-sidebar__group">
+        <p class="tray-sidebar__label">Workspace</p>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user-plus"/></svg><span>Team</span></a>
+        <a class="tray-sidebar__item" href="#" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg><span>Billing</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plug"/></svg><span>Integrations</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-settings"/></svg><span>Settings</span></a>
+      </div>
+      <div class="tray-sidebar__foot">
+        <div class="tray-usage tray-usage--sm" style="flex: 1">
+          <div class="tray-progress">
+            <span class="tray-progress__name">Orders</span>
+            <span class="tray-progress__value">842 of 1,000</span>
+            <span class="tray-progress__bar" role="meter" aria-label="Orders this month" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="842" style="--tray-v: 84"></span>
+          </div>
+          <a class="label" href="#plans">Upgrade the plan</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <header class="tray-topbar">
+      <div class="tray-topbar__start">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the navigation"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+        <nav aria-label="Breadcrumb"><ol class="tray-crumbs tray-crumbs--fold"><li><a href="#">Perly Farm</a></li><li><span aria-current="page">Billing</span></li></ol></nav>
+      </div>
+      <div class="tray-topbar__end">
+        <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders" aria-keyshortcuts="/"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
+        <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 2 unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip">2</span></span>
+        <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko, OF">OF</button>
+      </div>
+    </header>
+    <main class="tray-app__content">
+      <div class="tray-pagehead">
+        <div class="tray-pagehead__row">
+          <div class="tray-pagehead__text">
+            <h1 class="title">Billing</h1>
+            <p>What Perly Farm pays for Counter, what it uses, and how it pays.</p>
+          </div>
+        </div>
+      </div>
+      <div class="tray-bento">
+        <section class="tray-card tray-card--inverse tray-span-8" aria-labelledby="plan-title">
+          <div class="tray-card__head">
+            <div>
+              <p class="label tray-soft">Current plan</p>
+              <h2 class="title" id="plan-title">Shop</h2>
+            </div>
+            <span class="tray-badge">Active</span>
+          </div>
+          <div class="tray-stack tray-stack--sm">
+            <p class="tray-plan__price">$29<small>a month</small></p>
+            <p class="tray-soft">Renews on 1 December 2026.</p>
+          </div>
+          <div class="tray-card__foot">
+            <a class="tray-btn tray-btn--md" href="#plans">Change the plan</a>
+            <button class="tray-btn tray-btn--ghost tray-btn--md" type="button">Cancel the plan</button>
+          </div>
+        </section>
+        <section class="tray-card tray-span-4" aria-labelledby="usage-title" style="padding: min(var(--card-pad), var(--space-8))">
+          <div class="tray-card__head">
+            <div>
+              <h2 class="subtitle" id="usage-title">Usage</h2>
+              <p class="tray-soft">Resets on 1 December.</p>
+            </div>
+          </div>
+          <div class="tray-usage">
+            <div class="tray-progress">
+              <span class="tray-progress__name">Orders</span>
+              <span class="tray-progress__value">842 of 1,000</span>
+              <span class="tray-progress__bar" role="meter" aria-label="Orders this month" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="842" style="--tray-v: 84"></span>
+            </div>
+            <div class="tray-progress">
+              <span class="tray-progress__name">Team seats</span>
+              <span class="tray-progress__value">4 of 5</span>
+              <span class="tray-progress__bar" role="meter" aria-label="Team seats" aria-valuemin="0" aria-valuemax="5" aria-valuenow="4" style="--tray-v: 80"></span>
+            </div>
+            <div class="tray-progress">
+              <span class="tray-progress__name">Label prints</span>
+              <span class="tray-progress__value">1,264 of 3,000</span>
+              <span class="tray-progress__bar" role="meter" aria-label="Label prints this month" aria-valuemin="0" aria-valuemax="3000" aria-valuenow="1264" style="--tray-v: 42"></span>
+            </div>
+            <div class="tray-progress">
+              <span class="tray-progress__name">API requests</span>
+              <span class="tray-progress__value">Unlimited</span>
+            </div>
+          </div>
+        </section>
+        <section class="tray-card tray-upsell tray-span-8" aria-labelledby="upsell-title">
+          <span class="tray-upsell__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-zap"/></svg></span>
+          <div class="tray-upsell__text">
+            <h2 class="subtitle" id="upsell-title">The order limit comes around 19 November</h2>
+            <p>842 of this month's 1,000 orders are used. At this pace the rest go in three days, and later orders wait until the count resets on 1 December. Market has no limit.</p>
+          </div>
+          <div class="tray-upsell__actions">
+            <a class="tray-btn tray-btn--quiet tray-btn--md" href="#plans">Compare the plans</a>
+          </div>
+        </section>
+        <section class="tray-card tray-span-4" aria-labelledby="pay-title" style="padding: min(var(--card-pad), var(--space-8))">
+          <div class="tray-card__head">
+            <div>
+              <h2 class="subtitle" id="pay-title">Payment method</h2>
+            </div>
+          </div>
+          <fieldset>
+            <legend class="tray-vh">Card to charge</legend>
+            <div class="tray-choices">
+              <label class="tray-choice">
+                <input type="radio" name="card" checked>
+                <span class="tray-radio__ring"></span>
+                <span class="tray-choice__text"><b>Card ending 4242</b><span>Expires 08/27</span></span>
+              </label>
+              <label class="tray-choice">
+                <input type="radio" name="card">
+                <span class="tray-radio__ring"></span>
+                <span class="tray-choice__text"><b>Card ending 0005</b><span>Expires 01/28</span></span>
+              </label>
+            </div>
+          </fieldset>
+          <div class="tray-card__foot">
+            <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg>Add a card</button>
+          </div>
+        </section>
+        <section class="tray-card" aria-labelledby="invoices-title">
+          <div class="tray-card__head">
+            <div>
+              <h2 class="subtitle" id="invoices-title">Invoices</h2>
+              <p class="tray-soft">The last six. Each one also goes to oksana@perly.example.</p>
+            </div>
+          </div>
+          <div class="tray-table-wrap">
+            <table class="tray-table" aria-labelledby="invoices-title" style="min-inline-size: 32rem">
+              <thead>
+                <tr>
+                  <th scope="col">Invoice</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" data-num>Amount</th>
+                  <th scope="col"><span class="tray-vh">Download</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">CN-0042</th>
+                  <td>1 November 2026</td>
+                  <td><span class="tray-badge tray-badge--success"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-circle-check"/></svg>Paid</span></td>
+                  <td data-num>$29.00</td>
+                  <td data-num><a class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" href="#" aria-label="Download invoice CN-0042"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-download"/></svg></a></td>
+                </tr>
+                <tr>
+                  <th scope="row">CN-0041</th>
+                  <td>1 October 2026</td>
+                  <td><span class="tray-badge tray-badge--success"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-circle-check"/></svg>Paid</span></td>
+                  <td data-num>$29.00</td>
+                  <td data-num><a class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" href="#" aria-label="Download invoice CN-0041"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-download"/></svg></a></td>
+                </tr>
+                <tr>
+                  <th scope="row">CN-0040</th>
+                  <td>1 September 2026</td>
+                  <td><span class="tray-badge tray-badge--success"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-circle-check"/></svg>Paid</span></td>
+                  <td data-num>$29.00</td>
+                  <td data-num><a class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" href="#" aria-label="Download invoice CN-0040"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-download"/></svg></a></td>
+                </tr>
+                <tr>
+                  <th scope="row">CN-0039</th>
+                  <td>1 August 2026</td>
+                  <td><span class="tray-badge tray-badge--success"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-circle-check"/></svg>Paid</span></td>
+                  <td data-num>$29.00</td>
+                  <td data-num><a class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" href="#" aria-label="Download invoice CN-0039"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-download"/></svg></a></td>
+                </tr>
+                <tr>
+                  <th scope="row">CN-0038</th>
+                  <td>1 July 2026</td>
+                  <td><span class="tray-badge tray-badge--success"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-circle-check"/></svg>Paid</span></td>
+                  <td data-num>$29.00</td>
+                  <td data-num><a class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" href="#" aria-label="Download invoice CN-0038"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-download"/></svg></a></td>
+                </tr>
+                <tr>
+                  <th scope="row">CN-0037</th>
+                  <td>1 June 2026</td>
+                  <td><span class="tray-badge tray-badge--success"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-circle-check"/></svg>Paid</span></td>
+                  <td data-num>$29.00</td>
+                  <td data-num><a class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" href="#" aria-label="Download invoice CN-0037"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-download"/></svg></a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="tray-card__foot">
+            <a class="tray-btn tray-btn--quiet tray-btn--sm" href="#">See all invoices</a>
+          </div>
+        </section>
+      </div>
+      <section class="tray-stack tray-stack--lg" id="plans" aria-labelledby="plans-title">
+        <div class="tray-stack tray-stack--sm">
+          <h2 class="subtitle" id="plans-title">Compare the plans</h2>
+          <p class="tray-soft">A change starts the day you make it, and that month is charged in part.</p>
+        </div>
+        <div class="tray-table-wrap">
+          <table class="tray-compare" aria-labelledby="plans-title" style="min-inline-size: 38rem">
+            <thead>
+              <tr>
+                <th scope="col"><span class="tray-vh">Feature</span></th>
+                <th scope="col">Stall<small>$0</small></th>
+                <th scope="col" data-featured>Shop<small>$29 a month</small></th>
+                <th scope="col">Market<small>$79 a month</small></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="tray-compare__group">
+                <th scope="rowgroup">Orders</th>
+                <td></td>
+                <td data-featured></td>
+                <td></td>
+              </tr>
+              <tr>
+                <th scope="row">Orders a month</th>
+                <td class="tray-num">50</td>
+                <td class="tray-num" data-featured>1,000</td>
+                <td>Unlimited</td>
+              </tr>
+              <tr>
+                <th scope="row">Label prints a month</th>
+                <td class="tray-num">150</td>
+                <td class="tray-num" data-featured>3,000</td>
+                <td>Unlimited</td>
+              </tr>
+              <tr>
+                <th scope="row">Courier tracking</th>
+                <td data-off><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg><span class="tray-vh">Not included</span></td>
+                <td data-featured><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg><span class="tray-vh">Included</span></td>
+                <td><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg><span class="tray-vh">Included</span></td>
+              </tr>
+              <tr class="tray-compare__group">
+                <th scope="rowgroup">Team</th>
+                <td></td>
+                <td data-featured></td>
+                <td></td>
+              </tr>
+              <tr>
+                <th scope="row">People</th>
+                <td>One</td>
+                <td data-featured>Five</td>
+                <td>Twenty</td>
+              </tr>
+              <tr>
+                <th scope="row">Several workspaces</th>
+                <td data-off><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg><span class="tray-vh">Not included</span></td>
+                <td data-off data-featured><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg><span class="tray-vh">Not included</span></td>
+                <td><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg><span class="tray-vh">Included</span></td>
+              </tr>
+              <tr class="tray-compare__group">
+                <th scope="rowgroup">Data</th>
+                <td></td>
+                <td data-featured></td>
+                <td></td>
+              </tr>
+              <tr>
+                <th scope="row">Exports</th>
+                <td data-off><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-minus"/></svg><span class="tray-vh">Not included</span></td>
+                <td data-featured>Spreadsheet</td>
+                <td>Spreadsheet and webhooks</td>
+              </tr>
+              <tr>
+                <th scope="row">History kept</th>
+                <td>90 days</td>
+                <td data-featured>Two years</td>
+                <td>For good</td>
+              </tr>
+              <tr>
+                <th scope="row"><span class="tray-vh">Change the plan</span></th>
+                <td><a class="tray-btn tray-btn--ghost tray-btn--xs" href="#">Move to Stall</a></td>
+                <td data-featured><span class="tray-badge tray-badge--ink">Your plan</span></td>
+                <td><a class="tray-btn tray-btn--quiet tray-btn--xs" href="#">Move to Market</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

@@ -533,7 +533,7 @@
           '<div class="site-play__box"><div class="site-play__stage site-sk-area"></div><div class="tray-card site-play__controls"><div class="tray-stack">' +
           sk[2].split('').map(control).join('') + '<span class="tray-btn tray-btn--ghost tray-btn--sm site-sk-pill">' + filler(10) + '</span></div></div></div>' + codeBox(sk[4] || 1) + '</section>' : '') + prose(sk[3]);
     }
-    if (k === 'b') return h + '<section class="site-viewer site-sk" inert>' + ((sk[2] ? P.look : P.viewer) || '') + '<div class="tray-tabpanel"><div class="site-frame site-sk-frame"></div></div></section>' + prose(sk[1]);
+    if (k === 'b') return h + '<section class="site-viewer site-sk" inert>' + (P.viewer || '') + '<div class="tray-tabpanel"><div class="site-frame site-sk-frame"></div></div></section>' + prose(sk[1]);
     if (k === 'g') {
       return h + prose(sk[1], 'section') + sk[2].slice(0, 4).map(function (g) {
         return '<section class="site-prose site-sk" inert>' + ink(g[0], 'h2', 'subtitle') + '<div class="site-gallery">' + times(g[1], function () {

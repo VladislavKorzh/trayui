@@ -21,7 +21,7 @@ STEPS = [
     ('build the React package', ['npm', 'run', '--silent', 'build'], ROOT / 'react', False),
     ('drive the previews', [PY, 'tools/smoke.py'], ROOT, True),
     ('render the playgrounds', [PY, 'tools/play_check.py'], ROOT, True),
-    ('render the blocks', [PY, 'tools/pages.py'], ROOT, True),
+    ('render the blocks and templates', [PY, 'tools/pages.py'], ROOT, True),
     ('render the previews', [PY, 'tools/shoot.py'], ROOT, True),
     ('check the dialog feet', [PY, 'tools/feet.py'], ROOT, True),
     ('test the components', [PY, 'tools/test_components.py'], ROOT, True),

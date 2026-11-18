@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Set up a workspace</title>
+<meta name="description" content="A first-run wizard: four steps, one question at a time, with a way back and a way out.">
+<meta name="tray-category" content="Account">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-screen tray-screen--tray">
+  <header class="tray-screen__bar">
+    <a class="tray-wordmark" href="/">Counter</a>
+    <a class="tray-btn tray-btn--link" href="/">Save and finish later</a>
+  </header>
+  <main class="tray-screen__body tray-screen__body--narrow">
+    <h1 class="tray-vh">Set up a workspace</h1>
+    <ol class="tray-stepper tray-stepper--fold" aria-label="Setup">
+      <li data-done>
+        <span class="tray-step"><span class="tray-step__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span><span class="tray-step__text">Your farm<span class="tray-vh">, done</span></span></span>
+      </li>
+      <li aria-current="step">
+        <span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">What you sell<span class="tray-vh" hidden>, done</span></span></span>
+      </li>
+      <li>
+        <span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Delivery<span class="tray-vh" hidden>, done</span></span></span>
+      </li>
+      <li>
+        <span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Invite the team<span class="tray-vh" hidden>, done</span></span></span>
+      </li>
+    </ol>
+    <form class="tray-panel" id="setup" action="/setup" method="post">
+      <section class="tray-form" data-step aria-labelledby="farm-title" hidden>
+        <div class="tray-stack tray-stack--sm">
+          <h2 class="title" id="farm-title" tabindex="-1">What is the farm called?</h2>
+          <p class="tray-soft">The name and address go on every label and invoice.</p>
+        </div>
+        <div class="tray-stack">
+          <div class="tray-field">
+            <label class="tray-label" for="farm-name">Name of the farm</label>
+            <input class="tray-input" id="farm-name" name="name" value="Perly Farm" autocomplete="organization">
+          </div>
+          <div class="tray-field">
+            <label class="tray-label" for="farm-address">Address</label>
+            <input class="tray-input" id="farm-address" name="address" value="Farm road 4, Kyiv region" autocomplete="street-address" aria-describedby="farm-address-hint">
+            <p class="tray-field__hint" id="farm-address-hint">The courier collects the boxes here.</p>
+          </div>
+          <div class="tray-field">
+            <label class="tray-label" for="farm-zone">Time zone</label>
+            <span class="tray-select"><select id="farm-zone" name="zone"><option>London, UTC+0</option><option>Warsaw, UTC+1</option><option selected>Kyiv, UTC+2</option></select></span>
+          </div>
+        </div>
+        <div class="tray-form__foot">
+          <div class="tray-row" style="justify-content: flex-end">
+            <button class="tray-btn tray-btn--md" type="submit">Continue</button>
+          </div>
+        </div>
+      </section>
+      <section class="tray-form" data-step aria-labelledby="products-title">
+        <div class="tray-stack tray-stack--sm">
+          <h2 class="title" id="products-title" tabindex="-1">What do you sell?</h2>
+          <p class="tray-soft">Name the first product and price each size. The rest go in later, under Products.</p>
+        </div>
+        <div class="tray-stack">
+          <div class="tray-field">
+            <label class="tray-label" for="product-name">Product</label>
+            <input class="tray-input" id="product-name" name="product" value="Snail caviar">
+          </div>
+          <div role="group" aria-labelledby="sizes-label">
+            <p class="tray-label" id="sizes-label">Sizes and prices</p>
+            <ul class="tray-items">
+              <li class="tray-item">
+                <span class="tray-item__body"><span class="tray-item__title">Jar, 30 g</span></span>
+                <span class="tray-item__end"><span class="tray-input-group tray-input-group--sm"><span class="tray-input-group__addon">$</span><input class="tray-input" name="price-30" value="38.00" size="6" inputmode="decimal" aria-label="Price of the 30 g jar, in dollars"></span></span>
+              </li>
+              <li class="tray-item">
+                <span class="tray-item__body"><span class="tray-item__title">Jar, 50 g</span></span>
+                <span class="tray-item__end"><span class="tray-input-group tray-input-group--sm"><span class="tray-input-group__addon">$</span><input class="tray-input" name="price-50" value="59.00" size="6" inputmode="decimal" aria-label="Price of the 50 g jar, in dollars"></span></span>
+              </li>
+              <li class="tray-item">
+                <span class="tray-item__body"><span class="tray-item__title">Jar, 100 g</span></span>
+                <span class="tray-item__end"><span class="tray-input-group tray-input-group--sm"><span class="tray-input-group__addon">$</span><input class="tray-input" name="price-100" value="109.00" size="6" inputmode="decimal" aria-label="Price of the 100 g jar, in dollars"></span></span>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg>Add a size</button>
+          </div>
+        </div>
+        <div class="tray-form__foot">
+          <div class="tray-row tray-row--between">
+            <button class="tray-btn tray-btn--quiet tray-btn--md" type="button" data-back>Back</button>
+            <button class="tray-btn tray-btn--md" type="submit">Continue</button>
+          </div>
+        </div>
+      </section>
+      <section class="tray-form" data-step aria-labelledby="delivery-title" hidden>
+        <div class="tray-stack tray-stack--sm">
+          <h2 class="title" id="delivery-title" tabindex="-1">How do orders leave the farm?</h2>
+          <p class="tray-soft">Pick the way most orders go. Others can be added under Delivery.</p>
+        </div>
+        <div class="tray-stack">
+          <div role="radiogroup" aria-labelledby="delivery-label">
+            <p class="tray-label" id="delivery-label">Delivery</p>
+            <div class="tray-choices">
+              <label class="tray-choice">
+                <input type="radio" name="delivery" value="city" checked>
+                <span class="tray-radio__ring"></span>
+                <span class="tray-choice__text"><b>City courier</b><span>Chilled box, the same day in the city</span></span>
+                <span class="tray-choice__end">$9</span>
+              </label>
+              <label class="tray-choice">
+                <input type="radio" name="delivery" value="country">
+                <span class="tray-radio__ring"></span>
+                <span class="tray-choice__text"><b>Country courier</b><span>Chilled box, the next day anywhere in the country</span></span>
+                <span class="tray-choice__end">$14</span>
+              </label>
+              <label class="tray-choice">
+                <input type="radio" name="delivery" value="pickup">
+                <span class="tray-radio__ring"></span>
+                <span class="tray-choice__text"><b>Pickup</b><span>Customers collect from the farm shop</span></span>
+                <span class="tray-choice__end">Free</span>
+              </label>
+            </div>
+          </div>
+          <div class="tray-field">
+            <label class="tray-label" for="delivery-time">Pick-up time</label>
+            <span class="tray-select"><select id="delivery-time" name="pickup" aria-describedby="delivery-time-hint"><option>10:00</option><option>12:00</option><option selected>14:00</option><option>16:00</option></select></span>
+            <p class="tray-field__hint" id="delivery-time-hint">The courier comes at this time. Orders paid later go the next day.</p>
+          </div>
+        </div>
+        <div class="tray-form__foot">
+          <div class="tray-row tray-row--between">
+            <button class="tray-btn tray-btn--quiet tray-btn--md" type="button" data-back>Back</button>
+            <button class="tray-btn tray-btn--md" type="submit">Continue</button>
+          </div>
+        </div>
+      </section>
+      <section class="tray-form" data-step aria-labelledby="team-title" hidden>
+        <div class="tray-stack tray-stack--sm">
+          <h2 class="title" id="team-title" tabindex="-1">Who works with you?</h2>
+          <p class="tray-soft">They get an email with a link that works for 7 days. You can leave this empty and invite them later.</p>
+        </div>
+        <div class="tray-stack">
+          <div class="tray-field">
+            <label class="tray-label" for="team-emails">Emails <span class="tray-label__opt">(optional)</span></label>
+            <div class="tray-tags" data-tray="taginput" data-pattern="email" data-max="4">
+              <span class="tray-chip" data-value="dana@perly.example">dana@perly.example<button class="tray-chip__x" type="button" aria-label="Remove dana@perly.example"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-x"/></svg></button></span>
+              <input id="team-emails" type="email" placeholder="Add another" aria-describedby="team-emails-hint">
+              <input type="hidden" name="emails">
+            </div>
+            <p class="tray-field__hint" id="team-emails-hint">Press Enter or a comma after each one. Four seats are free.</p>
+          </div>
+          <div class="tray-field">
+            <label class="tray-label" for="team-role">Role</label>
+            <span class="tray-select"><select id="team-role" name="role" aria-describedby="team-role-hint"><option>Manager</option><option selected>Packer</option><option>Viewer</option></select></span>
+            <p class="tray-field__hint" id="team-role-hint">A packer sees today's orders and marks them packed.</p>
+          </div>
+        </div>
+        <div class="tray-form__foot">
+          <div class="tray-row tray-row--between">
+            <button class="tray-btn tray-btn--quiet tray-btn--md" type="button" data-back>Back</button>
+            <button class="tray-btn tray-btn--md" type="submit">Finish the setup</button>
+          </div>
+        </div>
+      </section>
+    </form>
+  </main>
+  <footer class="tray-screen__foot">Stuck on a step? Write to <a href="mailto:help@counter.example">help@counter.example</a>.</footer>
+</div>
+<script src="../components/bundle.js"></script>
+<script>
+/* The wizard: "Continue" (and Enter) shows the next step, "Back" the one before; the stepper follows and focus moves to the step's heading. */
+(function () {
+  var form = document.getElementById('setup');
+  var steps = [].slice.call(form.querySelectorAll('[data-step]'));
+  var marks = [].slice.call(document.querySelectorAll('.tray-stepper > li'));
+  var now = 0;
+  steps.forEach(function (step, i) { if (!step.hidden) now = i; });
+  function show(n) {
+    now = n;
+    steps.forEach(function (step, i) { step.hidden = i !== n; });
+    marks.forEach(function (li, i) {
+      if (i < n) li.setAttribute('data-done', ''); else li.removeAttribute('data-done');
+      if (i === n) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+      li.querySelector('.tray-step__mark').innerHTML = i < n ? TrayUI.icon('check', 'tray-icon--sm') : '';
+      li.querySelector('.tray-vh').hidden = i >= n;
+    });
+    steps[n].querySelector('h2').focus();
+  }
+  form.addEventListener('submit', function (e) {
+    if (now < steps.length - 1) { e.preventDefault(); show(now + 1); }
+  });
+  form.addEventListener('click', function (e) {
+    if (e.target.closest('[data-back]') && now > 0) show(now - 1);
+  });
+})();
+</script>
+</body>
+</html>

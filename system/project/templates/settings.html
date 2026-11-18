@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings</title>
+<meta name="description" content="Workspace settings in sections: profile, team, notifications, API keys and the danger zone.">
+<meta name="tray-category" content="Account">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app">
+  <div class="tray-app__side">
+    <nav class="tray-sidebar" id="nav" aria-label="Main">
+      <div class="tray-sidebar__head" style="padding-inline: 0">
+        <div class="tray-anchor tray-anchor--block" data-tray="menu">
+          <button class="tray-switcher" type="button"><span class="tray-avatar tray-avatar--sm tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-person__text"><b>Perly Farm</b><small>Shop plan</small></span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chevrons-up-down"/></svg></button>
+          <div class="tray-pop">
+            <div class="tray-list">
+              <p class="tray-list__label">Workspaces</p>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="true"><span class="tray-avatar tray-avatar--xs tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-option__text">Perly Farm</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">MB</span><span class="tray-option__text">Meadow Bakery</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">HC</span><span class="tray-option__text">Hill Cheese</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <hr class="tray-list__rule">
+              <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New workspace</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tray-sidebar__group">
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg><span>Orders</span><span class="tray-badge tray-badge--count">12</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-users"/></svg><span>Customers</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span>Batches</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chart-column"/></svg><span>Reports</span></a>
+      </div>
+      <div class="tray-sidebar__group">
+        <p class="tray-sidebar__label">Workspace</p>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user-plus"/></svg><span>Team</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg><span>Billing</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plug"/></svg><span>Integrations</span></a>
+        <a class="tray-sidebar__item" href="#" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-settings"/></svg><span>Settings</span></a>
+      </div>
+      <div class="tray-sidebar__foot">
+        <div class="tray-usage tray-usage--sm" style="flex: 1">
+          <div class="tray-progress">
+            <span class="tray-progress__name">Orders</span>
+            <span class="tray-progress__value">842 of 1,000</span>
+            <span class="tray-progress__bar" role="meter" aria-label="Orders this month" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="842" style="--tray-v: 84"></span>
+          </div>
+          <a class="label" href="#">Upgrade the plan</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <header class="tray-topbar">
+      <div class="tray-topbar__start">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the navigation"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+        <nav aria-label="Breadcrumb"><ol class="tray-crumbs tray-crumbs--fold"><li><a href="#">Perly Farm</a></li><li><span aria-current="page">Settings</span></li></ol></nav>
+      </div>
+      <div class="tray-topbar__end">
+        <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders" aria-keyshortcuts="/"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
+        <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 2 unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip">2</span></span>
+        <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko, OF">OF</button>
+      </div>
+    </header>
+    <main class="tray-app__content" data-tray="tabs">
+      <div class="tray-pagehead">
+        <div class="tray-pagehead__row">
+          <div class="tray-pagehead__text">
+            <h1 class="title">Settings</h1>
+            <p>The details, people, notifications and keys of Perly Farm.</p>
+          </div>
+        </div>
+        <div class="tray-tabs" role="tablist" aria-label="Settings" data-tray="strip">
+          <button class="tray-tab" type="button" role="tab" id="tab-workspace" aria-controls="panel-workspace" aria-selected="true">Workspace</button>
+          <button class="tray-tab" type="button" role="tab" id="tab-team" aria-controls="panel-team">Team</button>
+          <button class="tray-tab" type="button" role="tab" id="tab-notifications" aria-controls="panel-notifications">Notifications</button>
+          <button class="tray-tab" type="button" role="tab" id="tab-keys" aria-controls="panel-keys">API keys</button>
+        </div>
+      </div>
+      <div class="tray-tabpanel" role="tabpanel" id="panel-workspace" aria-labelledby="tab-workspace">
+        <section class="tray-settings" aria-labelledby="set-details">
+          <div class="tray-settings__intro">
+            <h2 class="subtitle" id="set-details">Name and address</h2>
+            <p>Printed on every label and invoice, and shown to customers in the shop.</p>
+          </div>
+          <form class="tray-settings__body" action="/settings/workspace" method="post">
+            <div class="tray-card">
+              <div class="tray-fields">
+                <div class="tray-field">
+                  <label class="tray-label" for="ws-name">Name</label>
+                  <input class="tray-input" id="ws-name" name="name" value="Perly Farm" autocomplete="organization">
+                </div>
+                <div class="tray-field">
+                  <label class="tray-label" for="ws-shop">Address of the shop</label>
+                  <div class="tray-input-group">
+                    <input class="tray-input" id="ws-shop" name="shop" value="perly" autocomplete="off">
+                    <span class="tray-input-group__addon">.counter.example</span>
+                  </div>
+                </div>
+                <div class="tray-field tray-field--full">
+                  <label class="tray-label" for="ws-address">Return address</label>
+                  <input class="tray-input" id="ws-address" name="address" value="Farm road 4, Kyiv region" autocomplete="street-address">
+                </div>
+                <div class="tray-field">
+                  <label class="tray-label" for="ws-zone">Time zone</label>
+                  <span class="tray-select"><select id="ws-zone" name="zone" aria-describedby="ws-zone-hint"><option>London, UTC+0</option><option>Warsaw, UTC+1</option><option selected>Kyiv, UTC+2</option></select></span>
+                  <p class="tray-field__hint" id="ws-zone-hint">The courier's 14:00 pick-up is counted in this time.</p>
+                </div>
+              </div>
+            </div>
+            <div class="tray-settings__foot">
+              <span class="tray-settings__note">Unsaved changes</span>
+              <button class="tray-btn tray-btn--ghost tray-btn--sm" type="reset">Discard</button>
+              <button class="tray-btn tray-btn--sm" type="submit">Save the changes</button>
+            </div>
+          </form>
+        </section>
+        <section class="tray-settings" aria-labelledby="set-printer">
+          <div class="tray-settings__intro">
+            <h2 class="subtitle" id="set-printer">Label printer</h2>
+            <p>Where the shipping labels come out, and on what paper.</p>
+          </div>
+          <form class="tray-settings__body" action="/settings/printer" method="post">
+            <div class="tray-card">
+              <div class="tray-fields">
+                <div class="tray-field">
+                  <label class="tray-label" for="printer-name">Printer</label>
+                  <span class="tray-select"><select id="printer-name" name="printer"><option selected>Packing table</option><option>Office</option></select></span>
+                </div>
+                <div class="tray-field">
+                  <label class="tray-label" for="printer-size">Label size</label>
+                  <span class="tray-select"><select id="printer-size" name="size"><option>62 by 100 mm</option><option selected>100 by 150 mm</option></select></span>
+                </div>
+                <div class="tray-field tray-field--full">
+                  <label class="tray-check">
+                    <input type="checkbox" name="auto" checked>
+                    <span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span>
+                    <span class="tray-check__text">Print a label when an order is paid<small>It is on the packing table before the jars are.</small></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="tray-settings__foot">
+              <button class="tray-btn tray-btn--ghost tray-btn--sm" type="button">Print a test label</button>
+              <button class="tray-btn tray-btn--quiet tray-btn--sm" type="submit">Save the changes</button>
+            </div>
+          </form>
+        </section>
+        <section class="tray-settings" aria-labelledby="set-delete">
+          <div class="tray-settings__intro">
+            <h2 class="subtitle" id="set-delete">Delete the workspace</h2>
+            <p>Orders, customers and invoices are removed for everyone, for good.</p>
+          </div>
+          <div class="tray-settings__body">
+            <div class="tray-card">
+              <div class="tray-setting">
+                <div class="tray-setting__text"><b>Export everything first</b><small>A spreadsheet of orders and customers, sent to oksana@perly.example.</small></div>
+                <div class="tray-setting__control">
+                  <button class="tray-btn tray-btn--quiet tray-btn--xs" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-download"/></svg>Export the data</button>
+                </div>
+              </div>
+              <div class="tray-setting">
+                <div class="tray-setting__text"><b>Delete Perly Farm</b><small>You are asked once more before anything is removed.</small></div>
+                <div class="tray-setting__control">
+                  <button class="tray-btn tray-btn--danger tray-btn--xs" type="button" data-tray="open" data-target="#delete-workspace">Delete the workspace</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="tray-tabpanel tray-stack" role="tabpanel" id="panel-team" aria-labelledby="tab-team" style="gap: var(--space-10)" hidden>
+        <section class="tray-stack" aria-labelledby="team-people">
+          <div class="tray-stack tray-stack--sm">
+            <h2 class="subtitle" id="team-people">People</h2>
+            <p class="tray-soft">Four people and one invitation. The Shop plan has five seats.</p>
+          </div>
+          <div class="tray-table-wrap">
+            <table class="tray-table" aria-labelledby="team-people" style="min-inline-size: 44rem">
+              <thead>
+                <tr>
+                  <th scope="col">Person</th>
+                  <th scope="col" style="inline-size: 10rem">Role</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Last seen</th>
+                  <th scope="col"><span class="tray-vh">Remove</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row"><span class="tray-person"><span class="tray-avatar tray-avatar--sm tray-avatar--ink" aria-hidden="true">OF</span><span class="tray-person__text"><b>Oksana Franko (you)</b><small>oksana@perly.example</small></span></span></th>
+                  <td><span class="tray-soft">Owner</span></td>
+                  <td><span class="tray-badge">Active</span></td>
+                  <td class="tray-soft">Now</td>
+                  <td data-num></td>
+                </tr>
+                <tr>
+                  <th scope="row"><span class="tray-person"><span class="tray-avatar tray-avatar--sm" aria-hidden="true">DK</span><span class="tray-person__text"><b>Dana Kovalenko</b><small>dana@perly.example</small></span></span></th>
+                  <td><span class="tray-select tray-select--sm"><select aria-label="Role of Dana Kovalenko"><option>Owner</option><option selected>Manager</option><option>Packer</option><option>Viewer</option></select></span></td>
+                  <td><span class="tray-badge">Active</span></td>
+                  <td class="tray-soft">Today, 08:30</td>
+                  <td data-num><button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Remove Dana Kovalenko"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-trash-2"/></svg></button></td>
+                </tr>
+                <tr>
+                  <th scope="row"><span class="tray-person"><span class="tray-avatar tray-avatar--sm" aria-hidden="true">MH</span><span class="tray-person__text"><b>Marta Hrytsenko</b><small>marta@perly.example</small></span></span></th>
+                  <td><span class="tray-select tray-select--sm"><select aria-label="Role of Marta Hrytsenko"><option>Owner</option><option>Manager</option><option selected>Packer</option><option>Viewer</option></select></span></td>
+                  <td><span class="tray-badge">Active</span></td>
+                  <td class="tray-soft">Today, 07:55</td>
+                  <td data-num><button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Remove Marta Hrytsenko"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-trash-2"/></svg></button></td>
+                </tr>
+                <tr>
+                  <th scope="row"><span class="tray-person"><span class="tray-avatar tray-avatar--sm" aria-hidden="true">IP</span><span class="tray-person__text"><b>Ivan Petrenko</b><small>ivan@perly.example</small></span></span></th>
+                  <td><span class="tray-select tray-select--sm"><select aria-label="Role of Ivan Petrenko"><option>Owner</option><option>Manager</option><option>Packer</option><option selected>Viewer</option></select></span></td>
+                  <td><span class="tray-badge">Active</span></td>
+                  <td class="tray-soft">12 November</td>
+                  <td data-num><button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Remove Ivan Petrenko"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-trash-2"/></svg></button></td>
+                </tr>
+                <tr>
+                  <th scope="row"><span class="tray-person"><span class="tray-avatar tray-avatar--sm" aria-hidden="true">OB</span><span class="tray-person__text"><b>Olena Bondar</b><small>olena@perly.example</small></span></span></th>
+                  <td><span class="tray-select tray-select--sm"><select aria-label="Role of Olena Bondar"><option>Owner</option><option>Manager</option><option selected>Packer</option><option>Viewer</option></select></span></td>
+                  <td><span class="tray-badge tray-badge--off">Invited</span></td>
+                  <td><button class="tray-btn tray-btn--link" type="button">Send again</button></td>
+                  <td data-num><button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Withdraw the invitation of Olena Bondar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-trash-2"/></svg></button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <form class="tray-card tray-stack" action="/settings/invitations" method="post" aria-labelledby="team-invite">
+          <div class="tray-stack tray-stack--sm">
+            <h2 class="subtitle" id="team-invite">Invite people</h2>
+            <p class="tray-soft">They get an email with a link that works for 7 days.</p>
+          </div>
+          <div class="tray-invite">
+            <div class="tray-field">
+              <label class="tray-label" for="invite-emails">Emails</label>
+              <div class="tray-tags" data-tray="taginput" data-pattern="email" data-max="5">
+                <input id="invite-emails" type="email" placeholder="name@farm.example" aria-describedby="invite-hint">
+                <input type="hidden" name="emails">
+              </div>
+            </div>
+            <div class="tray-field">
+              <label class="tray-label" for="invite-role">Role</label>
+              <span class="tray-select"><select id="invite-role" name="role"><option>Manager</option><option selected>Packer</option><option>Viewer</option></select></span>
+            </div>
+            <button class="tray-btn tray-btn--md" type="submit" style="align-self: end">Send the invitations</button>
+          </div>
+          <p class="caption tray-muted" id="invite-hint">Separate emails with a comma or Enter. A packer sees today's orders and marks them packed. One seat is free until Olena Bondar accepts; more people need <a href="#">extra seats</a>.</p>
+        </form>
+      </div>
+      <div class="tray-tabpanel" role="tabpanel" id="panel-notifications" aria-labelledby="tab-notifications" hidden>
+        <section class="tray-settings" aria-labelledby="set-notify">
+          <div class="tray-settings__intro">
+            <h2 class="subtitle" id="set-notify">Tell me when</h2>
+            <p>These are yours alone, and each one saves as you change it.</p>
+          </div>
+          <div class="tray-settings__body">
+            <div class="tray-table-wrap">
+              <table class="tray-matrix" aria-labelledby="set-notify">
+                <thead>
+                  <tr>
+                    <th scope="col"><span class="tray-vh">Event</span></th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Push</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="tray-matrix__group">
+                    <th scope="colgroup" colspan="3">Orders</th>
+                  </tr>
+                  <tr>
+                    <th scope="row"><b>A new order arrives</b><small>Once per order.</small></th>
+                    <td><label class="tray-check"><input type="checkbox" aria-label="A new order arrives, by email"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                    <td><label class="tray-check"><input type="checkbox" aria-label="A new order arrives, by push" checked><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><b>The courier cannot deliver</b><small>So you can call the customer.</small></th>
+                    <td><label class="tray-check"><input type="checkbox" aria-label="The courier cannot deliver, by email" checked><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                    <td><label class="tray-check"><input type="checkbox" aria-label="The courier cannot deliver, by push" checked><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><b>A batch is nearly sold out</b><small>When fewer than 50 jars are left.</small></th>
+                    <td><label class="tray-check"><input type="checkbox" aria-label="A batch is nearly sold out, by email" checked><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                    <td><label class="tray-check"><input type="checkbox" aria-label="A batch is nearly sold out, by push"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  </tr>
+                  <tr class="tray-matrix__group">
+                    <th scope="colgroup" colspan="3">Account</th>
+                  </tr>
+                  <tr>
+                    <th scope="row"><b>A payment fails</b><small>Always on by email: the plan depends on it.</small></th>
+                    <td><label class="tray-check"><input type="checkbox" aria-label="A payment fails, by email" checked disabled><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                    <td><label class="tray-check"><input type="checkbox" aria-label="A payment fails, by push" checked><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><b>Someone joins the workspace</b><small>When an invitation is accepted.</small></th>
+                    <td><label class="tray-check"><input type="checkbox" aria-label="Someone joins the workspace, by email" checked><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                    <td><label class="tray-check"><input type="checkbox" aria-label="Someone joins the workspace, by push"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><b>News from Counter</b><small>New features, a few times a year.</small></th>
+                    <td><label class="tray-check"><input type="checkbox" aria-label="News from Counter, by email"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                    <td><label class="tray-check"><input type="checkbox" aria-label="News from Counter, by push"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="tray-tabpanel tray-stack" role="tabpanel" id="panel-keys" aria-labelledby="tab-keys" hidden>
+        <div class="tray-row tray-row--between">
+          <div class="tray-stack tray-stack--sm">
+            <h2 class="subtitle" id="keys-title">API keys</h2>
+            <p class="tray-soft">A key gives a program the same access as its role.</p>
+          </div>
+          <button class="tray-btn tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg>Create a key</button>
+        </div>
+        <div class="tray-table-wrap">
+          <table class="tray-table" aria-labelledby="keys-title" style="min-inline-size: 40rem">
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Key</th>
+                <th scope="col">Access</th>
+                <th scope="col">Last used</th>
+                <th scope="col"><span class="tray-vh">Revoke</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Storefront</th>
+                <td><span class="tray-secret"><code>ck_live_&bull;&bull;&bull;&bull;4f2a</code></span></td>
+                <td>Read and write</td>
+                <td class="tray-soft">2 minutes ago</td>
+                <td data-num><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button">Revoke<span class="tray-vh"> the Storefront key</span></button></td>
+              </tr>
+              <tr>
+                <th scope="row">Old label printer</th>
+                <td><span class="tray-secret"><code>ck_live_&bull;&bull;&bull;&bull;07bd</code></span></td>
+                <td>Read only</td>
+                <td class="tray-soft">3 August</td>
+                <td data-num><span class="tray-badge tray-badge--off">Revoked on 2 November</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<dialog class="tray-dialog tray-dialog--sm" id="delete-workspace" role="alertdialog" data-tray="dialog" aria-labelledby="delete-title" aria-describedby="delete-text">
+  <div class="tray-dialog__head">
+    <div>
+      <h2 class="subtitle" id="delete-title">Delete Perly Farm?</h2>
+      <p class="tray-dialog__text" id="delete-text">Its orders, customers and invoices are removed for all four people, for good.</p>
+    </div>
+  </div>
+  <div class="tray-dialog__foot">
+    <button class="tray-btn tray-btn--quiet tray-btn--md" type="button" data-close>Keep it</button>
+    <button class="tray-btn tray-btn--danger tray-btn--md" type="button" data-close value="delete">Delete the workspace</button>
+  </div>
+</dialog>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

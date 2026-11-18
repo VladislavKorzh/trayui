@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landing page</title>
+<meta name="description" content="The home page of a product: what it is, how it works, proof, prices and one call to action.">
+<meta name="tray-category" content="Public pages">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<header class="tray-nav tray-container">
+  <a class="tray-wordmark" href="landing.html">Counter</a>
+  <nav class="tray-nav__strip" aria-label="Main">
+    <ul class="tray-nav__links tray-tabs" data-tray="strip">
+      <li><a class="tray-tab" href="landing.html" aria-current="page">Product</a></li>
+      <li><a class="tray-tab" href="pricing.html">Pricing</a></li>
+      <li><a class="tray-tab" href="article.html">Help</a></li>
+      <li><a class="tray-tab" href="#">Changelog</a></li>
+    </ul>
+  </nav>
+  <div class="tray-nav__actions" style="gap: var(--space-4)">
+    <a class="tray-btn tray-btn--link" href="#">Sign in</a>
+    <a class="tray-btn tray-btn--sm" href="#">Start free</a>
+  </div>
+</header>
+
+<main>
+  <div class="tray-container">
+    <section class="tray-hero" aria-labelledby="hero-title">
+      <div class="tray-card tray-hero__text">
+        <div class="tray-hero__copy">
+          <h1 class="display" id="hero-title">Every order leaves today</h1>
+          <p>Counter is the order desk for small farms: orders in, labels out, the courier told.</p>
+        </div>
+        <div class="tray-stack tray-stack--sm">
+          <div class="tray-hero__actions">
+            <a class="tray-btn" href="#">Start free</a>
+            <a class="tray-btn tray-btn--quiet" href="#how">See how it works</a>
+          </div>
+          <p class="tray-hero__note">Free for 14 days. No card needed.</p>
+        </div>
+      </div>
+      <div class="tray-card tray-card--accent tray-hero__media">
+        <div class="tray-row tray-row--between">
+          <p class="control">Today at Perly Farm</p>
+          <span class="tray-badge tray-badge--ink">14:00 courier</span>
+        </div>
+        <div class="tray-stack tray-stack--sm">
+          <p class="tray-figure">38<small>orders</small></p>
+          <p>26 packed, 12 to go. All of them leave today.</p>
+        </div>
+        <div class="tray-stack">
+          <div class="tray-steps" role="img" aria-label="26 of 38 orders packed">
+            <span data-done></span>
+            <span data-done></span>
+            <span data-done></span>
+            <span data-done></span>
+            <span data-done></span>
+            <span data-done></span>
+            <span data-done></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <ul class="tray-items">
+            <li class="tray-item tray-item--sm">
+              <span class="tray-item__body"><span class="tray-item__title">PL-20431</span><span class="tray-item__text">Dana Kovalenko, two jars</span></span>
+              <span class="tray-item__end">To pack</span>
+            </li>
+            <li class="tray-item tray-item--sm">
+              <span class="tray-item__body"><span class="tray-item__title">PL-20432</span><span class="tray-item__text">Olena Bondar, one jar</span></span>
+              <span class="tray-item__end">To pack</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="tray-section" id="features" aria-labelledby="features-title">
+    <div class="tray-container">
+      <div class="tray-section__head">
+        <h2 class="headline" id="features-title">One desk from the order to the courier</h2>
+        <p class="lead tray-soft">Counter gathers the orders, prints the labels and books the pickup. You pack.</p>
+      </div>
+      <div class="tray-bento">
+        <article class="tray-card tray-feature tray-span-7">
+          <span class="tray-feature__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg></span>
+          <h3 class="subtitle">One list for every order</h3>
+          <p>From the shop, the phone and the market stall, in the order they must leave.</p>
+          <div class="tray-feature__end">
+            <ul class="tray-items">
+              <li class="tray-item tray-item--sm">
+                <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-globe"/></svg></span>
+                <span class="tray-item__body"><span class="tray-item__title">Web shop</span></span>
+                <span class="tray-item__end">21 orders</span>
+              </li>
+              <li class="tray-item tray-item--sm">
+                <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-phone"/></svg></span>
+                <span class="tray-item__body"><span class="tray-item__title">Phone</span></span>
+                <span class="tray-item__end">9 orders</span>
+              </li>
+              <li class="tray-item tray-item--sm">
+                <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-tag"/></svg></span>
+                <span class="tray-item__body"><span class="tray-item__title">Market stall</span></span>
+                <span class="tray-item__end">8 orders</span>
+              </li>
+            </ul>
+          </div>
+        </article>
+        <article class="tray-card tray-card--inverse tray-feature tray-span-5">
+          <span class="tray-feature__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg></span>
+          <h3 class="subtitle">The courier knows before you call</h3>
+          <p>A packed order books its own pickup for the next courier day.</p>
+          <div class="tray-feature__end tray-stack tray-stack--sm">
+            <p class="title">14:00</p>
+            <p class="caption tray-muted">Next pickup at Perly Farm, booked for 26 boxes</p>
+          </div>
+        </article>
+        <article class="tray-card tray-feature tray-span-5">
+          <span class="tray-feature__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-receipt-text"/></svg></span>
+          <h3 class="subtitle">Labels that print themselves</h3>
+          <p>One label per box, with the courier's code on it. A whole morning of orders prints in one run.</p>
+        </article>
+        <article class="tray-card tray-feature tray-span-7">
+          <span class="tray-feature__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg></span>
+          <h3 class="subtitle">Stock by batch</h3>
+          <p>Know how many jars of the autumn batch are left before you promise one.</p>
+          <div class="tray-feature__end">
+            <div class="tray-progress">
+              <span class="tray-progress__name">Autumn batch</span>
+              <span class="tray-progress__value">132 of 412 jars left</span>
+              <span class="tray-progress__bar" role="meter" aria-label="Autumn batch reserved" aria-valuemin="0" aria-valuemax="100" aria-valuenow="68" style="--tray-v: 68"></span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="tray-section" id="how" aria-labelledby="how-title">
+    <div class="tray-container">
+      <div class="tray-section__head">
+        <h2 class="headline" id="how-title">How it works</h2>
+        <p class="lead tray-soft">Three steps, and you do the first one only once.</p>
+      </div>
+      <div class="tray-bento">
+        <article class="tray-feature tray-span-4">
+          <hr class="tray-rule">
+          <span class="tray-feature__icon control">1</span>
+          <h3 class="subtitle">Bring your orders in</h3>
+          <p>Connect the shop, forward the order emails, or type in what the stall sold. Counter keeps one list.</p>
+        </article>
+        <article class="tray-feature tray-span-4">
+          <hr class="tray-rule">
+          <span class="tray-feature__icon control">2</span>
+          <h3 class="subtitle">Pack from the list</h3>
+          <p>Orders stand in the order they must leave. Print the labels, fill the boxes, tick each one off.</p>
+        </article>
+        <article class="tray-feature tray-span-4">
+          <hr class="tray-rule">
+          <span class="tray-feature__icon control">3</span>
+          <h3 class="subtitle">Hand over to the courier</h3>
+          <p>The pickup is already booked. Your customer gets a message when the courier sets off.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="tray-section" aria-label="What a farm says">
+    <div class="tray-container">
+      <div class="tray-bento">
+        <figure class="tray-card tray-card--leaf tray-testimonial tray-span-7">
+          <blockquote>&ldquo;We stopped losing orders the week we started. Friday is quiet now.&rdquo;</blockquote>
+          <figcaption class="tray-person">
+            <span class="tray-avatar" aria-hidden="true">OF</span>
+            <span class="tray-person__text"><b>Oksana Franko</b><small>Owner of Perly Farm</small></span>
+          </figcaption>
+        </figure>
+        <div class="tray-card tray-stack tray-span-5">
+          <p class="tray-figure">842<small>orders</small></p>
+          <p class="tray-soft">Packed at Perly Farm in October by three people. None missed the courier.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tray-section" id="pricing" aria-labelledby="pricing-title">
+    <div class="tray-container">
+      <div class="tray-section__head">
+        <h2 class="headline" id="pricing-title">Free for a stall, $29&nbsp;a&nbsp;month for a shop</h2>
+        <p class="lead tray-soft">Every plan has the order list and printable labels. Move up when the orders do.</p>
+      </div>
+      <div class="tray-bento">
+        <article class="tray-card tray-plan tray-span-4">
+          <div class="tray-plan__head">
+            <h3 class="tray-plan__name">Stall</h3>
+            <p class="tray-plan__price"><span>$0</span><small>forever</small></p>
+            <p class="tray-plan__text">For a first season at the market. 50 orders a month, one person.</p>
+          </div>
+        </article>
+        <article class="tray-card tray-card--inverse tray-plan tray-span-4">
+          <div class="tray-plan__head">
+            <h3 class="tray-plan__name">Shop <span class="tray-badge tray-badge--ink">Most chosen</span></h3>
+            <p class="tray-plan__price"><span>$29</span><small>a month</small></p>
+            <p class="tray-plan__text">For a farm that ships every day. 1,000 orders a month, five people.</p>
+          </div>
+        </article>
+        <article class="tray-card tray-plan tray-span-4">
+          <div class="tray-plan__head">
+            <h3 class="tray-plan__name">Market</h3>
+            <p class="tray-plan__price"><span>$79</span><small>a month</small></p>
+            <p class="tray-plan__text">For several farms under one roof. Unlimited orders, twenty people.</p>
+          </div>
+        </article>
+      </div>
+      <div class="tray-row" style="margin-block-start: var(--space-6)">
+        <a class="tray-btn tray-btn--quiet" href="pricing.html">Compare the plans</a>
+        <p class="caption tray-muted">Shop and Market are free for the first 14 days. Paying by the year saves 17%.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tray-section" id="questions" aria-labelledby="questions-title">
+    <div class="tray-container">
+      <div class="tray-bento">
+        <div class="tray-section__head tray-span-5">
+          <h2 class="headline" id="questions-title">Questions farms ask first</h2>
+          <p class="lead tray-soft">The rest are answered in the <a href="article.html">help centre</a>.</p>
+        </div>
+        <div class="tray-accordion tray-span-7">
+          <details name="questions" open>
+            <summary>Do I need a web shop to use Counter?<span class="tray-tile" aria-hidden="true"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg></span></summary>
+            <p class="tray-accordion__body">No. Orders can come from a web shop, from forwarded emails, or be typed in at the market stall. Several farms run Counter with a phone and nothing else.</p>
+          </details>
+          <details name="questions">
+            <summary>How long does setting up take?<span class="tray-tile" aria-hidden="true"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg></span></summary>
+            <p class="tray-accordion__body">About a morning. Add your products, connect where the orders come from, and print a test label. We answer questions on weekdays from 8:00 to 18:00.</p>
+          </details>
+          <details name="questions">
+            <summary>What do I need to print labels?<span class="tray-tile" aria-hidden="true"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg></span></summary>
+            <p class="tray-accordion__body">Any printer. Labels come at 100 by 150 mm for a label printer, or four to a sheet of A4 for the printer you already have.</p>
+          </details>
+          <details name="questions">
+            <summary>Can the people who pack use a phone?<span class="tray-tile" aria-hidden="true"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg></span></summary>
+            <p class="tray-accordion__body">Yes. The packing screen shows today's orders on a phone, with one tap to mark each one done. Everyone signs in under their own name, so you see who packed what.</p>
+          </details>
+          <details name="questions">
+            <summary>Is there a contract?<span class="tray-tile" aria-hidden="true"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg></span></summary>
+            <p class="tray-accordion__body">No. Pay by the month or by the year and cancel at any time. After you cancel, the workspace stays open to read for 30 days.</p>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="tray-section">
+    <div class="tray-container">
+      <section class="tray-card tray-card--accent tray-cta" aria-labelledby="cta-title">
+        <div class="tray-cta__text">
+          <h2 class="headline" id="cta-title">Pack tomorrow's orders with Counter</h2>
+          <p>Free for 14 days. Your products and customers stay yours.</p>
+        </div>
+        <div class="tray-cta__actions">
+          <a class="tray-btn tray-btn--dark" href="#">Start free</a>
+          <a class="tray-btn tray-btn--quiet" href="#">Talk to us</a>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<footer class="tray-footer tray-container">
+  <div class="tray-footer__top">
+    <div class="tray-footer__brand">
+      <a class="tray-wordmark" href="landing.html">Counter</a>
+      <p>The order desk for small farms and food makers.</p>
+    </div>
+    <nav class="tray-footer__col" aria-label="Product">
+      <h3>Product</h3>
+      <a href="landing.html">Features</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="#">Changelog</a>
+      <a href="#">Status</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="Help">
+      <h3>Help</h3>
+      <a href="#">Getting started</a>
+      <a href="article.html">Guides</a>
+      <a href="#">Contact us</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="Company">
+      <h3>Company</h3>
+      <a href="#">About</a>
+      <a href="#">Field notes</a>
+      <a href="#">Work with us</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="Developers">
+      <h3>Developers</h3>
+      <a href="#">API reference</a>
+      <a href="#">Webhooks</a>
+    </nav>
+  </div>
+  <div class="tray-footer__bottom">
+    <p>&copy; 2026 Counter. The product, Perly Farm and every figure and quote on this page are invented for the template.</p>
+    <ul class="tray-footer__legal">
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms</a></li>
+      <li><a href="#">Cookies</a></li>
+    </ul>
+  </div>
+</footer>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

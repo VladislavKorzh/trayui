@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inbox</title>
+<meta name="description" content="A conversation screen: a list of conversations, the open thread with a reply box, and the customer at the side.">
+<meta name="tray-category" content="Product">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app tray-app--both tray-app--fill">
+  <div class="tray-app__side tray-app__side--double">
+    <nav class="tray-sidebar tray-sidebar--flyout" id="nav" aria-label="Main" data-collapsed>
+      <div class="tray-sidebar__head" style="padding-inline: 0">
+        <div class="tray-anchor tray-anchor--block" data-tray="menu">
+          <button class="tray-switcher" type="button"><span class="tray-avatar tray-avatar--sm tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-person__text"><b>Perly Farm</b><small>Shop plan</small></span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chevrons-up-down"/></svg></button>
+          <div class="tray-pop">
+            <div class="tray-list">
+              <p class="tray-list__label">Workspaces</p>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="true"><span class="tray-avatar tray-avatar--xs tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-option__text">Perly Farm</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">MB</span><span class="tray-option__text">Meadow Bakery</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">HC</span><span class="tray-option__text">Hill Cheese</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <hr class="tray-list__rule">
+              <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New workspace</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tray-sidebar__group">
+        <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Home"><a class="tray-sidebar__item" href="#" aria-label="Home"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a></span>
+        <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Orders"><a class="tray-sidebar__item" href="#" aria-label="Orders, 12 to pack"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg><span>Orders</span><span class="tray-badge tray-badge--count">12</span></a></span>
+        <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Inbox"><a class="tray-sidebar__item" href="#" aria-label="Inbox" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-mail"/></svg><span>Inbox</span></a></span>
+        <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Customers"><a class="tray-sidebar__item" href="#" aria-label="Customers"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-users"/></svg><span>Customers</span></a></span>
+        <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Batches"><a class="tray-sidebar__item" href="#" aria-label="Batches"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span>Batches</span></a></span>
+        <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Reports"><a class="tray-sidebar__item" href="#" aria-label="Reports"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chart-column"/></svg><span>Reports</span></a></span>
+      </div>
+      <div class="tray-sidebar__group">
+        <p class="tray-sidebar__label">Workspace</p>
+        <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Team"><a class="tray-sidebar__item" href="#" aria-label="Team"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user-plus"/></svg><span>Team</span></a></span>
+        <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Billing"><a class="tray-sidebar__item" href="#" aria-label="Billing"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg><span>Billing</span></a></span>
+        <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Integrations"><a class="tray-sidebar__item" href="#" aria-label="Integrations"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plug"/></svg><span>Integrations</span></a></span>
+        <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Settings"><a class="tray-sidebar__item" href="#" aria-label="Settings"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-settings"/></svg><span>Settings</span></a></span>
+      </div>
+      <div class="tray-sidebar__foot">
+        <div class="tray-usage tray-usage--sm" style="flex: 1">
+          <div class="tray-progress">
+            <span class="tray-progress__name">Orders</span>
+            <span class="tray-progress__value">842 of 1,000</span>
+            <span class="tray-progress__bar" role="meter" aria-label="Orders this month" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="842" style="--tray-v: 84"></span>
+          </div>
+          <a class="label" href="#">Upgrade the plan</a>
+        </div>
+      </div>
+    </nav>
+    <nav class="tray-sidebar tray-sidebar--wide" id="conversations" aria-label="Conversations" data-tray="notices">
+      <div class="tray-sidebar__head">
+        <p class="subtitle">Inbox</p>
+        <label class="tray-switch">
+          <span>Unread</span>
+          <input type="checkbox" role="switch" name="notices-view" value="unread">
+          <span class="tray-switch__track"></span>
+        </label>
+      </div>
+      <div class="tray-input-group tray-input-group--sm">
+        <span class="tray-input-group__addon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg></span>
+        <input class="tray-input" type="search" placeholder="Search conversations" aria-label="Search conversations">
+      </div>
+      <div class="tray-sidebar__scroll">
+        <ul class="tray-list">
+          <li>
+            <a class="tray-notice" href="#" data-unread>
+              <span class="tray-notice__body">
+                <span class="tray-row tray-row--sm tray-row--between"><b>Ivan Petrenko</b><time class="tray-notice__meta" datetime="2026-11-16T11:20">11:20</time></span>
+                <span class="tray-clip">The courier is at the wrong gate</span>
+                <span class="tray-notice__meta tray-clip">He is waiting on the street side. Can you call him?</span>
+              </span>
+              <span class="tray-notice__mark"><span class="tray-vh">Unread</span></span>
+            </a>
+          </li>
+          <li>
+            <a class="tray-notice" href="#" aria-current="true">
+              <span class="tray-notice__body">
+                <span class="tray-row tray-row--sm tray-row--between"><b>Dana Kovalenko</b><time class="tray-notice__meta" datetime="2026-11-16T10:42">10:42</time></span>
+                <span class="tray-clip">A ribbon for the 100 g jar</span>
+                <span class="tray-notice__meta tray-clip">The entrance is from the yard, not from the street, and the bell for flat 12 sticks.</span>
+              </span>
+              <span class="tray-notice__mark"></span>
+            </a>
+          </li>
+          <li>
+            <a class="tray-notice" href="#" data-unread>
+              <span class="tray-notice__body">
+                <span class="tray-row tray-row--sm tray-row--between"><b>Marta Hrytsenko</b><time class="tray-notice__meta" datetime="2026-11-16T09:50">09:50</time></span>
+                <span class="tray-clip">Collecting from the farm shop</span>
+                <span class="tray-notice__meta tray-clip">I pass by on Thursday and could take both jars myself.</span>
+              </span>
+              <span class="tray-notice__mark"><span class="tray-vh">Unread</span></span>
+            </a>
+          </li>
+          <li>
+            <a class="tray-notice" href="#">
+              <span class="tray-notice__body">
+                <span class="tray-row tray-row--sm tray-row--between"><b>Olena Bondar</b><time class="tray-notice__meta" datetime="2026-11-15">Yesterday</time></span>
+                <span class="tray-clip">The box arrived warm</span>
+                <span class="tray-notice__meta tray-clip">The ice packs had melted by five. Is the caviar still good?</span>
+              </span>
+              <span class="tray-notice__mark"></span>
+            </a>
+          </li>
+          <li>
+            <a class="tray-notice" href="#">
+              <span class="tray-notice__body">
+                <span class="tray-row tray-row--sm tray-row--between"><b>Andrii Lysenko</b><time class="tray-notice__meta" datetime="2026-11-15">Yesterday</time></span>
+                <span class="tray-clip">Twenty jars for December</span>
+                <span class="tray-notice__meta tray-clip">Is there a price for twenty 30 g jars in gift boxes?</span>
+              </span>
+              <span class="tray-notice__mark"></span>
+            </a>
+          </li>
+          <li>
+            <a class="tray-notice" href="#">
+              <span class="tray-notice__body">
+                <span class="tray-row tray-row--sm tray-row--between"><b>Sofia Koval</b><time class="tray-notice__meta" datetime="2026-11-14">14 Nov</time></span>
+                <span class="tray-clip">A stall at the Saturday market</span>
+                <span class="tray-notice__meta tray-clip">The market gave us one table. Shall we share it?</span>
+              </span>
+              <span class="tray-notice__mark"></span>
+            </a>
+          </li>
+          <li>
+            <a class="tray-notice" href="#">
+              <span class="tray-notice__body">
+                <span class="tray-row tray-row--sm tray-row--between"><b>Anna Melnyk</b><time class="tray-notice__meta" datetime="2026-11-13">13 Nov</time></span>
+                <span class="tray-clip">A receipt with the company name</span>
+                <span class="tray-notice__meta tray-clip">Could the receipt for November name our company?</span>
+              </span>
+              <span class="tray-notice__mark"></span>
+            </a>
+          </li>
+          <li>
+            <a class="tray-notice" href="#">
+              <span class="tray-notice__body">
+                <span class="tray-row tray-row--sm tray-row--between"><b>Yulia Tkachenko</b><time class="tray-notice__meta" datetime="2026-11-12">12 Nov</time></span>
+                <span class="tray-clip">Is the autumn batch still open?</span>
+                <span class="tray-notice__meta tray-clip">I would like two jars before the season ends.</span>
+              </span>
+              <span class="tray-notice__mark"></span>
+            </a>
+          </li>
+        </ul>
+        <p class="tray-list__empty" data-notices="empty" hidden>Nothing unread.</p>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <header class="tray-topbar">
+      <div class="tray-topbar__start">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="conversations" aria-label="Open the conversations"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+        <nav aria-label="Breadcrumb"><ol class="tray-crumbs tray-crumbs--fold"><li><a href="#">Perly Farm</a></li><li><span aria-current="page">Inbox</span></li></ol></nav>
+      </div>
+      <div class="tray-topbar__end">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-topbar__wide" type="button" aria-label="Search orders" aria-keyshortcuts="/"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg></button>
+        <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 2 unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip">2</span></span>
+        <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko, OF">OF</button>
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the navigation"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-layout-grid"/></svg></button>
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu tray-app__menu--late" type="button" data-tray="sidebar-sheet" aria-controls="customer" aria-label="Open the details of Dana Kovalenko"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user"/></svg></button>
+      </div>
+    </header>
+    <main class="tray-app__content">
+      <div class="tray-pagehead">
+        <div class="tray-pagehead__row">
+          <div class="tray-pagehead__text">
+            <h1 class="subtitle">A ribbon for the 100 g jar</h1>
+            <p>Dana Kovalenko, about order <a href="#">PL-20431</a></p>
+          </div>
+          <div class="tray-pagehead__actions">
+            <span class="tray-anchor" data-tray="menu">
+              <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user-plus"/></svg>Assign</button>
+              <div class="tray-pop">
+                <div class="tray-list">
+                  <p class="tray-list__label">Assigned to</p>
+                  <button class="tray-option" type="button" role="menuitemradio" data-group="assignee" aria-checked="true"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">OF</span><span class="tray-option__text">Oksana Franko</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                  <button class="tray-option" type="button" role="menuitemradio" data-group="assignee" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">BS</span><span class="tray-option__text">Bohdan Savchuk</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                  <button class="tray-option" type="button" role="menuitemradio" data-group="assignee" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">AM</span><span class="tray-option__text">Andriy Melnyk</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                  <hr class="tray-list__rule">
+                  <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-circle-check"/></svg><span class="tray-option__text">Close the conversation</span></button>
+                </div>
+              </div>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="tray-scroller" data-tray="scroller">
+        <div class="tray-scroller__viewport" aria-label="Conversation with Dana Kovalenko">
+          <div class="tray-thread" id="thread">
+            <div class="tray-marker tray-marker--separator">Today</div>
+            <div class="tray-message">
+              <div class="tray-message__content">
+                <div class="tray-message__head"><b>Dana</b> 10:18</div>
+                <div class="tray-bubble">Good morning. I placed order PL-20431 an hour ago. Could you tie a ribbon on the 100 g jar? It is a gift for my mother.</div>
+              </div>
+            </div>
+            <div class="tray-message tray-message--end">
+              <div class="tray-message__content">
+                <div class="tray-message__head"><b>Oksana</b> 10:24</div>
+                <div class="tray-bubble tray-bubble--own">Good morning, Dana. Yes: a ribbon and a small card, at no charge.</div>
+              </div>
+            </div>
+            <div class="tray-message">
+              <div class="tray-message__content">
+                <div class="tray-message__head"><b>Dana</b> 10:26</div>
+                <div class="tray-bubble">Thank you. I have also moved the delivery to after four.</div>
+              </div>
+            </div>
+            <div class="tray-marker">
+              <span class="tray-marker__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-clock"/></svg></span>
+              <span class="tray-marker__text">Dana moved the delivery slot to 16:00 to 18:00</span>
+            </div>
+            <div class="tray-message tray-message--end">
+              <div class="tray-message__content">
+                <div class="tray-message__head"><b>Oksana</b> 10:31</div>
+                <div class="tray-bubble tray-bubble--own">That works. The courier reaches you between 16:00 and 18:00 and calls ten minutes before arriving.</div>
+              </div>
+            </div>
+            <div class="tray-message">
+              <div class="tray-message__content">
+                <div class="tray-message__head"><b>Dana</b> 10:42</div>
+                <div class="tray-bubble">Good. The entrance is from the yard, not from the street, and the bell for flat 12 sticks. This is the door.</div>
+                <div class="tray-attachment">
+                  <span class="tray-attachment__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-image"/></svg></span>
+                  <span class="tray-attachment__body">
+                    <a class="tray-attachment__link tray-attachment__name" href="#">door-from-the-yard.jpg</a>
+                    <span class="tray-attachment__meta">JPEG, 1.2 MB</span>
+                  </span>
+                  <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Download door-from-the-yard.jpg"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-download"/></svg></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="tray-btn tray-btn--quiet tray-btn--xs tray-scroller__jump" type="button"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-arrow-down"/></svg>Latest<span class="tray-badge tray-badge--count tray-badge--ink" data-count hidden></span></button>
+      </div>
+      <form class="tray-composer" id="reply" style="flex-wrap: wrap">
+        <textarea rows="1" style="flex-basis: 100%" placeholder="Write a reply to Dana" aria-label="Reply to Dana Kovalenko"></textarea>
+        <button class="tray-btn tray-btn--ghost tray-btn--sm tray-btn--icon" type="button" aria-label="Attach a file"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-paperclip"/></svg></button>
+        <button class="tray-btn tray-btn--sm" type="submit" style="margin-inline-start: auto">Send the reply</button>
+      </form>
+    </main>
+  </div>
+  <div class="tray-app__side tray-app__side--late">
+    <aside class="tray-sidebar" id="customer" aria-label="Customer">
+      <div class="tray-sidebar__head">
+        <div class="tray-person">
+          <span class="tray-avatar" aria-hidden="true">DK</span>
+          <span class="tray-person__text"><b>Dana Kovalenko</b><small>Regular, Kyiv</small></span>
+        </div>
+      </div>
+      <dl class="tray-dl tray-dl--plain tray-dl--stack tray-sidebar__body">
+        <div><dt>Email</dt><dd>dana@kovalenko.example</dd></div>
+        <div><dt>Phone</dt><dd class="tray-num">+380 44 555 01 42</dd></div>
+        <div><dt>Customer since</dt><dd>March 2025, 14 orders</dd></div>
+        <div><dt>Usual order</dt><dd>Two jars of 50 g, every second week</dd></div>
+      </dl>
+      <div class="tray-sidebar__group">
+        <h2 class="tray-sidebar__label">Last orders</h2>
+        <ul class="tray-items">
+          <li><a class="tray-item tray-item--sm" href="#"><span class="tray-item__body"><span class="tray-item__title">PL-20431</span><span class="tray-item__text">Today, to pack</span></span><span class="tray-item__end tray-num">$274.00</span></a></li>
+          <li><a class="tray-item tray-item--sm" href="#"><span class="tray-item__body"><span class="tray-item__title">PL-20396</span><span class="tray-item__text">2 Nov, delivered</span></span><span class="tray-item__end tray-num">$127.00</span></a></li>
+          <li><a class="tray-item tray-item--sm" href="#"><span class="tray-item__body"><span class="tray-item__title">PL-20377</span><span class="tray-item__text">19 Oct, delivered</span></span><span class="tray-item__end tray-num">$127.00</span></a></li>
+        </ul>
+      </div>
+      <div class="tray-sidebar__foot">
+        <a class="tray-btn tray-btn--link" href="#">Open the customer's page</a>
+      </div>
+    </aside>
+  </div>
+</div>
+<script src="../components/bundle.js"></script>
+<script>
+/* The thread is laid out again when the font arrives: put it back at the newest message. */
+if (document.fonts) document.fonts.ready.then(function () {
+  var view = document.querySelector('.tray-scroller__viewport');
+  view.scrollTop = view.scrollHeight;
+});
+/* The reply joins the thread as your own message; the scroller keeps it in view. */
+document.getElementById('reply').addEventListener('submit', function (event) {
+  event.preventDefault();
+  var area = this.querySelector('textarea'), text = area.value.trim();
+  if (!text) { area.focus(); return; }
+  var row = document.createElement('div');
+  row.className = 'tray-message tray-message--end';
+  row.innerHTML = '<div class="tray-message__content"><div class="tray-message__head"><b>Oksana</b> now</div><div class="tray-bubble tray-bubble--own"></div></div>';
+  row.querySelector('.tray-bubble').textContent = text;
+  document.getElementById('thread').appendChild(row);
+  area.value = '';
+});
+</script>
+</body>
+</html>

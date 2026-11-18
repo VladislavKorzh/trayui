@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order</title>
+<meta name="description" content="One record in full: its progress, what is in it, the customer, and everything that happened.">
+<meta name="tray-category" content="Product">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app">
+  <div class="tray-app__side">
+    <nav class="tray-sidebar" id="nav" aria-label="Main">
+      <div class="tray-sidebar__head" style="padding-inline: 0">
+        <div class="tray-anchor tray-anchor--block" data-tray="menu">
+          <button class="tray-switcher" type="button"><span class="tray-avatar tray-avatar--sm tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-person__text"><b>Perly Farm</b><small>Shop plan</small></span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chevrons-up-down"/></svg></button>
+          <div class="tray-pop">
+            <div class="tray-list">
+              <p class="tray-list__label">Workspaces</p>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="true"><span class="tray-avatar tray-avatar--xs tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-option__text">Perly Farm</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">MB</span><span class="tray-option__text">Meadow Bakery</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">HC</span><span class="tray-option__text">Hill Cheese</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <hr class="tray-list__rule">
+              <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New workspace</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tray-sidebar__group">
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a>
+        <a class="tray-sidebar__item" href="#" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg><span>Orders</span><span class="tray-badge tray-badge--count">12</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-users"/></svg><span>Customers</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span>Batches</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chart-column"/></svg><span>Reports</span></a>
+      </div>
+      <div class="tray-sidebar__group">
+        <p class="tray-sidebar__label">Workspace</p>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user-plus"/></svg><span>Team</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg><span>Billing</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plug"/></svg><span>Integrations</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-settings"/></svg><span>Settings</span></a>
+      </div>
+      <div class="tray-sidebar__foot">
+        <div class="tray-usage tray-usage--sm" style="flex: 1">
+          <div class="tray-progress">
+            <span class="tray-progress__name">Orders</span>
+            <span class="tray-progress__value">842 of 1,000</span>
+            <span class="tray-progress__bar" role="meter" aria-label="Orders this month" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="842" style="--tray-v: 84"></span>
+          </div>
+          <a class="label" href="#">Upgrade the plan</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <header class="tray-topbar">
+      <div class="tray-topbar__start" style="flex: none">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the navigation"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+        <nav aria-label="Breadcrumb"><ol class="tray-crumbs tray-crumbs--fold"><li><a href="#">Perly Farm</a></li><li><a href="#">Orders</a></li><li><span aria-current="page">PL-20431</span></li></ol></nav>
+      </div>
+      <div class="tray-topbar__end">
+        <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders" aria-keyshortcuts="/"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
+        <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 2 unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip">2</span></span>
+        <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko, OF">OF</button>
+      </div>
+    </header>
+    <main class="tray-app__content">
+      <div class="tray-pagehead">
+        <a class="tray-back" href="#"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-arrow-left"/></svg>Orders</a>
+        <div class="tray-pagehead__row">
+          <div class="tray-pagehead__text">
+            <div class="tray-pagehead__title">
+              <h1 class="title">Order PL-20431</h1>
+              <span class="tray-badge">To pack</span>
+            </div>
+            <p>Four jars to pack before the courier comes at 14:00.</p>
+          </div>
+          <div class="tray-pagehead__actions">
+            <span class="tray-anchor" data-tray="menu">
+              <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="More actions"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+              <div class="tray-pop">
+                <div class="tray-list">
+                  <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-pencil"/></svg><span class="tray-option__text">Edit the order</span></button>
+                  <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-message-square"/></svg><span class="tray-option__text">Write to the customer</span></button>
+                  <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-receipt-text"/></svg><span class="tray-option__text">Send the receipt again</span></button>
+                  <hr class="tray-list__rule">
+                  <button class="tray-option tray-option--danger" type="button" role="menuitem" data-tray="open" data-target="#cancel-order"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-circle-x"/></svg><span class="tray-option__text">Cancel the order</span></button>
+                </div>
+              </div>
+            </span>
+            <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-tag"/></svg>Print the label</button>
+            <button class="tray-btn tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg>Pack the order</button>
+          </div>
+        </div>
+        <p class="tray-pagehead__meta">
+          <span><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-clock"/></svg>Placed today at <time datetime="2026-11-16T09:12">09:12</time></span>
+          <span><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-user"/></svg>By Dana Kovalenko, on the shop page</span>
+        </p>
+      </div>
+      <ol class="tray-stepper" aria-label="Progress of the order">
+        <li data-done>
+          <span class="tray-step">
+            <span class="tray-step__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span>
+            <span class="tray-step__text">Paid<span class="tray-vh">, done</span></span>
+          </span>
+        </li>
+        <li aria-current="step" style="min-inline-size: max-content">
+          <span class="tray-step">
+            <span class="tray-step__mark"></span>
+            <span class="tray-step__text">Packed</span>
+          </span>
+        </li>
+        <li>
+          <span class="tray-step">
+            <span class="tray-step__mark"></span>
+            <span class="tray-step__text">With the courier</span>
+          </span>
+        </li>
+        <li>
+          <span class="tray-step">
+            <span class="tray-step__mark"></span>
+            <span class="tray-step__text">Delivered</span>
+          </span>
+        </li>
+      </ol>
+      <div class="tray-with-aside tray-with-aside--late">
+        <div class="tray-stack" style="gap: var(--space-10)">
+          <section class="tray-stack">
+            <div class="tray-table-wrap">
+              <table class="tray-table">
+                <caption>Items</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Jar</th>
+                    <th scope="col" data-num>Quantity</th>
+                    <th scope="col" data-num>Price</th>
+                    <th scope="col" data-num>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Snail caviar, 30 g</th>
+                    <td data-num>1</td>
+                    <td data-num>$38.00</td>
+                    <td data-num>$38.00</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Snail caviar, 50 g</th>
+                    <td data-num>2</td>
+                    <td data-num>$59.00</td>
+                    <td data-num>$118.00</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Snail caviar, 100 g</th>
+                    <td data-num>1</td>
+                    <td data-num>$109.00</td>
+                    <td data-num>$109.00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="tray-summary" style="justify-self: end; inline-size: min(100%, 22rem)">
+              <ul class="tray-summary__lines">
+                <li class="tray-summary__line"><span>Four jars</span><span>$265.00</span></li>
+                <li class="tray-summary__line"><span>Courier, chilled box</span><span>$9.00</span></li>
+              </ul>
+              <p class="tray-summary__total"><span>Total</span><span>$274.00</span></p>
+            </div>
+          </section>
+          <section class="tray-stack" aria-labelledby="history-title">
+            <h2 class="subtitle" id="history-title">History</h2>
+            <ol class="tray-feed">
+              <li class="tray-feed__day">Today</li>
+              <li>
+                <span class="tray-avatar tray-avatar--xs" aria-hidden="true">OF</span>
+                <div class="tray-feed__body">
+                  <p><b>Oksana Franko</b> booked the courier for 14:00.</p>
+                  <p class="tray-feed__meta"><time datetime="2026-11-16T10:31">10:31</time></p>
+                </div>
+              </li>
+              <li>
+                <span class="tray-avatar tray-avatar--xs" aria-hidden="true">DK</span>
+                <div class="tray-feed__body">
+                  <p><b>Dana Kovalenko</b> moved the delivery slot to 16:00 to 18:00.</p>
+                  <p class="tray-feed__meta"><time datetime="2026-11-16T10:26">10:26</time></p>
+                  <p class="tray-feed__detail">It was 14:00 to 16:00.</p>
+                </div>
+              </li>
+              <li>
+                <span class="tray-feed__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-mail"/></svg></span>
+                <div class="tray-feed__body">
+                  <p>The receipt was sent to <b>dana@kovalenko.example</b>.</p>
+                  <p class="tray-feed__meta"><time datetime="2026-11-16T09:13">09:13</time></p>
+                </div>
+              </li>
+              <li>
+                <span class="tray-feed__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-credit-card"/></svg></span>
+                <div class="tray-feed__body">
+                  <p><b>The payment</b> of $274.00 went through.</p>
+                  <p class="tray-feed__meta"><time datetime="2026-11-16T09:12">09:12</time></p>
+                </div>
+              </li>
+              <li>
+                <span class="tray-avatar tray-avatar--xs" aria-hidden="true">DK</span>
+                <div class="tray-feed__body">
+                  <p><b>Dana Kovalenko</b> placed the order on the shop page.</p>
+                  <p class="tray-feed__meta"><time datetime="2026-11-16T09:12">09:12</time></p>
+                </div>
+              </li>
+            </ol>
+          </section>
+        </div>
+        <aside class="tray-with-aside__aside" aria-label="Customer and payment">
+          <div class="tray-card tray-stack tray-stack--lg" style="padding: var(--space-7)">
+            <section class="tray-stack">
+              <h2 class="subtitle">Customer</h2>
+              <dl class="tray-dl tray-dl--plain tray-dl--stack">
+                <div><dt>Name</dt><dd><a href="#">Dana Kovalenko</a></dd></div>
+                <div><dt>Email</dt><dd>dana@kovalenko.example</dd></div>
+                <div><dt>Phone</dt><dd class="tray-num">+380 44 555 01 42</dd></div>
+                <div><dt>Address</dt><dd>Flat 12, 8 Lypova Street, Kyiv</dd></div>
+                <div><dt>Delivery slot</dt><dd>Today, 16:00 to 18:00</dd></div>
+              </dl>
+            </section>
+            <section class="tray-panel tray-stack tray-stack--sm">
+              <h3 class="label tray-soft">Note from the customer</h3>
+              <p class="nav">Please tie a ribbon on the 100 g jar, it is a gift. Call from the gate: the bell for flat 12 sticks.</p>
+            </section>
+            <section class="tray-stack tray-stack--sm">
+              <div class="tray-row tray-row--between">
+                <h3 class="control">Payment</h3>
+                <span class="tray-badge tray-badge--success"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-circle-check"/></svg>Paid</span>
+              </div>
+              <div class="tray-item tray-item--sm">
+                <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg></span>
+                <span class="tray-item__body">
+                  <span class="tray-item__title">Card ending 4242</span>
+                  <span class="tray-item__text">$274.00, today at 09:12</span>
+                </span>
+              </div>
+            </section>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+</div>
+<dialog class="tray-dialog tray-dialog--sm" id="cancel-order" role="alertdialog" data-tray="dialog" aria-labelledby="cancel-title" aria-describedby="cancel-text">
+  <div class="tray-dialog__head">
+    <div>
+      <h2 class="subtitle" id="cancel-title">Cancel order PL-20431?</h2>
+      <p class="tray-dialog__text" id="cancel-text">Dana Kovalenko gets $274.00 back on the card ending 4242. A cancelled order cannot be opened again.</p>
+    </div>
+  </div>
+  <div class="tray-dialog__foot">
+    <button class="tray-btn tray-btn--quiet tray-btn--md" type="button" data-close>Keep the order</button>
+    <button class="tray-btn tray-btn--danger tray-btn--md" type="button" data-close value="cancel">Cancel order</button>
+  </div>
+</dialog>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

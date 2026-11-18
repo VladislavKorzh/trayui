@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home</title>
+<meta name="description" content="The first screen of a product: what needs doing today, the numbers, and what happened.">
+<meta name="tray-category" content="Product">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app">
+  <div class="tray-app__side">
+    <nav class="tray-sidebar" id="nav" aria-label="Main">
+      <div class="tray-sidebar__head" style="padding-inline: 0">
+        <div class="tray-anchor tray-anchor--block" data-tray="menu">
+          <button class="tray-switcher" type="button"><span class="tray-avatar tray-avatar--sm tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-person__text"><b>Perly Farm</b><small>Shop plan</small></span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chevrons-up-down"/></svg></button>
+          <div class="tray-pop">
+            <div class="tray-list">
+              <p class="tray-list__label">Workspaces</p>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="true"><span class="tray-avatar tray-avatar--xs tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-option__text">Perly Farm</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">MB</span><span class="tray-option__text">Meadow Bakery</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">HC</span><span class="tray-option__text">Hill Cheese</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <hr class="tray-list__rule">
+              <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New workspace</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tray-sidebar__group">
+        <a class="tray-sidebar__item" href="#" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg><span>Orders</span><span class="tray-badge tray-badge--count">12</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-users"/></svg><span>Customers</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span>Batches</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chart-column"/></svg><span>Reports</span></a>
+      </div>
+      <div class="tray-sidebar__group">
+        <p class="tray-sidebar__label">Workspace</p>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user-plus"/></svg><span>Team</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg><span>Billing</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plug"/></svg><span>Integrations</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-settings"/></svg><span>Settings</span></a>
+      </div>
+      <div class="tray-sidebar__foot">
+        <div class="tray-usage tray-usage--sm" style="flex: 1">
+          <div class="tray-progress">
+            <span class="tray-progress__name">Orders</span>
+            <span class="tray-progress__value">842 of 1,000</span>
+            <span class="tray-progress__bar" role="meter" aria-label="Orders this month" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="842" style="--tray-v: 84"></span>
+          </div>
+          <a class="label" href="#">Upgrade the plan</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <header class="tray-topbar">
+      <div class="tray-topbar__start">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the navigation"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+        <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon tray-app__collapse" type="button" data-tray="sidebar-toggle" aria-controls="nav" aria-label="Collapse the sidebar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-panel-left"/></svg></button>
+        <nav aria-label="Breadcrumb"><ol class="tray-crumbs tray-crumbs--fold"><li><a href="#">Perly Farm</a></li><li><span aria-current="page">Home</span></li></ol></nav>
+      </div>
+      <div class="tray-topbar__end">
+        <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders" aria-keyshortcuts="/"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
+        <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 2 unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip">2</span></span>
+        <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko, OF">OF</button>
+      </div>
+    </header>
+    <main class="tray-app__content">
+      <div class="tray-pagehead">
+        <div class="tray-pagehead__row">
+          <div class="tray-pagehead__text">
+            <h1 class="title">Friday at Perly Farm</h1>
+            <p>12 orders to pack before the courier at 14:00.</p>
+          </div>
+          <div class="tray-pagehead__actions">
+            <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg>New order</button>
+            <button class="tray-btn tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg>Pack the next order</button>
+          </div>
+        </div>
+        <p class="tray-pagehead__meta">
+          <span><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-calendar"/></svg><time datetime="2026-11-27">27 November 2026</time></span>
+          <span><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-user"/></svg>Bohdan Savchuk is packing</span>
+          <span><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-dollar-sign"/></svg>$1,619.00 to send today</span>
+        </p>
+      </div>
+      <div class="tray-banner" role="status" data-dismissable>
+        <svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg>
+        <p class="tray-banner__text"><b>132 jars are left in the autumn batch.</b> At this week's pace they last until Sunday.</p>
+        <div class="tray-banner__actions">
+          <a class="tray-btn tray-btn--quiet tray-btn--xs" href="#">Open the batch</a>
+          <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-tray="dismiss" aria-label="Dismiss"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button>
+        </div>
+      </div>
+      <div class="tray-stats tray-stats--four">
+        <div class="tray-stat tray-inverse">
+          <p class="tray-stat__label">Jars to pack today</p>
+          <p class="tray-stat__value">24</p>
+          <p class="tray-stat__foot">5&nbsp;×&nbsp;30&nbsp;g, 15&nbsp;×&nbsp;50&nbsp;g, 4&nbsp;×&nbsp;100&nbsp;g</p>
+        </div>
+        <div class="tray-stat">
+          <p class="tray-stat__label">Orders yesterday</p>
+          <p class="tray-stat__value">38</p>
+          <p class="tray-stat__foot"><span class="tray-trend" data-tone="good"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-trending-up"/></svg>+3</span>than a week ago</p>
+        </div>
+        <div class="tray-stat">
+          <p class="tray-stat__label">Revenue yesterday</p>
+          <p class="tray-stat__value">$3,685</p>
+          <p class="tray-stat__foot"><span class="tray-trend" data-tone="good"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-trending-up"/></svg>+9%</span>than a week ago</p>
+        </div>
+        <div class="tray-stat">
+          <p class="tray-stat__label">Time to pack</p>
+          <p class="tray-stat__value">26<small>min</small></p>
+          <p class="tray-stat__foot"><span class="tray-trend" data-tone="bad"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-trending-up"/></svg>+4 min</span>than last week</p>
+        </div>
+      </div>
+      <section class="tray-card" aria-labelledby="pack-title">
+        <div class="tray-card__head">
+          <div>
+            <h2 class="subtitle" id="pack-title">Next to pack</h2>
+            <p class="tray-soft">The oldest first: 5 of 12 orders.</p>
+          </div>
+          <a class="tray-btn tray-btn--quiet tray-btn--xs" href="#">See all 12</a>
+        </div>
+        <div class="tray-table-wrap">
+          <table class="tray-table" aria-labelledby="pack-title" style="min-inline-size: 40rem">
+            <thead>
+              <tr>
+                <th scope="col">Order</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Jars</th>
+                <th scope="col">City</th>
+                <th scope="col">Placed</th>
+                <th scope="col" data-num>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row"><a href="#">PL-20420</a></th>
+                <td>Anna Melnyk</td>
+                <td>1 × 100 g</td>
+                <td>Lviv</td>
+                <td><time datetime="2026-11-26T12:08">Thu, 12:08</time></td>
+                <td data-num>$118.00</td>
+              </tr>
+              <tr>
+                <th scope="row"><a href="#">PL-20421</a></th>
+                <td>Taras Bondar</td>
+                <td>2 × 30 g</td>
+                <td>Kyiv</td>
+                <td><time datetime="2026-11-26T12:41">Thu, 12:41</time></td>
+                <td data-num>$85.00</td>
+              </tr>
+              <tr>
+                <th scope="row"><a href="#">PL-20422</a></th>
+                <td>Sofia Hrytsenko</td>
+                <td>1 × 50 g</td>
+                <td>Odesa</td>
+                <td><time datetime="2026-11-26T13:15">Thu, 13:15</time></td>
+                <td data-num>$68.00</td>
+              </tr>
+              <tr>
+                <th scope="row"><a href="#">PL-20423</a></th>
+                <td>Marko Petrenko</td>
+                <td>3 × 50 g</td>
+                <td>Kyiv</td>
+                <td><time datetime="2026-11-26T13:52">Thu, 13:52</time></td>
+                <td data-num>$186.00</td>
+              </tr>
+              <tr>
+                <th scope="row"><a href="#">PL-20424</a></th>
+                <td>Yulia Tkachenko</td>
+                <td>1 × 30 g, 1 × 50 g</td>
+                <td>Dnipro</td>
+                <td><time datetime="2026-11-26T16:05">Thu, 16:05</time></td>
+                <td data-num>$106.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <div class="tray-bento">
+        <section class="tray-card tray-span-8 tray-stack tray-stack--lg" aria-labelledby="jars-title">
+          <div class="tray-stack tray-stack--sm">
+            <h2 class="subtitle" id="jars-title">Jars sold per day</h2>
+            <p class="tray-chart__caption">20 to 26 November, by the size of the jar</p>
+          </div>
+          <figure class="tray-chart" data-tray="chart" data-chart='{
+            "type": "bar", "stacked": true, "unit": " jars", "height": 266, "labelHead": "Day",
+            "labels": ["Fri", "Sat", "Sun", "Mon", "Tue", "Wed", "Thu"],
+            "series": [
+              { "name": "30 g", "values": [20, 16, 13, 18, 23, 19, 20] },
+              { "name": "50 g", "values": [28, 23, 18, 27, 33, 28, 29] },
+              { "name": "100 g", "values": [8, 6, 5, 7, 9, 7, 8] }
+            ],
+            "summary": "Stacked bar chart of jars sold per day from Friday 20 to Thursday 26 November, by the size of the jar: 365 jars in all. Jars of 50 g are the largest part every day. The most, 65 jars, were sold on Tuesday."
+          }'></figure>
+        </section>
+        <section class="tray-card tray-span-4 tray-stack tray-stack--lg" aria-labelledby="feed-title" style="padding-inline: min(var(--card-pad), var(--space-8))">
+          <h2 class="subtitle" id="feed-title">What happened</h2>
+          <ol class="tray-feed">
+            <li>
+              <span class="tray-avatar tray-avatar--xs" aria-hidden="true">OF</span>
+              <div class="tray-feed__body">
+                <p><b>Oksana Franko</b> booked the courier for 14:00.</p>
+                <p class="tray-feed__meta"><time datetime="2026-11-27T10:31">10:31</time></p>
+              </div>
+            </li>
+            <li>
+              <span class="tray-feed__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span>
+              <div class="tray-feed__body">
+                <p><a href="#">PL-20362</a> was delivered in Odesa.</p>
+                <p class="tray-feed__meta"><time datetime="2026-11-27T09:58">09:58</time></p>
+              </div>
+            </li>
+            <li>
+              <span class="tray-avatar tray-avatar--xs" aria-hidden="true">DK</span>
+              <div class="tray-feed__body">
+                <p><b>Dana Kovalenko</b> placed <a href="#">PL-20431</a>.</p>
+                <p class="tray-feed__meta"><time datetime="2026-11-27T09:12">09:12</time></p>
+                <p class="tray-feed__detail tray-num">Four jars, $274.00</p>
+              </div>
+            </li>
+            <li>
+              <span class="tray-avatar tray-avatar--xs" aria-hidden="true">IL</span>
+              <div class="tray-feed__body">
+                <p><b>Iryna Lysenko</b> asked to return <a href="#">PL-20347</a>.</p>
+                <p class="tray-feed__meta"><time datetime="2026-11-27T09:02">09:02</time></p>
+              </div>
+            </li>
+          </ol>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>

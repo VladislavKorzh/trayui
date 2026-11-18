@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orders</title>
+<meta name="description" content="A list page: tabs by status, a filter bar, a data table and paging.">
+<meta name="tray-category" content="Product">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app">
+  <div class="tray-app__side">
+    <nav class="tray-sidebar" id="nav" aria-label="Main">
+      <div class="tray-sidebar__head" style="padding-inline: 0">
+        <div class="tray-anchor tray-anchor--block" data-tray="menu">
+          <button class="tray-switcher" type="button"><span class="tray-avatar tray-avatar--sm tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-person__text"><b>Perly Farm</b><small>Shop plan</small></span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chevrons-up-down"/></svg></button>
+          <div class="tray-pop">
+            <div class="tray-list">
+              <p class="tray-list__label">Workspaces</p>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="true"><span class="tray-avatar tray-avatar--xs tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-option__text">Perly Farm</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">MB</span><span class="tray-option__text">Meadow Bakery</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">HC</span><span class="tray-option__text">Hill Cheese</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <hr class="tray-list__rule">
+              <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New workspace</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tray-sidebar__group">
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a>
+        <a class="tray-sidebar__item" href="#" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg><span>Orders</span><span class="tray-badge tray-badge--count">12</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-users"/></svg><span>Customers</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span>Batches</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chart-column"/></svg><span>Reports</span></a>
+      </div>
+      <div class="tray-sidebar__group">
+        <p class="tray-sidebar__label">Workspace</p>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user-plus"/></svg><span>Team</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg><span>Billing</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plug"/></svg><span>Integrations</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-settings"/></svg><span>Settings</span></a>
+      </div>
+      <div class="tray-sidebar__foot">
+        <div class="tray-usage tray-usage--sm" style="flex: 1">
+          <div class="tray-progress">
+            <span class="tray-progress__name">Orders</span>
+            <span class="tray-progress__value">842 of 1,000</span>
+            <span class="tray-progress__bar" role="meter" aria-label="Orders this month" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="842" style="--tray-v: 84"></span>
+          </div>
+          <a class="label" href="#">Upgrade the plan</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <header class="tray-topbar">
+      <div class="tray-topbar__start">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the navigation"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+        <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon tray-app__collapse" type="button" data-tray="sidebar-toggle" aria-controls="nav" aria-label="Collapse the sidebar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-panel-left"/></svg></button>
+        <nav aria-label="Breadcrumb"><ol class="tray-crumbs tray-crumbs--fold"><li><a href="#">Perly Farm</a></li><li><span aria-current="page">Orders</span></li></ol></nav>
+      </div>
+      <div class="tray-topbar__end">
+        <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders" aria-keyshortcuts="/"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
+        <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 2 unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip">2</span></span>
+        <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko, OF">OF</button>
+      </div>
+    </header>
+    <main class="tray-app__content">
+      <div class="tray-pagehead">
+        <div class="tray-pagehead__row">
+          <div class="tray-pagehead__text">
+            <h1 class="title">Orders</h1>
+            <p>842 orders in November. 12 are waiting to be packed before the courier at 14:00.</p>
+          </div>
+          <div class="tray-pagehead__actions">
+            <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-download"/></svg>Export</button>
+            <button class="tray-btn tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg>New order</button>
+          </div>
+        </div>
+        <nav class="tray-tabs" data-tray="strip" aria-label="Orders by status">
+          <a class="tray-tab" href="#" aria-current="page">All<span class="tray-badge tray-badge--count">842</span></a>
+          <a class="tray-tab" href="#">To pack<span class="tray-badge tray-badge--count">12</span></a>
+          <a class="tray-tab" href="#">With the courier<span class="tray-badge tray-badge--count">9</span></a>
+          <a class="tray-tab" href="#">Delivered<span class="tray-badge tray-badge--count">818</span></a>
+          <a class="tray-tab" href="#">Returns<span class="tray-badge tray-badge--count">3</span></a>
+        </nav>
+      </div>
+      <div class="tray-datatable" id="orders-table" data-tray="datatable">
+        <div class="tray-filterbar" data-tray="filterbar">
+          <div class="tray-filterbar__row">
+            <div class="tray-input-group tray-input-group--sm"><span class="tray-input-group__addon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg></span><input class="tray-input" type="search" placeholder="Search orders" aria-label="Search orders" data-filter></div>
+            <span class="tray-anchor" data-tray="menu">
+              <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button">City<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-chevron-down"/></svg></button>
+              <div class="tray-pop tray-pop--end">
+                <div class="tray-list">
+                  <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="city:kyiv" data-label="City: Kyiv"><span class="tray-option__text">Kyiv</span><span class="tray-option__meta">388</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                  <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="city:lviv" data-label="City: Lviv"><span class="tray-option__text">Lviv</span><span class="tray-option__meta">162</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                  <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="city:odesa" data-label="City: Odesa"><span class="tray-option__text">Odesa</span><span class="tray-option__meta">131</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                  <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="city:dnipro" data-label="City: Dnipro"><span class="tray-option__text">Dnipro</span><span class="tray-option__meta">94</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                  <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="city:kharkiv" data-label="City: Kharkiv"><span class="tray-option__text">Kharkiv</span><span class="tray-option__meta">67</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                </div>
+              </div>
+            </span>
+            <span class="tray-anchor" data-tray="menu">
+              <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button">Delivery<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-chevron-down"/></svg></button>
+              <div class="tray-pop">
+                <div class="tray-list">
+                  <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="delivery:courier" data-label="Delivery: Courier"><span class="tray-option__text">Courier</span><span class="tray-option__meta">790</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                  <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="delivery:pickup" data-label="Delivery: Pickup"><span class="tray-option__text">Pickup</span><span class="tray-option__meta">52</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                </div>
+              </div>
+            </span>
+            <div class="tray-filterbar__end">
+              <span class="tray-select tray-select--sm"><select aria-label="Month"><option>November 2026</option><option>October 2026</option><option>September 2026</option></select></span>
+            </div>
+          </div>
+          <div class="tray-filterbar__chips">
+            <button class="tray-btn tray-btn--link" type="button" data-filter="clear">Clear all</button>
+          </div>
+        </div>
+        <div class="tray-datatable__bar">
+          <span class="nav" data-selected-count>2 of 12 selected</span>
+          <div class="tray-row tray-row--sm">
+            <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" data-bulk>Print the labels</button>
+            <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" data-bulk>Pack the orders</button>
+          </div>
+        </div>
+        <div class="tray-table-wrap">
+          <table class="tray-table tray-table--hover tray-table--pad" aria-label="Orders" style="min-inline-size: 45rem">
+            <thead>
+              <tr>
+                <th class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select-all aria-label="Select all orders on this page"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></th>
+                <th scope="col"><button class="tray-sort" type="button">Order<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-arrow-up-down"/></svg></button></th>
+                <th scope="col"><button class="tray-sort" type="button">Customer<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-arrow-up-down"/></svg></button></th>
+                <th scope="col">Status</th>
+                <th scope="col" aria-sort="descending"><button class="tray-sort" type="button">Updated<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-arrow-down"/></svg></button></th>
+                <th scope="col" data-num><button class="tray-sort" type="button">Total<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-arrow-up-down"/></svg></button></th>
+                <th scope="col"><span class="tray-vh">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select order PL-20431" checked><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                <th scope="row"><a href="#">PL-20431</a></th>
+                <td><span class="tray-person__text"><span>Dana Kovalenko</span><small>Kyiv, 4 jars</small></span></td>
+                <td><span class="tray-badge">To pack</span></td>
+                <td data-value="202611271031"><time datetime="2026-11-27T10:31">10:31</time></td>
+                <td data-num>$274.00</td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for order PL-20431"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-external-link"/></svg><span class="tray-option__text">Open the order</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-tag"/></svg><span class="tray-option__text">Print the label</span></button>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span class="tray-option__text">Pack the order</span></button>
+                        <hr class="tray-list__rule">
+                        <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-circle-x"/></svg><span class="tray-option__text">Cancel the order</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select order PL-20362"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                <th scope="row"><a href="#">PL-20362</a></th>
+                <td><span class="tray-person__text"><span>Viktor Marchenko</span><small>Odesa, 1 jar</small></span></td>
+                <td><span class="tray-badge tray-badge--success"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg>Delivered</span></td>
+                <td data-value="202611270958"><time datetime="2026-11-27T09:58">09:58</time></td>
+                <td data-num>$118.00</td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for order PL-20362"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-external-link"/></svg><span class="tray-option__text">Open the order</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-receipt-text"/></svg><span class="tray-option__text">Send the receipt again</span></button>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-rotate-cw"/></svg><span class="tray-option__text">Start a return</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select order PL-20418"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                <th scope="row"><a href="#">PL-20418</a></th>
+                <td><span class="tray-person__text"><span>Ivan Petrenko</span><small>Lviv, 3 jars</small></span></td>
+                <td><span class="tray-badge tray-badge--ink">With the courier</span></td>
+                <td data-value="202611270926"><time datetime="2026-11-27T09:26">09:26</time></td>
+                <td data-num>$186.00</td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for order PL-20418"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-external-link"/></svg><span class="tray-option__text">Open the order</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg><span class="tray-option__text">Track the box</span></button>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-message-square"/></svg><span class="tray-option__text">Write to the customer</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select order PL-20347"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                <th scope="row"><a href="#">PL-20347</a></th>
+                <td><span class="tray-person__text"><span>Iryna Lysenko</span><small>Dnipro, 1 jar</small></span></td>
+                <td><span class="tray-badge tray-badge--danger"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-circle-alert"/></svg>Return asked</span></td>
+                <td data-value="202611270902"><time datetime="2026-11-27T09:02">09:02</time></td>
+                <td data-num>$68.00</td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for order PL-20347"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-external-link"/></svg><span class="tray-option__text">Open the order</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg><span class="tray-option__text">Accept the return</span></button>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-message-square"/></svg><span class="tray-option__text">Write to the customer</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select order PL-20430"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                <th scope="row"><a href="#">PL-20430</a></th>
+                <td><span class="tray-person__text"><span>Marta Hrytsenko</span><small>Odesa, 1 jar</small></span></td>
+                <td><span class="tray-badge">To pack</span></td>
+                <td data-value="202611270844"><time datetime="2026-11-27T08:44">08:44</time></td>
+                <td data-num>$68.00</td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for order PL-20430"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-external-link"/></svg><span class="tray-option__text">Open the order</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-tag"/></svg><span class="tray-option__text">Print the label</span></button>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span class="tray-option__text">Pack the order</span></button>
+                        <hr class="tray-list__rule">
+                        <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-circle-x"/></svg><span class="tray-option__text">Cancel the order</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select order PL-20371"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                <th scope="row"><a href="#">PL-20371</a></th>
+                <td><span class="tray-person__text"><span>Olena Bondar</span><small>Kharkiv, 1 jar</small></span></td>
+                <td><span class="tray-badge tray-badge--success"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg>Delivered</span></td>
+                <td data-value="202611270831"><time datetime="2026-11-27T08:31">08:31</time></td>
+                <td data-num>$68.00</td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for order PL-20371"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-external-link"/></svg><span class="tray-option__text">Open the order</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-receipt-text"/></svg><span class="tray-option__text">Send the receipt again</span></button>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-rotate-cw"/></svg><span class="tray-option__text">Start a return</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select order PL-20429" checked><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                <th scope="row"><a href="#">PL-20429</a></th>
+                <td><span class="tray-person__text"><span>Bohdan Shevchuk</span><small>Kyiv, 4 jars</small></span></td>
+                <td><span class="tray-badge">To pack</span></td>
+                <td data-value="202611270802"><time datetime="2026-11-27T08:02">08:02</time></td>
+                <td data-num>$245.00</td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for order PL-20429"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-external-link"/></svg><span class="tray-option__text">Open the order</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-tag"/></svg><span class="tray-option__text">Print the label</span></button>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span class="tray-option__text">Pack the order</span></button>
+                        <hr class="tray-list__rule">
+                        <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-circle-x"/></svg><span class="tray-option__text">Cancel the order</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select order PL-20415"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                <th scope="row"><a href="#">PL-20415</a></th>
+                <td><span class="tray-person__text"><span>Halyna Rudenko</span><small>Lviv, 2 jars</small></span></td>
+                <td><span class="tray-badge tray-badge--ink">With the courier</span></td>
+                <td data-value="202611270748"><time datetime="2026-11-27T07:48">07:48</time></td>
+                <td data-num>$85.00</td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for order PL-20415"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-external-link"/></svg><span class="tray-option__text">Open the order</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg><span class="tray-option__text">Track the box</span></button>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-message-square"/></svg><span class="tray-option__text">Write to the customer</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select order PL-20428"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                <th scope="row"><a href="#">PL-20428</a></th>
+                <td><span class="tray-person__text"><span>Larysa Koval</span><small>Lviv, 2 jars</small></span></td>
+                <td><span class="tray-badge">To pack</span></td>
+                <td data-value="202611270735"><time datetime="2026-11-27T07:35">07:35</time></td>
+                <td data-num>$177.00</td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for order PL-20428"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end tray-pop--top">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-external-link"/></svg><span class="tray-option__text">Open the order</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-tag"/></svg><span class="tray-option__text">Print the label</span></button>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span class="tray-option__text">Pack the order</span></button>
+                        <hr class="tray-list__rule">
+                        <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-circle-x"/></svg><span class="tray-option__text">Cancel the order</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select order PL-20427"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                <th scope="row"><a href="#">PL-20427</a></th>
+                <td><span class="tray-person__text"><span>Petro Kravets</span><small>Kyiv, 1 jar</small></span></td>
+                <td><span class="tray-badge">To pack</span></td>
+                <td data-value="202611270648"><time datetime="2026-11-27T06:48">06:48</time></td>
+                <td data-num>$47.00</td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for order PL-20427"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end tray-pop--top">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-external-link"/></svg><span class="tray-option__text">Open the order</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-tag"/></svg><span class="tray-option__text">Print the label</span></button>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span class="tray-option__text">Pack the order</span></button>
+                        <hr class="tray-list__rule">
+                        <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-circle-x"/></svg><span class="tray-option__text">Cancel the order</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select order PL-20426"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                <th scope="row"><a href="#">PL-20426</a></th>
+                <td><span class="tray-person__text"><span>Nadia Moroz</span><small>Kharkiv, 2 jars</small></span></td>
+                <td><span class="tray-badge">To pack</span></td>
+                <td data-value="202611262147"><time datetime="2026-11-26T21:47">Thu, 21:47</time></td>
+                <td data-num>$127.00</td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for order PL-20426"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end tray-pop--top">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-external-link"/></svg><span class="tray-option__text">Open the order</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-tag"/></svg><span class="tray-option__text">Print the label</span></button>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span class="tray-option__text">Pack the order</span></button>
+                        <hr class="tray-list__rule">
+                        <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-circle-x"/></svg><span class="tray-option__text">Cancel the order</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select order PL-20425"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                <th scope="row"><a href="#">PL-20425</a></th>
+                <td><span class="tray-person__text"><span>Roman Savchenko</span><small>Kyiv, 1 jar</small></span></td>
+                <td><span class="tray-badge">To pack</span></td>
+                <td data-value="202611261920"><time datetime="2026-11-26T19:20">Thu, 19:20</time></td>
+                <td data-num>$118.00</td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for order PL-20425"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end tray-pop--top">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-external-link"/></svg><span class="tray-option__text">Open the order</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-tag"/></svg><span class="tray-option__text">Print the label</span></button>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span class="tray-option__text">Pack the order</span></button>
+                        <hr class="tray-list__rule">
+                        <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-circle-x"/></svg><span class="tray-option__text">Cancel the order</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr data-empty hidden>
+                <td colspan="7">
+                  <div class="tray-empty">
+                    <span class="tray-empty__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg></span>
+                    <div class="tray-empty__text">
+                      <p class="control">No order matches that search</p>
+                      <p>Check the spelling, or look in another month.</p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tray-datatable__foot">
+          <span>1–12 of 842 orders</span>
+          <nav aria-label="Pages">
+            <ul class="tray-pages">
+              <li><a class="tray-page tray-page--step" role="link" aria-disabled="true" aria-label="Previous page"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-left"/></svg></a></li>
+              <li><a class="tray-page" href="#" aria-current="page">1</a></li>
+              <li><a class="tray-page" href="#">2</a></li>
+              <li><span class="tray-page tray-page--gap" aria-hidden="true">…</span></li>
+              <li><a class="tray-page" href="#">71</a></li>
+              <li><a class="tray-page tray-page--step" href="#" aria-label="Next page"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../components/bundle.js"></script>
+<script>
+/* The bulk actions wake when a row is selected and rest when none is. */
+(function () {
+  var table = document.getElementById('orders-table');
+  var bulk = table.querySelectorAll('[data-bulk]');
+  table.addEventListener('tray:change', function (event) {
+    if (event.target !== table) return;
+    for (var i = 0; i < bulk.length; i += 1) bulk[i].disabled = !event.detail.selected;
+  });
+})();
+</script>
+</body>
+</html>

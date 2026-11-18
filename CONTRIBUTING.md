@@ -5,7 +5,7 @@ Thank you for helping. A bug report with a small example, a fix, a missing compo
 ## Before you start
 
 - **A bug:** open an issue with the smallest markup that shows it, the browser, and what you expected.
-- **A new component, variant or block:** open an issue first, so we can agree on its shape before you build it. The system is small on purpose: something new should earn its place.
+- **A new component, variant, block or template:** open an issue first, so we can agree on its shape before you build it. The system is small on purpose: something new should earn its place.
 - **A security problem:** do not open an issue. [SECURITY.md](SECURITY.md) says how to report it privately.
 
 ## Set up
@@ -48,9 +48,10 @@ python3 tools/check.py      # every check, as CI runs them; --fast skips the bro
 | An icon | the list in `system/tools/lucide.py`, then run it | `system/src/icons.json` by hand |
 | A component | `system/project/components/<Name>/preview.html` and `README.md`, its React twin in `system/react/src/components/`, `system/react/previews/` and `system/react/docs/`, and its test, `system/tests/components/<Name>.py` (a component without one fails `test_components.py`) | |
 | A block | `system/project/blocks/<name>.html` | `system/dist/blocks/` |
+| A template | `system/project/templates/<name>.html` | `system/dist/templates/` |
 | The site | `system/tools/site/` and `system/tools/site.py` | `system/site/` (not kept in git) |
 
-Built files are kept in the repository: `system/dist/`, `system/project/guides/0-components.md` and `5-blocks.md`, `system/project/assets/Icons/`, and `system/react/styles/`, `src/runtime.ts` and `src/icons.ts` (written by `build.py`) and `src/index.ts` (written by `npm run build` in `system/react`). `system/dist/skills/` is written by the site's build. Rebuild with `python3 system/tools/build.py`, `python3 system/tools/site.py` and `npm run build` in `system/react`, and commit what they changed with your change. CI fails when they are out of date.
+Built files are kept in the repository: `system/dist/`, `system/project/guides/0-components.md`, `5-blocks.md` and `6-templates.md`, `system/project/assets/Icons/`, and `system/react/styles/`, `src/runtime.ts` and `src/icons.ts` (written by `build.py`) and `src/index.ts` (written by `npm run build` in `system/react`). `system/dist/skills/` is written by the site's build. Rebuild with `python3 system/tools/build.py`, `python3 system/tools/site.py` and `npm run build` in `system/react`, and commit what they changed with your change. CI fails when they are out of date.
 
 ## How the system is written
 

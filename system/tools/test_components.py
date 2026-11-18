@@ -3,8 +3,8 @@
 
     python3 tools/test_components.py                    every component, in parallel
     python3 tools/test_components.py Tabs Select        only these
-    python3 tools/test_components.py --group Forms      one group (the group= of the preview's marker; Blocks for the blocks)
-    python3 tools/test_components.py --blocks           only the blocks (dashboard-01 ... names one); --no-blocks leaves them out
+    python3 tools/test_components.py --group Forms      one group (the group= of the preview's marker; Blocks for the blocks and templates)
+    python3 tools/test_components.py --blocks           only the blocks and templates (dashboard-01 or inbox names one); --no-blocks leaves them out
     python3 tools/test_components.py Tabs -k keys       only the steps whose name holds "keys" (generic, PARITY, test_keys, ...)
     python3 tools/test_components.py --no-generic       leave out the checks every component gets (faster while writing a test)
     python3 tools/test_components.py --no-react         leave out the React previews and the parity checks
@@ -14,8 +14,9 @@
     python3 tools/test_components.py --build Tabs       first run tools/build.py, once no other build is running
     python3 tools/test_components.py --build-only       only that
 
-Every run also checks the 64 blocks of project/blocks (harness.run_block: no script error, every label names its control,
-axe in Light and Dark at 390 and 1440px; what a block is excused is in tests/blocks.py). Each component has a module in
+Every run also checks the 64 blocks of project/blocks and the 10 templates of project/templates (harness.run_block: no
+script error, every label names its control, axe in Light and Dark at 390 and 1440px; what a block or a template is
+excused is in tests/blocks.py). Each component has a module in
 tests/components/<Name>.py; tests/harness.py says what every component is checked for
 (the accessibility scan in Light and Dark, the layout at 390 and 1440px, the targets, the React preview) and what a module
 adds: the accessibility tree, the keys, the focus, the events, the motion and the forced colours its README speaks of, and
@@ -117,7 +118,7 @@ def main(argv):
         every[b] = harness.BLOCKS
     unknown = [a for a in argv if a not in every]
     if unknown:
-        sys.exit(f'not a component or a block: {", ".join(unknown)}')
+        sys.exit(f'not a component, a block or a template: {", ".join(unknown)}')
     if argv:
         names = argv
     elif only_blocks:
@@ -145,7 +146,7 @@ def run(names, every, only, skip_generic, react, out, verbose, jobs, start):
     setup(react and any(every[n] != harness.BLOCKS for n in names))
     jobs = max(1, min(jobs, len(names)))
     # the biggest previews first, so the last to finish are short ones
-    size = lambda n: ((harness.P / 'blocks' / f'{n}.html') if every[n] == harness.BLOCKS else (harness.COMPONENTS / n / 'preview.html')).stat().st_size
+    size = lambda n: (harness.page_file(n) if every[n] == harness.BLOCKS else (harness.COMPONENTS / n / 'preview.html')).stat().st_size
     work = sorted(names, key=lambda n: -size(n))
     todo = [(n, every[n], only, skip_generic, react) for n in work]
     allres, times = [], {}
@@ -164,7 +165,7 @@ def run(names, every, only, skip_generic, react, out, verbose, jobs, start):
     xpass = [r for r in allres if r['ok'] and r['xfail']]
     by = lambda rs, k: sum(1 for r in rs if r['kind'] == k)
     nb = sum(1 for n in names if every[n] == harness.BLOCKS)
-    print(f'\n{len(names) - nb} components and {nb} blocks, {len(allres)} checks ({by(allres, "html")} of the system, {by(allres, "react")} of the React previews, '
+    print(f'\n{len(names) - nb} components and {nb} blocks and templates, {len(allres)} checks ({by(allres, "html")} of the system, {by(allres, "react")} of the React previews, '
           f'{by(allres, "parity")} of parity, {by(allres, "block")} of the blocks) in {took:.0f}s with {jobs} at a time')
     print(f'{len(fails)} failed ({by(fails, "html")} system, {by(fails, "react")} React, {by(fails, "parity")} parity, {by(fails, "block")} blocks)'
           + (f', {len(xfails)} known to fail (XFAIL)' if xfails else '') + (f', {len(xpass)} marked XFAIL now pass: take them out' if xpass else ''))

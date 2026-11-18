@@ -8,8 +8,9 @@ Sources:  project/tokens.json -> dist/tokens.css                 (and .preview/t
           src/js/*.js         -> dist/components/bundle.js       (one classic script, window.TrayUI)
           src/icons.json      -> project/assets/Icons/*.svg and the sprite inside bundle.js
           project/blocks/*.html -> dist/blocks/, and their list in project/guides/5-blocks.md
+          project/templates/*.html -> dist/templates/, and their list in project/guides/6-templates.md
 """
-import json, os, pathlib, re, sys
+import json, pathlib, re, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 P, SRC, PREV = ROOT / 'project', ROOT / 'src', ROOT / '.preview'
@@ -73,30 +74,21 @@ def read_blocks():
     return sorted(out, key=lambda x: (BLOCK_GROUPS.index(x['group']) if x['group'] in BLOCK_GROUPS else 99, x['name']))
 
 
-# Templates: whole pages of a product (a landing page, a dashboard, an inbox, settings...). They are not part of this
-# repository and not under its licence: they keep all rights reserved, in a repository of their own, and the site shows
-# them to look at when their folder is beside this repository (../trayui-templates) or where TRAYUI_TEMPLATES says
-# (TRAYUI_TEMPLATES= with nothing after it builds the site without them, as CI does). That folder holds templates/*.html
-# and order.json: the groups in their order, and the templates in their order. Nothing puts them in dist/.
-def templates_folder():
-    at = os.environ.get('TRAYUI_TEMPLATES')
-    folder = pathlib.Path(at).expanduser() if at else None if at is not None else ROOT.parent.parent / 'trayui-templates'
-    return folder if folder and (folder / 'order.json').exists() and (folder / 'templates').is_dir() else None
+# Templates: whole pages of a product (a landing page, a dashboard, an inbox, settings...). Their groups, in the order they are
+# listed, and the templates in their order within them.
+TEMPLATE_GROUPS = ['Public pages', 'Product', 'Account']
+TEMPLATE_ORDER = ['landing', 'pricing', 'article', 'dashboard', 'orders', 'order', 'inbox', 'settings', 'billing', 'onboarding']
 
 
 def read_templates():
-    """The templates and their groups, in the order they are listed; ([], []) when their folder is not there."""
-    folder = templates_folder()
-    if not folder:
-        return [], []
-    order = json.loads((folder / 'order.json').read_text(encoding='utf-8'))
-    groups, names = order.get('groups', []), order.get('order', [])
-    out = [read_screen(f, groups, 't-') for f in sorted((folder / 'templates').glob('*.html'))]
+    """The templates, in the order they are listed."""
+    out = [read_screen(f, TEMPLATE_GROUPS, 't-') for f in sorted((P / 'templates').glob('*.html'))]
     for x in out:
-        if x['name'] not in names:
-            x['problems'].append('it has no place in order.json')
-    rank = lambda x: (groups.index(x['group']) if x['group'] in groups else 99, names.index(x['name']) if x['name'] in names else 99, x['name'])
-    return sorted(out, key=rank), groups
+        if x['name'] not in TEMPLATE_ORDER:
+            x['problems'].append('it has no place in TEMPLATE_ORDER')
+    rank = lambda x: (TEMPLATE_GROUPS.index(x['group']) if x['group'] in TEMPLATE_GROUPS else 99,
+                      TEMPLATE_ORDER.index(x['name']) if x['name'] in TEMPLATE_ORDER else 99, x['name'])
+    return sorted(out, key=rank)
 
 
 def npm_package(dist, tok, icons):
@@ -104,10 +96,10 @@ def npm_package(dist, tok, icons):
     (trayui/tokens.css) and jsDelivr serves each release by its version. Publish it with `npm publish` from dist/."""
     links = json.loads((ROOT / 'tools' / 'links.json').read_text(encoding='utf-8'))
     version, site = links.get('version', '0.0.0'), links.get('site', '').rstrip('/')
-    blocks, themes = len(list((P / 'blocks').glob('*.html'))), len(tok['color']['themes'])
+    blocks, templates, themes = len(list((P / 'blocks').glob('*.html'))), len(list((P / 'templates').glob('*.html'))), len(tok['color']['themes'])
     plays = len(list((ROOT / 'tools' / 'site' / 'play').glob('*.json')))  # the components whose page has a playground
     pkg = {'name': 'trayui', 'version': version,
-           'description': f'A design system in plain HTML and CSS: {len(EXPECTED)} components, {blocks} blocks, {themes} themes. Three files, no build step.',
+           'description': f'A design system in plain HTML and CSS: {len(EXPECTED)} components, {blocks} blocks, {templates} page templates, {themes} themes. Three files, no build step.',
            'license': links.get('license', 'MIT'), 'author': f'{links.get("author", "")} ({links.get("author_url", "")})', 'homepage': site,
            # the repository only once it is open: npm would link a page nobody can see
            **({'repository': {'type': 'git', 'url': f'git+{links.get("repo", "")}.git', 'directory': 'system/dist'},
@@ -121,7 +113,7 @@ def npm_package(dist, tok, icons):
     cdn = f'https://cdn.jsdelivr.net/npm/trayui@{version}'
     (dist / 'README.md').write_text(f"""# Tray UI
 
-A design system in plain HTML and CSS: {len(EXPECTED)} components, {blocks} blocks, {len(icons)} icons and {themes} themes. Three files, no framework, no build step.
+A design system in plain HTML and CSS: {len(EXPECTED)} components, {blocks} blocks, {templates} page templates, {len(icons)} icons and {themes} themes. Three files, no framework, no build step.
 
 Docs and live examples of every component, with a playground for {plays} of them: {site}
 
@@ -158,6 +150,7 @@ import 'trayui/components/bundle.js';
 - `components/bundle.js`: one classic script, `window.TrayUI`, that wires every element with a `data-tray` attribute and adds the icons. It loads nothing.
 - `fonts/`: Onest, with its licence.
 - `blocks/`: {blocks} whole screens, each one HTML file to copy.
+- `templates/`: {templates} whole pages of a product (a landing page, pricing, a dashboard, orders, an inbox, settings, billing...), each one HTML file to copy.
 - `tailwind/` and `figma/`: the tokens as a Tailwind theme and as Figma variables.
 - `cli/`: the `trayui` command (below) and the markup checker it runs.
 - `skills/trayui/`: a skill for AI agents (Claude Code, and any tool that reads `SKILL.md`): the rules, a page for every component and block, and the checker. It is in the npm package; the zip on the site leaves it out, as the skill has an archive of its own, {site}/skills/trayui.zip.
@@ -398,16 +391,9 @@ def build():
     import exports
     exports.write(tok, dist, dark_themes(tok))
 
-    # blocks: copies beside the three files in dist/, checks, and their list in the brand book
-    page_used = set()
-    kind = 'blocks'
-    intro = 'A block is one screen-sized composition built only from the components and the layout classes: copy it into a product and fill it.'
-    (P / kind).mkdir(exist_ok=True)
-    (dist / kind).mkdir(exist_ok=True)
-    pages = read_blocks()
-    for old in (dist / kind).glob('*.html'):
-        if not (P / kind / old.name).exists():
-            old.unlink()
+    # blocks and templates: copies beside the three files in dist/, checks, and their two lists in the brand book
+    page_used, counts = set(), {}
+
     def check_page(kind, page):
         """What a whole page of the system may hold: nothing loaded from elsewhere, no picture, only icons, classes and
         values that exist. Returns the custom properties it reads."""
@@ -430,19 +416,29 @@ def build():
                 problems.append(f'{kind}/{page["name"]}.html: an inline style sets a colour, a font, a border or a shadow: {st[:60]}')
         return set(re.findall(r'var\(--([A-Za-z0-9_.-]+)', text))
 
-    for page in pages:
-        (dist / kind / f'{page["name"]}.html').write_text(page['source'], encoding='utf-8')
-        page_used |= check_page(kind, page)
-    for page in read_templates()[0]:  # the templates, when their folder is there: checked as the blocks are, and never copied into dist/
-        page_used |= check_page('templates', page)
-    lines = ['# Blocks', '', intro + f' There are {len(pages)}; each is one file in `{kind}/`.', '',
-             'A page links `../tokens.css`, `../components/bundle.css` and `../components/bundle.js`, so it works as it is one folder below those three files. '
-             'The grey trays (`tray-slot`) in a block stand in for your content.']
-    for g in BLOCK_GROUPS:
-        rows = [x for x in pages if x['group'] == g]
-        if rows:
-            lines += ['', f'## {g}', '', '| File | What it is |', '| --- | --- |'] + [f'| `{kind}/{x["name"]}.html` | {x["title"]}. {x["summary"]} |'.replace('|.', '|') for x in rows]
-    (P / 'guides' / '5-blocks.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
+    for kind, word, groups, pages, intro, fill, guide in (
+            ('blocks', 'Blocks', BLOCK_GROUPS, read_blocks(),
+             'A block is one screen-sized composition built only from the components and the layout classes: copy it into a product and fill it.',
+             'The grey trays (`tray-slot`) in a block stand in for your content.', '5-blocks.md'),
+            ('templates', 'Templates', TEMPLATE_GROUPS, read_templates(),
+             'A template is one complete page of a product, with realistic content, built only from the components and the layout classes.',
+             'Its names, figures and quotes are invented: replace them, never ship them.', '6-templates.md')):
+        (P / kind).mkdir(exist_ok=True)
+        (dist / kind).mkdir(exist_ok=True)
+        counts[kind] = len(pages)
+        for old in (dist / kind).glob('*.html'):
+            if not (P / kind / old.name).exists():
+                old.unlink()
+        for page in pages:
+            (dist / kind / f'{page["name"]}.html').write_text(page['source'], encoding='utf-8')
+            page_used |= check_page(kind, page)
+        lines = [f'# {word}', '', intro + f' There are {len(pages)}; each is one file in `{kind}/`.', '',
+                 'A page links `../tokens.css`, `../components/bundle.css` and `../components/bundle.js`, so it works as it is one folder below those three files. ' + fill]
+        for g in groups:
+            rows = [x for x in pages if x['group'] == g]
+            if rows:
+                lines += ['', f'## {g}', '', '| File | What it is |', '| --- | --- |'] + [f'| `{kind}/{x["name"]}.html` | {x["title"]}. {x["summary"]} |'.replace('|.', '|') for x in rows]
+        (P / 'guides' / guide).write_text('\n'.join(lines) + '\n', encoding='utf-8')
 
     # react: the same behaviours as a module, the icons as typed data, and one stylesheet, for the React package to build from
     react = ROOT / 'react'
@@ -533,7 +529,7 @@ def build():
 
     print(f'tokens {len(names)} | icons {len(icons)} | css {len(css) // 1024} KB from {len(css_parts)} files | '
           f'js {len(js) // 1024} KB from {len(js_parts)} files | components {len([n for n in found if n != COVER])}/{len(EXPECTED)} | '
-          f'blocks {len(pages)}')
+          f'blocks {counts["blocks"]} | templates {counts["templates"]}')
     if missing:
         print('still to build:', ' '.join(missing))
     if extra:
