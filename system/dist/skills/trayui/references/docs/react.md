@@ -10,7 +10,7 @@ The package is called `trayui-react`, and it is on npm. It needs `react` and `re
 npm install trayui-react
 ```
 
-
+Its source is the `system/react` folder of the repository ([open it](https://github.com/VladislavKorzh/trayui)).
 
 ## Use it
 

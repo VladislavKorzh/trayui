@@ -182,6 +182,19 @@ def main():
     check('every page but the home page is also Markdown, at its address with .md added', all(f.exists() for f in mds), [str(f) for f in mds if not f.exists()][:4])
     robots = (SITE / 'robots.txt').read_text(encoding='utf-8') if (SITE / 'robots.txt').exists() else ''
     check('robots.txt lets every reader in and names the sitemap', 'User-agent: *\nAllow: /' in robots and f'Sitemap: {site["site"]}/sitemap.xml' in robots, robots)
+    if template_ids:
+        groups = [g for g in robots.split('\n\n') if 'User-agent:' in g]
+        trainers = next((g for g in groups if 'User-agent: GPTBot' in g), '')
+        check('robots.txt keeps the crawlers that train models off the templates, their pictures and the files that hold them, and no one else',
+              all(f'User-agent: {a}' in trainers for a in ('GPTBot', 'ClaudeBot', 'CCBot', 'Google-Extended', 'Applebot-Extended'))
+              and all(f'Disallow: {d}\n' in trainers for d in ('/templates', '/_/pages/t-', '/_/og/templates')) and 'Allow: /' in trainers
+              and 'Disallow' not in next((g for g in groups if 'User-agent: *' in g), 'Disallow'), robots)
+    links = json.loads((ROOT / 'tools' / 'links.json').read_text(encoding='utf-8'))
+    if links.get('public'):
+        front = (SITE / 'index.html').read_text(encoding='utf-8')
+        check('with the repository open, the header and the sheet link it, the stars read as words, and the home page names it as the code\'s repository',
+              front.count(f'href="{links["repo"]}"') >= 3 and 'site-stars tray-topbar__wide' in front and 'class="site-sheet__repo"' in front
+              and f'"codeRepository":"{links["repo"]}"' in front and ('class="site-stars__n"' not in front or '<span class="tray-vh"> star' in front), links['repo'])
     headers = (SITE / '_headers').read_text(encoding='utf-8') if (SITE / '_headers').exists() else ''
     check('the host is told to send the Markdown pages as UTF-8', '/*.md\n  Content-Type: text/markdown; charset=utf-8' in headers)
     check('the download and the site hold the tokens for Tailwind 4 and 3 and the Figma variables, a file for each theme',

@@ -42,7 +42,7 @@ The first line writes the three files and the font into a `trayui/` folder; the 
 
 ## Or get the files
 
-Download [trayui-0.3.0.zip](https://trayui.com/trayui-0.3.0.zip) and unpack it beside your pages.
+Download [trayui-0.3.0.zip](https://trayui.com/trayui-0.3.0.zip) and unpack it beside your pages. The same files are in the `system/dist` folder of [the repository](https://github.com/VladislavKorzh/trayui).
 
 ```text
 trayui/

@@ -13,7 +13,8 @@ What changed in each version of Tray UI, the design system in plain HTML and CSS
   - Video Player: the figure carries `data-playing` while the film plays, a hook for your own styles.
   - The `z-overlay` token says what it is for: an overlay of your own that is not a `<dialog>`. The system's dialogs, drawers and sheets open in the top layer and need none.
   - Articles that had fallen behind the code are corrected: where menus are placed, what a menu item reports, the shadcn registry, the 0.3.0 install lines.
-- **The packages:** `npx trayui --help` lists every option. Neither package links the repository on npm while it is private, and the README of `trayui-react` links the site, not files the package does not hold.
+- **The repository is open**, at https://github.com/VladislavKorzh/trayui. The site links it from its header, with its stars, and from the source of each component's page; jsDelivr serves the files from npm as before. Report a vulnerability privately from its Security tab, as `SECURITY.md` says.
+- **The packages:** `npx trayui --help` lists every option, and the README of `trayui-react` links the site, not files the package does not hold.
 
 ## 0.3.0, November 2026
 

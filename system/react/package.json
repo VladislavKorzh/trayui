@@ -5,6 +5,14 @@
   "license": "MIT",
   "author": "Vladyslav Korzh (https://github.com/VladislavKorzh)",
   "homepage": "https://trayui.com/docs/react",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VladislavKorzh/trayui.git",
+    "directory": "system/react"
+  },
+  "bugs": {
+    "url": "https://github.com/VladislavKorzh/trayui/issues"
+  },
   "keywords": [
     "design-system",
     "react",

@@ -66,7 +66,7 @@
     </div>
     <div class="tray-topbar__end">
       <button class="tray-topbar__search tray-topbar__search--fold" type="button" id="site-find" aria-label="Search the site" aria-haspopup="dialog"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search</span><kbd class="tray-kbd">/</kbd></button>{{#repo}}
-      <a class="tray-btn tray-btn--quiet tray-btn--sm tray-topbar__wide" href="{{repo}}">GitHub</a>{{/repo}}
+      {{github}}{{/repo}}
       <span class="tray-anchor" data-tray="menu"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" id="site-theme-btn" aria-label="Theme"><span class="site-dot" aria-hidden="true"></span></button><div class="tray-pop tray-pop--end site-thememenu"><div class="tray-list" id="site-theme-list">{{theme_menu}}</div></div></span>
     </div>
   </header>
@@ -80,7 +80,8 @@
 <dialog class="tray-sheet tray-sheet--start" id="site-sheet" data-tray="dialog" aria-labelledby="site-sheet-title">
   <div class="tray-dialog__head"><div><h2 class="subtitle site-logo" id="site-sheet-title">{{mark}}<span>Tray UI</span></h2></div><button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-close aria-label="Close"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button></div>
   <nav class="tray-tabs site-sections site-sections--sheet" id="site-sections-sheet" aria-label="Sections" data-section="{{section}}">{{sections_tabs}}</nav>
-  <nav class="site-nav site-nav--sheet" id="site-nav-sheet" aria-label="Pages" data-section="{{section}}">{{nav_html}}</nav>
+  <nav class="site-nav site-nav--sheet" id="site-nav-sheet" aria-label="Pages" data-section="{{section}}">{{nav_html}}</nav>{{#repo}}
+  <p class="site-sheet__repo">{{github_sheet}}</p>{{/repo}}
 </dialog>
 <dialog class="site-search" id="site-search" data-tray="dialog" aria-label="Search the site">
   <div class="tray-command" data-tray="command" id="site-command">

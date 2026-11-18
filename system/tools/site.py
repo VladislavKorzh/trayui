@@ -27,7 +27,7 @@ files also stay at their plain addresses, for other sites to link. For readers t
 comes as Markdown at its address with .md added, llms.txt is the index of them, and llms-full.txt holds the whole
 system in one file. tools/og.py draws the picture a link to each page shows.
 """
-import gzip, hashlib, html, html.parser, json, pathlib, re, shutil, subprocess, sys, urllib.parse, zipfile
+import gzip, hashlib, html, html.parser, json, os, pathlib, re, shutil, subprocess, sys, urllib.parse, zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 P, SRC, DIST, OUT = ROOT / 'project', ROOT / 'tools' / 'site', ROOT / 'dist', ROOT / 'site'
@@ -451,6 +451,43 @@ def viewer(p, parts, about=''):
             '<div class="tray-tabpanel" role="tabpanel" id="site-src" aria-labelledby="site-t2" tabindex="0" hidden>'
             f'<div class="tray-code" dir="ltr"><div class="tray-code__head"><span>HTML</span></div><pre tabindex="0"><code id="site-src-code">{colour(p["source"], "html")}</code></pre></div></div></section>'
             f'<article class="site-prose">{note}</article>')
+
+
+# The tokens of the crawlers that gather pages to train models (not those of search, nor the fetches an agent makes for a
+# person): robots.txt keeps them off the templates. Google-Extended and Applebot-Extended are tokens only, read by Googlebot
+# and Applebot for what they already fetch.
+TRAINERS = ('GPTBot', 'ClaudeBot', 'anthropic-ai', 'CCBot', 'Google-Extended', 'Applebot-Extended', 'Meta-ExternalAgent', 'Bytespider',
+            'cohere-training-data-crawler', 'AI2Bot')
+
+# GitHub's mark, in Lucide's drawing (react-icons/lu, LuGithub): the site's own, not one of the system's icons.
+GITHUB_MARK = ('<svg class="tray-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5'
+               '.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65'
+               '-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>')
+
+
+def stars(repo):
+    """The stars of the repository on GitHub, asked once while the site is built (so a visitor's page asks GitHub nothing),
+    or None when GitHub does not answer. GITHUB_TOKEN, when it is set, lifts the limit on asking."""
+    import urllib.request
+    path = urllib.parse.urlsplit(repo).path.strip('/')
+    if not path:
+        return None
+    ask = urllib.request.Request(f'https://api.github.com/repos/{path}', headers={'Accept': 'application/vnd.github+json', 'User-Agent': 'trayui-site-build'})
+    if os.environ.get('GITHUB_TOKEN'):
+        ask.add_header('Authorization', f'Bearer {os.environ["GITHUB_TOKEN"]}')
+    try:
+        with urllib.request.urlopen(ask, timeout=8) as r:
+            return int(json.loads(r.read())['stargazers_count'])
+    except Exception:
+        return None
+
+
+def github_link(repo, count, cls=''):
+    """The link to the repository, with its stars when they are known: "GitHub ★ 12", read as "GitHub 12 stars"."""
+    short = '' if count is None else str(count) if count < 1000 else f'{count / 1000:.1f}'.rstrip('0').rstrip('.') + 'k'
+    n = (f'<span class="site-stars__n">{icon("star", "tray-icon--sm")}{short}<span class="tray-vh"> {"star" if count == 1 else "stars"}</span></span>'
+         if short else '')
+    return f'<a class="tray-btn tray-btn--quiet tray-btn--sm site-stars{" " + cls if cls else ""}" href="{html.escape(repo)}">{GITHUB_MARK}<span>GitHub</span>{n}</a>'
 
 
 TEMPLATE_TERMS = ('Names, figures and quotes are invented. The templates are here to look at: unlike the components and the blocks, they are '
@@ -1044,6 +1081,9 @@ def build():
              'site': site_url, 'author': LINKS.get('author', ''), 'author_url': LINKS.get('author_url', ''),
              'icon_wall': ''.join(icon(n) for n in sorted(icons)), 'themes': len(tok['color']['themes']),
              'theme_menu': theme_menu(theme_data(tok)['list']), 'mark': MARK, 'plays': len(plays), 'articles': len(articles), 'templates': len(templates)}
+    count = stars(facts['repo']) if facts['repo'] else None
+    facts['github'] = github_link(facts['repo'], count, 'tray-topbar__wide') if facts['repo'] else ''  # in the header, and in the sheet on a phone
+    facts['github_sheet'] = github_link(facts['repo'], count) if facts['repo'] else ''
     at = site_url or facts['cdn'] or 'trayui'  # the home page's lines are short: the site's own copies of the current release; the docs give jsDelivr by version
     facts['install'] = code_block(f'<link rel="stylesheet"\n  href="{at}/tokens.css">\n<link rel="stylesheet"\n  href="{at}/components/bundle.css">\n'
                                   f'<script defer\n  src="{at}/components/bundle.js"></script>', 'html', 'home-install-code')  # the lines the home page starts with, each tag on two to fit the card
@@ -1740,8 +1780,14 @@ def build():
         (OUT / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                                          + ''.join(f'  <url><loc>{html.escape(facts["site"] + "/" + m["path"])}</loc>' + (f'<lastmod>{m["lastmod"]}</lastmod>' if m.get('lastmod') else '') + '</url>\n'
                                                    for m in index.values()) + '</urlset>\n', encoding='utf-8')
-        (OUT / 'robots.txt').write_text('# Tray UI documentation (MIT). Search, AI answers, agent fetches and training are welcome.\n'
-                                        f'User-agent: *\nAllow: /\n\nSitemap: {facts["site"]}/sitemap.xml\n', encoding='utf-8')
+        robots = '# Tray UI documentation (MIT). Search, AI answers, agent fetches and training are welcome.\nUser-agent: *\nAllow: /\n'
+        if templates:
+            # the templates keep all rights reserved: the crawlers that gather pages to train models stay off them, their pictures
+            # and the files that hold their HTML; search and the fetches an agent makes for a person still reach them
+            robots = robots.replace('are welcome.\n', 'are welcome,\n# except training on the templates, which keep all rights reserved.\n') + (
+                '\n' + ''.join(f'User-agent: {a}\n' for a in TRAINERS)
+                + 'Disallow: /templates\nDisallow: /_/pages/t-\nDisallow: /_/og/templates\nAllow: /\n')
+        (OUT / 'robots.txt').write_text(robots + f'\nSitemap: {facts["site"]}/sitemap.xml\n', encoding='utf-8')
         if articles:  # the articles as an Atom feed, whole, for readers and for sites that take a feed (with the address here as the original)
             site, esc = facts['site'], lambda s: html.escape(s, quote=False)
             stamp = lambda a: max(d for d in (index[a['id']].get('lastmod'), a['published']) if d) + 'T00:00:00Z'

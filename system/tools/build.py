@@ -110,7 +110,8 @@ def npm_package(dist, tok, icons):
            'description': f'A design system in plain HTML and CSS: {len(EXPECTED)} components, {blocks} blocks, {themes} themes. Three files, no build step.',
            'license': links.get('license', 'MIT'), 'author': f'{links.get("author", "")} ({links.get("author_url", "")})', 'homepage': site,
            # the repository only once it is open: npm would link a page nobody can see
-           **({'repository': {'type': 'git', 'url': f'git+{links.get("repo", "")}.git', 'directory': 'system/dist'}} if links.get('public') else {}),
+           **({'repository': {'type': 'git', 'url': f'git+{links.get("repo", "")}.git', 'directory': 'system/dist'},
+               'bugs': {'url': f'{links.get("repo", "")}/issues'}} if links.get('public') else {}),
            'keywords': ['design-system', 'css', 'html', 'ui-components', 'component-library', 'accessibility', 'no-build', 'dark-mode', 'tailwind', 'figma',
                         'cli', 'shadcn-registry', 'agent-skills'],
            'style': 'components/bundle.css', 'unpkg': 'components/bundle.js', 'jsdelivr': 'components/bundle.js', 'sideEffects': True,
