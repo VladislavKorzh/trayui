@@ -252,6 +252,10 @@
       var q = input.value.trim().toLowerCase(), shown = 0;
       options().forEach(function (o) { var hit = !q || optionWords(o).toLowerCase().indexOf(q) >= 0; o.hidden = !hit; if (hit) shown += 1; });
       if (empty) { empty.hidden = shown > 0; tell(shown ? '' : empty.textContent.trim()); }
+      /* With nothing to match the panel holds only the sentence, which is no listbox (a listbox holds options): it is
+         hidden from screen readers, which hear the sentence through the status line, and the input is not expanded. */
+      if (shown) panel.removeAttribute('aria-hidden'); else panel.setAttribute('aria-hidden', 'true');
+      if (pop.isOpen()) input.setAttribute('aria-expanded', String(shown > 0));
       setActive(visible()[0]);
     }
     function choose(o) {

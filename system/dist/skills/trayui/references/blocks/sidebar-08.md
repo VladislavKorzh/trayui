@@ -1,0 +1,165 @@
+# Two sidebars
+
+Two sidebars: a rail of section icons beside an inbox of messages with a search and an Unread switch; for when a section is a list to pick from.
+
+A mail or support inbox, or any section that is a list to pick from: a rail of section icons at the start, then a 21rem column of messages, then the open message. The rail is a sidebar with `data-collapsed` in the markup and no button to widen it; each icon names itself in a tooltip. An unread message carries a dot and the hidden word "Unread" for screen readers. Opening one marks it read, and the Unread switch hides those already read, showing "Nothing unread." when none are left. The search field has no behaviour of its own: filter the list in your script.
+
+Pick this over [a sidebar on each side](https://trayui.com/blocks/sidebar-12.md) when the second column lists many things rather than describing one. Below 56rem both columns leave the page and the top bar gains two buttons: one opens the inbox in a sheet, the other the sections, which show their labels there and fold back into a rail when the sheet closes.
+
+It is made of these components: [App Shell](https://trayui.com/components/app-shell.md), [Sidebar](https://trayui.com/components/sidebar.md), [Tooltip](https://trayui.com/components/tooltip.md), [Badge](https://trayui.com/components/badge.md), [Switch](https://trayui.com/components/switch.md), [Input Group](https://trayui.com/components/input-group.md), [Input](https://trayui.com/components/input.md), [Top Bar](https://trayui.com/components/top-bar.md), [Button](https://trayui.com/components/button.md), [Breadcrumb](https://trayui.com/components/breadcrumb.md).
+
+Behaviours it uses: `notices`, `sidebar-sheet`, `tooltip`.
+
+Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two sidebars</title>
+<meta name="description" content="Two sidebars: a rail of section icons beside an inbox of messages with a search and an Unread switch; for when a section is a list to pick from.">
+<meta name="tray-category" content="Sidebar">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app">
+  <div class="tray-app__side tray-app__side--double">
+    <nav class="tray-sidebar tray-sidebar--flyout" id="sections" aria-label="Sections" data-collapsed>
+      <div class="tray-sidebar__group">
+        <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Inbox"><a class="tray-sidebar__item" href="#" aria-label="Inbox" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-mail"/></svg><span>Inbox</span></a></span>
+        <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Orders"><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg><span>Orders</span><span class="tray-badge tray-badge--count">12<span class="tray-vh"> to pack</span></span></a></span>
+        <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Customers"><a class="tray-sidebar__item" href="#" aria-label="Customers"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-users"/></svg><span>Customers</span></a></span>
+        <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Reports"><a class="tray-sidebar__item" href="#" aria-label="Reports"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chart-column"/></svg><span>Reports</span></a></span>
+      </div>
+      <div class="tray-sidebar__group" style="margin-block-start: auto">
+        <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Settings"><a class="tray-sidebar__item" href="#" aria-label="Settings"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-settings"/></svg><span>Settings</span></a></span>
+      </div>
+    </nav>
+    <nav class="tray-sidebar tray-sidebar--wide" id="inbox" aria-label="Inbox" data-tray="notices">
+      <div class="tray-sidebar__head">
+        <p class="subtitle">Inbox</p>
+        <label class="tray-switch">
+          <span>Unread</span>
+          <input type="checkbox" role="switch" name="notices-view" value="unread">
+          <span class="tray-switch__track"></span>
+        </label>
+      </div>
+      <div class="tray-input-group tray-input-group--sm">
+        <span class="tray-input-group__addon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg></span>
+        <input class="tray-input" type="search" placeholder="Search messages" aria-label="Search messages">
+      </div>
+      <div class="tray-sidebar__scroll">
+        <ul class="tray-list">
+          <li>
+            <a class="tray-notice" href="#" data-unread>
+              <span class="tray-notice__body">
+                <span class="tray-row tray-row--sm tray-row--between"><b>Dana Kovalenko</b><span class="tray-notice__meta">09:42</span></span>
+                <span class="tray-clip">A gift box for PL-20431</span>
+                <span class="tray-notice__meta tray-clip">Could you add a gift box to my order before the courier leaves at 14:00?</span>
+              </span>
+              <span class="tray-notice__mark"><span class="tray-vh">Unread</span></span>
+            </a>
+          </li>
+          <li>
+            <a class="tray-notice" href="#" data-unread>
+              <span class="tray-notice__body">
+                <span class="tray-row tray-row--sm tray-row--between"><b>Marta Hrytsenko</b><span class="tray-notice__meta">08:15</span></span>
+                <span class="tray-clip">Delivery on Saturday</span>
+                <span class="tray-notice__meta tray-clip">We are away until Friday evening. Can the courier come on Saturday morning?</span>
+              </span>
+              <span class="tray-notice__mark"><span class="tray-vh">Unread</span></span>
+            </a>
+          </li>
+          <li>
+            <a class="tray-notice" href="#">
+              <span class="tray-notice__body">
+                <span class="tray-row tray-row--sm tray-row--between"><b>Ivan Petrenko</b><span class="tray-notice__meta">Yesterday</span></span>
+                <span class="tray-clip">Twenty jars for a restaurant</span>
+                <span class="tray-notice__meta tray-clip">We open in December and would like 20 jars of 50 g every week.</span>
+              </span>
+              <span class="tray-notice__mark"></span>
+            </a>
+          </li>
+          <li>
+            <a class="tray-notice" href="#">
+              <span class="tray-notice__body">
+                <span class="tray-row tray-row--sm tray-row--between"><b>Olena Bondar</b><span class="tray-notice__meta">Yesterday</span></span>
+                <span class="tray-clip">Thank you</span>
+                <span class="tray-notice__meta tray-clip">The jars arrived cold and whole. My guests asked where to order more.</span>
+              </span>
+              <span class="tray-notice__mark"></span>
+            </a>
+          </li>
+          <li>
+            <a class="tray-notice" href="#">
+              <span class="tray-notice__body">
+                <span class="tray-row tray-row--sm tray-row--between"><b>Yaryna Melnyk</b><span class="tray-notice__meta">12 Nov</span></span>
+                <span class="tray-clip">A jar with a loose lid</span>
+                <span class="tray-notice__meta tray-clip">One of the three 30 g jars in PL-20402 was not sealed. I have a photo.</span>
+              </span>
+              <span class="tray-notice__mark"></span>
+            </a>
+          </li>
+          <li>
+            <a class="tray-notice" href="#">
+              <span class="tray-notice__body">
+                <span class="tray-row tray-row--sm tray-row--between"><b>Taras Shevchuk</b><span class="tray-notice__meta">11 Nov</span></span>
+                <span class="tray-clip">One invoice for October</span>
+                <span class="tray-notice__meta tray-clip">Our accountant needs one invoice for the four orders we placed in October.</span>
+              </span>
+              <span class="tray-notice__mark"></span>
+            </a>
+          </li>
+          <li>
+            <a class="tray-notice" href="#">
+              <span class="tray-notice__body">
+                <span class="tray-row tray-row--sm tray-row--between"><b>Sofia Koval</b><span class="tray-notice__meta">10 Nov</span></span>
+                <span class="tray-clip">Two jars every month</span>
+                <span class="tray-notice__meta tray-clip">Is there a discount if we take two 100 g jars every month?</span>
+              </span>
+              <span class="tray-notice__mark"></span>
+            </a>
+          </li>
+          <li>
+            <a class="tray-notice" href="#">
+              <span class="tray-notice__body">
+                <span class="tray-row tray-row--sm tray-row--between"><b>Andrii Lysenko</b><span class="tray-notice__meta">8 Nov</span></span>
+                <span class="tray-clip">Pickup at the farm</span>
+                <span class="tray-notice__meta tray-clip">I will be near the farm on Sunday. May I collect PL-20388 myself?</span>
+              </span>
+              <span class="tray-notice__mark"></span>
+            </a>
+          </li>
+        </ul>
+        <p class="tray-list__empty" data-notices="empty" hidden>Nothing unread.</p>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <header class="tray-topbar">
+      <div class="tray-topbar__start">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="inbox" aria-label="Open the inbox"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+        <nav aria-label="Breadcrumb"><ol class="tray-crumbs"><li><a href="#">Perly Farm</a></li><li><span aria-current="page">Inbox</span></li></ol></nav>
+      </div>
+      <div class="tray-topbar__end">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="sections" aria-label="Open the sections"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-layout-grid"/></svg></button>
+      </div>
+    </header>
+    <main class="tray-app__content">
+      <h1 class="tray-vh">Inbox</h1>
+      <div class="tray-slots">
+        <div class="tray-slot tray-slot--video"></div>
+        <div class="tray-slot tray-slot--video"></div>
+        <div class="tray-slot tray-slot--video"></div>
+      </div>
+      <div class="tray-slot tray-slot--tall"></div>
+    </main>
+  </div>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>
+```

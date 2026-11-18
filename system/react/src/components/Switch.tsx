@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { useFieldControl } from '../lib/field';
 import { cx } from '../lib/util';

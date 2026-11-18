@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import type { IconSource } from '../lib/icon';
 import { cx } from '../lib/util';
@@ -122,7 +123,7 @@ export const NotificationCenter = React.forwardRef<HTMLSpanElement, Notification
           </div>
         ) : null}
         {shown.length ? (
-          <ul className="tray-notices__list">
+          <ul className="tray-notices__list" role="list">
             {shown.map((n) => {
               const on = isUnread(n);
               const body = (

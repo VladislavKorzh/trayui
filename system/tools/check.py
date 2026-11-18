@@ -15,6 +15,7 @@ PY = sys.executable
 STEPS = [
     ('build the system', [PY, 'tools/build.py'], ROOT, False),
     ('build the site', [PY, 'tools/site.py'], ROOT, False),
+    ('test the markup checker', ['node', 'cli/test.mjs'], ROOT, False),
     ('measure the themes', [PY, 'tools/themes.py', '--check'], ROOT, False),
     ('type-check the React package', ['npm', 'run', '--silent', 'check'], ROOT / 'react', False),
     ('build the React package', ['npm', 'run', '--silent', 'build'], ROOT / 'react', False),
@@ -23,7 +24,9 @@ STEPS = [
     ('render the blocks', [PY, 'tools/pages.py'], ROOT, True),
     ('render the previews', [PY, 'tools/shoot.py'], ROOT, True),
     ('check the dialog feet', [PY, 'tools/feet.py'], ROOT, True),
+    ('test the components', [PY, 'tools/test_components.py'], ROOT, True),
     ('check the site', [PY, 'tools/site_check.py'], ROOT, True),
+    ('prove the registry and the CLI', [PY, 'tools/cli_check.py'], ROOT, True),
 ]
 
 

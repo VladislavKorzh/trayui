@@ -21,7 +21,7 @@ A message is one row of a conversation: who spoke, what they said, and what happ
 
 ## Variants
 - `other` (default): someone else, at the start edge, in the resting fill.
-- `own`: you, at the end edge, in ink. Leave out the avatar and the name.
+- `own`: you, at the end edge, in ink. Leave out the avatar and the name: the message starts with "You:" for a screen reader, hidden from sight (`ownLabel` changes the words).
 - `assistant`: plain bubbles set as prose, the yellow sparkle avatar, aligned to the top of the answer.
 
 ## Content

@@ -20,6 +20,19 @@
   Access-Control-Allow-Origin: *
   Cache-Control: public, max-age=604800
 
+# The registry (r/, in shadcn's format) and the skill (skills/): read by the trayui and shadcn CLIs, by agents and by
+# other sites' tools, so any origin may fetch them. Their names stay the same from one build to the next, so a client
+# checks them again after an hour.
+/r/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=3600
+  Content-Type: application/json; charset=utf-8
+/skills/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=3600
+/skills/marketplace.json
+  Content-Type: application/json; charset=utf-8
+
 # The site's own files, and its copies of the three files: each name holds a hash of the content, so a new
 # version is a new name, and a browser may keep a copy for a year without asking again.
 /_/*

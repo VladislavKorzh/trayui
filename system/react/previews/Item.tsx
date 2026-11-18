@@ -3,7 +3,7 @@ import { Avatar, Badge, Button, Icon, Item } from 'trayui-react';
 
 export function Filled() {
   return (
-    <ul className="tray-items" style={{ maxWidth: 440 }}>
+    <ul className="tray-items" role="list" style={{ maxWidth: 440 }}>
       <Item href="#" icon="truck" title="Order PL-20418" text="Two jars of 50 g, out for delivery" end={<Icon name="chevron-right" flip />} />
       <Item media={<Avatar initials="OF" />} title="Oksana Franko" text="Farm manager" end={<Badge tone="accent">On shift</Badge>} />
       <Item
@@ -23,9 +23,9 @@ export function Filled() {
 
 export function Ruled() {
   return (
-    <ul className="tray-items tray-items--ruled" style={{ maxWidth: 440 }}>
-      <Item icon="file" title="Receipt, 14 November" text="PDF, 84 KB" end={<Button variant="ghost" size="xs" icon="download" aria-label="Download the receipt" />} />
-      <Item icon="file" title="Receipt, 3 October" text="PDF, 81 KB" end={<Button variant="ghost" size="xs" icon="download" aria-label="Download the receipt" />} />
+    <ul className="tray-items tray-items--ruled" role="list" style={{ maxWidth: 440 }}>
+      <Item icon="file" title="Receipt, 14 November" text="PDF, 84 KB" end={<Button variant="ghost" size="xs" icon="download" aria-label="Download the receipt of 14 November" />} />
+      <Item icon="file" title="Receipt, 3 October" text="PDF, 81 KB" end={<Button variant="ghost" size="xs" icon="download" aria-label="Download the receipt of 3 October" />} />
       <Item size="sm" icon="map-pin" title="Farm shop" end="2.4 km" />
     </ul>
   );
@@ -40,7 +40,7 @@ export function AsButtons() {
   ];
   return (
     <div className="tray-stack tray-stack--sm" style={{ maxWidth: 440 }}>
-      <ul className="tray-items">
+      <ul className="tray-items" role="list">
         {jars.map((j) => (
           <Item key={j.size} size="sm" icon="plus" title={`Jar of ${j.size}`} text={j.text} end={j.price} onClick={() => setBasket(basket + 1)} />
         ))}

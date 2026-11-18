@@ -91,7 +91,7 @@ document.getElementById('period').addEventListener('change', (event) => {
 });
 ```
 
-In Chromium, ArrowDown on Monthly chooses Yearly, keeps focus on it, and leaves "Yearly prices: Shop, $24 a month, billed yearly" in the status. MDN's guide to live regions says "The most reliable way to ensure that live regions are registered is to include them in the initial markup", which is why the paragraph is written into the page empty. Since the next release Tray UI puts its status inside the wrapper, empty, as the behaviour starts (in 0.2.0 it made it on the first change, which could lose the first prices); at each change it empties it and writes the words a frame later; when the same words come twice in a row, it adds a no-break space so the region's text still changes.
+In Chromium, ArrowDown on Monthly chooses Yearly, keeps focus on it, and leaves "Yearly prices: Shop, $24 a month, billed yearly" in the status. MDN's guide to live regions says "The most reliable way to ensure that live regions are registered is to include them in the initial markup", which is why the paragraph is written into the page empty. Since version 0.3.0 Tray UI puts its status inside the wrapper, empty, as the behaviour starts (in 0.2.0 it made it on the first change, which could lose the first prices); at each change it empties it and writes the words a frame later; when the same words come twice in a row, it adds a no-break space so the region's text still changes.
 
 The sliding pill is motion, so under `prefers-reduced-motion: reduce` it moves to the chosen period at once.
 

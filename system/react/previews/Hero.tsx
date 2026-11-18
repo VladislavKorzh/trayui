@@ -1,4 +1,4 @@
-import { Badge, Button, Hero, Item, Progress, Typography } from 'trayui-react';
+import { Badge, Button, Hero, Item, Typography } from 'trayui-react';
 
 export function Figure() {
   return (
@@ -27,7 +27,12 @@ export function Figure() {
               </Typography>
               <p style={{ marginBlockStart: 'var(--space-3)' }}>26 packed, 12 to go. All of them leave today.</p>
             </div>
-            <Progress steps={10} value={7} meter aria-label="26 of 38 orders packed" />
+            {/* A picture of the share, beside the figure that says it: one image with the words, as in the HTML preview. */}
+            <div className="tray-steps" role="img" aria-label="26 of 38 orders packed">
+              {Array.from({ length: 10 }, (_, i) => (
+                <span key={i} data-done={i < 7 ? '' : undefined} />
+              ))}
+            </div>
           </>
         }
       />
@@ -54,7 +59,7 @@ export function Display() {
         media={
           <>
             <span className="nav" style={{ fontWeight: 600 }}>To pack this morning</span>
-            <ul className="tray-items">
+            <ul className="tray-items" role="list">
               <Item size="sm" title="PL-20431" text="Two jars of 50 g" end="$118.00" />
               <Item size="sm" title="PL-20430" text="One jar of 100 g" end="$59.00" />
               <Item size="sm" title="PL-20429" text="Four jars of 50 g" end="$236.00" />

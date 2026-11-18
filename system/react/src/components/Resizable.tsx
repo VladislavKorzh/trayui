@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, useBehaviour, useForwardedRef } from '../lib/util';
 import { useOwnBcEvent } from '../lib/nav';

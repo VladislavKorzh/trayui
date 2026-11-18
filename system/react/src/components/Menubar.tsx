@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, useTrayEvent, useBehaviour } from '../lib/util';
 import { MenuItems, useMergedRef } from '../lib/menus';

@@ -21,7 +21,7 @@ A lightbox shows the pictures of a gallery one at a time, as large as the window
 
 ## Details
 - The gallery is a grid of thumbnails, each a link to the full picture, so it works without script. `lead` makes the first one twice the size; `thumbWidth` is the least width of a thumbnail (11rem by default) and the row takes as many as fit.
-- A press on a thumbnail opens the lightbox on that picture, over the whole window on the ink ground. Swipe, the trackpad, the arrow keys, Home and End move through the pictures; the buttons step one picture and turn off at the ends; the count follows; a status line says which picture you are on.
+- A press on a thumbnail opens the lightbox on that picture, over the whole window on the ink ground. Swipe, the trackpad, the arrow keys, Home and End move through the pictures; the buttons step one picture and turn off at the ends; the count follows; a status line says which picture you are on. The strip of pictures inside is a list named "Pictures" (`trackLabel`).
 - Escape and Close shut it, and the focus goes back to the thumbnail. A press with Ctrl, Cmd or Shift opens the picture in a new tab.
 - `alt` is the picture's text both as a thumbnail and in the lightbox. `caption` shows under the picture in the lightbox.
 - Name the buttons in the page's language with `closeLabel`, `previousLabel` and `nextLabel`, and the word in "2 of 6" with `of`.

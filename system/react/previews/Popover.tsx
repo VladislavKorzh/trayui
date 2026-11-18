@@ -21,7 +21,7 @@ export function Share() {
         </label>
       </Popover>
       <Popover
-        style={{ marginInlineStart: '22rem' }}
+        style={{ marginInlineStart: 'auto' }}
         align="end"
         trigger={<Button variant="ghost" size="sm" icon="circle-help" aria-label="What is a batch?" />}
         title="Batch"

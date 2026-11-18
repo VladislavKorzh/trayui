@@ -64,6 +64,16 @@
         '<div class="tray-chart__x" aria-hidden="true">' + labels.map(function (l, i) { return '<span>' + (i % every ? '' : esc(l)) + '</span>'; }).join('') + '</div>';
       if (cfg.height) frame.style.setProperty('--tray-h', cfg.height + 'px');
       el.appendChild(frame);
+      /* The labels under the plot: every one while each fits its column, else every second, third and so on, so that on
+         a narrow card none is cut. A label is centred on its column and may reach into the empty ones beside it. */
+      var xrow = $('.tray-chart__x', frame), xs = $$('span', xrow);
+      watch(xrow, function () {
+        var col = xrow.clientWidth / n, wide = 0, r = document.createRange();
+        if (!col) return;
+        labels.forEach(function (l, i) { xs[i].textContent = l; r.selectNodeContents(xs[i]); wide = Math.max(wide, r.getBoundingClientRect().width); });
+        var step = Math.max(every, Math.ceil((wide + 8) / col));
+        labels.forEach(function (l, i) { xs[i].textContent = i % step ? '' : l; });
+      });
       var plot = $('.tray-chart__plot', frame), lines = [];
       var peak = null;
       if (series.length === 1 && cfg.label !== 'none') {

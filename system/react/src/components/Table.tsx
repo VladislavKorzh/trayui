@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { cx } from '../lib/util';
-import { bodyCell, headCell } from '../lib/data';
+import { cx, useUid } from '../lib/util';
+import { bodyCell, headCell, wideRegion } from '../lib/data';
 
 /** One row of a Table or Data Table: its values by column key. */
 export type TableRow = Record<string, React.ReactNode>;
@@ -37,6 +37,11 @@ export interface TableProps extends Omit<React.TableHTMLAttributes<HTMLTableElem
   pad?: boolean;
   /** Free table content: `<thead>`, `<tbody>`, `<tfoot>`. Used when `columns` is left out. Mark numeric cells with `data-num` and give heads a `scope`. */
   children?: React.ReactNode;
+  /**
+   * The table may be wider than the screen. Its wrap, which scrolls it sideways, then becomes a region named as the table is
+   * (by its caption, or its `aria-label`), which the keyboard can reach with Tab and scroll with the arrow keys.
+   */
+  wide?: boolean;
 }
 
 /**
@@ -45,13 +50,14 @@ export interface TableProps extends Omit<React.TableHTMLAttributes<HTMLTableElem
  * It sits in a wrapper that scrolls sideways on a phone; `className`, `aria-label` and the ref go to the `<table>`.
  */
 export const Table = React.forwardRef<HTMLTableElement, TableProps>(function Table(
-  { caption, columns, rows = [], rowKey, footer, compact, hover, pad, className, children, ...rest },
+  { caption, columns, rows = [], rowKey, footer, compact, hover, pad, wide, className, children, ...rest },
   ref,
 ) {
+  const captionId = useUid('table-caption');
   return (
-    <div className="tray-table-wrap">
+    <div className="tray-table-wrap" {...(wide ? wideRegion(caption != null ? captionId : undefined, rest) : null)}>
       <table ref={ref} className={cx('tray-table', compact && 'tray-table--compact', hover && 'tray-table--hover', pad && 'tray-table--pad', className)} {...rest}>
-        {caption != null ? <caption>{caption}</caption> : null}
+        {caption != null ? <caption id={wide ? captionId : undefined}>{caption}</caption> : null}
         {columns ? (
           <>
             <thead>

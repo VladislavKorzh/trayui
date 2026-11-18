@@ -34,11 +34,11 @@
 </div>
 <div class="tray-app__main">
 <header class="tray-topbar">
-<div class="tray-topbar__start"><button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-tray="sidebar-toggle" aria-controls="app-sb" aria-label="Collapse the sidebar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-panel-left"/></svg></button>
-<nav aria-label="Breadcrumb"><ol class="tray-crumbs"><li><a href="#">Perly Farm</a></li><li><span aria-current="page">Orders</span></li></ol></nav></div>
-<div class="tray-topbar__end"><button class="tray-topbar__search" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
+<div class="tray-topbar__start"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="app-sb" aria-label="Open the navigation"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button><button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon tray-app__collapse" type="button" data-tray="sidebar-toggle" aria-controls="app-sb" aria-label="Collapse the sidebar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-panel-left"/></svg></button>
+<nav aria-label="Breadcrumb"><ol class="tray-crumbs tray-crumbs--fold"><li><a href="#">Perly Farm</a></li><li><span aria-current="page">Orders</span></li></ol></nav></div>
+<div class="tray-topbar__end"><button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
 <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 2 unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip">2</span></span>
-<button class="tray-avatar" type="button" aria-label="Account: Oksana Franko">OF</button></div>
+<button class="tray-avatar" type="button" aria-label="Account: Oksana Franko, OF">OF</button></div>
 </header>
 <main class="tray-app__content">
 <div class="tray-pagehead"><div class="tray-pagehead__row"><div class="tray-pagehead__text"><h1 class="title">Orders</h1><p>Twelve orders are waiting to be packed.</p></div><div class="tray-pagehead__actions"><button class="tray-btn tray-btn--quiet tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-download"/></svg>Export</button><button class="tray-btn tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg>New order</button></div></div></div>
@@ -47,7 +47,7 @@
 <div class="tray-stat"><p class="tray-stat__label">To pack</p><p class="tray-stat__value">12</p><p class="tray-stat__foot">The courier comes at 14:00</p></div>
 <div class="tray-stat"><p class="tray-stat__label">Revenue today</p><p class="tray-stat__value">$2,470</p><p class="tray-stat__foot"><span class="tray-trend" data-tone="good"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-trending-up"/></svg>+8%</span>than last Friday</p></div>
 </div>
-<div class="tray-table-wrap"><table class="tray-table"><thead><tr><th scope="col">Order</th><th scope="col">Customer</th><th scope="col">Status</th><th scope="col" data-num>Total</th></tr></thead><tbody>
+<div class="tray-table-wrap"><table class="tray-table" aria-label="Orders"><thead><tr><th scope="col">Order</th><th scope="col">Customer</th><th scope="col">Status</th><th scope="col" data-num>Total</th></tr></thead><tbody>
 <tr><th scope="row">PL-20431</th><td>Dana Kovalenko</td><td><span class="tray-badge">To pack</span></td><td data-num>$118.00</td></tr>
 <tr><th scope="row">PL-20430</th><td>Marta Hrytsenko</td><td><span class="tray-badge">To pack</span></td><td data-num>$59.00</td></tr>
 <tr><th scope="row">PL-20418</th><td>Ivan Petrenko</td><td><span class="tray-badge tray-badge--ink">With the courier</span></td><td data-num>$177.00</td></tr>

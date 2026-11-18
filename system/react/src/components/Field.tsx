@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { FieldContext } from '../lib/field';
 import { cx, useUid } from '../lib/util';
@@ -38,10 +39,22 @@ export const Field = React.forwardRef<HTMLDivElement, FieldProps>(function Field
   const messageId = error != null || hint != null ? `${id}-msg` : undefined;
   const labelId = `${id}-label`;
   const ctx = React.useMemo(() => ({ id, labelId, describedBy: messageId, invalid: error != null, disabled }), [id, labelId, messageId, error, disabled]);
-  const labelEl = (
-    <label className={cx('tray-label', hideLabel && 'tray-vh')} htmlFor={id} id={labelId}>
+  // A control that is a group of inputs (Input OTP) is named by the label through aria-labelledby: a <label for> would
+  // point at its first input, which has a name of its own, and so name nothing. The label is then a span.
+  const group = React.Children.toArray(children).some((c) => React.isValidElement(c) && (c.type as { trayGroup?: boolean } | null)?.trayGroup === true);
+  const words = (
+    <>
       {label}
       {optional ? <span className="tray-label__opt"> {optional === true ? '(optional)' : optional}</span> : null}
+    </>
+  );
+  const labelEl = group ? (
+    <span className={cx('tray-label', hideLabel && 'tray-vh')} id={labelId}>
+      {words}
+    </span>
+  ) : (
+    <label className={cx('tray-label', hideLabel && 'tray-vh')} htmlFor={id} id={labelId}>
+      {words}
     </label>
   );
   const message =

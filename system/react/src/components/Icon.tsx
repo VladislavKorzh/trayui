@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { icons } from '../icons';
 import type { IconSource } from '../lib/icon';
-import { cx } from '../lib/util';
+import { cx, resolveNode } from '../lib/util';
 
 export interface IconProps extends Omit<React.SVGProps<SVGSVGElement>, 'name' | 'ref' | 'children' | 'dangerouslySetInnerHTML'> {
   /**
@@ -21,7 +21,8 @@ export interface IconProps extends Omit<React.SVGProps<SVGSVGElement>, 'name' | 
  * An icon in the colour of the text around it. The system's icons are Lucide's: the ones built in go by name,
  * and every other one comes from `react-icons/lu` as an element. Both are drawn at the same size and with the same stroke.
  */
-export const Icon = React.forwardRef<SVGSVGElement, IconProps>(function Icon({ name, size = 'md', flip, label, className, ...rest }, ref) {
+export const Icon = React.forwardRef<SVGSVGElement, IconProps>(function Icon({ name: given, size = 'md', flip, label, className, ...rest }, ref) {
+  const name = resolveNode(given);
   const a11y = label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': true as const };
   if (typeof name !== 'string') {
     /* An element from an icon library: it keeps its own drawing and takes the system's class, so its box and stroke match the built-in ones. */

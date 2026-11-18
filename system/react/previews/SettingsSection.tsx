@@ -27,7 +27,7 @@ export function SwitchesThatSave() {
           control: <NativeSelect size="sm" options={['12:00', '14:00', '16:00']} defaultValue="14:00" />,
         },
         { title: 'Ask before refunding over $100', description: 'The owner gets a notification to approve.', control: <Switch /> },
-        { title: 'Courier days', description: 'Tuesday, Thursday and Saturday.', control: <Button variant="quiet" size="xs">Change</Button> },
+        { title: 'Courier days', description: 'Tuesday, Thursday and Saturday.', control: <Button variant="quiet" size="xs" aria-label="Change the courier days">Change</Button> },
       ]}
     />
   );

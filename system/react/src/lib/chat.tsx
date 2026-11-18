@@ -4,9 +4,3 @@ import * as React from 'react';
 export type ChatBubbleVariant = 'fill' | 'own' | 'plain';
 
 export const MessageContext = React.createContext<{ bubble: ChatBubbleVariant } | null>(null);
-
-/** Turns a number into a CSS length (px); passes strings through. */
-export function toLength(v: string | number | undefined): string | undefined {
-  if (v === undefined) return undefined;
-  return typeof v === 'number' ? `${v}px` : v;
-}

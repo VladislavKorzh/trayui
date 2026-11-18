@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { MessageContext } from '../lib/chat';
 import { cx, useBehaviour, useUid } from '../lib/util';

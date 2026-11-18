@@ -125,6 +125,7 @@ export function Product() {
       sidebar={{ groups, defaultValue: 'Orders', head: switcher, flushHead: true, foot: usage }}
       topbar={
         <TopBar
+          fold
           breadcrumb={[{ label: 'Perly Farm', href: '#' }, { label: 'Orders' }]}
           search="Search orders"
           end={topbarEnd}
@@ -161,7 +162,7 @@ export function CollapsedSidebar() {
       collapsed={collapsed}
       onCollapsedChange={setCollapsed}
       sidebar={{ groups, defaultValue: 'Customers', head: switcher, flushHead: true, foot: usage }}
-      topbar={<TopBar breadcrumb={[{ label: 'Perly Farm', href: '#' }, { label: 'Customers' }]} search="Search customers" user={{ name: 'Oksana Franko' }} />}
+      topbar={<TopBar fold breadcrumb={[{ label: 'Perly Farm', href: '#' }, { label: 'Customers' }]} search="Search customers" user={{ name: 'Oksana Franko' }} />}
     >
       <PageHeader
         title="Customers"

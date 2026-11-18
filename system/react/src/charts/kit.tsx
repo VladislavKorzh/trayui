@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { Label, Legend, ResponsiveContainer, Tooltip } from 'recharts';
 import type { LegendProps, TooltipProps } from 'recharts';
@@ -28,6 +29,23 @@ export type ChartConfig = Record<
 interface ChartContextValue {
   config: ChartConfig;
   locale: string;
+  /** The point the keyboard is on, when the chart is walked (`walk`): the tooltip shows it. */
+  active?: number;
+}
+
+/**
+ * What the arrow keys walk in a chart: one stop for Tab, the drawing, whose points the keys move through, each said by a
+ * polite live region beside the drawing. `Chart` sets it up for itself.
+ */
+export interface ChartWalk {
+  /** How many points there are: the labels, or the segments of a donut. */
+  count: number;
+  /** What a point says, in words: "May: 22 kg", "Mar: 2026 6 kg, 2025 5 kg", "Jars: 57 kg, 55%". */
+  say: (index: number) => string;
+  /** The point the first press of an arrow reaches, such as the labelled peak. Default the first (the last for ArrowLeft and End). */
+  start?: number;
+  /** Goes round from the last point to the first and back, as on a donut. Default false: the keys stop at either end. */
+  wrap?: boolean;
 }
 
 const ChartContext = React.createContext<ChartContextValue | null>(null);
@@ -78,6 +96,13 @@ export interface ChartContainerProps extends Omit<React.HTMLAttributes<HTMLEleme
   locale?: string;
   /** One Recharts chart: `<AreaChart>`, `<BarChart>`, `<LineChart>`, `<PieChart>`, `<RadarChart>`, `<RadialBarChart>`. */
   children: React.ReactElement;
+  /**
+   * Makes the drawing one image the keyboard walks: a stop for Tab named by `summary`, whose points the arrow keys, Home and
+   * End move through, each said by a live region and shown by the tooltip; Escape lets go. Give the Recharts chart
+   * `accessibilityLayer={false}` then, so its own stop for Tab is not inside the image. Without it the drawing is a group
+   * named by `summary`, and Recharts' own keyboard layer is left as it is.
+   */
+  walk?: ChartWalk;
 }
 
 /**
@@ -86,30 +111,86 @@ export interface ChartContainerProps extends Omit<React.HTMLAttributes<HTMLEleme
  * Inside it, marks take their colour from `var(--color-<key>)`.
  */
 export const ChartContainer = React.forwardRef<HTMLElement, ChartContainerProps>(function ChartContainer(
-  { config, title, caption, summary, height, round, legend, footer, locale = 'en-GB', className, style, children, ...rest },
+  { config, title, caption, summary, height, round, legend, footer, locale = 'en-GB', walk, className, style, children, ...rest },
   ref,
 ) {
+  const [active, setActive] = React.useState<number | undefined>(undefined);
+  // Recharts shows the tooltip at the point the keyboard is on only while the pointer has not moved over the chart; once
+  // it has, the chart is drawn afresh as the keyboard takes over (a new key), so the tooltip follows the keys again.
+  const pointed = React.useRef(false);
+  const [fresh, setFresh] = React.useState(0);
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!walk || walk.count < 1) return;
+    const last = walk.count - 1;
+    const rtl = getComputedStyle(e.currentTarget).direction === 'rtl';
+    const step = ({ ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1, ArrowDown: 1, ArrowUp: -1 } as Record<string, number>)[e.key];
+    let next: number | undefined;
+    if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = last;
+    else if (step && active === undefined) next = walk.start ?? (step > 0 ? 0 : last);
+    else if (step && active !== undefined) next = walk.wrap ? (active + step + walk.count) % walk.count : Math.max(0, Math.min(last, active + step));
+    else if (e.key === 'Escape' && active !== undefined) {
+      e.preventDefault();
+      setActive(undefined);
+      return;
+    } else return;
+    e.preventDefault();
+    if (active === undefined && pointed.current) {
+      pointed.current = false;
+      setFresh((n) => n + 1);
+    }
+    setActive(next);
+  };
+  const said = walk && active !== undefined && active < walk.count ? walk.say(active) : '';
   const keys = Object.keys(config);
   const vars: Record<string, string> = {};
   keys.forEach((key, i) => {
     vars[`--color-${safe(key)}`] = config[key].color ?? `var(--tray-s${Math.min(i + 1, 5)})`;
   });
-  const value = React.useMemo(() => ({ config, locale }), [config, locale]);
+  const value = React.useMemo(() => ({ config, locale, active }), [config, locale, active]);
+  // The figure is named by its caption, as the plain-HTML chart is: a screen reader says the title on entering it.
+  const titleId = 'tray-chart-title-' + React.useId().replace(/[^a-zA-Z0-9]/g, '');
   return (
     <ChartContext.Provider value={value}>
-      <figure ref={ref} className={cx('tray-chart', keys.length === 1 && 'tray-chart--single', className)} style={{ ...vars, ...style } as React.CSSProperties} {...rest}>
-        {title != null ? <figcaption className="tray-chart__title">{title}</figcaption> : null}
+      <figure
+        ref={ref}
+        className={cx('tray-chart', keys.length === 1 && 'tray-chart--single', className)}
+        style={{ ...vars, ...style } as React.CSSProperties}
+        aria-labelledby={title != null ? titleId : undefined}
+        {...rest}
+      >
+        {title != null ? (
+          <figcaption className="tray-chart__title" id={titleId}>
+            {title}
+          </figcaption>
+        ) : null}
         {caption != null ? <p className="tray-chart__caption">{caption}</p> : null}
         <div
           className={cx('tray-chart__canvas', round && 'tray-chart__canvas--round')}
-          role="group"
+          role={walk ? 'img' : 'group'}
           aria-label={summary}
+          tabIndex={walk ? 0 : undefined}
+          onKeyDown={walk ? onKeyDown : undefined}
+          onBlur={walk ? () => setActive(undefined) : undefined}
+          onPointerMove={
+            walk
+              ? () => {
+                  pointed.current = true;
+                }
+              : undefined
+          }
           style={height ? ({ [round ? '--tray-d' : '--tray-h']: `${height}px` } as React.CSSProperties) : undefined}
         >
-          <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+          <ResponsiveContainer key={fresh} width="100%" height="100%" minWidth={0}>
             {children}
           </ResponsiveContainer>
         </div>
+        {/* Beside the image, not in it: a live region inside a role="img" is never heard. */}
+        {walk ? (
+          <span className="tray-vh" aria-live="polite">
+            {said}
+          </span>
+        ) : null}
         {legend ? <ChartLegendContent /> : null}
         {footer}
       </figure>
@@ -214,7 +295,9 @@ export function ChartTooltipContent({ unit = '', hideLabel, hideIndicator, indic
  * Pass `content={<ChartTooltipContent unit=" kg" />}` to set a unit or change what it says; every other prop is the Recharts one.
  */
 export function ChartTooltip(props: TooltipProps) {
-  return <Tooltip isAnimationActive={false} offset={12} content={<ChartTooltipContent />} {...props} />;
+  // a chart the keyboard walks shows the point the keys are on
+  const active = React.useContext(ChartContext)?.active;
+  return <Tooltip isAnimationActive={false} offset={12} content={<ChartTooltipContent />} defaultIndex={active} {...props} />;
 }
 
 /* ---------- Legend ---------- */

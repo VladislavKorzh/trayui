@@ -62,7 +62,8 @@ export const Button = React.forwardRef<HTMLElement, ButtonProps>(function Button
     </>
   );
   if (href !== undefined) {
-    const { disabled, ...anchorRest } = rest as React.ButtonHTMLAttributes<HTMLButtonElement>;
+    /* The props are typed for a button; what the link takes of them is what every element has (a button's own, such as `form`, mean nothing here). */
+    const { disabled, ...anchorRest } = rest;
     return (
       <a
         ref={ref as React.Ref<HTMLAnchorElement>}
@@ -72,7 +73,7 @@ export const Button = React.forwardRef<HTMLElement, ButtonProps>(function Button
         rel={rel}
         aria-disabled={disabled || undefined}
         aria-busy={busy || undefined}
-        {...(anchorRest as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
+        {...(anchorRest as React.HTMLAttributes<HTMLElement>)}
       >
         {body}
       </a>

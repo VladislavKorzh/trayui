@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, useControlled, useUid } from '../lib/util';
 import { ShellContext, type ShellState } from '../lib/shell';
@@ -59,8 +60,9 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(function
         setMenuMounted(true);
         setMenuOpen(true);
       },
+      menuOpen,
     }),
-    [sidebarId, rail, setRail],
+    [sidebarId, rail, setRail, menuOpen],
   );
 
   const { value: _value, defaultValue: _defaultValue, onChange: _onChange, id: _id, ...nav } = sidebar;

@@ -61,6 +61,69 @@ def pick(pg, selector):
     pg.locator(selector).locator('xpath=..').click()
 
 
+def registry_and_skill(site, index, url):
+    """The registry in shadcn's format (r/, r/html/) and the skill (skills/): valid against shadcn's published schemas,
+    made of the sources as they are, complete, served with the right headers, and named in llms.txt and on the CLI page."""
+    import hashlib, io
+    import registry  # tools/registry.py: writes r/ and validates it against tools/shadcn/
+    r = SITE / 'r'
+    problems = registry.validate(r) if (r / 'registry.json').exists() else ['no r/registry.json']
+    check('every item of the registry is valid against shadcn\'s registry-item.json, and both indexes against registry.json, with every dependency in the registry',
+          not problems, problems[:4])
+    load = lambda p: json.loads(p.read_text(encoding='utf-8')) if p.exists() else {}
+    react_reg, html_reg = load(r / 'registry.json'), load(r / 'html' / 'registry.json')
+    comps = sorted(p.stem for p in (ROOT / 'react' / 'src' / 'components').glob('*.tsx'))
+    blocks = sorted(p.stem for p in (ROOT / 'project' / 'blocks').glob('*.html'))
+    kebab = lambda n: re.sub(r'(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])', '-', n).lower()
+    react_names, html_names = {i['name'] for i in react_reg.get('items', [])}, {i['name'] for i in html_reg.get('items', [])}
+    check('the React registry has the core, every component and every block; the plain HTML one the three files and every block',
+          'core' in react_names and all(kebab(c) in react_names for c in comps) and all(b in react_names for b in blocks)
+          and 'trayui' in html_names and all(b in html_names for b in blocks),
+          sorted({kebab(c) for c in comps} - react_names)[:4] + sorted(set(blocks) - html_names)[:4])
+    files = lambda item: {f['path']: f['content'] for f in load(r / item).get('files', [])}
+    button, page = files('button.json'), files('html/login-01.json')
+    check('the registry is made of the sources as they are: a component\'s file is its source, a plain HTML block is its page',
+          button.get('react/src/components/Button.tsx') == (ROOT / 'react' / 'src' / 'components' / 'Button.tsx').read_text(encoding='utf-8')
+          and page.get('project/blocks/login-01.html') == (ROOT / 'project' / 'blocks' / 'login-01.html').read_text(encoding='utf-8'), sorted(button)[:3])
+    block = files('login-01.json')
+    tsx = next(iter(block.values()), '')
+    check('a React block is a client component that wires its behaviours once mounted', re.sub(r'\A// @ts-nocheck\n', '', tsx).startswith("'use client'") and 'useBehaviour(ref)' in tsx
+          and 'export function Login01' in tsx, tsx[:120])
+
+    zipped = SITE / 'skills' / 'trayui.zip'
+    names = zipfile.ZipFile(zipped).namelist() if zipped.exists() else []
+    read = lambda n: zipfile.ZipFile(zipped).read(n).decode('utf-8') if n in names else ''
+    skill_md = read('trayui/SKILL.md')
+    front = skill_md.split('---')[1] if skill_md.startswith('---') else ''
+    keys = re.findall(r'^([a-z-]+):', front, re.M)
+    check('the skill\'s archive holds SKILL.md with only the standard fields of its frontmatter, named trayui', 'name: trayui' in front and 'description:' in front
+          and set(keys) <= {'name', 'description', 'license', 'compatibility', 'metadata', 'allowed-tools'}, keys)
+    check('the skill holds every component and block page, the docs, and the checker with its rules, the same files as the package',
+          all(f'trayui/references/components/{kebab(c)}.md' in names for c in comps if c != 'Icon') and all(f'trayui/references/blocks/{b}.md' in names for b in blocks)
+          and 'trayui/references/docs/accessibility.md' in names and read('trayui/scripts/check.mjs') == (ROOT / 'dist' / 'cli' / 'check.mjs').read_text(encoding='utf-8')
+          and read('trayui/scripts/rules.json') == (ROOT / 'dist' / 'cli' / 'rules.json').read_text(encoding='utf-8')
+          and (ROOT / 'dist' / 'skills' / 'trayui' / 'SKILL.md').exists() and (ROOT / 'dist' / 'skills' / 'trayui' / 'SKILL.md').read_text(encoding='utf-8') == skill_md,
+          [n for n in names if n.count('/') < 3][:12])
+    plugin = json.loads(read('trayui/.claude-plugin/plugin.json') or '{}')
+    check('the archive is also a Claude Code plugin: its manifest, a README and an icon, and no version, so an install follows the site',
+          plugin.get('name') == 'trayui' and 'version' not in plugin and 'trayui/README.md' in names and plugin.get('icon', '').lstrip('./') and f'trayui/{plugin.get("icon", "").lstrip("./")}' in names, plugin)
+    market = load(SITE / 'skills' / 'marketplace.json')
+    entry = next(iter(market.get('plugins', [])), {})
+    digest = hashlib.sha256(zipped.read_bytes()).hexdigest() if zipped.exists() else ''
+    check('marketplace.json lists the plugin with the archive as its source, pinned by the archive\'s sha256', market.get('name') == 'trayui' and market.get('owner', {}).get('name')
+          and entry.get('source', {}).get('source') == 'archive' and entry['source'].get('sha256') == digest and entry['source'].get('url') == f'{site["site"]}/skills/trayui.zip', entry)
+
+    headers = (SITE / '_headers').read_text(encoding='utf-8')
+    check('the host lets any site fetch the registry and the skill', '/r/*\n  Access-Control-Allow-Origin: *' in headers and '/skills/*\n  Access-Control-Allow-Origin: *' in headers)
+    served = {p: answer(url + p) for p in ('r/registry.json', 'r/button.json', 'r/html/registry.json', 'r/html/login-01.json', 'skills/marketplace.json')}
+    check('the registry and the marketplace are served as JSON at their addresses', all(s == 200 and json.loads(body) for s, _, body in served.values()), {p: s for p, (s, _, _) in served.items()})
+    index_txt = (SITE / 'llms.txt').read_text(encoding='utf-8')
+    check('llms.txt names the CLI, the registry and the skill', f'{site["site"]}/r/registry.json' in index_txt and f'{site["site"]}/skills/trayui.zip' in index_txt and '/docs/cli.md' in index_txt)
+    cli = (SITE / 'docs' / 'cli.html').read_text(encoding='utf-8') if (SITE / 'docs' / 'cli.html').exists() else ''
+    check('the CLI has a page of its own in the docs, and the agents page says how to install the skill', 'd-cli' in index and 'npx trayui init' in cli
+          and 'skills/marketplace.json' in (SITE / 'docs' / 'agents.html').read_text(encoding='utf-8'))
+
+
 FRAME_JS = '''() => { const f = document.querySelector('.site-frame iframe'); if (!f || !f.contentDocument || !f.contentDocument.body) return null; const d = f.contentDocument;
   return { kids: d.body.children.length, over: d.documentElement.scrollWidth - d.documentElement.clientWidth, width: f.contentWindow.innerWidth,
            styled: getComputedStyle(d.body).fontFamily.includes('Onest'), wired: !!f.contentWindow.TrayUI, theme: d.documentElement.dataset.theme }; }'''
@@ -210,6 +273,7 @@ def main():
     check('the script that draws the charts comes with the licences of what it holds', any((SITE / '_').glob('charts.*.js')) and all(f'\n{n} ' in notice for n in ('recharts', 'react', 'react-dom')) and 'MIT License' in notice, len(notice))
 
     server, url = serve()
+    registry_and_skill(site, index, url)
     with sync_playwright() as p:
         b = p.chromium.launch(channel='chrome')
         ctx = b.new_context(viewport={'width': 1440, 'height': 900}, reduced_motion='reduce', color_scheme='light', permissions=['clipboard-read', 'clipboard-write'])

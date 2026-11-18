@@ -80,8 +80,11 @@ def npm_package(dist, tok, icons):
            'description': f'A design system in plain HTML and CSS: {len(EXPECTED)} components, {blocks} blocks, {themes} themes. Three files, no build step.',
            'license': links.get('license', 'MIT'), 'author': f'{links.get("author", "")} ({links.get("author_url", "")})', 'homepage': site,
            'repository': {'type': 'git', 'url': f'git+{links.get("repo", "")}.git', 'directory': 'system/dist'},
-           'keywords': ['design-system', 'css', 'html', 'ui-components', 'component-library', 'accessibility', 'no-build', 'dark-mode', 'tailwind', 'figma'],
-           'style': 'components/bundle.css', 'unpkg': 'components/bundle.js', 'jsdelivr': 'components/bundle.js', 'sideEffects': True}
+           'keywords': ['design-system', 'css', 'html', 'ui-components', 'component-library', 'accessibility', 'no-build', 'dark-mode', 'tailwind', 'figma',
+                        'cli', 'shadcn-registry', 'agent-skills'],
+           'style': 'components/bundle.css', 'unpkg': 'components/bundle.js', 'jsdelivr': 'components/bundle.js', 'sideEffects': True,
+           # npx trayui: the command that adds the system to a project, a block at a time, and checks its markup (cli/)
+           'bin': {'trayui': 'cli/trayui.mjs'}, 'engines': {'node': '>=18'}}
     (dist / 'package.json').write_text(json.dumps(pkg, indent=2) + '\n', encoding='utf-8')
     cdn = f'https://cdn.jsdelivr.net/npm/trayui@{version}'
     (dist / 'README.md').write_text(f"""# Tray UI
@@ -124,13 +127,50 @@ import 'trayui/components/bundle.js';
 - `fonts/`: Onest, with its licence.
 - `blocks/`: {blocks} whole screens, each one HTML file to copy.
 - `tailwind/` and `figma/`: the tokens as a Tailwind theme and as Figma variables.
+- `cli/`: the `trayui` command (below) and the markup checker it runs.
+- `skills/trayui/`: a skill for AI agents (Claude Code, and any tool that reads `SKILL.md`): the rules, a page for every component and block, and the checker.
 
 For React, there is [trayui-react](https://www.npmjs.com/package/trayui-react). For an AI agent, {site}/llms.txt lists every page as Markdown.
+
+## Add it with the CLI
+
+```sh
+npx trayui init              # the three files and the font, in trayui/
+npx trayui add login-01      # a block, beside your pages, its links pointed at trayui/
+npx trayui add button --react   # in React: the component's source, yours to change
+npx trayui diff              # what you changed, and what changed upstream
+npx trayui check page.html   # check the markup against the system's rules
+```
+
+It needs Node 18 or later and nothing else. It works in a folder of plain HTML pages, in a Vite or Next.js app, with npm, pnpm, yarn or bun, and it never overwrites a file you changed unless you ask with `--overwrite`. The same items are a registry in shadcn's format, at {site}/r/registry.json: `npx shadcn add {site}/r/login-01.json`. {site}/docs/cli says more.
+
+## For AI agents
+
+Copy `skills/trayui` into your project's `.claude/skills/` (or `.agents/skills/`), or install it from {site}/docs/agents. It tells an agent how to build with the system and has it check what it wrote with `node scripts/check.mjs page.html`.
 
 ## Licence
 
 MIT. The typeface, Onest, is under the SIL Open Font License 1.1 (`fonts/OFL.txt`); the icons are Lucide's, under the ISC licence (`components/LUCIDE-LICENSE.txt`). The name Tray UI and its logo are not covered by the licence.
 """, encoding='utf-8')
+
+
+def cli_files(dist, css, js, tok, icons):
+    """dist/cli/: the trayui command (cli/trayui.mjs, the package's bin), the markup checker (cli/check.mjs), and the
+    rules it checks against, from this build: every class the stylesheets define, the type styles, the behaviours the
+    script registers and the icons it carries. The skill (tools/skill.py, run by tools/site.py) takes the same two files."""
+    out = dist / 'cli'
+    out.mkdir(parents=True, exist_ok=True)
+    for name in ('trayui.mjs', 'check.mjs'):
+        if (ROOT / 'cli' / name).exists():
+            (out / name).write_text((ROOT / 'cli' / name).read_text(encoding='utf-8'), encoding='utf-8')
+    links = json.loads((ROOT / 'tools' / 'links.json').read_text(encoding='utf-8'))
+    selectors = re.sub(r'\{[^{}]*\}', '{}', re.sub(r'/\*.*?\*/', '', css, flags=re.S))  # the rules' bodies taken out: what is left are selectors
+    classes = sorted({c for c in re.findall(r'\.(-?[_a-zA-Z][\w-]*)', selectors) if not c.startswith('recharts-')})
+    types = [s['name'] for g in tok['type']['groups'] for s in g['styles']]
+    rules = {'version': links.get('version', '0.0.0'), 'site': links.get('site', '').rstrip('/'), 'classes': classes, 'typeStyles': types,
+             'behaviours': sorted(set(re.findall(r"UI\.register\('([a-z0-9-]+)'", js))), 'icons': sorted(icons)}
+    (out / 'rules.json').write_text(json.dumps(rules, separators=(',', ':')) + '\n', encoding='utf-8')
+    return rules
 
 
 def lum(value):
@@ -315,6 +355,7 @@ def build():
     if (ROOT.parent / 'LICENSE').exists():  # the licence of the system itself
         (dist / 'LICENSE').write_text((ROOT.parent / 'LICENSE').read_text(encoding='utf-8'), encoding='utf-8')
     npm_package(dist, tok, icons)  # dist/ is also the package trayui on npm
+    cli_files(dist, css, js, tok, icons)  # with the trayui command and the markup checker in cli/
     # the tokens for other tools: a theme for Tailwind 4, a preset for Tailwind 3, and Figma variables (tools/exports.py)
     import exports
     exports.write(tok, dist, dark_themes(tok))
@@ -362,8 +403,18 @@ def build():
     react = ROOT / 'react'
     if (react / 'package.json').exists():
         body = '\n'.join(p.read_text(encoding='utf-8').rstrip() + '\n' for p in js_parts)
+        # In React each component wires its own markup in an effect, once React has it (useBehaviour). Wiring the whole
+        # document as the module loads would change server-rendered markup before React hydrates it (React error #418,
+        # and the sprite lost with the page React then draws again), so on import the runtime only adds the icon sprite.
+        # UI.sprite lets an effect add it again when a render has taken it away.
+        start = 'function start() { sprite(); UI.init(document); }'
+        if body.count(start) != 1:
+            problems.append(f'react/src/runtime.ts: src/js must hold "{start}" once, which the React runtime replaces so that it wires nothing on import')
+        body = body.replace('add the icon sprite and wire up what is there', 'add the icon sprite (in React each component wires itself)')
+        body = body.replace(start, 'UI.sprite = sprite;\n  function start() { sprite(); }')
         (react / 'src' / 'runtime.ts').write_text(
-            '// @ts-nocheck\n/* Generated by tools/build.py from src/js: the behaviours of the plain-HTML system, as a module. Do not edit. */\n'
+            '// @ts-nocheck\n/* Generated by tools/build.py from src/js: the behaviours of the plain-HTML system, as a module. On import it adds\n'
+            '   the icon sprite and wires nothing: each component wires its own markup (useBehaviour). Do not edit. */\n'
             'const UI: any = {};\n'
             "if (typeof document !== 'undefined') (function () {\n  'use strict';\n" + icon_js + body + '})();\nexport default UI;\n', encoding='utf-8')
         (react / 'src' / 'icons.ts').write_text(

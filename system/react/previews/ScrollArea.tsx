@@ -15,7 +15,7 @@ export function Vertical() {
   return (
     <div className="tray-card" style={{ padding: 'var(--space-5)', maxWidth: 428 }}>
       <ScrollArea label="Pickup points" maxHeight="13rem">
-        <ul className="tray-items tray-items--ruled" style={{ borderBlockStart: 0 }}>
+        <ul className="tray-items tray-items--ruled" role="list" style={{ borderBlockStart: 0 }}>
           {points.map(([name, km]) => (
             <li key={name} className="tray-item tray-item--sm">
               <span className="tray-item__body">

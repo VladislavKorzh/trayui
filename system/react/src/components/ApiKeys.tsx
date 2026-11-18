@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, useTrayEvent, useBehaviour, useUid } from '../lib/util';
 import { SectionHead } from '../lib/account';
@@ -126,7 +127,8 @@ function NewKeyDialog({ newKey, modal, onCopy, onDone }: { newKey: ApiNewKey; mo
           onCopy?.(newKey);
         }}
       />
-      <div className="tray-alert" role="status">
+      {/* A plain alert, no live region: it is there as the dialog opens, so it is read with the dialog. */}
+      <div className="tray-alert">
         <span className="tray-alert__icon">
           <Icon name="shield" />
         </span>

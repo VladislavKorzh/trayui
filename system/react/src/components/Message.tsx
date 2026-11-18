@@ -1,7 +1,8 @@
+'use client';
 import * as React from 'react';
 import type { IconSource } from '../lib/icon';
 import { MessageContext, type ChatBubbleVariant } from '../lib/chat';
-import { cx, useBehaviour, useForwardedRef } from '../lib/util';
+import { cx, resolveNode, useBehaviour, useForwardedRef } from '../lib/util';
 import { Avatar } from './Avatar';
 import { Bubble, type BubbleProps } from './Bubble';
 import { Button } from './Button';
@@ -40,6 +41,11 @@ export interface MessageProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: MessageVariant;
   /** The speaker's name, in bold in the head. Skip it on the second message in a row from the same person. */
   author?: React.ReactNode;
+  /**
+   * Your own messages have no name on screen, only their place and fill: these words, hidden from sight, start them for a
+   * screen reader. Default "You:"; an `author` takes their place.
+   */
+  ownLabel?: string;
   /** The time as the person's clock shows it: "14:02". Shown in the head after the name. */
   time?: React.ReactNode;
   /**
@@ -104,7 +110,7 @@ function arrange(children: React.ReactNode): React.ReactNode[] {
     } else out.push(...run);
     run = [];
   };
-  React.Children.toArray(children).forEach((child) => {
+  React.Children.toArray(children).map(resolveNode).forEach((child) => {
     if (isBubbleContent(child)) loose.push(child);
     else if (typeof child === 'string') {
       if (loose.length) loose.push(child); // a space between two pieces of text
@@ -125,7 +131,7 @@ function arrange(children: React.ReactNode): React.ReactNode[] {
  * Stack messages in a `<div className="tray-thread">` (or a MessageScroller), with Markers between them for dates and events.
  */
 export const Message = React.forwardRef<HTMLDivElement, MessageProps>(function Message(
-  { variant = 'other', author, time, avatar, avatarAlign, reactions, onReact, footer, actions, className, children, ...rest },
+  { variant = 'other', author, ownLabel = 'You:', time, avatar, avatarAlign, reactions, onReact, footer, actions, className, children, ...rest },
   ref,
 ) {
   const own = useForwardedRef(ref);
@@ -159,6 +165,7 @@ export const Message = React.forwardRef<HTMLDivElement, MessageProps>(function M
               {time}
             </div>
           ) : null}
+          {variant === 'own' && author == null && ownLabel ? <span className="tray-vh">{ownLabel} </span> : null}
           {arrange(children)}
           {reactions && reactions.length ? (
             <div className="tray-reactions">

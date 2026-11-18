@@ -1,6 +1,6 @@
 {
   "name": "trayui",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A design system in plain HTML and CSS: 108 components, 64 blocks, 10 themes. Three files, no build step.",
   "license": "MIT",
   "author": "Vladyslav Korzh (https://github.com/VladislavKorzh)",
@@ -20,10 +20,19 @@
     "no-build",
     "dark-mode",
     "tailwind",
-    "figma"
+    "figma",
+    "cli",
+    "shadcn-registry",
+    "agent-skills"
   ],
   "style": "components/bundle.css",
   "unpkg": "components/bundle.js",
   "jsdelivr": "components/bundle.js",
-  "sideEffects": true
+  "sideEffects": true,
+  "bin": {
+    "trayui": "cli/trayui.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }

@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, runtime } from '../lib/util';
 import { bodyCell, headCell, sortKey, textOf } from '../lib/data';
@@ -28,6 +29,8 @@ export interface DataTableState {
 export interface DataTableProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'children'> {
   /** Names the table for screen readers, as a plural noun: "Orders". It also words the checkboxes: "Select all orders". */
   label: string;
+  /** One row, as a noun: "order". It words each row's checkbox: "Select order PL-20418". Default: `label` made singular ("Orders" gives "order"). */
+  itemLabel?: string;
   /** The columns, in order. The first one is usually the row's name with `rowHeader`; numbers take `numeric`. */
   columns: DataTableColumn[];
   /** The rows, one object per row with a value for each column key and a unique `rowKey`. When the set of rows changes, the table starts over: filter, sort and selection reset. */
@@ -89,15 +92,23 @@ function compare(x: number | string, y: number | string): number {
   return (x as number) > (y as number) ? 1 : (x as number) < (y as number) ? -1 : 0;
 }
 
+/** "orders" gives "order", "batches" "batch", "deliveries" "delivery": the name of one row, for its checkbox. */
+function singular(plural: string): string {
+  if (/ies$/.test(plural)) return plural.slice(0, -3) + 'y';
+  if (/(ch|sh|x|ss)es$/.test(plural)) return plural.slice(0, -2);
+  return plural.replace(/s$/, '');
+}
+
 /**
  * A data table is a Table that can be searched, sorted, selected and paged.
  * A filter bar above, checkboxes at the start of each row, sort buttons in the heads, the selection count and pager at the foot: every part is optional.
  * The system's own behaviour runs it in the page; for data that lives on a server, filter, sort and page there and use Table.
  */
 export const DataTable = React.forwardRef<HTMLDivElement, DataTableProps>(function DataTable(
-  { label, columns, rows, rowKey = 'id', filter, actions, selectable, defaultSelected, defaultSort, pageSize, rowActions, empty, onChange, className, ...rest },
+  { label, itemLabel, columns, rows, rowKey = 'id', filter, actions, selectable, defaultSelected, defaultSort, pageSize, rowActions, empty, onChange, className, ...rest },
   ref,
 ) {
+  const noun = itemLabel ?? singular(label.toLowerCase());
   const own = React.useRef<HTMLDivElement | null>(null);
   const keyOf = (row: TableRow, i: number) => textOf(row[rowKey]) ?? String(i);
 
@@ -156,7 +167,7 @@ export const DataTable = React.forwardRef<HTMLDivElement, DataTableProps>(functi
           {actions}
         </div>
       ) : null}
-      <Table hover pad aria-label={label}>
+      <Table hover pad wide aria-label={label}>
         <thead>
           <tr>
             {selectable ? (
@@ -191,7 +202,7 @@ export const DataTable = React.forwardRef<HTMLDivElement, DataTableProps>(functi
               <tr key={k} data-key={k}>
                 {selectable ? (
                   <td className="tray-table__check">
-                    <Check data-select="" aria-label={`Select ${name}`} defaultChecked={picked.has(k)} />
+                    <Check data-select="" aria-label={`Select ${noun} ${name}`} defaultChecked={picked.has(k)} />
                   </td>
                 ) : null}
                 {columns.map((col) =>
@@ -215,10 +226,10 @@ export const DataTable = React.forwardRef<HTMLDivElement, DataTableProps>(functi
       </Table>
       {selectable || pageSize ? (
         <div className="tray-datatable__foot">
-          <span data-selected-count="" />
+          <span data-selected-count="" role="status" />
           {pageSize ? (
             <div className="tray-row tray-row--sm">
-              <span data-page-status="" />
+              <span data-page-status="" role="status" />
               <button className="tray-btn tray-btn--quiet tray-btn--xs tray-btn--icon" type="button" data-page-prev="" aria-label="Previous page">
                 <Icon name="chevron-left" flip />
               </button>

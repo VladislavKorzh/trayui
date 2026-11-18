@@ -1,0 +1,8 @@
+{
+  "name": "trayui-tests",
+  "private": true,
+  "description": "The test dependency of the component tests (tools/test_components.py): axe-core, the accessibility scan. Not part of either package.",
+  "devDependencies": {
+    "axe-core": "4.14.1"
+  }
+}

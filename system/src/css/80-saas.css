@@ -55,7 +55,8 @@
 
 /* ---------- Page header ---------- */
 
-.tray-pagehead { display: grid; gap: var(--space-3); }
+/* One column as wide as the header, never wider: a strip of tabs that does not fit scrolls inside it, even in a wrapper of its own. */
+.tray-pagehead { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
 .tray-pagehead__row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-4) var(--space-6); }
 .tray-pagehead__text { display: grid; gap: var(--space-2); min-inline-size: 0; max-inline-size: 44rem; }
 .tray-pagehead__text > p { color: var(--ink-soft); font: 400 1.0625rem/1.45 var(--font-sans); }
@@ -72,7 +73,9 @@
 .tray-switcher > .tray-icon { color: var(--ink-muted); }
 .tray-sidebar__head > .tray-anchor--block { flex: 1; min-inline-size: 0; }
 .tray-sidebar[data-collapsed] .tray-switcher { justify-content: center; min-block-size: var(--size-hit); padding: 0; background: none; }
-.tray-sidebar[data-collapsed] .tray-switcher > :not(.tray-avatar) { display: none; }
+.tray-sidebar[data-collapsed] .tray-switcher > .tray-icon { display: none; }
+/* In the rail the name and the plan are only hidden from sight, as the items' labels are, so the button keeps its name. */
+.tray-sidebar[data-collapsed] .tray-switcher > :not(.tray-avatar, .tray-icon) { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 /* In the rail the switcher has no fill, so what it holds sits on the tray again: an avatar that is not ink turns white, not tray grey. */
 .tray-sidebar[data-collapsed] .tray-switcher > * { --tray-ground: var(--tray-ground-up); --tray-fill: var(--tray-fill-up); }
 .tray-sidebar[data-collapsed] .tray-usage { display: none; }
@@ -290,7 +293,8 @@ a.tray-stat:hover { filter: brightness(.96); }
 
 /* ---------- Sign in ---------- */
 
-.tray-auth { display: grid; gap: var(--space-6); inline-size: min(100%, 27rem); margin-inline: auto; }
+/* 27rem at most, also as an item of a row that would stretch it (flex: 1, a grid track). */
+.tray-auth { display: grid; gap: var(--space-6); inline-size: min(100%, 27rem); max-inline-size: 27rem; margin-inline: auto; }
 .tray-auth__head { display: grid; gap: var(--space-2); }
 .tray-auth__head p, .tray-auth__foot { color: var(--ink-soft); font: 400 1rem/1.45 var(--font-sans); }
 .tray-auth__foot { text-align: center; }
@@ -325,10 +329,11 @@ a.tray-stat:hover { filter: brightness(.96); }
 
 /* ---------- API key ---------- */
 
-.tray-secret { display: inline-flex; align-items: center; gap: 2px; max-inline-size: 100%; min-block-size: var(--size-hit); padding-inline: var(--space-3); border-radius: var(--radius-control); background: var(--tray-fill); }
+.tray-secret { display: inline-flex; align-items: center; gap: 4px; max-inline-size: 100%; min-block-size: var(--size-hit); padding-inline: var(--space-3); border-radius: var(--radius-control); background: var(--tray-fill); }
 .tray-secret code { flex: 1; min-inline-size: 0; overflow: hidden; color: var(--ink); font: 400 .9375rem/1.55 var(--font-mono); text-overflow: ellipsis; white-space: nowrap; }
 .tray-secret button { position: relative; flex: none; display: grid; place-items: center; inline-size: var(--size-xs); block-size: var(--size-xs); padding: 0; border: 0; border-radius: var(--radius-chip); background: none; color: var(--ink-soft); cursor: pointer; }
-/* Its buttons are 40px to the eye and 44px to a finger, as an extra small button is: the target reaches past each edge. */
+/* Its buttons are 40px to the eye and 44px to a finger, as an extra small button is: the target reaches past each edge,
+   and the 4px between them lets the two targets meet without one taking the edge of the other. */
 .tray-secret button::before { content: ""; position: absolute; inset: calc((var(--size-xs) - var(--size-hit)) / 2); }
 .tray-secret button:hover { background: var(--tray-fill); color: var(--ink); }
 .tray-secret:has(button) { padding-inline-end: 2px; }

@@ -1,0 +1,51 @@
+# Sign-up with social accounts
+
+A sign-up card of six full-width account buttons and a link to use your email instead; for when the email form can live on a page of its own.
+
+Six buttons make this social sign-up page, one per line, each with the whole sentence, such as "Continue with Google"; under them a quiet "Use your email" link leads to a page of its own. The line under the heading carries a short promise, here the length of the trial, and the foot holds a link to sign in and the note on the terms. With no field to fill, the card is a section named by its heading rather than a form.
+
+Pick it when most people sign up with an account they already have; [the accounts-first page](https://trayui.com/blocks/signup-05.md) keeps the email form on the same page. It mirrors [the social sign-in](https://trayui.com/blocks/login-06.md), so the two screens can share one layout. Each button shows its full name, so it needs no `aria-label`, and voice control reaches it by the words on it. The list keeps one button per line at every width.
+
+It is made of these components: [Card](https://trayui.com/components/card.md), [Auth Form](https://trayui.com/components/auth-form.md), [Button](https://trayui.com/components/button.md), [Separator](https://trayui.com/components/separator.md).
+
+Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign-up with social accounts</title>
+<meta name="description" content="A sign-up card of six full-width account buttons and a link to use your email instead; for when the email form can live on a page of its own.">
+<meta name="tray-category" content="Signup">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-screen">
+  <main class="tray-screen__body tray-screen__body--center">
+    <section class="tray-card tray-auth" aria-labelledby="auth-title">
+      <a class="tray-wordmark" href="/">Counter</a>
+      <div class="tray-auth__head">
+        <h1 class="title" id="auth-title">Create an account</h1>
+        <p>Free for 14 days. No card needed.</p>
+      </div>
+      <div class="tray-providers tray-providers--list" role="group" aria-label="Sign up with another account">
+        <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/google">Continue with Google</a>
+        <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/apple">Continue with Apple</a>
+        <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/facebook">Continue with Facebook</a>
+        <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/telegram">Continue with Telegram</a>
+        <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/linkedin">Continue with LinkedIn</a>
+        <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/microsoft">Continue with Microsoft</a>
+      </div>
+      <p class="tray-rule tray-rule--label">or</p>
+      <a class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--block" href="/signup/email"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-mail"/></svg>Use your email</a>
+      <p class="tray-auth__foot">Already have one? <a href="/signin">Sign in</a>. By signing up you accept the <a href="/terms">terms</a>.</p>
+    </section>
+  </main>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>
+```

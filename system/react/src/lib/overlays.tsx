@@ -1,7 +1,12 @@
 import * as React from 'react';
-import { useControlled, useForwardedRef } from './util';
+import { resolveNode, useControlled, useForwardedRef } from './util';
 
 /* Shared by the overlays: the native <dialog> under Dialog, AlertDialog, Sheet and Drawer. Not exported from the package. */
+
+interface TriggerProps {
+  onClick?: React.MouseEventHandler<HTMLElement>;
+  'aria-haspopup'?: React.AriaAttributes['aria-haspopup'];
+}
 
 interface DialogShellProps extends Omit<React.DialogHTMLAttributes<HTMLDialogElement>, 'open' | 'onCancel' | 'onClose' | 'title'> {
   open?: boolean;
@@ -108,11 +113,13 @@ export const DialogShell = React.forwardRef<HTMLDialogElement, DialogShellProps>
     }
   };
 
-  const opener = trigger
-    ? React.cloneElement(trigger, {
+  /* React 19's types give an element's props the type unknown: these are the two the opener reads and sets. */
+  const own = resolveNode(trigger) as React.ReactElement<TriggerProps> | undefined;
+  const opener = own
+    ? React.cloneElement(own, {
         'aria-haspopup': 'dialog',
         onClick: (e: React.MouseEvent<HTMLElement>) => {
-          trigger.props.onClick?.(e);
+          own.props.onClick?.(e);
           if (!e.defaultPrevented) setOpen(true);
         },
       })

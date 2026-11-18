@@ -8,15 +8,17 @@ A chart turns figures into thin marks on a quiet frame: a value axis in `tick` t
   <figcaption class="tray-chart__title">Caviar collected by month</figcaption>
 </figure>
 <script>
-  TrayUI.chart(document.getElementById('harvest'), {
-    type: 'bar', unit: ' kg',
-    labels: ['Mar', 'Apr', 'May'],
-    series: [{ name: 'Collected', values: [6, 14, 22] }],
-    summary: 'Bar chart of caviar collected by month. The most, 22 kg, came in May.'
+  document.addEventListener('DOMContentLoaded', function () {
+    TrayUI.chart(document.getElementById('harvest'), {
+      type: 'bar', unit: ' kg',
+      labels: ['Mar', 'Apr', 'May'],
+      series: [{ name: 'Collected', values: [6, 14, 22] }],
+      summary: 'Bar chart of caviar collected by month. The most, 22 kg, came in May.'
+    });
   });
 </script>
 ```
-Or put the same object as JSON in `data-chart` and add `data-tray="chart"`.
+`bundle.js` loads with `defer`, as the guide to behaviour says, so it runs once the page is parsed: a script of the page's own calls `TrayUI.chart` on `DOMContentLoaded`, or from a script that runs after the bundle. Or put the same object as JSON in `data-chart` and add `data-tray="chart"`, and the behaviour draws it with no script of yours.
 
 | Option | Values |
 | --- | --- |

@@ -1,0 +1,359 @@
+# Table with filters and bulk actions
+
+A table of batches in a card: a filter bar with search, two filters and a date range, rows to select with actions, a total and numbered pages.
+
+A data table with filters, for work on many rows at once, such as stock that comes in batches. Above it sit a search, two filter menus whose choices become chips, and a date range with presets; under them, the count of rows selected and the bulk actions, with the destructive one kept in a menu. Each row shows what is left as a meter, a footer row totals the page, and numbered pages close the card. Pick it when people tick rows and act on them together; for looking up one record at a time, the [table with row menus](https://trayui.com/blocks/table-02.md) is lighter.
+
+The search hides the rows that do not contain its text, and an empty row says so when none is left. The head checkbox is announced as mixed while only some rows are chosen, and the count reads "3 of 10 selected". Collected is sorted on load, said with `aria-sort`. The table keeps 52rem and scrolls sideways in its card.
+
+It is made of these components: [App Shell](https://trayui.com/components/app-shell.md), [Sidebar](https://trayui.com/components/sidebar.md), [Dropdown Menu](https://trayui.com/components/dropdown-menu.md), [Workspace Switcher](https://trayui.com/components/workspace-switcher.md), [Avatar](https://trayui.com/components/avatar.md), [Badge](https://trayui.com/components/badge.md), [Usage Meter](https://trayui.com/components/usage-meter.md), [Progress](https://trayui.com/components/progress.md), [Top Bar](https://trayui.com/components/top-bar.md), [Button](https://trayui.com/components/button.md), [Breadcrumb](https://trayui.com/components/breadcrumb.md), [Kbd](https://trayui.com/components/kbd.md), [Page Header](https://trayui.com/components/page-header.md), [Card](https://trayui.com/components/card.md), [Data Table](https://trayui.com/components/data-table.md), [Filter Bar](https://trayui.com/components/filter-bar.md), [Input Group](https://trayui.com/components/input-group.md), [Input](https://trayui.com/components/input.md), [Select](https://trayui.com/components/select.md), [Date Picker](https://trayui.com/components/date-picker.md), [Table](https://trayui.com/components/table.md), [Checkbox](https://trayui.com/components/checkbox.md), [Empty](https://trayui.com/components/empty.md), [Pagination](https://trayui.com/components/pagination.md).
+
+Behaviours it uses: `calendar`, `datatable`, `datepicker`, `filterbar`, `menu`, `sidebar-sheet`, `sidebar-toggle`.
+
+Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Table with filters and bulk actions</title>
+<meta name="description" content="A table of batches in a card: a filter bar with search, two filters and a date range, rows to select with actions, a total and numbered pages.">
+<meta name="tray-category" content="Tables">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app">
+  <div class="tray-app__side">
+    <nav class="tray-sidebar" id="nav" aria-label="Main">
+      <div class="tray-sidebar__head" style="padding-inline: 0">
+        <div class="tray-anchor tray-anchor--block" data-tray="menu">
+          <button class="tray-switcher" type="button"><span class="tray-avatar tray-avatar--sm tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-person__text"><b>Perly Farm</b><small>Shop plan</small></span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chevrons-up-down"/></svg></button>
+          <div class="tray-pop">
+            <div class="tray-list">
+              <p class="tray-list__label">Workspaces</p>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="true"><span class="tray-avatar tray-avatar--xs tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-option__text">Perly Farm</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">MB</span><span class="tray-option__text">Meadow Bakery</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">HC</span><span class="tray-option__text">Hill Cheese</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <hr class="tray-list__rule">
+              <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New workspace</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tray-sidebar__scroll">
+        <div class="tray-sidebar__group">
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg><span>Orders</span><span class="tray-badge tray-badge--count">12</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg><span>Deliveries</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-users"/></svg><span>Customers</span></a>
+          <a class="tray-sidebar__item" href="#" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span>Batches</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chart-column"/></svg><span>Reports</span></a>
+        </div>
+        <div class="tray-sidebar__group">
+          <p class="tray-sidebar__label">Workspace</p>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user-plus"/></svg><span>Team</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg><span>Billing</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-settings"/></svg><span>Settings</span></a>
+        </div>
+      </div>
+      <div class="tray-sidebar__foot">
+        <div class="tray-usage tray-usage--sm" style="flex: 1">
+          <div class="tray-progress">
+            <span class="tray-progress__name">Orders</span>
+            <span class="tray-progress__value">842 of 1,000</span>
+            <span class="tray-progress__bar" role="meter" aria-label="Orders this month" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="842" style="--tray-v: 84"></span>
+          </div>
+          <a class="label" href="#">Upgrade the plan</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <header class="tray-topbar">
+      <div class="tray-topbar__start">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the navigation"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+        <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon tray-app__collapse" type="button" data-tray="sidebar-toggle" aria-controls="nav" aria-label="Collapse the sidebar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-panel-left"/></svg></button>
+        <nav aria-label="Breadcrumb"><ol class="tray-crumbs tray-crumbs--fold"><li><a href="#">Perly Farm</a></li><li><span aria-current="page">Batches</span></li></ol></nav>
+      </div>
+      <div class="tray-topbar__end">
+        <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
+        <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 2 unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip">2</span></span>
+        <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko, OF">OF</button>
+      </div>
+    </header>
+    <main class="tray-app__content">
+      <div class="tray-pagehead">
+        <div class="tray-pagehead__row">
+          <div class="tray-pagehead__text">
+            <h1 class="title">Batches</h1>
+            <p>Every batch of caviar, from the cold room to the last jar. Demo data.</p>
+          </div>
+          <div class="tray-pagehead__actions">
+            <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-download"/></svg>Export</button>
+            <button class="tray-btn tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg>New batch</button>
+          </div>
+        </div>
+      </div>
+      <section class="tray-card" aria-label="Batches in stock">
+        <div class="tray-datatable" id="batches" data-tray="datatable">
+          <div class="tray-filterbar" data-tray="filterbar">
+            <div class="tray-filterbar__row">
+              <div class="tray-input-group tray-input-group--sm"><span class="tray-input-group__addon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg></span><input class="tray-input" type="search" placeholder="Search batches" aria-label="Search batches" data-filter></div>
+              <span class="tray-anchor" data-tray="menu">
+                <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button">Status<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-chevron-down"/></svg></button>
+                <div class="tray-pop">
+                  <div class="tray-list">
+                    <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="status:curing" data-label="Status: Curing"><span class="tray-option__text">Curing</span><span class="tray-option__meta">3</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                    <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="true" data-value="status:cold" data-label="Status: In the cold room"><span class="tray-option__text">In the cold room</span><span class="tray-option__meta">6</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                    <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="true" data-value="status:sale" data-label="Status: On sale"><span class="tray-option__text">On sale</span><span class="tray-option__meta">18</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                    <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="status:sold" data-label="Status: Sold out"><span class="tray-option__text">Sold out</span><span class="tray-option__meta">19</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                  </div>
+                </div>
+              </span>
+              <span class="tray-anchor" data-tray="menu">
+                <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button">Size<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-chevron-down"/></svg></button>
+                <div class="tray-pop">
+                  <div class="tray-list">
+                    <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="size:30" data-label="Size: 30 g"><span class="tray-option__text">30 g jars</span><span class="tray-option__meta">12</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                    <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="size:50" data-label="Size: 50 g"><span class="tray-option__text">50 g jars</span><span class="tray-option__meta">19</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                    <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="size:100" data-label="Size: 100 g"><span class="tray-option__text">100 g jars</span><span class="tray-option__meta">9</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                    <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="size:250" data-label="Size: 250 g"><span class="tray-option__text">250 g tins</span><span class="tray-option__meta">6</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+                  </div>
+                </div>
+              </span>
+              <div class="tray-filterbar__end">
+                <div class="tray-anchor" data-tray="datepicker">
+                  <button class="tray-select-trigger tray-select-trigger--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-calendar"/></svg><span class="tray-vh">Collected between </span><span class="tray-select-trigger__value">Pick the days</span></button>
+                  <div class="tray-pop tray-pop--roomy tray-pop--end">
+                    <div class="tray-datepicker__presets"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" data-preset="30">Last 30 days</button><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" data-preset="90">Last 90 days</button></div>
+                    <div data-tray="calendar" data-mode="range" data-months="2" data-today="2026-11-27" data-month="2026-10" data-value="2026-09-01/2026-11-27" data-max="2026-11-27"></div>
+                    <div class="tray-pop__foot"><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button" data-clear>Clear</button><button class="tray-btn tray-btn--dark tray-btn--xs" type="button" data-apply>Show the batches</button></div>
+                  </div>
+                  <input type="hidden" name="collected">
+                </div>
+              </div>
+            </div>
+            <div class="tray-filterbar__chips">
+              <span class="tray-chip" data-value="status:cold">Status: In the cold room<button class="tray-chip__x" type="button" aria-label="Remove Status: In the cold room"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-x"/></svg></button></span>
+              <span class="tray-chip" data-value="status:sale">Status: On sale<button class="tray-chip__x" type="button" aria-label="Remove Status: On sale"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-x"/></svg></button></span>
+              <button class="tray-btn tray-btn--link" type="button" data-filter="clear">Clear all</button>
+            </div>
+          </div>
+          <div class="tray-datatable__bar">
+            <span class="nav" data-selected-count role="status">3 of 10 selected</span>
+            <div class="tray-row tray-row--sm">
+              <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-tag"/></svg>Print the labels</button>
+              <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-shopping-bag"/></svg>Send to the shop</button>
+              <span class="tray-anchor" data-tray="menu">
+                <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="More for the selected batches"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                <div class="tray-pop tray-pop--end">
+                  <div class="tray-list">
+                    <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-layers"/></svg><span class="tray-option__text">Merge into one batch</span></button>
+                    <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-download"/></svg><span class="tray-option__text">Export the selected</span></button>
+                    <hr class="tray-list__rule">
+                    <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-trash-2"/></svg><span class="tray-option__text">Write off the jars</span></button>
+                  </div>
+                </div>
+              </span>
+            </div>
+          </div>
+          <div class="tray-table-wrap" tabindex="0" role="region" aria-label="Batches">
+            <table class="tray-table tray-table--hover tray-table--pad" aria-label="Batches" style="min-inline-size: 52rem">
+              <thead>
+                <tr>
+                  <th class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select-all aria-label="Select all batches on this page"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></th>
+                  <th scope="col"><button class="tray-sort" type="button">Batch<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-arrow-up-down"/></svg></button></th>
+                  <th scope="col" aria-sort="descending"><button class="tray-sort" type="button">Collected<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-arrow-down"/></svg></button></th>
+                  <th scope="col"><button class="tray-sort" type="button">Size<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-arrow-up-down"/></svg></button></th>
+                  <th scope="col" style="inline-size: 22%"><button class="tray-sort" type="button">Jars left<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-arrow-up-down"/></svg></button></th>
+                  <th scope="col"><button class="tray-sort" type="button">Best before<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-arrow-up-down"/></svg></button></th>
+                  <th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select batch B-26-46"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row"><a href="#">B-26-46</a></th>
+                  <td data-value="2026-11-09"><time datetime="2026-11-09">9 Nov</time></td>
+                  <td data-value="50">50 g jars</td>
+                  <td data-value="380">
+                    <div class="tray-progress">
+                      <span class="tray-progress__value">380 of 380</span>
+                      <span class="tray-progress__bar" role="meter" aria-label="Jars left in B-26-46" aria-valuemin="0" aria-valuemax="380" aria-valuenow="380" style="--tray-v: 100"></span>
+                    </div>
+                  </td>
+                  <td data-value="2027-05-09"><time datetime="2027-05-09">9 May 2027</time></td>
+                  <td><span class="tray-badge">In the cold room</span></td>
+                </tr>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select batch B-26-45"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row"><a href="#">B-26-45</a></th>
+                  <td data-value="2026-11-02"><time datetime="2026-11-02">2 Nov</time></td>
+                  <td data-value="30">30 g jars</td>
+                  <td data-value="412">
+                    <div class="tray-progress">
+                      <span class="tray-progress__value">412 of 412</span>
+                      <span class="tray-progress__bar" role="meter" aria-label="Jars left in B-26-45" aria-valuemin="0" aria-valuemax="412" aria-valuenow="412" style="--tray-v: 100"></span>
+                    </div>
+                  </td>
+                  <td data-value="2027-05-02"><time datetime="2027-05-02">2 May 2027</time></td>
+                  <td><span class="tray-badge">In the cold room</span></td>
+                </tr>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select batch B-26-44"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row"><a href="#">B-26-44</a></th>
+                  <td data-value="2026-10-26"><time datetime="2026-10-26">26 Oct</time></td>
+                  <td data-value="50">50 g jars</td>
+                  <td data-value="211">
+                    <div class="tray-progress">
+                      <span class="tray-progress__value">211 of 400</span>
+                      <span class="tray-progress__bar" role="meter" aria-label="Jars left in B-26-44" aria-valuemin="0" aria-valuemax="400" aria-valuenow="211" style="--tray-v: 53"></span>
+                    </div>
+                  </td>
+                  <td data-value="2027-04-26"><time datetime="2027-04-26">26 Apr 2027</time></td>
+                  <td><span class="tray-badge tray-badge--ink">On sale</span></td>
+                </tr>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select batch B-26-43"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row"><a href="#">B-26-43</a></th>
+                  <td data-value="2026-10-19"><time datetime="2026-10-19">19 Oct</time></td>
+                  <td data-value="100">100 g jars</td>
+                  <td data-value="96">
+                    <div class="tray-progress">
+                      <span class="tray-progress__value">96 of 180</span>
+                      <span class="tray-progress__bar" role="meter" aria-label="Jars left in B-26-43" aria-valuemin="0" aria-valuemax="180" aria-valuenow="96" style="--tray-v: 53"></span>
+                    </div>
+                  </td>
+                  <td data-value="2027-04-19"><time datetime="2027-04-19">19 Apr 2027</time></td>
+                  <td><span class="tray-badge tray-badge--ink">On sale</span></td>
+                </tr>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select batch B-26-42" checked><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row"><a href="#">B-26-42</a></th>
+                  <td data-value="2026-10-12"><time datetime="2026-10-12">12 Oct</time></td>
+                  <td data-value="50">50 g jars</td>
+                  <td data-value="132">
+                    <div class="tray-progress">
+                      <span class="tray-progress__value">132 of 412</span>
+                      <span class="tray-progress__bar" role="meter" aria-label="Jars left in B-26-42" aria-valuemin="0" aria-valuemax="412" aria-valuenow="132" style="--tray-v: 32"></span>
+                    </div>
+                  </td>
+                  <td data-value="2027-04-12"><time datetime="2027-04-12">12 Apr 2027</time></td>
+                  <td><span class="tray-badge tray-badge--ink">On sale</span></td>
+                </tr>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select batch B-26-41"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row"><a href="#">B-26-41</a></th>
+                  <td data-value="2026-10-05"><time datetime="2026-10-05">5 Oct</time></td>
+                  <td data-value="250">250 g tins</td>
+                  <td data-value="18">
+                    <div class="tray-progress">
+                      <span class="tray-progress__value">18 of 60</span>
+                      <span class="tray-progress__bar" role="meter" aria-label="Jars left in B-26-41" aria-valuemin="0" aria-valuemax="60" aria-valuenow="18" style="--tray-v: 30"></span>
+                    </div>
+                  </td>
+                  <td data-value="2027-04-05"><time datetime="2027-04-05">5 Apr 2027</time></td>
+                  <td><span class="tray-badge tray-badge--ink">On sale</span></td>
+                </tr>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select batch B-26-40" checked><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row"><a href="#">B-26-40</a></th>
+                  <td data-value="2026-09-28"><time datetime="2026-09-28">28 Sep</time></td>
+                  <td data-value="30">30 g jars</td>
+                  <td data-value="64">
+                    <div class="tray-progress">
+                      <span class="tray-progress__value">64 of 420</span>
+                      <span class="tray-progress__bar" role="meter" aria-label="Jars left in B-26-40" aria-valuemin="0" aria-valuemax="420" aria-valuenow="64" style="--tray-v: 15"></span>
+                    </div>
+                  </td>
+                  <td data-value="2027-03-28"><time datetime="2027-03-28">28 Mar 2027</time></td>
+                  <td><span class="tray-badge tray-badge--ink">On sale</span></td>
+                </tr>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select batch B-26-38" checked><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row"><a href="#">B-26-38</a></th>
+                  <td data-value="2026-09-14"><time datetime="2026-09-14">14 Sep</time></td>
+                  <td data-value="50">50 g jars</td>
+                  <td data-value="41">
+                    <div class="tray-progress">
+                      <span class="tray-progress__value">41 of 400</span>
+                      <span class="tray-progress__bar" role="meter" aria-label="Jars left in B-26-38" aria-valuemin="0" aria-valuemax="400" aria-valuenow="41" style="--tray-v: 10"></span>
+                    </div>
+                  </td>
+                  <td data-value="2027-03-14"><time datetime="2027-03-14">14 Mar 2027</time></td>
+                  <td><span class="tray-badge tray-badge--ink">On sale</span></td>
+                </tr>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select batch B-26-37"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row"><a href="#">B-26-37</a></th>
+                  <td data-value="2026-09-07"><time datetime="2026-09-07">7 Sep</time></td>
+                  <td data-value="100">100 g jars</td>
+                  <td data-value="22">
+                    <div class="tray-progress">
+                      <span class="tray-progress__value">22 of 180</span>
+                      <span class="tray-progress__bar" role="meter" aria-label="Jars left in B-26-37" aria-valuemin="0" aria-valuemax="180" aria-valuenow="22" style="--tray-v: 12"></span>
+                    </div>
+                  </td>
+                  <td data-value="2027-03-07"><time datetime="2027-03-07">7 Mar 2027</time></td>
+                  <td><span class="tray-badge tray-badge--ink">On sale</span></td>
+                </tr>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" data-select aria-label="Select batch B-26-35"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row"><a href="#">B-26-35</a></th>
+                  <td data-value="2026-09-01"><time datetime="2026-09-01">1 Sep</time></td>
+                  <td data-value="50">50 g jars</td>
+                  <td data-value="9">
+                    <div class="tray-progress">
+                      <span class="tray-progress__value">9 of 400</span>
+                      <span class="tray-progress__bar" role="meter" aria-label="Jars left in B-26-35" aria-valuemin="0" aria-valuemax="400" aria-valuenow="9" style="--tray-v: 2"></span>
+                    </div>
+                  </td>
+                  <td data-value="2027-03-01"><time datetime="2027-03-01">1 Mar 2027</time></td>
+                  <td><span class="tray-badge tray-badge--ink">On sale</span></td>
+                </tr>
+                <tr data-empty hidden>
+                  <td colspan="7">
+                    <div class="tray-empty">
+                      <span class="tray-empty__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg></span>
+                      <div class="tray-empty__text">
+                        <p class="control">No batch matches that search</p>
+                        <p>Check the number, or clear the filters.</p>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td></td>
+                  <th scope="row" colspan="3">On this page</th>
+                  <td>1,385 of 3,244 jars</td>
+                  <td colspan="2"></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <div class="tray-datatable__foot">
+            <span>1–10 of 24 batches</span>
+            <nav aria-label="Pages">
+              <ul class="tray-pages">
+                <li><a class="tray-page tray-page--step" role="link" aria-disabled="true" aria-label="Previous page"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-left"/></svg></a></li>
+                <li><a class="tray-page" href="#" aria-current="page">1</a></li>
+                <li><a class="tray-page" href="#">2</a></li>
+                <li><a class="tray-page" href="#">3</a></li>
+                <li><a class="tray-page tray-page--step" href="#" aria-label="Next page"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></a></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>
+```

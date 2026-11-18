@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import type { IconSource } from '../lib/icon';
 import { cx, useControlled } from '../lib/util';

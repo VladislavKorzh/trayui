@@ -26,6 +26,8 @@
   });
   /* Open: data-tray="open" on a button with data-target="#id". data-modal="false" shows the dialog in place instead of over the page. */
   UI.register('open', function (btn) {
+    /* the button says it opens a dialog, as the button of a sidebar sheet does */
+    if (!btn.hasAttribute('aria-haspopup')) btn.setAttribute('aria-haspopup', 'dialog');
     btn.addEventListener('click', function () {
       var d = document.querySelector(btn.dataset.target);
       if (!d) return;
@@ -72,7 +74,7 @@
   UI.register('hovercard', function (root) {
     var trigger = root.querySelector(':scope > a, :scope > button'), panel = root.querySelector(':scope > .tray-pop'), timer = null;
     if (!trigger || !panel) return;
-    if (!panel.hasAttribute('data-open')) panel.hidden = true;
+    if (!panel.hasAttribute('data-open')) panel.hidden = true; else fit(panel);
     function set(open) { clearTimeout(timer); timer = setTimeout(function () { if (open) show(panel); else hide(panel); }, open ? 250 : 150); }
     root.addEventListener('pointerenter', function () { set(true); });
     root.addEventListener('pointerleave', function () { set(false); });
@@ -104,6 +106,9 @@
         tip.replaceChildren(said);
       }
       (root.dataset.keys || '').split(' ').filter(Boolean).forEach(function (k) { var kbd = document.createElement('kbd'); kbd.className = 'tray-kbd'; kbd.textContent = k; tip.appendChild(kbd); });
+      /* With nothing left for a screen reader (the words repeat the name and there are no keys) the bubble is hidden from
+         it altogether, as a tooltip with no words of its own would be one without a name. The description stays empty. */
+      if (tip.textContent.trim()) tip.removeAttribute('aria-hidden'); else tip.setAttribute('aria-hidden', 'true');
     }
     paint();
     tip.hidden = !root.hasAttribute('data-open');

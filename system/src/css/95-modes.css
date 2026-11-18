@@ -51,9 +51,10 @@
   .tray-tab[aria-selected="true"]:focus-visible, .tray-tab[aria-current]:not([aria-current="false"]):focus-visible, .tray-sidebar__item[aria-current]:focus-visible,
   .tray-cal__day[aria-pressed="true"]:focus-visible .tray-cal__num { outline-color: SelectedItemText; }
   .tray-seg__item input:focus-visible + span { outline-color: CanvasText; }
-  /* the option under the keyboard or the pointer in a list, and the link to the page you are on in a menu */
-  .tray-option:hover, .tray-option[data-active] { forced-color-adjust: none; background: Highlight; color: HighlightText; }
-  .tray-option:hover *, .tray-option[data-active] * { color: HighlightText; }
+  /* the option under the keyboard or the pointer in a list, the item under them in a menu, and the link to the page you are on in a menu */
+  .tray-option:hover, .tray-option[data-active], :is([role="listbox"], [role="menu"]) .tray-option:focus-visible { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+  .tray-option:hover *, .tray-option[data-active] *, :is([role="listbox"], [role="menu"]) .tray-option:focus-visible * { color: HighlightText; }
+  :is([role="listbox"], [role="menu"]) .tray-option:focus-visible { outline-color: HighlightText; }
   .tray-option:hover .tray-kbd, .tray-option[data-active] .tray-kbd { border-color: HighlightText; background: Highlight; }
   .tray-option[aria-current], .tray-notice[aria-current], .tray-task[aria-current], .tray-table tbody tr[aria-selected="true"] { outline: 2px solid Highlight; outline-offset: -2px; }
   .tray-cal__day[data-in-range] .tray-cal__num { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .25em; }

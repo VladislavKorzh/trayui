@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { FieldContext, useFieldControl } from '../lib/field';
 import { cx, useBehaviour, useForwardedRef, useUid } from '../lib/util';

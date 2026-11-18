@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { DialogShell } from '../lib/overlays';
 import { cx, useUid } from '../lib/util';
@@ -33,7 +34,7 @@ export interface AlertDialogProps extends Omit<React.DialogHTMLAttributes<HTMLDi
    * false: shown in place, with no veil. Inside a `<div className="tray-stage tray-stage--scrim">` this pictures it open in a preview or a documentation page (with `defaultOpen`).
    */
   modal?: boolean;
-  /** false makes Escape do nothing as well, when even leaving needs a choice. Default true. */
+  /** false makes Escape slower as well, when even leaving needs a choice: the first presses do nothing, and the browser closes it at the third (Chrome), as the safe choice (`onCancel`). Default true. */
   closeOnEscape?: boolean;
 }
 

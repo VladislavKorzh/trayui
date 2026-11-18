@@ -176,7 +176,7 @@ Tray UI's [Carousel](#c-carousel) is a strip of cards, one or more in view with 
 
 - The track keeps `role="list"`: without its bullets Safari would no longer announce it as a list. Tab reaches every link in the cards, and the browser scrolls each into view.
 - The script gives the track `tabindex="0"`; there, ArrowLeft and ArrowRight move one card, mirrored under `dir="rtl"`.
-- The count is written as "2 / 5": the first card in view, and the last once the track can go no further, so with three cards in view it ends on "5 / 5" as Next turns off (since the next release; 0.2.0 stopped at "3 / 5"). It is plain text, not announced as it changes.
+- The count is written as "2 / 5": the first card in view, and the last once the track can go no further, so with three cards in view it ends on "5 / 5" as Next turns off (since version 0.3.0; 0.2.0 stopped at "3 / 5"). It is plain text, not announced as it changes.
 - The buttons step one card and turn off at the ends. A button that turns off with focus hands it to the other button, or to the track, with `TrayUI.rescue()`, which moves focus only when focus is inside the element that is going. This came in version 0.2.0, as "the end of a carousel".
 - Under `prefers-reduced-motion: reduce`, the buttons and keys jump to the card.
 - Nothing advances on its own.

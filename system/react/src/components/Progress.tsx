@@ -77,6 +77,8 @@ export const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(function
         aria-valuemin={busy ? undefined : 0}
         aria-valuemax={busy ? undefined : whole}
         aria-valuenow={busy ? undefined : value}
+        // Words that are not the percentage are read as the value too: "68%: 132 of 412 jars left".
+        aria-valuetext={!busy && typeof text === 'string' && text !== `${pct}%` ? `${pct}%: ${text}` : undefined}
         style={busy ? undefined : ({ '--tray-v': pct } as React.CSSProperties)}
       />
     </div>

@@ -5,7 +5,7 @@ export function StatusPage() {
     <div className="tray-stack" style={{ gap: 'var(--space-8)' }}>
       <Uptime name="Order API" share="99.94% up" incidents={{ 12: 'degraded', 47: 'down', 48: 'degraded' }} />
       <Uptime name="Courier tracking" state="slow" stateText="Slow since 09:40" share="99.71% up" incidents={{ 0: 'degraded', 31: 'degraded' }} legend />
-      <ul className="tray-items tray-items--ruled">
+      <ul className="tray-items tray-items--ruled" role="list">
         <Item size="sm" title="Order API was down for 18 minutes" text="29 September, 03:10 to 03:28. A database update ran long." />
         <Item size="sm" title="Courier tracking was slow for 2 hours" text="15 October. The courier's own service answered late." />
       </ul>

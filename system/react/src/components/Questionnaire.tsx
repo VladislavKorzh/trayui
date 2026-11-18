@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, useTrayEvent, useBehaviour, useForwardedRef, useUid } from '../lib/util';
 import { Button } from './Button';

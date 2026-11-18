@@ -78,7 +78,7 @@ A component rule names tokens and holds no colour of its own. This is the start 
 }
 ```
 
-Counted in `src/css`, the stylesheet of the components reads a token 1,823 times and names 111 of the 118. It holds no hex value and, since the next release, no colour function: the one it had, a dimmed backdrop in forced colours mode, never applied and is gone. The seven tokens it never names are the four breakpoints, `paper-muted`, `space-16` and `z-overlay`.
+Counted in `src/css`, the stylesheet of the components reads a token 1,823 times and names 111 of the 118. It holds no hex value and, since version 0.3.0, no colour function: the one it had, a dimmed backdrop in forced colours mode, never applied and is gone. The seven tokens it never names are the four breakpoints, `paper-muted`, `space-16` and `z-overlay`.
 
 Tokens combine with `calc()`. An extra small button is 40px high to the eye and 44px to a finger, because a pseudo-element reaches past its edge by half the difference:
 

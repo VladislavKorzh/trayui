@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import type { IconSource } from '../lib/icon';
 import { cx, useBehaviour, useForwardedRef } from '../lib/util';
@@ -77,7 +78,7 @@ export const Uptime = React.forwardRef<HTMLDivElement, UptimeProps>(function Upt
         <span>{to}</span>
       </div>
       {legend ? (
-        <ul className="tray-uptime__key">
+        <ul className="tray-uptime__key" role="list">
           <li>
             <i />
             {words.normal ?? 'A normal day'}

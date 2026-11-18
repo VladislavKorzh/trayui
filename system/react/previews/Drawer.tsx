@@ -1,4 +1,4 @@
-import { Button, Drawer, Field, Icon } from 'trayui-react';
+import { Button, ButtonGroup, Drawer, Field } from 'trayui-react';
 
 export function AddToOrder() {
   return (
@@ -12,11 +12,7 @@ export function AddToOrder() {
           </div>
           <div className="tray-row tray-row--between">
             <span className="nav">Jars</span>
-            <div className="tray-btn-group" role="group" aria-label="Quantity">
-              <button className="tray-btn-group__item tray-btn-group__item--icon" type="button" aria-label="One fewer"><Icon name="minus" /></button>
-              <output className="tray-btn-group__value">2</output>
-              <button className="tray-btn-group__item tray-btn-group__item--icon" type="button" aria-label="One more"><Icon name="plus" /></button>
-            </div>
+            <ButtonGroup stepper label="Quantity" defaultValue={2} min={1} max={9} />
           </div>
         </div>
       </Drawer>

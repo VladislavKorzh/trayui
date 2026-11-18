@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, useControlled } from '../lib/util';
 import { PlusTile, summaryClick } from '../lib/nav';

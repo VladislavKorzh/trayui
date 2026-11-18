@@ -22,7 +22,7 @@
   </nav>
   <div class="tray-nav__actions">
     <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search the shop"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search the shop</span><kbd class="tray-kbd">/</kbd></button>
-    <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" id="cart-button" data-tray="open" data-target="#cart" data-open-first aria-haspopup="dialog" aria-label="Cart, 3 items"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-shopping-bag"/></svg>Cart<span class="tray-badge tray-badge--count tray-badge--ink" id="cart-count">3</span></button>
+    <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" id="cart-button" data-tray="open" data-target="#cart" data-open-first aria-haspopup="dialog"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-shopping-bag"/></svg>Cart<span class="tray-badge tray-badge--count tray-badge--ink" id="cart-count">3<span class="tray-vh"> items</span></span></button>
   </div>
 </header>
 
@@ -260,8 +260,8 @@
     });
     var dollars = Math.round(sum / 100), bar = $('free-bar');
     $('cart-text').textContent = count ? (NUMBERS[count] || count + ' things') + ', in one chilled box.' : 'Nothing in it yet.';
-    $('cart-count').textContent = count || '';
-    $('cart-button').setAttribute('aria-label', 'Cart, ' + count + (count === 1 ? ' item' : ' items'));
+    /* the count, and for a screen reader what it counts: the button is named "Cart 3 items" by its own words */
+    $('cart-count').innerHTML = count ? count + '<span class="tray-vh"> ' + (count === 1 ? 'item' : 'items') + '</span>' : '';
     $('subtotal').textContent = $('checkout-sum').textContent = money(sum);
     $('empty').hidden = count > 0;
     $('lines').hidden = !count;

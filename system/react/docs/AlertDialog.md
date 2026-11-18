@@ -25,7 +25,7 @@ An alert dialog stops a person before something that cannot be undone, and makes
 - There is no close button in the corner, and a click on the veil never closes it.
 - Focus starts on the safe button, which comes first.
 - It carries `role="alertdialog"`, and the description is read out with the title.
-- `closeOnEscape={false}` makes Escape do nothing as well, when even leaving needs a choice.
+- `closeOnEscape={false}` makes Escape slower as well, when even leaving needs a choice: the first presses of Escape do nothing. A browser lets a page refuse a close request only a few times, so Escape is not stopped for ever: in Chrome the third press closes the dialog, whatever was clicked or pressed between, and that close counts as the safe choice (`onCancel` runs).
 
 Both buttons close it. `onConfirm` runs on the action button; `onCancel` runs on the safe button and on Escape.
 

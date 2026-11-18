@@ -50,6 +50,9 @@
 
   /* The items of one menu panel, not those of a submenu inside it. */
   var OWN_ITEMS = '[role^="menuitem"]:not(.tray-submenu > .tray-pop *)';
+  /* What a menu item reports as its value: its data-value, or its words without its icon and its shortcut ("Duplicate",
+     not "DuplicateCtrl D"), as an option of a list reports them. */
+  function itemValue(it) { return it.dataset.value || optionWords(it); }
 
   /* A submenu: in a .tray-submenu, an item with aria-haspopup="menu" and the .tray-pop beside it, which becomes a menu of
      its own. The item opens it with the arrow towards it (ArrowRight, or ArrowLeft right to left), Enter or Space, and
@@ -118,7 +121,7 @@
     panel.addEventListener('click', function (e) {
       var it = e.target.closest('[role^="menuitem"]');
       if (!it || it.getAttribute('aria-disabled') === 'true' || it.hasAttribute('aria-haspopup')) return;
-      var role = it.getAttribute('role'), value = it.dataset.value || it.textContent.trim();
+      var role = it.getAttribute('role'), value = itemValue(it);
       if (role === 'menuitemcheckbox') {
         var on = it.getAttribute('aria-checked') !== 'true';
         it.setAttribute('aria-checked', String(on));
@@ -183,6 +186,7 @@
       show(panel);
       panel.style.insetInlineStart = clamp(x - box.left, 8, Math.max(8, box.width - panel.offsetWidth - 8)) + 'px';
       panel.style.insetBlockStart = clamp(y - box.top, 8, Math.max(8, box.height - panel.offsetHeight - 8)) + 'px';
+      fit(panel);
       var first = $(OWN_ITEMS, panel);
       if (first) first.focus();
     }
@@ -194,7 +198,7 @@
     });
     rove(panel, OWN_ITEMS);
     $$('.tray-submenu', panel).forEach(submenu);
-    panel.addEventListener('click', function (e) { var it = e.target.closest('[role^="menuitem"]'); if (it && it.getAttribute('aria-disabled') !== 'true' && !it.hasAttribute('aria-haspopup')) { fire(region, 'select', { value: it.dataset.value || it.textContent.trim() }); close(); } });
+    panel.addEventListener('click', function (e) { var it = e.target.closest('[role^="menuitem"]'); if (it && it.getAttribute('aria-disabled') !== 'true' && !it.hasAttribute('aria-haspopup')) { fire(region, 'select', { value: itemValue(it) }); close(); } });
     /* Tab out of the menu closes it, as it does a dropdown menu */
     panel.addEventListener('focusout', function (e) { var to = e.relatedTarget; if (!panel.hidden && to && !panel.contains(to)) hide(panel); });
     document.addEventListener('pointerdown', function (e) { if (!panel.hidden && !panel.contains(e.target) && e.button !== 2) close(); });
@@ -269,6 +273,9 @@
     input.setAttribute('aria-controls', list.id);
     input.setAttribute('autocomplete', 'off');
     options().forEach(function (o) { o.id = o.id || uid('tray-option'); o.setAttribute('tabindex', '-1'); });
+    /* A listbox holds options and groups only: the no-match sentence inside it is for the eye, and the status line below
+       says the same words to a screen reader. */
+    if (empty) empty.setAttribute('aria-hidden', 'true');
     /* a group of options is a group of the listbox, named by its label, so the name is read on the way into it */
     $$('[data-group]', list).forEach(function (g) {
       var label = $(':scope > .tray-list__label', g);

@@ -17,7 +17,7 @@ The top bar is the row above the content: where you are at the start edge; searc
       <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 2 unread">…</button>
       <span class="tray-pip" aria-hidden="true">2</span>
     </span>
-    <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko">OF</button>
+    <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko, OF">OF</button>
   </div>
 </header>
 ```
@@ -30,7 +30,7 @@ The bar has no fill of its own: it sits on the page. `tray-topbar--sticky` keeps
 ## Accessibility
 - The breadcrumb is a `<nav>` named "Breadcrumb", and its last item carries `aria-current="page"`.
 - The search is a `<button>` named by its words. The system does not bind the key shown in its `tray-kbd`: listen for it in your own script, and only then add `aria-keyshortcuts="/"`, which tells a screen reader that the key works. With `tray-topbar__search--fold` the words are hidden, so the button needs an `aria-label`.
-- Every icon button needs an `aria-label` ("Help", "More actions"), and the avatar button names the account ("Account: Oksana Franko").
+- Every icon button needs an `aria-label` ("Help", "More actions"), and the avatar button names the account and ends with the initials it shows ("Account: Oksana Franko, OF"), as the Avatar says: the initials are the words on the button, so its name holds them (WCAG 2.5.3, Label in Name).
 - A button with a pip says the count in its `aria-label` too ("Notifications, 2 unread"). Change that label whenever the count changes. The pip itself is `aria-hidden` (the script sets it on every `tray-pip` as well), so the number is not read a second time after the button.
 - The back link hides its arrow and says where it goes in a `tray-vh` span.
 

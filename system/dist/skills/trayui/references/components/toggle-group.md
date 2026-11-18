@@ -1,0 +1,26 @@
+# Toggle Group
+
+A toggle group is the segmented control: a tray of segments where the selected one is solid ink. Also called a segmented control or a button toggle group.
+
+## Use
+A choice among two to five short options that are all worth seeing at once: jar size, list or grid view, a time range. More options, or long labels, belong in a Select or a Radio Group.
+
+## Markup
+```html
+<div class="tray-seg" role="radiogroup" aria-label="Jar size">
+  <label class="tray-seg__item"><input type="radio" name="jar" checked><span>30 g</span></label>
+  <label class="tray-seg__item"><input type="radio" name="jar"><span>50 g</span></label>
+</div>
+```
+The inputs are real radios, so the arrow keys and form submission work without script. With the script the ink pill of the chosen segment slides to the next one chosen; after setting a radio from script, dispatch a `change` event on the `.tray-seg` so the pill follows. Use `type="checkbox"` inputs (and `role="group"`) when several segments may be on at once.
+
+Modifiers: `tray-seg--fill` (equal columns across the full width), `tray-seg--sm` (44px segments, `nav` type), `tray-seg--icon` (square, icon-only segments; each input needs an `aria-label`).
+
+## Accessibility
+A single choice is a `role="radiogroup"` of real radios, named by its `aria-label` or by `aria-labelledby` on a visible label. `Tab` reaches the group at the chosen segment, and the arrow keys move the choice, passing over a `disabled` one. Several choices are checkboxes in a `role="group"`: `Tab` moves between them and `Space` turns each on or off. Each segment is named by its text, so an icon-only one needs an `aria-label` on its input. Focus draws the 3px ink ring round the segment, the chosen one is solid ink, and with forced colours it takes the system's colours for a chosen item. Under `prefers-reduced-motion: reduce` the pill moves to the new segment at once.
+
+## Do and don't
+- Do keep every label to one or two words.
+- Do put a second line (a price, a count) inside the segment in weight 400 when it helps the choice.
+- Don't use it for navigation between pages; that is Tabs.
+- Don't leave a single-choice group with nothing selected.

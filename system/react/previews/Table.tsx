@@ -23,7 +23,7 @@ const rows = [
 ];
 
 export function SeasonRecord() {
-  return <Table caption="Season record" columns={columns} rows={rows} rowKey="month" footer={{ month: 'Season so far', collected: '104 kg', delta: '+11 kg' }} />;
+  return <Table wide caption="Season record" columns={columns} rows={rows} rowKey="month" footer={{ month: 'Season so far', collected: '104 kg', delta: '+11 kg' }} />;
 }
 
 export function CompactInACard() {

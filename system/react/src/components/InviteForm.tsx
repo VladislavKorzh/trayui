@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, useUid } from '../lib/util';
 import { EMAIL, SectionHead } from '../lib/account';

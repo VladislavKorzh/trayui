@@ -1,6 +1,6 @@
 {
   "name": "trayui-react",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Tray UI for React: typed components over the system's own stylesheet and behaviours, and charts drawn with Recharts.",
   "license": "MIT",
   "author": "Vladyslav Korzh (https://github.com/VladislavKorzh)",
@@ -51,7 +51,7 @@
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
-    "check": "tsc --noEmit -p tsconfig.json && tsc -p tsconfig.examples.json",
+    "check": "tsc --noEmit -p tsconfig.json && tsc -p tsconfig.examples.json && node scripts/server.mjs",
     "charts": "node scripts/charts.mjs",
     "try": "node scripts/try.mjs",
     "prepublishOnly": "npm run check && npm run build"

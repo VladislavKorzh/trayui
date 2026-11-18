@@ -9,7 +9,7 @@ The plan comparison is the full table under the pricing cards: every feature as 
 ## Use
 ```tsx
 <PlanComparison
-  aria-label="What each plan includes"
+  caption="The plans compared"                     // hidden from sight, said by a screen reader
   plans={[
     { name: 'Stall', price: '$0' },
     { name: 'Shop', price: '$29 a month', featured: true },   // a tray behind the whole column
@@ -29,7 +29,7 @@ The plan comparison is the full table under the pricing cards: every feature as 
 - `group` on a row starts a group above it: a muted heading in the first cell and an empty cell under each plan, so the featured tray runs through.
 - `featured` lays a tray behind one column, rounded at the head and the foot: the plan you recommend, or the one the person is on.
 
-The table sits in a wrapper that scrolls sideways on a phone. Name it with an `aria-label`.
+The table sits in a wrapper that scrolls sideways on a phone. Name it with `caption`, a `<caption>` hidden from sight, or with an `aria-label`: the wrapper is a region with the same name, which the keyboard reaches with Tab and scrolls with the arrow keys.
 
 ## Do and don't
 - Do keep the plan names and prices in the head, in the order of the pricing cards.

@@ -1,0 +1,217 @@
+# Journal
+
+The front page of a journal: its name, topic tabs, one featured article, a grid of six more, pages, and a letter to sign up for.
+
+The front page of a magazine, a company blog or a news section, where readers land from the main navigation. Under the display heading come topic tabs with their counts, links to the archive and the search, one featured story as a wide card, six more in a grid of three, numbered pages, and a newsletter signup at the end.
+
+Of the three article lists, this is the one for browsing what is new: [the search](https://trayui.com/blocks/articles-02.md) serves a reader who has words in mind, and [the archive](https://trayui.com/blocks/articles-03.md) lists everything by date. Below 56rem the featured card puts its picture above its text and the grid falls to one column. Each card is a single link named by its title through `aria-labelledby`, so a screen reader's list of links reads as a list of headlines rather than of whole paragraphs.
+
+It is made of these components: [Navigation Menu](https://trayui.com/components/navigation-menu.md), [Tabs](https://trayui.com/components/tabs.md), [Button](https://trayui.com/components/button.md), [Badge](https://trayui.com/components/badge.md), [Card](https://trayui.com/components/card.md), [Feature Grid](https://trayui.com/components/feature-grid.md), [Avatar](https://trayui.com/components/avatar.md), [Pagination](https://trayui.com/components/pagination.md), [Call to Action](https://trayui.com/components/call-to-action.md), [Field](https://trayui.com/components/field.md), [Label](https://trayui.com/components/label.md), [Input Group](https://trayui.com/components/input-group.md), [Input](https://trayui.com/components/input.md), [Footer](https://trayui.com/components/footer.md).
+
+Behaviours it uses: `strip`.
+
+Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Journal</title>
+<meta name="description" content="The front page of a journal: its name, topic tabs, one featured article, a grid of six more, pages, and a letter to sign up for.">
+<meta name="tray-category" content="Articles">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<header class="tray-nav tray-container">
+  <a class="tray-wordmark" href="#">Perly Farm</a>
+  <nav class="tray-nav__strip" aria-label="Main">
+    <ul class="tray-nav__links tray-tabs" data-tray="strip">
+      <li><a class="tray-tab" href="#">Caviar</a></li>
+      <li><a class="tray-tab" href="#">The farm</a></li>
+      <li><a class="tray-tab" href="articles-01.html" aria-current="page">Journal</a></li>
+      <li><a class="tray-tab" href="#">Visit us</a></li>
+    </ul>
+  </nav>
+  <div class="tray-nav__actions">
+    <a class="tray-btn tray-btn--sm" href="#">Order a jar</a>
+  </div>
+</header>
+
+<main class="tray-container">
+  <div class="tray-section">
+    <div class="tray-section__head">
+      <h1 class="display">Perly Journal</h1>
+      <p class="lead tray-soft">How we raise snails near Kyiv, what we cook with their caviar, and what is new at the farm. A new piece most Thursdays.</p>
+    </div>
+
+    <div class="tray-row tray-row--between">
+      <nav class="tray-tabs" aria-label="Topics" data-tray="strip">
+        <a class="tray-tab" href="articles-01.html" aria-current="page">All <span class="tray-badge tray-badge--count">32</span></a>
+        <a class="tray-tab" href="#">Farming <span class="tray-badge tray-badge--count">14</span></a>
+        <a class="tray-tab" href="#">Kitchen <span class="tray-badge tray-badge--count">10</span></a>
+        <a class="tray-tab" href="#">News <span class="tray-badge tray-badge--count">8</span></a>
+      </nav>
+      <div class="tray-row tray-row--sm">
+        <a class="tray-btn tray-btn--ghost tray-btn--sm" href="articles-03.html"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-calendar"/></svg>Archive</a>
+        <a class="tray-btn tray-btn--quiet tray-btn--sm" href="articles-02.html"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg>Search the journal</a>
+      </div>
+    </div>
+
+    <a class="tray-card" href="#" style="margin-block-start: var(--space-6)">
+      <div class="tray-bento">
+        <div class="tray-slot tray-slot--video tray-span-7"></div>
+        <div class="tray-feature tray-span-5">
+          <div class="tray-row tray-row--sm">
+            <span class="tray-badge">Farming</span>
+            <span class="caption tray-muted"><time datetime="2026-11-12">12 November 2026</time></span>
+          </div>
+          <h2 class="title" id="featured-title">How a batch is graded, one pearl at a time</h2>
+          <p>Before batch 14 went into its jars, three of us looked at every spoonful of pearls; this is what we keep and what we turn away.</p>
+          <div class="tray-feature__end tray-row tray-row--between">
+            <span class="tray-person">
+              <span class="tray-avatar tray-avatar--sm" aria-hidden="true">DK</span>
+              <span class="tray-person__text"><b>Dana Kovalenko</b><small>Grades every batch</small></span>
+            </span>
+            <span class="tray-row tray-row--sm caption tray-muted"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-clock"/></svg>9 minutes to read</span>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <section class="tray-section" aria-labelledby="latest-title">
+    <div class="tray-stack tray-stack--lg">
+      <div class="tray-stack tray-stack--sm">
+        <h2 class="headline" id="latest-title">Lately at the farm</h2>
+        <p class="tray-soft">Six more pieces from October and November, newest first.</p>
+      </div>
+      <div class="tray-bento">
+        <a class="tray-card tray-span-4" href="#">
+          <div class="tray-stack">
+            <div class="tray-slot tray-slot--video"></div>
+            <div class="tray-row tray-row--sm"><span class="tray-badge">News</span><span class="caption tray-muted"><time datetime="2026-11-10">10 November</time>, 3 minutes</span></div>
+            <h3 class="subtitle" id="latest-1">Our farm shop opens at Farm road 4</h3>
+            <p class="tray-soft">From 19 November you can buy jars straight from the cold room, Thursday to Sunday.</p>
+          </div>
+        </a>
+        <a class="tray-card tray-span-4" href="article-03.html">
+          <div class="tray-stack">
+            <div class="tray-slot tray-slot--video"></div>
+            <div class="tray-row tray-row--sm"><span class="tray-badge">Kitchen</span><span class="caption tray-muted"><time datetime="2026-11-05">5 November</time>, 5 minutes</span></div>
+            <h3 class="subtitle" id="latest-2">Six ways to serve a 30&nbsp;g jar</h3>
+            <p class="tray-soft">From a spoon on its own to a soft egg: what one small jar does for two people.</p>
+          </div>
+        </a>
+        <a class="tray-card tray-span-4" href="#">
+          <div class="tray-stack">
+            <div class="tray-slot tray-slot--video"></div>
+            <div class="tray-row tray-row--sm"><span class="tray-badge">Farming</span><span class="caption tray-muted"><time datetime="2026-10-29">29 October</time>, 6 minutes</span></div>
+            <h3 class="subtitle" id="latest-3">Why the snails sleep from December</h3>
+            <p class="tray-soft">When the soil drops below 8&nbsp;&deg;C they seal their shells, and the beds go quiet until March.</p>
+          </div>
+        </a>
+        <a class="tray-card tray-span-4" href="#">
+          <div class="tray-stack">
+            <div class="tray-slot tray-slot--video"></div>
+            <div class="tray-row tray-row--sm"><span class="tray-badge">Kitchen</span><span class="caption tray-muted"><time datetime="2026-10-22">22 October</time>, 4 minutes</span></div>
+            <h3 class="subtitle" id="latest-4">Caviar on a baked potato, the farm's way</h3>
+            <p class="tray-soft">Butter, flaky salt, a spoon of sour cream, and 10&nbsp;g of caviar added at the very end.</p>
+          </div>
+        </a>
+        <a class="tray-card tray-span-4" href="#">
+          <div class="tray-stack">
+            <div class="tray-slot tray-slot--video"></div>
+            <div class="tray-row tray-row--sm"><span class="tray-badge">News</span><span class="caption tray-muted"><time datetime="2026-10-15">15 October</time>, 2 minutes</span></div>
+            <h3 class="subtitle" id="latest-5">Batch 14 is in the jars</h3>
+            <p class="tray-soft">1,240 jars from the autumn laying, packed in 30&nbsp;g, 50&nbsp;g and 100&nbsp;g, and on sale now.</p>
+          </div>
+        </a>
+        <a class="tray-card tray-span-4" href="#">
+          <div class="tray-stack">
+            <div class="tray-slot tray-slot--video"></div>
+            <div class="tray-row tray-row--sm"><span class="tray-badge">Kitchen</span><span class="caption tray-muted"><time datetime="2026-10-08">8 October</time>, 5 minutes</span></div>
+            <h3 class="subtitle" id="latest-6">What to pour with white caviar</h3>
+            <p class="tray-soft">Dry, cold and quiet: the drinks we open at the farm table, and the two we leave shut.</p>
+          </div>
+        </a>
+      </div>
+      <div class="tray-row tray-row--between">
+        <p class="caption tray-muted">Articles 1 to 7 of 32</p>
+        <nav aria-label="Pages">
+          <ul class="tray-pages">
+            <li><a class="tray-page tray-page--step" role="link" aria-disabled="true" aria-label="Previous page"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-left"/></svg></a></li>
+            <li><a class="tray-page" href="articles-01.html" aria-current="page">1</a></li>
+            <li><a class="tray-page" href="#">2</a></li>
+            <li><a class="tray-page" href="#">3</a></li>
+            <li><span class="tray-page tray-page--gap" aria-hidden="true">&hellip;</span></li>
+            <li><a class="tray-page" href="#" aria-label="Page 5, the last">5</a></li>
+            <li><a class="tray-page tray-page--step" href="#" aria-label="Next page"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <section class="tray-card tray-cta" aria-labelledby="letter-title">
+    <div class="tray-cta__text">
+      <h2 class="title" id="letter-title">A letter when a batch is ready</h2>
+      <p class="tray-soft">About once a month in the season: the batch number, the jars that are left, and one recipe from the kitchen. Nothing else.</p>
+    </div>
+    <form class="tray-field" action="/journal/letter" method="post" style="flex: 1 1 20rem; max-inline-size: 28rem">
+      <label class="tray-label" for="letter-email">Email</label>
+      <div class="tray-input-group">
+        <input class="tray-input" id="letter-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" aria-describedby="letter-hint" required>
+        <button class="tray-input-group__btn tray-input-group__btn--accent" type="submit">Subscribe</button>
+      </div>
+      <p class="tray-field__hint" id="letter-hint">Leave at any time with the link at the end of every letter.</p>
+    </form>
+  </section>
+</main>
+
+<footer class="tray-footer tray-container">
+  <div class="tray-footer__top">
+    <div class="tray-footer__brand">
+      <a class="tray-wordmark" href="#">Perly Farm</a>
+      <p>Snail caviar from a small farm near Kyiv. The farm shop at Farm road 4 opens Thursday to Sunday, 10:00 to 18:00.</p>
+    </div>
+    <nav class="tray-footer__col" aria-label="Caviar">
+      <h3>Caviar</h3>
+      <a href="#">Jars and prices</a>
+      <a href="#">Gift boxes</a>
+      <a href="#">Delivery</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="Journal">
+      <h3>Journal</h3>
+      <a href="#">Farming</a>
+      <a href="#">Kitchen</a>
+      <a href="#">News</a>
+      <a href="articles-03.html">Archive</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="The farm">
+      <h3>The farm</h3>
+      <a href="#">Our story</a>
+      <a href="#">Visit us</a>
+      <a href="#">Work with us</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="Help">
+      <h3>Help</h3>
+      <a href="article-02.html">Storing a jar</a>
+      <a href="#">Returns</a>
+      <a href="#">Contact</a>
+    </nav>
+  </div>
+  <div class="tray-footer__bottom">
+    <p>&copy; 2026 Perly Farm. Every name, date and figure on this page is demo data.</p>
+    <ul class="tray-footer__legal" role="list">
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms</a></li>
+    </ul>
+  </div>
+</footer>
+<script src="../components/bundle.js"></script>
+</body>
+</html>
+```

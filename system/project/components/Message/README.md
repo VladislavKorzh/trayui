@@ -6,7 +6,7 @@ A message is one row of a conversation: who spoke, what they said, and what happ
 ```html
 <div class="tray-thread">
   <div class="tray-message">
-    <span class="tray-avatar tray-avatar--sm">OF</span>
+    <span class="tray-avatar tray-avatar--sm" aria-hidden="true">OF</span>
     <div class="tray-message__content">
       <div class="tray-message__head"><b>Oksana</b> 14:02</div>
       <div class="tray-bubble">The courier has the box.</div>
@@ -14,7 +14,7 @@ A message is one row of a conversation: who spoke, what they said, and what happ
   </div>
   <div class="tray-message tray-message--end">
     <div class="tray-message__content">
-      <div class="tray-bubble tray-bubble--own">Thank you.</div>
+      <div class="tray-bubble tray-bubble--own"><span class="tray-vh">You: </span>Thank you.</div>
       <div class="tray-message__foot">Delivered</div>
     </div>
   </div>

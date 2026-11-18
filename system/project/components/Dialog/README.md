@@ -15,7 +15,7 @@ A dialog asks for one decision or one small task in a panel over the page, and h
   <div class="tray-dialog__foot">…Cancel, then the action…</div>
 </dialog>
 ```
-It is the browser's own `<dialog>`: opened with `showModal()` it traps focus, closes on Escape and returns focus to the button that opened it. The behaviour adds `data-close` buttons and closing on a click on the veil (`data-static` turns that off).
+It is the browser's own `<dialog>`: opened with `showModal()` it traps focus, closes on Escape and returns focus to the button that opened it. The behaviour adds `data-close` buttons and closing on a click on the veil (`data-static` turns that off), and gives the `data-tray="open"` button `aria-haspopup="dialog"`.
 
 ## Look
 A `raised` panel with 40px corners, card padding and the float shadow, over the `scrim`. Widths: 32rem, `tray-dialog--sm` 26rem, `tray-dialog--lg` 44rem. The title is `title` type. Buttons sit at the end, the action last; on a phone they stack, the action on top.

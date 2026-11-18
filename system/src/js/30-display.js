@@ -4,12 +4,14 @@
   UI.register('split', function (root) {
     var handle = $('.tray-split__handle', root), first = root.firstElementChild, vertical = root.classList.contains('tray-split--v');
     var min = +(root.dataset.min || 20), max = +(root.dataset.max || 80), size = +(root.dataset.size || 50);
-    function set(v) {
+    /* set(v, atLoad): the size set up at load is no change, so it fires nothing (a page that keeps the size the person
+       chose would otherwise keep the default as their choice) */
+    function set(v, atLoad) {
       size = clamp(v, min, max);
       first.setAttribute('data-size', '');
       first.style.flexBasis = size + '%';
       handle.setAttribute('aria-valuenow', String(Math.round(size)));
-      fire(root, 'change', { size: size });
+      if (!atLoad) fire(root, 'change', { size: size });
     }
     handle.setAttribute('role', 'separator');
     handle.setAttribute('aria-orientation', vertical ? 'horizontal' : 'vertical');
@@ -38,7 +40,7 @@
       else if (e.key === 'Home') { e.preventDefault(); set(min); }
       else if (e.key === 'End') { e.preventDefault(); set(max); }
     });
-    set(size);
+    set(size, true);
   });
 
   /* Carousel: data-tray="carousel" on .tray-carousel holding a track of slides, [data-prev], [data-next] and a count. */
@@ -56,7 +58,11 @@
       /* The count is the first slide in view, until the track can go no further: with several slides in view the last
          ones are then in view too, and the count says the last, "5 / 5", as Next turns off. */
       if (count) count.textContent = (end && i > 0 ? n : i + 1) + ' / ' + n;
-      /* a button that turns off at an end while it has focus hands it to the other one, or to the track */
+      /* a button that turns off at an end while it has focus hands it to the other one, or to the track. The other one
+         turns on first: one step can cross the whole track (a wide one that shows most slides at once), from an end where
+         that button was off itself, and a button that is still off cannot take focus. */
+      if (prev && i > 0) prev.disabled = false;
+      if (next && !end) next.disabled = false;
       if (prev && i === 0) rescue(prev, next && !end ? next : track);
       if (next && end) rescue(next, prev && i > 0 ? prev : track);
       if (prev) prev.disabled = i === 0;

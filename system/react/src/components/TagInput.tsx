@@ -1,6 +1,7 @@
+'use client';
 import * as React from 'react';
 import { useFieldControl } from '../lib/field';
-import { cx, useTrayEvent, useBehaviour, useForwardedRef } from '../lib/util';
+import { cx, useBehaviour, useForwardedRef, useIsoLayoutEffect, useTrayEvent } from '../lib/util';
 import { wrongFor } from '../lib/account';
 import { Icon } from './Icon';
 
@@ -67,7 +68,7 @@ export const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(functi
     if (ringed || el.querySelector('.tray-chip[data-invalid]')) box.setAttribute('aria-invalid', 'true');
     else box.removeAttribute('aria-invalid');
   };
-  React.useLayoutEffect(paint);
+  useIsoLayoutEffect(paint);
 
   useTrayEvent(
     root,

@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, useTrayEvent, useBehaviour, useForwardedRef, useUid } from '../lib/util';
 import { Button } from './Button';
@@ -40,6 +41,8 @@ export interface OnboardingChecklistProps extends Omit<React.HTMLAttributes<HTML
   tasks: ChecklistTask[];
   /** The name over the progress bar, at the start. Default "Done"; the count, "2 of 5", sits at the end. */
   progressLabel?: React.ReactNode;
+  /** The name of the progress bar for screen readers, what the tasks set up. Default "Setup". */
+  progressName?: string;
   /** A line shown once every task is done: "Everything is set. The first order will appear on the Orders page." */
   doneText?: React.ReactNode;
   /** The heading level of the title. Default 2. */
@@ -55,7 +58,7 @@ export interface OnboardingChecklistProps extends Omit<React.HTMLAttributes<HTML
  * Use it on the first screens of a new account; remove it once it is complete.
  */
 export const OnboardingChecklist = React.forwardRef<HTMLElement, OnboardingChecklistProps>(function OnboardingChecklist(
-  { title, tasks, progressLabel = 'Done', doneText, headingLevel = 2, onChange, onComplete, className, ...rest },
+  { title, tasks, progressLabel = 'Done', progressName = 'Setup', doneText, headingLevel = 2, onChange, onComplete, className, ...rest },
   forwarded,
 ) {
   const ref = useForwardedRef<HTMLElement>(forwarded);
@@ -106,10 +109,10 @@ export const OnboardingChecklist = React.forwardRef<HTMLElement, OnboardingCheck
           value={doneCount}
           max={total || 1}
           valueText={`${doneCount} of ${total}`}
-          aria-label={typeof title === 'string' ? title : undefined}
+          aria-label={progressName}
         />
       </div>
-      <ol className="tray-tasks">
+      <ol className="tray-tasks" role="list">
         {tasks.map((t, i) => {
           const completes = t.completes ?? t.href === undefined;
           return (

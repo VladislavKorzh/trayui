@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import {
   Area,
@@ -20,7 +21,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { ChartCenter, ChartContainer, ChartFigures, ChartTooltip, ChartTooltipContent, type ChartConfig } from './kit';
+import { ChartCenter, ChartContainer, ChartFigures, ChartTooltip, ChartTooltipContent, type ChartConfig, type ChartWalk } from './kit';
 
 export type ChartType = 'bar' | 'line' | 'area' | 'donut' | 'radial' | 'radar';
 
@@ -131,7 +132,7 @@ export const Chart = React.forwardRef<HTMLElement, ChartProps>(function Chart(
 
   if (type === 'bar' && horizontal) {
     plot = (
-      <BarChart data={rows} layout="vertical" barSize={16} margin={{ right: 56 }}>
+      <BarChart accessibilityLayer={false} data={rows} layout="vertical" barSize={16} margin={{ right: 56 }}>
         <XAxis type="number" hide domain={scale} />
         <YAxis type="category" dataKey="label" width="auto" tick={{ className: 'tray-chart__name' }} />
         {tip}
@@ -142,7 +143,7 @@ export const Chart = React.forwardRef<HTMLElement, ChartProps>(function Chart(
     );
   } else if (type === 'bar') {
     plot = (
-      <BarChart data={rows} maxBarSize={24} barGap={2} margin={{ top: peak >= 0 ? 24 : 8 }}>
+      <BarChart accessibilityLayer={false} data={rows} maxBarSize={24} barGap={2} margin={{ top: peak >= 0 ? 24 : 8 }}>
         <CartesianGrid vertical={false} />
         <XAxis dataKey="label" />
         <YAxis width="auto" domain={scale} ticks={ticks} unit={unit} />
@@ -156,7 +157,7 @@ export const Chart = React.forwardRef<HTMLElement, ChartProps>(function Chart(
     );
   } else if (type === 'line') {
     plot = (
-      <LineChart data={rows} margin={{ top: peak >= 0 ? 24 : 8, right: 12 }}>
+      <LineChart accessibilityLayer={false} data={rows} margin={{ top: peak >= 0 ? 24 : 8, right: 12 }}>
         <CartesianGrid vertical={false} />
         <XAxis dataKey="label" padding={{ left: 12, right: 12 }} />
         <YAxis width="auto" domain={scale} ticks={ticks} unit={unit} />
@@ -170,7 +171,7 @@ export const Chart = React.forwardRef<HTMLElement, ChartProps>(function Chart(
     );
   } else if (type === 'area') {
     plot = (
-      <AreaChart data={rows} margin={{ top: peak >= 0 ? 24 : 8, right: 12 }}>
+      <AreaChart accessibilityLayer={false} data={rows} margin={{ top: peak >= 0 ? 24 : 8, right: 12 }}>
         <CartesianGrid vertical={false} />
         <XAxis dataKey="label" padding={{ left: 12, right: 12 }} />
         <YAxis width="auto" domain={scale} ticks={ticks} unit={unit} />
@@ -185,7 +186,7 @@ export const Chart = React.forwardRef<HTMLElement, ChartProps>(function Chart(
   } else if (type === 'radar') {
     round = true;
     plot = (
-      <RadarChart data={rows} outerRadius="72%">
+      <RadarChart accessibilityLayer={false} data={rows} outerRadius="72%">
         <PolarGrid />
         <PolarAngleAxis dataKey="label" />
         <PolarRadiusAxis domain={scale} tick={false} axisLine={false} />
@@ -200,9 +201,9 @@ export const Chart = React.forwardRef<HTMLElement, ChartProps>(function Chart(
     const total = first.reduce((a, v) => a + v, 0);
     if (type === 'donut') {
       plot = (
-        <PieChart>
+        <PieChart accessibilityLayer={false}>
           {tip}
-          <Pie data={rows} dataKey="value" nameKey="part" innerRadius="82%" outerRadius="100%" startAngle={90} endAngle={-270}>
+          <Pie data={rows} dataKey="value" nameKey="part" innerRadius="82%" outerRadius="100%" startAngle={90} endAngle={-270} rootTabIndex={-1}>
             <ChartCenter value={val(total)} label={totalLabel} />
           </Pie>
         </PieChart>
@@ -211,7 +212,7 @@ export const Chart = React.forwardRef<HTMLElement, ChartProps>(function Chart(
       const rings = first.length;
       const ring = rings > 1 ? rows : [{ label: labels[0] ?? '', value: first[0] ?? 0, fill: 'var(--color-s0)' }];
       plot = (
-        <RadialBarChart data={ring} innerRadius={rings > 1 ? '38%' : '86%'} outerRadius="100%" startAngle={90} endAngle={-270} barCategoryGap={rings > 1 ? 4 : 0}>
+        <RadialBarChart accessibilityLayer={false} data={ring} innerRadius={rings > 1 ? '38%' : '86%'} outerRadius="100%" startAngle={90} endAngle={-270} barCategoryGap={rings > 1 ? 4 : 0}>
           <PolarAngleAxis type="number" domain={[0, max ?? 100]} tick={false} axisLine={false} />
           <PolarRadiusAxis type="category" dataKey="label" tick={false} axisLine={false}>
             {rings === 1 ? <ChartCenter value={val(first[0] ?? 0)} label={labels[0]} /> : null}
@@ -242,6 +243,18 @@ export const Chart = React.forwardRef<HTMLElement, ChartProps>(function Chart(
   }
 
   const figures = table && !byLabel && !(type === 'bar' && horizontal) ? <ChartFigures data={rows} labelKey="label" labelHead={labelHead} unit={unit} /> : null;
+  /* The keys walk the labels (or the parts of a donut), each said in words, as the plain-HTML chart says them. */
+  const sum = first.reduce((a, v) => a + v, 0);
+  const single = type === 'radial' && !byLabel;
+  const walk: ChartWalk = {
+    count: single ? Math.min(1, labels.length) : labels.length,
+    say: (i) =>
+      byLabel
+        ? `${labels[i]}: ${val(first[i] ?? 0)}` + (type === 'donut' ? `, ${sum ? Math.round(((first[i] ?? 0) / sum) * 100) : 0}%` : '')
+        : `${labels[i]}: ` + (one ? val(first[i] ?? 0) : series.map((s) => `${s.name} ${val(s.values[i] ?? 0)}`).join(', ')),
+    start: peak >= 0 ? peak : undefined,
+    wrap: round,
+  };
   return (
     <ChartContainer
       ref={ref}
@@ -251,6 +264,7 @@ export const Chart = React.forwardRef<HTMLElement, ChartProps>(function Chart(
       summary={said}
       height={height ?? (type === 'bar' && horizontal ? labels.length * 40 : undefined)}
       round={round}
+      walk={walk}
       legend={!byLabel && series.length > 1}
       locale={locale}
       className={[side && 'tray-chart--side', className].filter(Boolean).join(' ') || undefined}

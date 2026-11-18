@@ -23,7 +23,7 @@ Pagination moves through a long list one page at a time: 44px pages, the current
 
 **Compact** (`compact`). Previous, a status ("Page 2 of 12"), Next, as icon buttons. Use it where there is no room for the numbers. Change the words with `status`.
 
-With `href` every page is a link and a disabled step loses its link; without it the pages are buttons and `onPageChange` does the work.
+With `href` every page is a link, and a step that cannot be used loses its `href` and takes `role="link"` and `aria-disabled="true"`, so it keeps its name and says it is off; without it the pages are buttons and `onPageChange` does the work.
 
 ## Do and don't
 - Do keep the list's position and filters when the page changes.

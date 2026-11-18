@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, useUid } from '../lib/util';
 import { Alert } from './Alert';
@@ -42,7 +43,7 @@ export interface AuthFormProps extends Omit<React.FormHTMLAttributes<HTMLFormEle
   error?: React.ReactNode;
   /** What to do about `error`, under its title: "<a>Sign in</a> or use another email." */
   errorText?: React.ReactNode;
-  /** An error under one field. */
+  /** An error under one field; `true` rings the field without a line, and points it at the title of `error`, which already says why. */
   fieldErrors?: AuthFormFieldErrors;
   /** In sign-up: the label of a first field for the farm or shop name, such as "Farm or shop name". Left out, sign-up asks only for an email and a password. */
   nameLabel?: string;
@@ -70,8 +71,9 @@ export interface AuthFormProps extends Omit<React.FormHTMLAttributes<HTMLFormEle
   onSubmit?: (values: AuthFormValues, event: React.FormEvent<HTMLFormElement>) => void;
 }
 
-function wrong(e: React.ReactNode | true | undefined): { error?: React.ReactNode; invalid?: boolean } {
-  if (e === true) return { invalid: true };
+/** A field's error: its own line, or `true` when the form's alert already says why (the field then points at that alert's title). */
+function wrong(e: React.ReactNode | true | undefined, alertTitle: string | undefined): { error?: React.ReactNode; invalid?: boolean; about?: string } {
+  if (e === true) return { invalid: true, about: alertTitle };
   return e != null && e !== false ? { error: e } : {};
 }
 
@@ -112,9 +114,10 @@ export const AuthForm = React.forwardRef<HTMLFormElement, AuthFormProps>(functio
   const id = useUid('auth');
   const signup = mode === 'signup';
   const H = `h${headingLevel}` as 'h1' | 'h2';
-  const name = wrong(fieldErrors.name);
-  const email = wrong(fieldErrors.email);
-  const pass = wrong(fieldErrors.password);
+  const errorId = error != null ? `${id}-error` : undefined;
+  const name = wrong(fieldErrors.name, errorId);
+  const email = wrong(fieldErrors.email, errorId);
+  const pass = wrong(fieldErrors.password, errorId);
   const passId = `${id}-password`;
   const passMsg = pass.error != null ? { cls: 'tray-field__error', text: pass.error } : passwordHint != null ? { cls: 'tray-field__hint', text: passwordHint } : null;
 
@@ -138,7 +141,7 @@ export const AuthForm = React.forwardRef<HTMLFormElement, AuthFormProps>(functio
           required
           defaultValue={defaultValues.password}
           invalid={pass.invalid || pass.error != null || undefined}
-          aria-describedby={passMsg ? `${passId}-msg` : undefined}
+          aria-describedby={cx(passMsg && `${passId}-msg`, pass.about)}
         />
         {passMsg ? (
           <p className={passMsg.cls} id={`${passId}-msg`}>
@@ -149,9 +152,9 @@ export const AuthForm = React.forwardRef<HTMLFormElement, AuthFormProps>(functio
     ) : (
       <Field label={passwordLabel} controlId={passId} hint={passwordHint} error={pass.error}>
         {signup ? (
-          <Input type="password" name="password" autoComplete="new-password" required defaultValue={defaultValues.password} invalid={pass.invalid} />
+          <Input type="password" name="password" autoComplete="new-password" required defaultValue={defaultValues.password} invalid={pass.invalid} aria-describedby={pass.about} />
         ) : (
-          <InputGroup reveal name="password" autoComplete="current-password" required defaultValue={defaultValues.password} invalid={pass.invalid} />
+          <InputGroup reveal name="password" autoComplete="current-password" required defaultValue={defaultValues.password} invalid={pass.invalid} aria-describedby={pass.about} />
         )}
       </Field>
     );
@@ -190,18 +193,19 @@ export const AuthForm = React.forwardRef<HTMLFormElement, AuthFormProps>(functio
         </>
       ) : null}
       {error != null ? (
-        <Alert tone="danger" title={error}>
+        // tabIndex -1: a page that answers a send with this error moves focus here as it loads, since an alert already in the page is not read
+        <Alert tone="danger" title={error} titleId={errorId} tabIndex={-1}>
           {errorText}
         </Alert>
       ) : null}
       <div className="tray-stack">
         {signup && nameLabel != null ? (
           <Field label={nameLabel} controlId={`${id}-name`} error={name.error}>
-            <Input name="name" autoComplete="organization" defaultValue={defaultValues.name} invalid={name.invalid} />
+            <Input name="name" autoComplete="organization" defaultValue={defaultValues.name} invalid={name.invalid} aria-describedby={name.about} />
           </Field>
         ) : null}
         <Field label={emailLabel} controlId={`${id}-email`} error={email.error}>
-          <Input type="email" name="email" autoComplete="username" required defaultValue={defaultValues.email} invalid={email.invalid} />
+          <Input type="email" name="email" autoComplete="username" required defaultValue={defaultValues.email} invalid={email.invalid} aria-describedby={email.about} />
         </Field>
         {password}
         {children}

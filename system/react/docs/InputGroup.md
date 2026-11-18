@@ -24,7 +24,7 @@ An input group is one field that also holds an icon, a unit, a prefix or one sma
 ## Parts
 - `icon` and `prefix` sit at the start, `suffix` at the end, in muted type: they are never part of the value.
 - `action` is one small button at the end, 44px with 12px corners, in the colour of the ground behind the group; `accent` makes it yellow.
-- `reveal` turns the field into a password with a button that shows and hides it; it takes the place of `action`.
+- `reveal` turns the field into a password with a button that shows and hides it; it takes the place of `action`. The field sets `spellCheck={false}` and `autoCapitalize="none"`, which matter once it shows text, and turns back into a password field when its form is sent and when the page comes back from the browser's back-forward cache.
 
 The group carries the fill, the corners and the focus ring; the input inside is transparent. `ref` and the native input props go to the `<input>`; `className` and `style` go to the group. Inside a Field it picks up the label, the hint and the error by itself.
 

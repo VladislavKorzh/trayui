@@ -1,5 +1,6 @@
+'use client';
 import * as React from 'react';
-import { cx, useUid } from '../lib/util';
+import { cx, resolveNode, useUid } from '../lib/util';
 import { Button } from './Button';
 import { Card } from './Card';
 import { Input } from './Input';
@@ -59,7 +60,7 @@ const described: unknown[] = [...named, Button];
 function Setting({ row }: { row: SettingRow }) {
   const titleId = useUid('setting');
   const descId = `${titleId}-text`;
-  const { control } = row;
+  const control = resolveNode(row.control);
   const element = React.isValidElement<Record<string, unknown>>(control) ? control : null;
   // The row's title names a control that has no words of its own, and the line under it describes the control,
   // so the effect is read when the control takes focus.

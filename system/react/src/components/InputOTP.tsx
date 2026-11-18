@@ -1,7 +1,7 @@
+'use client';
 import * as React from 'react';
 import { FieldContext, useFieldControl } from '../lib/field';
 import { cx, useBehaviour, useForwardedRef } from '../lib/util';
-import { useFieldLabel } from '../lib/forms';
 
 export interface InputOTPProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue' | 'id'> {
   /** How many cells: four to eight. Default 6. */
@@ -39,10 +39,12 @@ export const InputOTP = React.forwardRef<HTMLDivElement, InputOTPProps>(function
   ref,
 ) {
   const own = useForwardedRef(ref);
-  const inField = React.useContext(FieldContext) != null;
+  const fieldCtx = React.useContext(FieldContext);
+  const inField = fieldCtx != null;
   const field = useFieldControl({ id, disabled, invalid, 'aria-describedby': rest['aria-describedby'], 'aria-invalid': rest['aria-invalid'] });
   const labelled = rest['aria-label'] != null || rest['aria-labelledby'] != null;
-  const fieldLabel = useFieldLabel(own, field.id, inField && !labelled);
+  // inside a Field the group is named by the Field's label, which is a span for a group (see Field)
+  const fieldLabel = inField && !labelled ? fieldCtx.labelId : undefined;
   const [initial] = React.useState(() => (value ?? defaultValue ?? '').slice(0, length));
   const [code, setCode] = React.useState(initial);
   const last = React.useRef(initial);
@@ -124,3 +126,5 @@ export const InputOTP = React.forwardRef<HTMLDivElement, InputOTPProps>(function
   );
 });
 InputOTP.displayName = 'InputOTP';
+/* Read by Field: a group of inputs, which its label names through aria-labelledby. */
+(InputOTP as typeof InputOTP & { trayGroup?: boolean }).trayGroup = true;

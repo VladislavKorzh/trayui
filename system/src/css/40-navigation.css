@@ -72,10 +72,17 @@
 .tray-nav__strip { display: flex; min-inline-size: 0; }
 @media (max-width: 75.99rem) {
   .tray-nav__strip { order: 1; flex: 0 0 100%; }
+  .tray-nav__strip > .tray-nav__links { min-inline-size: 0; max-inline-size: 100%; overflow-x: auto; scrollbar-width: none; }
+  /* A strip that scrolls would cut a panel that hangs from one of its links: here the panel hangs from the header, at its
+     start edge, under the strip. */
+  .tray-nav:has(> .tray-nav__strip) { position: relative; }
+  .tray-nav__strip .tray-anchor { position: static; }
+  .tray-nav__strip .tray-pop { min-inline-size: 12rem; }
 }
 .tray-nav__links { display: flex; align-items: center; gap: var(--space-1); margin: 0; padding: var(--space-1); border-radius: var(--radius-button); background: var(--tray-fill); list-style: none; }
 .tray-nav__actions { display: flex; align-items: center; gap: var(--space-2); }
-.tray-nav__panel { display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 1fr); gap: var(--space-3); inline-size: min(40rem, calc(100vw - 2rem)); }
+/* At most the window less 1rem each side, the roomy panel's padding included. */
+.tray-nav__panel { display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 1fr); gap: var(--space-3); inline-size: min(40rem, calc(100vw - 2rem - 2 * var(--space-5))); }
 .tray-nav__panel > .tray-card { padding: var(--space-6); border-radius: var(--radius-button); }
 .tray-nav__panel .tray-list { align-content: start; }
 @media (max-width: 40rem) { .tray-nav__panel { grid-template-columns: minmax(0, 1fr); } }
@@ -110,8 +117,9 @@
 .tray-sidebar[data-collapsed] .tray-sidebar__head, .tray-sidebar[data-collapsed] .tray-sidebar__foot { justify-content: center; padding: 0; }
 .tray-sidebar[data-collapsed] .tray-sidebar__head .tray-wordmark { display: none; }
 .tray-sidebar__user { display: flex; align-items: center; gap: var(--space-3); min-inline-size: 0; }
-.tray-shell { display: flex; gap: var(--grid-gap); inline-size: 100%; min-block-size: 30rem; }
-.tray-shell__main { flex: 1; min-inline-size: 0; }
+/* Where the sidebar and 16rem of content do not fit side by side (a phone), the content goes under the sidebar. */
+.tray-shell { display: flex; flex-wrap: wrap; gap: var(--grid-gap); inline-size: 100%; min-block-size: 30rem; }
+.tray-shell__main { flex: 1 1 16rem; min-inline-size: 0; }
 
 /* ---------- Command ---------- */
 

@@ -33,7 +33,16 @@ import 'trayui/components/bundle.js';
 
 The package also holds the font, the blocks and the tokens for Tailwind and Figma. For React, see [React](#d-react).
 
-{{/npm}}## Or get the files
+{{/npm}}## Or add them with the CLI
+
+```sh
+npx trayui init
+npx trayui add login-01
+```
+
+The first line writes the three files and the font into a `trayui/` folder; the second puts a block beside your pages, its links pointed at that folder. In a React app the same commands copy the source of components and blocks. [Add with a CLI](#d-cli) says more.
+
+## Or get the files
 
 Download [trayui-{{version}}.zip]({{zip}}) and unpack it beside your pages.{{#repo}} The same files are in the `system/dist` folder of [the repository]({{repo}}).{{/repo}}
 

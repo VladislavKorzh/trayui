@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, runtime, useControlled } from '../lib/util';
 import { calendarHandle, useTrayOn, useIsoLayoutEffect, useMergedRef, type CalendarHandle } from '../lib/menus';

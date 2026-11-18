@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, useBehaviour, useForwardedRef, useUid } from '../lib/util';
 import { Icon } from './Icon';
@@ -25,6 +26,8 @@ export interface LightboxProps extends React.HTMLAttributes<HTMLDivElement> {
   lead?: boolean;
   /** The least width of a thumbnail, any CSS length. Default '11rem'; the row takes as many as fit. */
   thumbWidth?: string;
+  /** The name of the strip of pictures inside the open dialog. Default 'Pictures'. */
+  trackLabel?: string;
   /** The aria-label of the close button. Default 'Close'. */
   closeLabel?: string;
   /** The aria-label of the button that goes back. Default 'Previous picture'. */
@@ -40,7 +43,7 @@ export interface LightboxProps extends React.HTMLAttributes<HTMLDivElement> {
  * The thumbnails are links to the full pictures, so the gallery works without script too.
  */
 export const Lightbox = React.forwardRef<HTMLDivElement, LightboxProps>(function Lightbox(
-  { label, pictures, lead, thumbWidth, closeLabel = 'Close', previousLabel = 'Previous picture', nextLabel = 'Next picture', of = 'of', className, ...rest },
+  { label, pictures, lead, thumbWidth, trackLabel = 'Pictures', closeLabel = 'Close', previousLabel = 'Previous picture', nextLabel = 'Next picture', of = 'of', className, ...rest },
   forwarded,
 ) {
   const ref = useForwardedRef(forwarded);
@@ -51,7 +54,7 @@ export const Lightbox = React.forwardRef<HTMLDivElement, LightboxProps>(function
   const style = thumbWidth ? ({ '--tray-thumb': thumbWidth } as React.CSSProperties) : undefined;
   return (
     <div ref={ref as React.RefObject<HTMLDivElement>} className={className} {...rest}>
-      <ul key={`g${sig}`} className={cx('tray-gallery', lead && 'tray-gallery--lead')} data-tray="lightbox" data-target={`#${id}`} aria-label={label} style={style}>
+      <ul key={`g${sig}`} className={cx('tray-gallery', lead && 'tray-gallery--lead')} data-tray="lightbox" data-target={`#${id}`} role="list" aria-label={label} style={style}>
         {pictures.map((p) => (
           <li key={p.src}>
             <a className="tray-gallery__item" href={p.src} data-caption={p.caption}>
@@ -77,7 +80,7 @@ export const Lightbox = React.forwardRef<HTMLDivElement, LightboxProps>(function
             <Icon name="chevron-right" flip />
           </button>
         </div>
-        <ul className="tray-lightbox__track" role="list" aria-label={label} />
+        <ul className="tray-lightbox__track" role="list" aria-label={trackLabel} />
         <p className="tray-vh" role="status" />
       </dialog>
     </div>

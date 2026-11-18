@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import type { IconSource } from '../lib/icon';
 import { cx, useBehaviour } from '../lib/util';
@@ -59,6 +60,8 @@ export interface NavigationMenuProps extends React.HTMLAttributes<HTMLElement> {
   actions?: React.ReactNode;
   /** The label of the entry whose panel is shown open at first; also holds it open in a static picture, until a click outside. */
   defaultOpen?: string;
+  /** Names the strip's `<nav>` landmark for screen readers. Default "Main"; give each `<nav>` of a page its own name. */
+  label?: string;
 }
 
 /**
@@ -66,7 +69,7 @@ export interface NavigationMenuProps extends React.HTMLAttributes<HTMLElement> {
  * A link with children opens a roomy panel on click, Enter or Space (never on hover alone); the panel is a disclosure, so Tab moves through its links and Escape closes it.
  */
 export const NavigationMenu = React.forwardRef<HTMLElement, NavigationMenuProps>(function NavigationMenu(
-  { brand, brandHref = '/', links, actions, defaultOpen, className, ...rest },
+  { brand, brandHref = '/', links, actions, defaultOpen, label = 'Main', className, ...rest },
   forwarded,
 ) {
   const ref = React.useRef<HTMLElement | null>(null);
@@ -80,56 +83,58 @@ export const NavigationMenu = React.forwardRef<HTMLElement, NavigationMenuProps>
       <a className="tray-wordmark" href={brandHref}>
         {brand}
       </a>
-      <ul className="tray-nav__links">
-        {links.map((link, i) => {
-          if (!link.panel) {
+      <nav className="tray-nav__strip" aria-label={label}>
+        <ul className="tray-nav__links">
+          {links.map((link, i) => {
+            if (!link.panel) {
+              return (
+                <li key={i}>
+                  <a className="tray-tab" href={link.href} aria-current={link.current ? 'page' : undefined}>
+                    {link.label}
+                  </a>
+                </li>
+              );
+            }
+            const open = link.label === initiallyOpen;
+            const list = (
+              <div className="tray-list">
+                {link.panel.links.map((l, j) => (
+                  <a key={j} className="tray-option tray-option--two" href={l.href}>
+                    {l.icon ? <Icon name={l.icon} /> : null}
+                    <span className="tray-option__text">
+                      <b>{l.label}</b>
+                      {l.description ? <small>{l.description}</small> : null}
+                    </span>
+                  </a>
+                ))}
+              </div>
+            );
+            const feature = link.panel.feature;
             return (
-              <li key={i}>
-                <a className="tray-tab" href={link.href} aria-current={link.current ? 'page' : undefined}>
+              <li key={i} className="tray-anchor" data-tray="popover">
+                <button className="tray-tab" type="button">
                   {link.label}
-                </a>
+                  <Icon name="chevron-down" size="sm" />
+                </button>
+                <div className="tray-pop tray-pop--roomy" data-open={open ? '' : undefined} hidden={open ? undefined : true}>
+                  {feature ? (
+                    <div className="tray-nav__panel">
+                      <a className="tray-card tray-stack tray-stack--sm" href={feature.href}>
+                        <p className="subtitle">{feature.title}</p>
+                        {feature.description ? <p className="tray-soft">{feature.description}</p> : null}
+                        {feature.meta ? <p className="caption tray-muted">{feature.meta}</p> : null}
+                      </a>
+                      {list}
+                    </div>
+                  ) : (
+                    list
+                  )}
+                </div>
               </li>
             );
-          }
-          const open = link.label === initiallyOpen;
-          const list = (
-            <div className="tray-list">
-              {link.panel.links.map((l, j) => (
-                <a key={j} className="tray-option tray-option--two" href={l.href}>
-                  {l.icon ? <Icon name={l.icon} /> : null}
-                  <span className="tray-option__text">
-                    <b>{l.label}</b>
-                    {l.description ? <small>{l.description}</small> : null}
-                  </span>
-                </a>
-              ))}
-            </div>
-          );
-          const feature = link.panel.feature;
-          return (
-            <li key={i} className="tray-anchor" data-tray="popover">
-              <button className="tray-tab" type="button">
-                {link.label}
-                <Icon name="chevron-down" size="sm" />
-              </button>
-              <div className="tray-pop tray-pop--roomy" data-open={open ? '' : undefined} hidden={open ? undefined : true}>
-                {feature ? (
-                  <div className="tray-nav__panel">
-                    <a className="tray-card tray-stack tray-stack--sm" href={feature.href}>
-                      <p className="subtitle">{feature.title}</p>
-                      {feature.description ? <p className="tray-soft">{feature.description}</p> : null}
-                      {feature.meta ? <p className="caption tray-muted">{feature.meta}</p> : null}
-                    </a>
-                    {list}
-                  </div>
-                ) : (
-                  list
-                )}
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+          })}
+        </ul>
+      </nav>
       {actions != null ? <div className="tray-nav__actions">{actions}</div> : null}
     </header>
   );

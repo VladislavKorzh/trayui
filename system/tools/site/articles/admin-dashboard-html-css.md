@@ -129,7 +129,7 @@ In Tray UI the button is `data-tray="sidebar-toggle"` with `aria-controls`, and 
 The bar says where the person is at its start and holds the tools at its end.
 
 - **The breadcrumb** is a `<nav aria-label="Breadcrumb">` around an ordered list, and its last item carries `aria-current="page"`.
-- **The search** is a button that looks like a field and opens a [Command](#c-command) panel. Its key hint, `/`, is drawn in a [Kbd](#c-kbd). Tray UI does not bind that key, so your own script has to listen for it, and only then add `aria-keyshortcuts="/"` to the button, which tells a screen reader the key works. Since the next release the block's button no longer declares a key that nothing binds.
+- **The search** is a button that looks like a field and opens a [Command](#c-command) panel. Its key hint, `/`, is drawn in a [Kbd](#c-kbd). Tray UI does not bind that key, so your own script has to listen for it, and only then add `aria-keyshortcuts="/"` to the button, which tells a screen reader the key works. Since version 0.3.0 the block's button no longer declares a key that nothing binds.
 - **Notifications** is an icon button named "Notifications, 2 unread". The yellow count on its corner is hidden from assistive technologies, so the number is not read a second time. Change the label whenever the count changes.
 - **The account** is the avatar as a button, named "Account: Oksana Franko".
 

@@ -415,8 +415,9 @@ mark { padding-inline: .12em; border-radius: var(--radius-mark); background: var
 /* ---------- Input OTP ---------- */
 
 /* A code is read left to right in every language: the cells keep that order in a right-to-left page too. */
-.tray-otp { display: inline-flex; align-items: center; gap: var(--space-2); direction: ltr; }
-.tray-otp input { inline-size: 52px; block-size: var(--size-lg); padding: 0; border: 0; border-radius: var(--radius-control); background: var(--tray-fill); color: var(--ink); caret-color: var(--ink); font: 700 1.375rem/1 var(--font-sans); font-variant-numeric: tabular-nums; text-align: center; }
+/* On a narrow phone the cells share the width there is, rather than run past the edge of the screen. */
+.tray-otp { display: inline-flex; align-items: center; gap: var(--space-2); max-inline-size: 100%; direction: ltr; }
+.tray-otp input { flex: 0 1 52px; inline-size: 52px; min-inline-size: 0; block-size: var(--size-lg); padding: 0; border: 0; border-radius: var(--radius-control); background: var(--tray-fill); color: var(--ink); caret-color: var(--ink); font: 700 1.375rem/1 var(--font-sans); font-variant-numeric: tabular-nums; text-align: center; }
 .tray-otp input:focus-visible { outline: 2px solid var(--ink); outline-offset: 0; }
 .tray-otp[aria-invalid="true"] input { outline: 2px solid var(--danger); outline-offset: -2px; }
 .tray-otp[aria-invalid="true"] input:focus-visible { outline: 2px solid var(--ink); outline-offset: 0; box-shadow: inset 0 0 0 2px var(--danger); }
@@ -642,7 +643,7 @@ details[open] > summary .tray-tile .tray-icon { transform: rotate(45deg); }
 @keyframes tray-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) {
   .tray-spinner { animation-duration: 2.4s; }
-  .tray-skeleton, .tray-progress--busy .tray-progress__bar::before { animation: none; }
+  .tray-skeleton { animation: none; }
 }
 
 /* ---------- Progress ---------- */
@@ -655,6 +656,8 @@ details[open] > summary .tray-tile .tray-icon { transform: rotate(45deg); }
 .tray-progress--accent .tray-progress__bar::before { background: var(--accent); }
 .tray-progress--busy .tray-progress__bar::before { inline-size: 35%; animation: tray-slide 1.3s var(--ease) infinite; }
 @keyframes tray-slide { from { transform: translateX(-100%); } to { transform: translateX(290%); } }
+/* after the rule that sets it going, so that it wins: the segment of a busy bar rests at the start */
+@media (prefers-reduced-motion: reduce) { .tray-progress--busy .tray-progress__bar::before { animation: none; } }
 .tray-steps { display: flex; gap: var(--space-1); }
 .tray-steps span { flex: 1; block-size: 8px; border-radius: var(--radius-pill); background: var(--track); }
 .tray-steps span[data-done] { background: var(--ink); }
@@ -892,10 +895,17 @@ a.tray-item:hover, button.tray-item:hover { filter: brightness(.96); }
 .tray-nav__strip { display: flex; min-inline-size: 0; }
 @media (max-width: 75.99rem) {
   .tray-nav__strip { order: 1; flex: 0 0 100%; }
+  .tray-nav__strip > .tray-nav__links { min-inline-size: 0; max-inline-size: 100%; overflow-x: auto; scrollbar-width: none; }
+  /* A strip that scrolls would cut a panel that hangs from one of its links: here the panel hangs from the header, at its
+     start edge, under the strip. */
+  .tray-nav:has(> .tray-nav__strip) { position: relative; }
+  .tray-nav__strip .tray-anchor { position: static; }
+  .tray-nav__strip .tray-pop { min-inline-size: 12rem; }
 }
 .tray-nav__links { display: flex; align-items: center; gap: var(--space-1); margin: 0; padding: var(--space-1); border-radius: var(--radius-button); background: var(--tray-fill); list-style: none; }
 .tray-nav__actions { display: flex; align-items: center; gap: var(--space-2); }
-.tray-nav__panel { display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 1fr); gap: var(--space-3); inline-size: min(40rem, calc(100vw - 2rem)); }
+/* At most the window less 1rem each side, the roomy panel's padding included. */
+.tray-nav__panel { display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 1fr); gap: var(--space-3); inline-size: min(40rem, calc(100vw - 2rem - 2 * var(--space-5))); }
 .tray-nav__panel > .tray-card { padding: var(--space-6); border-radius: var(--radius-button); }
 .tray-nav__panel .tray-list { align-content: start; }
 @media (max-width: 40rem) { .tray-nav__panel { grid-template-columns: minmax(0, 1fr); } }
@@ -930,8 +940,9 @@ a.tray-item:hover, button.tray-item:hover { filter: brightness(.96); }
 .tray-sidebar[data-collapsed] .tray-sidebar__head, .tray-sidebar[data-collapsed] .tray-sidebar__foot { justify-content: center; padding: 0; }
 .tray-sidebar[data-collapsed] .tray-sidebar__head .tray-wordmark { display: none; }
 .tray-sidebar__user { display: flex; align-items: center; gap: var(--space-3); min-inline-size: 0; }
-.tray-shell { display: flex; gap: var(--grid-gap); inline-size: 100%; min-block-size: 30rem; }
-.tray-shell__main { flex: 1; min-inline-size: 0; }
+/* Where the sidebar and 16rem of content do not fit side by side (a phone), the content goes under the sidebar. */
+.tray-shell { display: flex; flex-wrap: wrap; gap: var(--grid-gap); inline-size: 100%; min-block-size: 30rem; }
+.tray-shell__main { flex: 1 1 16rem; min-inline-size: 0; }
 
 /* ---------- Command ---------- */
 
@@ -1053,7 +1064,8 @@ a.tray-item:hover, button.tray-item:hover { filter: brightness(.96); }
 .tray-chart__dot { position: absolute; inline-size: 10px; block-size: 10px; margin: -5px; border-radius: 50%; background: var(--tray-c); box-shadow: 0 0 0 2px var(--tray-ground); pointer-events: none; }
 .tray-chart__cross { position: absolute; inset-block: 0; inline-size: 1px; background: var(--ink); pointer-events: none; }
 .tray-chart__x { grid-column: 2; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); color: var(--ink-hint); font: 400 .8125rem/1 var(--font-sans); text-align: center; }
-.tray-chart__x span { overflow: hidden; text-overflow: clip; white-space: nowrap; }
+/* A label centred on its column; where the behaviour leaves every second one out on a narrow card, it reaches into the empty columns beside it. */
+.tray-chart__x span { display: flex; justify-content: center; min-inline-size: 0; white-space: nowrap; }
 .tray-chart__legend { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); margin: 0; padding: 0; list-style: none; color: var(--ink-soft); font: 400 .875rem/1.4 var(--font-sans); }
 .tray-chart__legend li { display: inline-flex; align-items: center; gap: var(--space-2); }
 .tray-swatch { flex: none; inline-size: 12px; block-size: 12px; border-radius: var(--radius-mark); background: var(--tray-c); }
@@ -1161,6 +1173,8 @@ th[aria-sort="ascending"] .tray-sort .tray-icon, th[aria-sort="descending"] .tra
 .tray-message--top { align-items: flex-start; }
 .tray-message__content { display: grid; gap: 6px; justify-items: start; min-inline-size: 0; max-inline-size: min(100%, 34rem); }
 .tray-message--end .tray-message__content { justify-items: end; }
+/* Each part hugs its content but never grows past the column: a code block's long line scrolls inside the block. */
+.tray-message__content > * { max-inline-size: 100%; }
 .tray-message__head { display: flex; align-items: baseline; gap: var(--space-2); color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
 .tray-message__head b { color: var(--ink); font-weight: 600; }
 .tray-message__foot { display: flex; align-items: center; gap: var(--space-1); color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
@@ -1248,7 +1262,8 @@ th[aria-sort="ascending"] .tray-sort .tray-icon, th[aria-sort="descending"] .tra
 
 /* ---------- Trace: what an agent did, step by step ---------- */
 
-.tray-trace { position: relative; display: grid; margin: 0; padding: 0; list-style: none; }
+/* One column that may be narrower than its widest line: a step's output scrolls inside its code block. */
+.tray-trace { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); margin: 0; padding: 0; list-style: none; }
 .tray-trace::before { content: ""; position: absolute; inset-block: 20px; inset-inline-start: 15.5px; inline-size: 1px; background: var(--hairline); }
 .tray-trace__line { position: relative; display: flex; align-items: center; gap: var(--space-3); min-block-size: var(--size-xs); color: var(--ink-soft); font: 400 .9375rem/1.3 var(--font-sans); }
 .tray-trace__icon { flex: none; display: grid; place-items: center; inline-size: 32px; block-size: 32px; border-radius: var(--radius-chip); background: var(--tray-fill); color: var(--ink); }
@@ -1258,6 +1273,9 @@ th[aria-sort="ascending"] .tray-sort .tray-icon, th[aria-sort="descending"] .tra
 .tray-trace__line[data-status="running"] .tray-trace__title { color: var(--ink); }
 .tray-trace__line[data-status="failed"] .tray-trace__icon, .tray-trace__line[data-status="failed"] .tray-trace__title b { color: var(--danger); }
 .tray-trace__detail { margin: var(--space-1) 0 var(--space-3) 44px; }
+/* The output inside its step's <li>, so the list holds one item per step: it takes a row of its own under the title. */
+.tray-trace__line:has(> .tray-trace__detail) { flex-wrap: wrap; row-gap: var(--space-1); }
+.tray-trace__line > .tray-trace__detail { flex: 1 0 calc(100% - 44px); min-inline-size: 0; margin-block: 0 var(--space-3); }
 .tray-trace-group > summary { display: inline-flex; align-items: center; gap: var(--space-2); min-block-size: var(--size-hit); color: var(--ink-soft); font: 500 .9375rem/1.3 var(--font-sans); list-style: none; cursor: pointer; border-radius: var(--radius-mark); }
 .tray-trace-group > summary::-webkit-details-marker { display: none; }
 .tray-trace-group > summary .tray-icon { transition: transform var(--duration-move) var(--ease); }
@@ -1352,7 +1370,8 @@ th[aria-sort="ascending"] .tray-sort .tray-icon, th[aria-sort="descending"] .tra
 
 /* ---------- Page header ---------- */
 
-.tray-pagehead { display: grid; gap: var(--space-3); }
+/* One column as wide as the header, never wider: a strip of tabs that does not fit scrolls inside it, even in a wrapper of its own. */
+.tray-pagehead { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
 .tray-pagehead__row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-4) var(--space-6); }
 .tray-pagehead__text { display: grid; gap: var(--space-2); min-inline-size: 0; max-inline-size: 44rem; }
 .tray-pagehead__text > p { color: var(--ink-soft); font: 400 1.0625rem/1.45 var(--font-sans); }
@@ -1369,7 +1388,9 @@ th[aria-sort="ascending"] .tray-sort .tray-icon, th[aria-sort="descending"] .tra
 .tray-switcher > .tray-icon { color: var(--ink-muted); }
 .tray-sidebar__head > .tray-anchor--block { flex: 1; min-inline-size: 0; }
 .tray-sidebar[data-collapsed] .tray-switcher { justify-content: center; min-block-size: var(--size-hit); padding: 0; background: none; }
-.tray-sidebar[data-collapsed] .tray-switcher > :not(.tray-avatar) { display: none; }
+.tray-sidebar[data-collapsed] .tray-switcher > .tray-icon { display: none; }
+/* In the rail the name and the plan are only hidden from sight, as the items' labels are, so the button keeps its name. */
+.tray-sidebar[data-collapsed] .tray-switcher > :not(.tray-avatar, .tray-icon) { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 /* In the rail the switcher has no fill, so what it holds sits on the tray again: an avatar that is not ink turns white, not tray grey. */
 .tray-sidebar[data-collapsed] .tray-switcher > * { --tray-ground: var(--tray-ground-up); --tray-fill: var(--tray-fill-up); }
 .tray-sidebar[data-collapsed] .tray-usage { display: none; }
@@ -1587,7 +1608,8 @@ a.tray-stat:hover { filter: brightness(.96); }
 
 /* ---------- Sign in ---------- */
 
-.tray-auth { display: grid; gap: var(--space-6); inline-size: min(100%, 27rem); margin-inline: auto; }
+/* 27rem at most, also as an item of a row that would stretch it (flex: 1, a grid track). */
+.tray-auth { display: grid; gap: var(--space-6); inline-size: min(100%, 27rem); max-inline-size: 27rem; margin-inline: auto; }
 .tray-auth__head { display: grid; gap: var(--space-2); }
 .tray-auth__head p, .tray-auth__foot { color: var(--ink-soft); font: 400 1rem/1.45 var(--font-sans); }
 .tray-auth__foot { text-align: center; }
@@ -1622,10 +1644,11 @@ a.tray-stat:hover { filter: brightness(.96); }
 
 /* ---------- API key ---------- */
 
-.tray-secret { display: inline-flex; align-items: center; gap: 2px; max-inline-size: 100%; min-block-size: var(--size-hit); padding-inline: var(--space-3); border-radius: var(--radius-control); background: var(--tray-fill); }
+.tray-secret { display: inline-flex; align-items: center; gap: 4px; max-inline-size: 100%; min-block-size: var(--size-hit); padding-inline: var(--space-3); border-radius: var(--radius-control); background: var(--tray-fill); }
 .tray-secret code { flex: 1; min-inline-size: 0; overflow: hidden; color: var(--ink); font: 400 .9375rem/1.55 var(--font-mono); text-overflow: ellipsis; white-space: nowrap; }
 .tray-secret button { position: relative; flex: none; display: grid; place-items: center; inline-size: var(--size-xs); block-size: var(--size-xs); padding: 0; border: 0; border-radius: var(--radius-chip); background: none; color: var(--ink-soft); cursor: pointer; }
-/* Its buttons are 40px to the eye and 44px to a finger, as an extra small button is: the target reaches past each edge. */
+/* Its buttons are 40px to the eye and 44px to a finger, as an extra small button is: the target reaches past each edge,
+   and the 4px between them lets the two targets meet without one taking the edge of the other. */
 .tray-secret button::before { content: ""; position: absolute; inset: calc((var(--size-xs) - var(--size-hit)) / 2); }
 .tray-secret button:hover { background: var(--tray-fill); color: var(--ink); }
 .tray-secret:has(button) { padding-inline-end: 2px; }
@@ -2283,9 +2306,10 @@ summary.tray-sidebar__item { list-style: none; }
   .tray-tab[aria-selected="true"]:focus-visible, .tray-tab[aria-current]:not([aria-current="false"]):focus-visible, .tray-sidebar__item[aria-current]:focus-visible,
   .tray-cal__day[aria-pressed="true"]:focus-visible .tray-cal__num { outline-color: SelectedItemText; }
   .tray-seg__item input:focus-visible + span { outline-color: CanvasText; }
-  /* the option under the keyboard or the pointer in a list, and the link to the page you are on in a menu */
-  .tray-option:hover, .tray-option[data-active] { forced-color-adjust: none; background: Highlight; color: HighlightText; }
-  .tray-option:hover *, .tray-option[data-active] * { color: HighlightText; }
+  /* the option under the keyboard or the pointer in a list, the item under them in a menu, and the link to the page you are on in a menu */
+  .tray-option:hover, .tray-option[data-active], :is([role="listbox"], [role="menu"]) .tray-option:focus-visible { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+  .tray-option:hover *, .tray-option[data-active] *, :is([role="listbox"], [role="menu"]) .tray-option:focus-visible * { color: HighlightText; }
+  :is([role="listbox"], [role="menu"]) .tray-option:focus-visible { outline-color: HighlightText; }
   .tray-option:hover .tray-kbd, .tray-option[data-active] .tray-kbd { border-color: HighlightText; background: Highlight; }
   .tray-option[aria-current], .tray-notice[aria-current], .tray-task[aria-current], .tray-table tbody tr[aria-selected="true"] { outline: 2px solid Highlight; outline-offset: -2px; }
   .tray-cal__day[data-in-range] .tray-cal__num { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .25em; }

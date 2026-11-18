@@ -1,6 +1,7 @@
+'use client';
 import * as React from 'react';
 import { useFieldControl } from '../lib/field';
-import { cx, useForwardedRef, useUid } from '../lib/util';
+import { cx, useForwardedRef, useIsoLayoutEffect, useUid } from '../lib/util';
 
 export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
   /** What becomes true when it is checked, in plain words: "Send me the receipt". Never a negative ("Don't send me email"). */
@@ -39,7 +40,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(functi
     'aria-invalid': rest['aria-invalid'],
   });
   // indeterminate is a property, not an attribute; a click clears it, so it is set again on every render.
-  React.useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (own.current) own.current.indeterminate = !!indeterminate;
   });
   const second =

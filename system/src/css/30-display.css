@@ -102,7 +102,7 @@ details[open] > summary .tray-tile .tray-icon { transform: rotate(45deg); }
 @keyframes tray-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) {
   .tray-spinner { animation-duration: 2.4s; }
-  .tray-skeleton, .tray-progress--busy .tray-progress__bar::before { animation: none; }
+  .tray-skeleton { animation: none; }
 }
 
 /* ---------- Progress ---------- */
@@ -115,6 +115,8 @@ details[open] > summary .tray-tile .tray-icon { transform: rotate(45deg); }
 .tray-progress--accent .tray-progress__bar::before { background: var(--accent); }
 .tray-progress--busy .tray-progress__bar::before { inline-size: 35%; animation: tray-slide 1.3s var(--ease) infinite; }
 @keyframes tray-slide { from { transform: translateX(-100%); } to { transform: translateX(290%); } }
+/* after the rule that sets it going, so that it wins: the segment of a busy bar rests at the start */
+@media (prefers-reduced-motion: reduce) { .tray-progress--busy .tray-progress__bar::before { animation: none; } }
 .tray-steps { display: flex; gap: var(--space-1); }
 .tray-steps span { flex: 1; block-size: 8px; border-radius: var(--radius-pill); background: var(--track); }
 .tray-steps span[data-done] { background: var(--ink); }

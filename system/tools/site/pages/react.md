@@ -46,6 +46,14 @@ import { Chart, ChartContainer, ChartTooltip } from 'trayui-react/charts';
 
 `Chart` is the ready-made component for the six usual forms; `ChartContainer` and the parts around it are for a Recharts chart you compose yourself. [Charts](#charts) has {{charts}} examples to copy, and [Using the charts](#ch-use) explains the parts.
 
+## Blocks, and source you own
+
+The {{blocks}} blocks exist in React too, as components with the same markup and classes as the HTML pages: `npx trayui add login-01` copies `Login01` into your app, with what it needs, and the components come the same way (`npx trayui add button tabs`). These are copies of the source rather than the package: change them as you like, and `npx trayui update` keeps your changes when a release changes the originals. [Add with a CLI](#d-cli) explains it, and the same items install with `npx shadcn add {{site}}/r/login-01.json`.
+
+A block keeps the script of its HTML page, if it has one (a filter that narrows a table, a total that follows the quantities), as plain DOM code that runs once it is mounted: rewrite it with React state when you make the screen yours.
+
+In Next.js, the components that keep state start with `'use client'`, in the package and in the copies, so a Server Component can render them as they are.
+
 ## What it does not have yet
 
-The page layouts added for the blocks (the shell and sidebar variants, the screen frame) are in the stylesheet, so their classes work in React, but the components have no props for them yet, and the blocks exist as plain HTML only.
+The page layouts added for the blocks (the shell and sidebar variants, the screen frame) are in the stylesheet, so their classes work in React, but the components have no props for them yet: the React blocks write those classes as they are.

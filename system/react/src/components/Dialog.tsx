@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { DialogShell } from '../lib/overlays';
 import { cx, useUid } from '../lib/util';

@@ -24,7 +24,7 @@ export function Tones() {
 export function GroupAndName() {
   return (
     <div className="tray-row" style={{ gap: 32 }}>
-      <div className="tray-avatar-group">
+      <div className="tray-avatar-group" role="group" aria-label="Packing team, 6 people">
         <Avatar initials="AM" />
         <Avatar initials="BS" />
         <Avatar initials="OF" />

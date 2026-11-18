@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import type { IconName } from '../icons';
 import type { IconSource } from '../lib/icon';

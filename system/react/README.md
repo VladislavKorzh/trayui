@@ -30,8 +30,43 @@ export function OrderForm() {
 
 - `styles.css` carries the tokens, every component style and the font. No provider or wrapper is needed.
 - Variants are named after the modifiers of the classes (`variant="quiet"`, `size="sm"`).
-- Components wire their own behaviour, so never write `data-tray` attributes by hand in React: use the component.
+- Components wire their own behaviour: use the component rather than `data-tray` attributes written by hand (for markup that must carry them, see [Markup written by hand](#markup-written-by-hand)).
 - An `icon` prop takes a built-in name (`icon="truck"`) or any element from `react-icons/lu`.
+
+## Server rendering and Next.js
+
+Import the components straight into a Server Component: each file that needs the browser (state, effects, an event handler, a behaviour) starts with `'use client'`, so Next.js's App Router sends it to the browser and renders the rest on the server. The components that need nothing of the browser (Badge, Button, Card, Hero, Icon, Table, Typography and the like) render on the server with no script. Props a server passes must be data: text, numbers, elements, never a function.
+
+```tsx
+// app/layout.tsx
+import 'trayui-react/styles.css';
+
+// app/page.tsx, a Server Component
+import { Button, Dialog, Tabs } from 'trayui-react';
+
+export default function Page() {
+  return <Tabs label="Order PL-20418" items={[{ value: 'items', label: 'Items', content: <p>Two jars</p> }, { value: 'delivery', label: 'Delivery', content: <p>Tomorrow</p> }]} />;
+}
+```
+
+The page the server sends is the page React hydrates: on import the runtime only adds the icon sprite, and each component wires its own behaviour in an effect, once React has the markup. Server-rendered or not, StrictMode or not, nothing is wired twice.
+
+## Markup written by hand
+
+For markup that carries `data-tray` itself, such as a block pasted into a component, `useBehaviour` wires the behaviours under an element once it is mounted, and `useTrayEvent` hears their events. `runtime` holds the system's functions: `init`, `chart`, `calendar`, `toast` and `formatDate`.
+
+```tsx
+'use client';
+import { useRef } from 'react';
+import { useBehaviour, useTrayEvent } from 'trayui-react';
+
+export function Pasted() {
+  const ref = useRef<HTMLDivElement>(null);
+  useTrayEvent(ref, 'change', (detail) => save(detail)); // before useBehaviour: a behaviour may report its first state at once
+  useBehaviour(ref);
+  return <div ref={ref}>{/* the block's markup, with its data-tray attributes */}</div>;
+}
+```
 
 ## Charts
 
@@ -50,7 +85,7 @@ import { Chart } from 'trayui-react/charts';
 ## Develop
 
 ```sh
-npm run check            # type-check the package and the chart examples
+npm run check            # type-check the package and the chart examples; check that a server can import every component and render every preview
 npm run build            # compile to dist/
 npm run try -- Button    # render a component's preview in Chrome and save a picture in .try/
 ```

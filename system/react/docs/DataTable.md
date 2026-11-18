@@ -41,7 +41,9 @@ Every part is optional.
 | What shows when the filter matches nothing | `empty` (default: a small Empty) |
 
 ## Behaviour
-The system's own datatable behaviour runs the table in the page: it filters, sorts, selects and pages the rows it was given. The checkboxes belong to it, so selection is set with `defaultSelected` and followed with `onChange`, which is called on load and after every change with the selected row keys and the page. When the set of rows (or the columns, or the parts) changes, the table starts over: the filter, sort and selection reset.
+The system's own datatable behaviour runs the table in the page: it filters, sorts, selects and pages the rows it was given. The checkboxes belong to it, named from `label` and `itemLabel` ("Select all orders", "Select order PL-20418"), so selection is set with `defaultSelected` and followed with `onChange`, which is called on load and after every change with the selected row keys and the page. When the set of rows (or the columns, or the parts) changes, the table starts over: the filter, sort and selection reset.
+
+The selection count and the page status at the foot are `role="status"`, so a screen reader reads them as they change ("2 of 8 selected", "6–8 of 8"). The table's wrapper is a region named by `label`, which the keyboard reaches with Tab and scrolls sideways with the arrow keys on a phone.
 
 Sorting is by text, or by number when the value reads as one ("$127", "22 kg"). The first click sorts ascending; the head gets `aria-sort` and its icon turns into an arrow.
 

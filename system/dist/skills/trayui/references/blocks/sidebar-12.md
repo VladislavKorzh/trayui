@@ -1,0 +1,110 @@
+# Sidebar on each side
+
+Navigation at the start of the page and details at the end: one order's customer, items, total and next deliveries, with a button to pack it.
+
+Three columns for working through records one at a time: the main navigation at the start, the list in the middle, and a details panel for the chosen record at the end, here an order to pack. That panel is an `<aside>` named after its order, with the facts as a description list, the upcoming deliveries as links, and the page's one yellow button in its foot, since packing is what you do to that record.
+
+Pick it over [two sidebars](https://trayui.com/blocks/sidebar-08.md) when the second column describes one thing rather than listing many. Both trays are 17rem wide, so the middle gets what they leave; with `tray-app__side--late` on the end column and `tray-app__menu--late` on its button, the details wait in a sheet until the window reaches 80rem. Below 56rem both leave the page: the menu button opens the navigation from the start side, and the info button, "Open the details of order PL-20431", opens the details in a sheet from the end side.
+
+It is made of these components: [App Shell](https://trayui.com/components/app-shell.md), [Sidebar](https://trayui.com/components/sidebar.md), [Badge](https://trayui.com/components/badge.md), [Avatar](https://trayui.com/components/avatar.md), [Top Bar](https://trayui.com/components/top-bar.md), [Button](https://trayui.com/components/button.md), [Breadcrumb](https://trayui.com/components/breadcrumb.md), [Description List](https://trayui.com/components/description-list.md), [Item](https://trayui.com/components/item.md).
+
+Behaviours it uses: `sidebar-sheet`.
+
+Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sidebar on each side</title>
+<meta name="description" content="Navigation at the start of the page and details at the end: one order's customer, items, total and next deliveries, with a button to pack it.">
+<meta name="tray-category" content="Sidebar">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app tray-app--both">
+  <div class="tray-app__side">
+    <nav class="tray-sidebar" id="nav" aria-label="Main">
+      <div class="tray-sidebar__head">
+        <a class="tray-wordmark" href="#">Counter</a>
+      </div>
+      <div class="tray-sidebar__group">
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a>
+        <a class="tray-sidebar__item" href="#" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg><span>Orders</span><span class="tray-badge tray-badge--count">12</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-users"/></svg><span>Customers</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span>Batches</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chart-column"/></svg><span>Reports</span></a>
+      </div>
+      <div class="tray-sidebar__group">
+        <p class="tray-sidebar__label">Shop</p>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-tag"/></svg><span>Products</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg><span>Delivery</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-percent"/></svg><span>Discounts</span></a>
+      </div>
+      <div class="tray-sidebar__group">
+        <p class="tray-sidebar__label">Workspace</p>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user-plus"/></svg><span>Team</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg><span>Billing</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-settings"/></svg><span>Settings</span></a>
+      </div>
+      <div class="tray-sidebar__foot">
+        <div class="tray-sidebar__user">
+          <span class="tray-avatar tray-avatar--sm" aria-hidden="true">OF</span>
+          <span class="tray-person__text"><b>Oksana Franko</b><small>Perly Farm</small></span>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <header class="tray-topbar">
+      <div class="tray-topbar__start">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the navigation"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+        <nav aria-label="Breadcrumb"><ol class="tray-crumbs"><li><a href="#">Perly Farm</a></li><li><span aria-current="page">Orders</span></li></ol></nav>
+      </div>
+      <div class="tray-topbar__end">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="details" aria-label="Open the details of order PL-20431"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-info"/></svg></button>
+      </div>
+    </header>
+    <main class="tray-app__content">
+      <h1 class="tray-vh">Orders</h1>
+      <div class="tray-slots">
+        <div class="tray-slot tray-slot--video"></div>
+        <div class="tray-slot tray-slot--video"></div>
+        <div class="tray-slot tray-slot--video"></div>
+      </div>
+      <div class="tray-slot tray-slot--tall"></div>
+    </main>
+  </div>
+  <div class="tray-app__side">
+    <aside class="tray-sidebar" id="details" aria-label="Details of order PL-20431">
+      <div class="tray-sidebar__head">
+        <h2 class="subtitle">PL-20431</h2>
+        <span class="tray-badge">To pack</span>
+      </div>
+      <dl class="tray-dl tray-dl--plain tray-dl--stack tray-sidebar__body" style="gap: var(--space-2)">
+        <div><dt>Customer</dt><dd>Dana Kovalenko</dd></div>
+        <div><dt>Items</dt><dd>Two jars of 50 g</dd></div>
+        <div><dt>Delivery</dt><dd>Courier, chilled box</dd></div>
+        <div><dt>Total</dt><dd class="tray-num">$118.00</dd></div>
+      </dl>
+      <div class="tray-sidebar__group">
+        <h3 class="tray-sidebar__label">Upcoming deliveries</h3>
+        <ul class="tray-items" role="list">
+          <li><a class="tray-item tray-item--sm" href="#"><span class="tray-item__body"><span class="tray-item__title">16 November</span><span class="tray-item__text">Two jars of 50 g</span></span><span class="tray-item__end tray-num">14:00</span></a></li>
+          <li><a class="tray-item tray-item--sm" href="#"><span class="tray-item__body"><span class="tray-item__title">30 November</span><span class="tray-item__text">One jar of 100 g</span></span><span class="tray-item__end tray-num">14:00</span></a></li>
+          <li><a class="tray-item tray-item--sm" href="#"><span class="tray-item__body"><span class="tray-item__title">14 December</span><span class="tray-item__text">Three jars of 30 g</span></span><span class="tray-item__end tray-num">14:00</span></a></li>
+        </ul>
+      </div>
+      <div class="tray-sidebar__foot">
+        <button class="tray-btn tray-btn--sm tray-btn--block" type="button">Pack the order</button>
+      </div>
+    </aside>
+  </div>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>
+```

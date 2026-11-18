@@ -2,8 +2,15 @@
 
 What changed in each version of Tray UI, the design system in plain HTML and CSS: its components, blocks, themes and tools, newest first.
 
-## Not released yet
+## 0.3.0, November 2026
 
+Both packages, `trayui` and `trayui-react`, are 0.3.0. A CLI, a registry and a skill bring the system into a project; tests for every component, and the bugs they found; React that works in Next.js. Each change was checked in Chrome and its accessibility tree; none was tested in a screen reader.
+
+- **A CLI, a registry and a skill.**
+  - `npx trayui init` and `npx trayui add <items>` put the three files, the font, components and blocks into a project: a plain folder with no `package.json`, a Vite app or a Next.js app, in HTML or as React source you own (`--react`). It keeps a record of what it wrote, so `trayui diff` shows your edits and `trayui add` never overwrites one without `--overwrite`. `trayui check` checks markup against the system's classes, behaviours and rules.
+  - The same components and blocks are a registry in shadcn's format at `https://trayui.com/r/`, so `npx shadcn add https://trayui.com/r/<item>.json` installs them too. Every block exists in React now.
+  - A skill teaches an AI agent to build with Tray UI, with the markup checker beside it: `npx trayui skill`, the `trayui` package's `skills/trayui`, or the plugin at `https://trayui.com/skills/marketplace.json`.
+- **Tests for every component.** `python3 system/tools/test_components.py` holds each component, and its React twin, to what its README promises: the accessibility tree, the keys, focus, events, an axe scan in Light and Dark, layout at 390 and 1440px; and scans every block. CI runs it.
 - **Menus have a name.** A dropdown menu is named by the button that opens it (`aria-labelledby`), unless it has a name of its own. Shift+Tab from an item now closes the menu and returns focus to the button, as Tab closes it.
 - **A plan comparison reads its prices.** Switching it between monthly and yearly reads the new price of each plan, as the pricing cards already do.
 - **Escape hides a tooltip wherever focus is.** A bubble the pointer showed goes too, and inside a dialog that Escape hides only the bubble; the next one closes the dialog. Words that the control's name already holds ("Orders" on a link named "Orders, 12 to pack") are no longer read again as its description.
@@ -70,6 +77,73 @@ What changed in each version of Tray UI, the design system in plain HTML and CSS
   - Ctrl+Shift+K and Caps Lock open its search.
   - Its `.md` pages are sent as UTF-8.
 - **trayui-react** no longer ships `dist/all.*`, and its build imports the packed package in Node.
+- **A test for every component.** `python3 system/tools/test_components.py` holds each of the 108 components to what its README promises, in Chrome: the accessibility tree (roles, names, descriptions, states), every key and where focus goes, the events and their `detail`, an axe-core scan against WCAG 2.2 A and AA in Light and Dark, the layout at 390 and 1440px (no sideways scroll, no text cut, targets of 24px and the 44px the guide promises), reduced motion, forced colours and right to left where the README speaks of them, and the React twin against the HTML. These are what it found and what changed:
+  - **Floating panels stay in the window.** A menu, a list, a popover or a hover card that would leave the window sideways on a narrow screen moves back inside it, 8px from its edge. Menubar and Hover Card passed the edge of a phone.
+  - Tooltip: a bubble whose words only repeat the control's name, with no keys, is hidden from screen readers; it was a tooltip without a name.
+  - Menus: `detail.value` of a menu, context menu, menubar, user menu or workspace switcher item without `data-value` is its words alone ("Duplicate", not "DuplicateCtrl D"; "Perly Farm", not "PFPerly Farm").
+  - Dialog: a `data-tray="open"` button says it opens a dialog (`aria-haspopup="dialog"`).
+  - Forced colours: the option or the menu item under the keyboard is drawn in `Highlight`, as the guide says; it only had a ring.
+  - Combobox: while nothing matches, the list is hidden from screen readers and the field says it is collapsed, so there is no list without options; the status line says there is no match. Command hides its no-match sentence the same way.
+  - Input OTP fits a phone: its cells narrow instead of scrolling the page sideways.
+  - Navigation Menu: below 76rem its links scroll sideways in their strip, as its page says, and the panel opens from the header, so the strip does not cut it.
+  - Sidebar: in a `tray-shell` the content goes under the sidebar on a phone; it scrolled the page sideways.
+  - Progress: the sliding segment of a busy bar stops under reduced motion, as promised; a rule that came too early let it run.
+  - Carousel: focus stays on a button when one step crosses the whole track (from the end back to the start on a wide window); it fell to the page.
+  - Resizable: the size it starts at fires no `tray:change`.
+  - Chart: on a narrow card the labels under the plot thin out to every second or third, so none is cut ("Ja", "Fe").
+  - Workspace Switcher keeps its name in a collapsed sidebar: its words are hidden from sight only.
+  - Page Header: a strip of tabs too wide for a phone scrolls inside the header, not the page.
+  - Trace: the output of a step sits inside its step, so five steps are read as five, and it scrolls inside the trace on a phone. A code block in a message keeps to the message's width.
+  - Message Scroller follows text streamed into a message already there, and counts on Latest only new messages at the end, not streamed words or older messages loaded above.
+  - Questionnaire keeps the answers when its pills are drawn already filled (a page rendered on the server).
+  - API Keys: the show and copy buttons are both 44px to a finger (4px apart); each Revoke button names its key.
+  - Auth Form: the card is 27rem wide at most, as promised, also where it may grow.
+- **Examples, found by the tests:**
+  - Avatars: one beside its name is `aria-hidden`, one alone is an image named by the person (Avatar, Sidebar, Hover Card, Message, Message Scroller), and those inside a named group are `aria-hidden`, so "Packing team, 6 people" is not followed by "AM BS OF +3"; an avatar button ends its name with the initials it shows, "Account: Oksana Franko, OF" (Top Bar, User Menu, App Shell). Your own messages say "You:" to a screen reader.
+  - Badge counts say what they count; Usage Meter's meters say their words (`aria-valuetext`); finished steps of the vertical Stepper say ", done"; Label's "Full name" is required; Input Group's field is named "Weight in kg"; Upgrade Prompt's notices are `role="status"`; Plan Comparison's table can be scrolled from the keyboard on a phone.
+  - The App Shell preview has its phone menu button and folds its top bar, as its page says; the Top Bar preview folds too.
+  - Every preview fits a 390px screen: Activity Feed, Description List, File Upload, Onboarding Checklist, Popover, Radio Group, Switch, Tag Input, Usage Meter and Tour no longer scroll sideways.
+- **Docs, found by the tests:**
+  - Chart: the example waits for `DOMContentLoaded`, so it works with the bundle loaded with `defer`, as the guide loads it.
+  - Avatar says how to name an avatar button: with the initials it shows (WCAG 2.5.3, Label in Name). Top Bar and User Menu say the same.
+  - Combobox, Command, Tooltip, Dialog, Resizable, Trace, API Keys, Navigation Menu, Workspace Switcher, Usage Meter, Upgrade Prompt, Plan Comparison and Message describe what they do now.
+- **Blocks, found by the tests** (which now scan all 64 with axe-core in Light and Dark at 390 and 1440px): every name holds the words its control shows, in their order (WCAG 2.5.3, Label in Name).
+  - The account button ends its name with the initials it shows ("Account: Oksana Franko, OF"), in 16 blocks.
+  - The workspace and account switchers are named by their words ("Perly Farm Shop plan"), with no `aria-label` that left out the second line, in 13 blocks.
+  - A sidebar item with a count and the cart say what the count counts inside the badge, for a screen reader alone ("Orders 12 to pack", "Cart 2 items"), and lose the `aria-label` that put a comma between the words; the cart of the shop pages keeps it so as its count changes.
+  - The cart's add buttons start their names with what they show ("Add for $14: a second mother-of-pearl spoon").
+  - The cards of the blog, the journal and the long read are one link named by all the text inside it, as Card says, not by their title alone.
+- **trayui-react in server-rendered apps, such as Next.js's App Router:**
+  - A Server Component imports and renders the components as they are. Every file that needs the browser (state, effects, an event handler, a behaviour) starts with `'use client'`; the components that need nothing of it, such as Badge, Button, Card, Table and Typography, render on the server with no script. With 0.2.1 Next.js stopped at the build: "useRef is not a function".
+  - The page the server sends is the page React hydrates: on import the runtime only adds the icon sprite, and each component wires its own behaviour in an effect. A server-rendered Tooltip gave React error #418, and the icon sprite was lost with the page React drew again. A render that takes the sprite away no longer leaves the icons blank: the next component to wire itself puts it back.
+  - An element that a Server Component passes, such as a dialog's `trigger`, an `icon` or a setting's `control`, may reach the browser after the component that holds it, on a large page: the components wait for it. A Dialog with a trigger stopped with "Element type is invalid".
+  - The Date picker writes its day or period in words on the server too, so the server's page and the browser's agree.
+  - `useBehaviour`, `useTrayEvent` and `runtime` are exported, to wire markup written by hand, such as a block pasted into a component.
+  - Copied into an app, the components type-check with React 19's types and with Next.js's loose settings (Button's link, the trigger of a dialog).
+  - StrictMode: a pricing table no longer reads its prices aloud and fires `tray:change` as it mounts, and a slider or a counted text area no longer repaints for nothing.
+  - React 18 on a server no longer warns about layout effects (Checkbox, Tag Input, Upgrade Prompt).
+  - `npm run check` now checks that a server can import every component and render every preview, and the build that the packed files keep `'use client'` and that the runtime wires nothing on import.
+- **trayui-react, the twins of the HTML fixes:**
+  - Lists without markers keep `role="list"`: Stepper, the ticks of a plan, the tasks of a checklist, notifications, the key of an uptime row, the footer's legal links, a trace and the Lightbox gallery. The Item, Uptime, Feature Grid, Hero and Scroll Area examples and guides put it on their lists.
+  - Pagination: a step that is off stays a link that is off (`role="link"`, `aria-disabled`).
+  - A password that can be shown (`InputGroup reveal`, and so Auth Form) turns spell checking and capitals off, and is a password field again when its form is sent and when the page comes back from the back-forward cache.
+  - Navigation Menu puts its strip of links in a `<nav>` named "Main" (`label` changes it).
+  - Tour: every step has Skip; from the second step on, Back stands beside Next.
+  - The app shell leaves its layout to its styles, which change at 56rem; the top bar had its own test of the width, one pixel off. Its phone button is "Open the navigation" and reports `aria-expanded`.
+  - Trace: the output of a step sits inside its step, so five steps are read as five.
+  - Wide tables can be reached and scrolled from the keyboard: Table takes `wide`, and the wraps of Data Table and Plan Comparison are named regions with `tabindex="0"`. Data Table reads its selection and page counts as they change.
+  - Progress and Usage Meter say their words as the value (`aria-valuetext`, "68%: 132 of 412 jars left").
+  - A chart's figure is named by its caption.
+  - The account button of Top Bar and User Menu ends its name with the initials it shows ("Account: Oksana Franko, OF").
+  - Your own messages start with "You:" for a screen reader (`ownLabel`).
+  - Auth Form: a field the form's error is about points at the alert's title, and the alert can take focus, for a page that answers with it. Alert takes `titleId`.
+  - Top Bar: the search is named by its words, and `fold` folds the bar for a phone, as the HTML does: the breadcrumb keeps only the current page (Breadcrumb takes `fold` too) and the search only its icon.
+  - Examples: an avatar group is a named group, count badges say what they count, the Hero's bar is one picture with its words, a "Change" button names what it changes, "Weight in kg" is the field's name, and fields not marked optional are required.
+  - Chart: the drawing is one image named by its summary and the only stop for Tab, as in the HTML; the arrow keys, Home and End walk its points, the tooltip follows, and a polite live region beside it says each point ("May: 22 kg"). Recharts' own unnamed stop for Tab is gone. `ChartContainer` takes `walk` to do the same for a chart of your own.
+  - Found by the component tests: the new-key warning of API Keys is a plain alert, read with its dialog; the shell's collapse button hides below 56rem (`tray-app__collapse`); Workspace Switcher is named by its words, "Perly Farm Shop plan" (WCAG 2.5.3); a Data Table row's checkbox is "Select order PL-20418" (`itemLabel`); a pricing table fires `tray:change` once a change; the Lightbox's strip is named "Pictures" (`trackLabel`); Plan Comparison and Notification Preferences take a hidden `caption`; the checklist's bar is named "Setup" (`progressName`); in a collapsed sidebar an item keeps its count in its name ("Orders 12"); a Field's label names an Input OTP, as a span its group is labelled by.
+  - Examples: each receipt's download button names its date, the Drawer's quantity stepper counts, and the Popover and Description List examples fit a 390px screen.
+  - Docs: Alert Dialog says what `closeOnEscape={false}` does (in Chrome the third press of Escape closes it, as the safe choice); Tour, Navigation Menu, Input Group, Auth Form, Progress, Badge, Avatar, Table, Data Table and Plan Comparison describe their markup and names as they are.
+- **The theme maker** steps the yellow card's greys in more contrast too (`paper-hairline`, `paper-track`), and a rule that would fall under 3:1 on one of its grounds takes the next step towards the ink, as the system's own themes do. A theme made on the site now holds 3:1 there, unless its accent is too dark for the yellow card's text, which its report already flags.
 
 ## trayui-react 0.2.1, November 2026
 

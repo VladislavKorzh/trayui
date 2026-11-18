@@ -24,7 +24,7 @@ The user menu opens from the avatar at the end of the top bar: who is signed in,
 ```
 
 ## Parts
-- **Avatar**: a button named "Account: Oksana Franko".
+- **Avatar**: a button named "Account: Oksana Franko, OF": the initials it shows end its name, so a person who says what they see reaches it (WCAG 2.5.3). With a photo it is "Account: Oksana Franko".
 - **Head**: the person again, with their name in bold over their e-mail, then a rule.
 - **Items** (`items`): the Dropdown Menu's items. Actions close the menu and report through `onSelect`; a checkbox item such as "Dark theme" stays open and reports through `onCheckedChange`. Set `data-theme="dark"` on the page there.
 

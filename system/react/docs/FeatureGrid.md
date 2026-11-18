@@ -13,7 +13,7 @@ The feature grid tells what the product does in a few cards of unequal size: eac
   features={[
     { icon: 'inbox', title: 'One list for every order', span: 7,
       text: 'From the shop, the phone and the market stall, in the order they must leave.',
-      end: <ul className="tray-items"><Item size="sm" title="PL-20431, Dana Kovalenko" end={<Badge>To pack</Badge>} /></ul> },
+      end: <ul className="tray-items" role="list"><Item size="sm" title="PL-20431, Dana Kovalenko" end={<Badge>To pack</Badge>} /></ul> },
     { icon: 'truck', title: 'The courier knows before you call', span: 5, tone: 'inverse',
       text: 'A packed order books its own pickup for the next courier day.' },
     { icon: 'receipt-text', title: 'Labels that print themselves', span: 4, text: "One label per box." },

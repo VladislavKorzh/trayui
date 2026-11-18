@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, useTrayEvent, useBehaviour, useForwardedRef, useUid } from '../lib/util';
 import { Button } from './Button';
@@ -25,7 +26,7 @@ export interface TourProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 't
   doneLabel?: React.ReactNode;
   /** The button that goes one step back, from the second step on. Default "Back". */
   backLabel?: React.ReactNode;
-  /** The link on the first step that ends the tour at once. Default "Skip the tour". */
+  /** The link on every step that ends the tour at once, unfinished. Default "Skip the tour". */
   skipLabel?: React.ReactNode;
   /** Called with the index of the step now shown, after Next or Back. */
   onStepChange?: (index: number) => void;
@@ -73,18 +74,24 @@ export const Tour = React.forwardRef<HTMLDivElement, TourProps>(function Tour(
           </h2>
           <p className="tray-pop__text">{s.text}</p>
           <div className="tray-tour__foot">
+            {/* Skip on every step, so the tour can be left from any of them; Back from the second step on. */}
+            <Button variant="link" data-tour="skip">
+              {skipLabel}
+            </Button>
             {i === 0 ? (
-              <Button variant="link" data-tour="skip">
-                {skipLabel}
+              <Button variant="dark" size="xs" data-tour="next">
+                {i === last ? doneLabel : nextLabel}
               </Button>
             ) : (
-              <Button variant="ghost" size="xs" data-tour="back">
-                {backLabel}
-              </Button>
+              <span className="tray-row tray-row--sm">
+                <Button variant="ghost" size="xs" data-tour="back">
+                  {backLabel}
+                </Button>
+                <Button variant="dark" size="xs" data-tour="next">
+                  {i === last ? doneLabel : nextLabel}
+                </Button>
+              </span>
             )}
-            <Button variant="dark" size="xs" data-tour="next">
-              {i === last ? doneLabel : nextLabel}
-            </Button>
           </div>
         </div>
       ))}

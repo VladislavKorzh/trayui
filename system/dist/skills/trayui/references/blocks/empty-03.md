@@ -1,0 +1,165 @@
+# No access
+
+A packer opens the reports: a dimmed picture of what the page holds, who can open it, a way to ask for access, and the pages that are open to them.
+
+An access denied screen for a product with roles: a packer opens the reports, which only owners and managers may see. A badge with a lock beside the title says who can. The figures and the chart stay on the page, dimmed, behind a prompt that names the owner who can open them and asks her with one button. Under it, a card lists what the person can do today instead.
+
+Of the three empty states, this is the one where the data exists and the person may not see it: [First run](https://trayui.com/blocks/empty-01.md) has no data yet, and [No results](https://trayui.com/blocks/empty-02.md) hides it behind a filter. The prompt over the preview is the locked form of the [Upgrade Prompt](https://trayui.com/components/upgrade-prompt.md). The dimmed copy is `inert` and `aria-hidden`, so neither Tab nor a screen reader reaches it. After asking, the button is disabled and reads "Request sent", and the note under it, a status region, says when the request went.
+
+It is made of these components: [App Shell](https://trayui.com/components/app-shell.md), [Sidebar](https://trayui.com/components/sidebar.md), [Dropdown Menu](https://trayui.com/components/dropdown-menu.md), [Workspace Switcher](https://trayui.com/components/workspace-switcher.md), [Avatar](https://trayui.com/components/avatar.md), [Badge](https://trayui.com/components/badge.md), [Top Bar](https://trayui.com/components/top-bar.md), [Button](https://trayui.com/components/button.md), [Breadcrumb](https://trayui.com/components/breadcrumb.md), [Kbd](https://trayui.com/components/kbd.md), [Page Header](https://trayui.com/components/page-header.md), [Stat Card](https://trayui.com/components/stat-card.md), [Card](https://trayui.com/components/card.md), [Chart](https://trayui.com/components/chart.md), [Upgrade Prompt](https://trayui.com/components/upgrade-prompt.md), [Item](https://trayui.com/components/item.md).
+
+Behaviours it uses: `chart`, `menu`, `sidebar-sheet`.
+
+Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>No access</title>
+<meta name="description" content="A packer opens the reports: a dimmed picture of what the page holds, who can open it, a way to ask for access, and the pages that are open to them.">
+<meta name="tray-category" content="Empty states">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app">
+  <div class="tray-app__side">
+    <nav class="tray-sidebar" id="nav" aria-label="Main">
+      <div class="tray-sidebar__head" style="padding-inline: 0">
+        <div class="tray-anchor tray-anchor--block" data-tray="menu">
+          <button class="tray-switcher" type="button"><span class="tray-avatar tray-avatar--sm" aria-hidden="true">PF</span><span class="tray-person__text"><b>Perly Farm</b><small>You pack orders</small></span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chevrons-up-down"/></svg></button>
+          <div class="tray-pop">
+            <div class="tray-list">
+              <p class="tray-list__label">Workspaces</p>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="true"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">PF</span><span class="tray-option__text">Perly Farm</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tray-sidebar__group">
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg><span>Orders</span><span class="tray-badge tray-badge--count">12</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-list"/></svg><span>Packing list</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span>Batches</span></a>
+        <a class="tray-sidebar__item" href="#" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chart-column"/></svg><span>Reports</span></a>
+      </div>
+      <div class="tray-sidebar__group">
+        <p class="tray-sidebar__label">Help</p>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-life-buoy"/></svg><span>How to pack a jar</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-users"/></svg><span>Who does what</span></a>
+      </div>
+      <div class="tray-sidebar__foot">
+        <div class="tray-sidebar__user">
+          <span class="tray-avatar tray-avatar--sm tray-avatar--ink" aria-hidden="true">MH</span>
+          <span class="tray-person__text"><b>Marta Hrytsenko</b><small>Packer</small></span>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <header class="tray-topbar">
+      <div class="tray-topbar__start">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the navigation"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+        <nav aria-label="Breadcrumb"><ol class="tray-crumbs tray-crumbs--fold"><li><a href="#">Perly Farm</a></li><li><span aria-current="page">Reports</span></li></ol></nav>
+      </div>
+      <div class="tray-topbar__end">
+        <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
+        <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 1 unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip">1</span></span>
+        <button class="tray-avatar" type="button" aria-label="Account: Marta Hrytsenko, MH">MH</button>
+      </div>
+    </header>
+    <main class="tray-app__content">
+      <div class="tray-pagehead">
+        <div class="tray-pagehead__row">
+          <div class="tray-pagehead__text">
+            <div class="tray-pagehead__title"><h1 class="title">Reports</h1><span class="tray-badge tray-badge--off"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-lock"/></svg>Owners and managers</span></div>
+            <p>Orders and revenue by product, city and courier, month by month.</p>
+          </div>
+        </div>
+      </div>
+      <div class="tray-locked">
+        <div class="tray-locked__content tray-stack" inert aria-hidden="true">
+          <div class="tray-stats tray-stats--four">
+            <div class="tray-stat">
+              <p class="tray-stat__label">Orders in November</p>
+              <p class="tray-stat__value">842</p>
+              <p class="tray-stat__foot"><span class="tray-trend" data-tone="good"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-trending-up"/></svg>+9%</span>than October</p>
+            </div>
+            <div class="tray-stat">
+              <p class="tray-stat__label">Revenue</p>
+              <p class="tray-stat__value">$17,480</p>
+              <p class="tray-stat__foot"><span class="tray-trend" data-tone="good"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-trending-up"/></svg>+7%</span>than October</p>
+            </div>
+            <div class="tray-stat">
+              <p class="tray-stat__label">Returning customers</p>
+              <p class="tray-stat__value">61<small>%</small></p>
+              <p class="tray-stat__foot">of the orders this month</p>
+            </div>
+            <div class="tray-stat">
+              <p class="tray-stat__label">Refunds</p>
+              <p class="tray-stat__value">3</p>
+              <p class="tray-stat__foot">$148 in all</p>
+            </div>
+          </div>
+          <section class="tray-card tray-stack tray-stack--lg">
+            <div class="tray-stack tray-stack--sm">
+              <p class="subtitle">Orders per month</p>
+              <p class="tray-chart__caption">June to November 2026</p>
+            </div>
+            <figure class="tray-chart" data-tray="chart" data-chart='{
+              "type": "bar", "unit": " orders", "max": 1000, "labelHead": "Month",
+              "labels": ["Jun", "Jul", "Aug", "Sep", "Oct", "Nov"],
+              "series": [{ "name": "Orders", "values": [412, 538, 604, 690, 771, 842] }],
+              "summary": "Bar chart of orders per month from June to November 2026, growing every month to 842 in November."
+            }'></figure>
+          </section>
+        </div>
+        <section class="tray-locked__prompt tray-raised tray-upsell" aria-labelledby="locked-title">
+          <span class="tray-upsell__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-lock"/></svg></span>
+          <div class="tray-upsell__text">
+            <h2 class="subtitle" id="locked-title">Reports are for owners and managers</h2>
+            <p>Oksana Franko, the owner, can open them for you. She sees why you asked before she says yes.</p>
+          </div>
+          <div class="tray-upsell__actions">
+            <button class="tray-btn tray-btn--sm" type="button" id="ask"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-send"/></svg>Ask Oksana for access</button>
+            <a class="tray-btn tray-btn--link" href="#">Who can see what</a>
+          </div>
+          <p class="caption tray-muted" id="ask-note">She gets an email and a notification in Counter.</p>
+        </section>
+      </div>
+      <section class="tray-card" aria-labelledby="open-title">
+        <div class="tray-card__head">
+          <div>
+            <h2 class="subtitle" id="open-title">Open to you today</h2>
+            <p class="tray-soft">The courier comes at 14:00. Here is what needs you before then.</p>
+          </div>
+        </div>
+        <ul class="tray-items" role="list">
+          <li><a class="tray-item" href="#"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg></span><span class="tray-item__body"><span class="tray-item__title">Orders to pack</span><span class="tray-item__text">12 orders, the first one paid at 07:35</span></span><span class="tray-item__end"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></span></a></li>
+          <li><a class="tray-item" href="#"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-list"/></svg></span><span class="tray-item__body"><span class="tray-item__title">Packing list</span><span class="tray-item__text">31 jars: 14 of 50 g, 11 of 100 g, 6 of 30 g</span></span><span class="tray-item__end"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></span></a></li>
+          <li><a class="tray-item" href="#"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg></span><span class="tray-item__body"><span class="tray-item__title">Batches</span><span class="tray-item__text">132 jars left in the autumn batch</span></span><span class="tray-item__end"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></span></a></li>
+        </ul>
+      </section>
+    </main>
+  </div>
+</div>
+<script src="../components/bundle.js"></script>
+<script>
+/* Asking sends the request once; the button then says so, and the note says what happens next. The button turns off
+   under the reader's finger: focus moves to the note first, so the note is read and focus is not dropped to the top of
+   the page; the toast says that the request went. */
+document.getElementById('ask').addEventListener('click', function () {
+  var note = document.getElementById('ask-note');
+  note.textContent = 'Sent at ' + new Date().toTimeString().slice(0, 5) + '. You get a notification when Oksana answers.';
+  TrayUI.rescue(this, note);
+  this.disabled = true;
+  this.innerHTML = TrayUI.icon('check') + 'Request sent';
+  TrayUI.toast({ tone: 'success', title: 'Request sent', text: 'Oksana Franko gets it by email and in Counter.' });
+});
+</script>
+</body>
+</html>
+```

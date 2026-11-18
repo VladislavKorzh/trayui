@@ -158,7 +158,7 @@ Write the cells in a group with `data-tray="otp"`, a name, and `autocomplete="on
 </div>
 ```
 
-The script names each cell "Character 1 of 6", sets `inputmode="numeric"` unless you set another, removes `maxlength`, and handles the keys and the spreading described above. Since 0.2.0 a whole code that is typed, pasted or filled in is spread over the cells; spaces in it are dropped. Since the next release so is anything else a cell does not take: a numeric cell keeps digits only, so "409-316" fills all six cells, and a key it does not take, such as a hyphen, changes nothing. When every cell holds a character, the group fires `tray:complete` with the code in `detail.value`:
+The script names each cell "Character 1 of 6", sets `inputmode="numeric"` unless you set another, removes `maxlength`, and handles the keys and the spreading described above. Since 0.2.0 a whole code that is typed, pasted or filled in is spread over the cells; spaces in it are dropped. Since version 0.3.0 so is anything else a cell does not take: a numeric cell keeps digits only, so "409-316" fills all six cells, and a key it does not take, such as a hyphen, changes nothing. When every cell holds a character, the group fires `tray:complete` with the code in `detail.value`:
 
 ```js
 document.querySelector('[data-tray="otp"]').addEventListener('tray:complete', (e) => {

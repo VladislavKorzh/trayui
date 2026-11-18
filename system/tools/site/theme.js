@@ -106,9 +106,18 @@
     ['on-dark-code-variable', ['inverse', 'inverse-off'], 4.5, 'Code on the ink card: variables'],
   ];
   /* More contrast (prefers-contrast: more): a grey takes the value its theme gives the step after it, towards the ink.
-     tools/build.py writes the same for the themes of the system. */
+     The yellow card has greys of its own (paper-*), which step the same way. A rule stays at least 3:1 on every ground it
+     is drawn on (RULES): where the next step is short of that in a theme, it takes the step after. tools/build.py writes
+     the same for the themes of the system (MORE and RULES there): keep the two lists alike. */
   var MORE = [['ink-soft', 'ink'], ['ink-muted', 'ink-soft'], ['ink-hint', 'ink-muted'], ['control-off', 'ink-hint'], ['rule-strong', 'ink-hint'],
-              ['hairline', 'control-off'], ['track', 'rule-strong'], ['on-dark-soft', 'on-inverse'], ['on-dark-muted', 'on-dark-soft'], ['dark-rule', 'on-dark-muted']];
+              ['hairline', 'control-off'], ['track', 'rule-strong'], ['on-dark-soft', 'on-inverse'], ['on-dark-muted', 'on-dark-soft'], ['dark-rule', 'on-dark-muted'],
+              ['paper-hairline', 'paper-soft'], ['paper-track', 'paper-soft']];
+  var RULES = { hairline: ['page', 'surface', 'raised'], 'dark-rule': ['inverse', 'inverse-off'], 'paper-hairline': ['accent', 'paper', 'paper-tray'] };
+  /* Past the last grey of its list, a rule's next step towards the ink is the ink of its grounds. A theme made here may
+     have grounds the system's never have (a dark accent under the yellow card's greys): when no step towards the ink
+     holds 3:1, the rule keeps the colour that holds the most, its own included. The themes of the system never get there,
+     so they come out as tools/build.py writes them. */
+  var INK = { hairline: 'ink', 'dark-rule': 'on-inverse', 'paper-hairline': 'paper-ink' };
   /* The colours that are the system's own and keep their hue in every theme: the status colours of the yellow card and the
      ink card, and the colours of code. Each, the grounds it is read on, and the text it moves towards when a theme's grounds
      are too close to it. */
@@ -181,6 +190,33 @@
     return out;
   }
 
+  /* The colour a token holds, through a reference to another token ("{ink}") where a theme has one. */
+  function resolved(tokens, name) {
+    var v = tokens[name], i;
+    for (i = 0; i < 8 && typeof v === 'string' && /^\{[^}]+\}$/.test(v); i += 1) v = tokens[v.slice(1, -1)];
+    return valid(v) ? normal(v) : null;
+  }
+  /* moreContrast(tokens): what each grey takes in more contrast, { name: colour }: the next step towards the ink, or for a
+     rule, the first step from there that holds 3:1 on each of its grounds. */
+  function moreContrast(tokens) {
+    var after = {}, out = {};
+    MORE.forEach(function (m) { after[m[0]] = m[1]; });
+    MORE.forEach(function (m) {
+      var a = m[0], b = m[1];
+      if (!resolved(tokens, a) || !resolved(tokens, b)) return;
+      var grounds = (RULES[a] || []).filter(function (g) { return resolved(tokens, g); });
+      function held(step) { return Math.min.apply(null, grounds.map(function (g) { return contrast(resolved(tokens, step), resolved(tokens, g)); })); }
+      if (!grounds.length) { out[a] = resolved(tokens, b); return; }
+      var steps = [b];
+      while (after[b] && resolved(tokens, after[b])) { b = after[b]; steps.push(b); }
+      if (INK[a] && resolved(tokens, INK[a]) && steps.indexOf(INK[a]) < 0) steps.push(INK[a]);
+      var first = steps.filter(function (s) { return held(s) >= 3; })[0];
+      if (!first) first = [a].concat(steps).reduce(function (best, s) { return held(s) > held(best) ? s : best; });
+      out[a] = resolved(tokens, first);
+    });
+    return out;
+  }
+
   /* css(id, tokens, names, more): the theme as a rule for [data-theme="id"]. `names` are the tokens that differ between the
      themes of the system: each is written, so a part of a page in this theme takes nothing from the theme around it.
      The tokens every theme shares are left to tokens.css. `more` adds other custom properties, such as the shadow and corners.
@@ -189,7 +225,7 @@
     var rows = ['  color-scheme: ' + modeOf(tokens.page) + ';'], name;
     names.forEach(function (n) { if (n in tokens) rows.push('  --' + n + ': ' + tokens[n] + ';'); });
     for (name in more || {}) rows.push('  --' + name + ': ' + more[name] + ';');
-    var up = MORE.filter(function (m) { return valid(tokens[m[0]]) && valid(tokens[m[1]]); }).map(function (m) { return '    --' + m[0] + ': ' + normal(tokens[m[1]]) + ';'; });
+    var stepped = moreContrast(tokens), up = Object.keys(stepped).map(function (n) { return '    --' + n + ': ' + stepped[n] + ';'; });
     return '[data-theme="' + id + '"] {\n' + rows.join('\n') + '\n}' + (up.length ? '\n@media (prefers-contrast: more) {\n  [data-theme="' + id + '"] {\n' + up.join('\n') + '\n  }\n}' : '');
   }
 
@@ -199,5 +235,5 @@
   }
 
   return { oklch: oklch, normal: normal, valid: valid, modeOf: modeOf, along: along, derive: derive, report: report, corners: corners, css: css,
-           slug: slug, STEPS: STEPS, CARDS: CARDS };
+           more: moreContrast, slug: slug, STEPS: STEPS, CARDS: CARDS, MORE: MORE, RULES: RULES };
 });

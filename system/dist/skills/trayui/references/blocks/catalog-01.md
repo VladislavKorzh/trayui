@@ -1,0 +1,252 @@
+# Catalog with filters on top
+
+Products in a grid of cards under a filter bar for type, size and price, with the count, the sort and pages; for a range that three filters cover.
+
+A product listing with filters for a small range: a breadcrumb, a heading with a line about the products, the bar, eight cards and a pager. Each card holds a picture, a name that links to the product page, a line of detail and the price, and its Add to cart button carries an `aria-label` with the product's name, so eight buttons with the same words stay apart for a screen reader. When people need checkboxes, a price limit and a stock switch at once, the [catalog with a filter column](https://trayui.com/blocks/catalog-02.md) has room for them.
+
+Each filter is a menu of checkable items that stays open while you tick. A ticked item becomes a chip such as "Type: Caviar", with "Clear all" beside it, and the row of chips hides while it is empty. The [filter bar](https://trayui.com/components/filter-bar.md) fires `tray:change` with the filters that are on; the products that match are yours to fetch. The cards take as many 17rem columns as fit: one on a phone.
+
+It is made of these components: [Navigation Menu](https://trayui.com/components/navigation-menu.md), [Tabs](https://trayui.com/components/tabs.md), [Top Bar](https://trayui.com/components/top-bar.md), [Kbd](https://trayui.com/components/kbd.md), [Button](https://trayui.com/components/button.md), [Badge](https://trayui.com/components/badge.md), [Breadcrumb](https://trayui.com/components/breadcrumb.md), [Filter Bar](https://trayui.com/components/filter-bar.md), [Dropdown Menu](https://trayui.com/components/dropdown-menu.md), [Native Select](https://trayui.com/components/native-select.md), [Card](https://trayui.com/components/card.md), [Feature Grid](https://trayui.com/components/feature-grid.md), [Aspect Ratio](https://trayui.com/components/aspect-ratio.md), [Pagination](https://trayui.com/components/pagination.md), [Footer](https://trayui.com/components/footer.md).
+
+Behaviours it uses: `filterbar`, `menu`, `strip`.
+
+Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catalog with filters on top</title>
+<meta name="description" content="Products in a grid of cards under a filter bar for type, size and price, with the count, the sort and pages; for a range that three filters cover.">
+<meta name="tray-category" content="Catalog">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<header class="tray-nav tray-container">
+  <a class="tray-wordmark" href="/">Perly Farm</a>
+  <nav class="tray-nav__strip" aria-label="Main">
+    <ul class="tray-nav__links tray-tabs" data-tray="strip">
+      <li><a class="tray-tab" href="/shop" aria-current="page">Shop</a></li>
+      <li><a class="tray-tab" href="/gifts">Gifts</a></li>
+      <li><a class="tray-tab" href="/farm">The farm</a></li>
+      <li><a class="tray-tab" href="/delivery">Delivery</a></li>
+    </ul>
+  </nav>
+  <div class="tray-nav__actions">
+    <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search the shop"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search the shop</span><kbd class="tray-kbd">/</kbd></button>
+    <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/cart"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-shopping-bag"/></svg>Cart<span class="tray-badge tray-badge--count tray-badge--ink">2<span class="tray-vh"> items</span></span></a>
+  </div>
+</header>
+
+<main>
+  <div class="tray-container tray-stack tray-stack--lg">
+    <nav aria-label="Breadcrumb">
+      <ol class="tray-crumbs">
+        <li><a href="/">Home</a></li>
+        <li><a href="/shop">Shop</a></li>
+        <li><span aria-current="page">Caviar and sets</span></li>
+      </ol>
+    </nav>
+    <div class="tray-stack" style="max-inline-size: 46rem; padding-block-end: var(--space-4)">
+      <h1 class="headline">Snail caviar and sets</h1>
+      <p class="lead tray-soft">White caviar from our own snails, salted by hand on the day it is collected. Every jar leaves the farm in a chilled box.</p>
+    </div>
+
+    <div class="tray-filterbar" data-tray="filterbar">
+      <div class="tray-filterbar__row">
+        <span class="tray-anchor" data-tray="menu">
+          <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button">Type<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-chevron-down"/></svg></button>
+          <div class="tray-pop">
+            <div class="tray-list">
+              <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="type:caviar" data-label="Type: Caviar"><span class="tray-option__text">Caviar</span><span class="tray-option__meta">6</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="type:tasting" data-label="Type: Tasting sets"><span class="tray-option__text">Tasting sets</span><span class="tray-option__meta">1</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="type:gift" data-label="Type: Gift boxes"><span class="tray-option__text">Gift boxes</span><span class="tray-option__meta">1</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="type:tools" data-label="Type: Spoons and bags"><span class="tray-option__text">Spoons and bags</span><span class="tray-option__meta">2</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+            </div>
+          </div>
+        </span>
+        <span class="tray-anchor" data-tray="menu">
+          <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button">Size<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-chevron-down"/></svg></button>
+          <div class="tray-pop">
+            <div class="tray-list">
+              <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="size:30" data-label="Size: 30 g"><span class="tray-option__text">30&nbsp;g</span><span class="tray-option__meta">3</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="size:50" data-label="Size: 50 g"><span class="tray-option__text">50&nbsp;g</span><span class="tray-option__meta">3</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="size:100" data-label="Size: 100 g"><span class="tray-option__text">100&nbsp;g</span><span class="tray-option__meta">2</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+            </div>
+          </div>
+        </span>
+        <span class="tray-anchor" data-tray="menu">
+          <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button">Price<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-chevron-down"/></svg></button>
+          <div class="tray-pop">
+            <div class="tray-list">
+              <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="price:low" data-label="Price: under $40"><span class="tray-option__text">Under $40</span><span class="tray-option__meta">4</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="price:mid" data-label="Price: $40 to $100"><span class="tray-option__text">$40 to $100</span><span class="tray-option__meta">3</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemcheckbox" aria-checked="false" data-value="price:high" data-label="Price: over $100"><span class="tray-option__text">Over $100</span><span class="tray-option__meta">3</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+            </div>
+          </div>
+        </span>
+        <div class="tray-filterbar__end">
+          <p class="nav tray-soft">10 products</p>
+          <label class="tray-vh" for="sort">Sort the products</label>
+          <span class="tray-select tray-select--sm">
+            <select id="sort" name="sort">
+              <option value="featured" selected>Most ordered first</option>
+              <option value="price-up">Price, low to high</option>
+              <option value="price-down">Price, high to low</option>
+              <option value="batch">Newest batch first</option>
+            </select>
+          </span>
+        </div>
+      </div>
+      <div class="tray-filterbar__chips">
+        <button class="tray-btn tray-btn--link" type="button" data-filter="clear">Clear all</button>
+      </div>
+    </div>
+
+    <div class="tray-integrations" style="--card-pad: var(--space-6)">
+      <article class="tray-card tray-feature">
+        <div class="tray-slot tray-ratio tray-ratio--photo"></div>
+        <div class="tray-stack tray-stack--sm">
+          <h2 class="subtitle"><a href="/shop/caviar-50">Snail caviar, 50&nbsp;g</a></h2>
+          <p class="tray-soft">Batch 14, about ten servings</p>
+        </div>
+        <div class="tray-feature__end tray-row tray-row--between">
+          <p class="subtitle tray-num">$59</p>
+          <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" aria-label="Add to cart: snail caviar, 50 g, batch 14">Add to cart</button>
+        </div>
+      </article>
+      <article class="tray-card tray-feature">
+        <div class="tray-slot tray-ratio tray-ratio--photo"></div>
+        <div class="tray-stack tray-stack--sm">
+          <h2 class="subtitle"><a href="/shop/gift-box">Gift box</a></h2>
+          <p class="tray-row tray-row--sm"><span class="tray-soft">A 50&nbsp;g jar, two spoons and a card</span><span class="tray-badge tray-badge--accent">New</span></p>
+        </div>
+        <div class="tray-feature__end tray-row tray-row--between">
+          <p class="subtitle tray-num">$96</p>
+          <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" aria-label="Add to cart: gift box">Add to cart</button>
+        </div>
+      </article>
+      <article class="tray-card tray-feature">
+        <div class="tray-slot tray-ratio tray-ratio--photo"></div>
+        <div class="tray-stack tray-stack--sm">
+          <h2 class="subtitle"><a href="/shop/caviar-30">Snail caviar, 30&nbsp;g</a></h2>
+          <p class="tray-soft">Batch 14, about six servings</p>
+        </div>
+        <div class="tray-feature__end tray-row tray-row--between">
+          <p class="subtitle tray-num">$38</p>
+          <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" aria-label="Add to cart: snail caviar, 30 g, batch 14">Add to cart</button>
+        </div>
+      </article>
+      <article class="tray-card tray-feature">
+        <div class="tray-slot tray-ratio tray-ratio--photo"></div>
+        <div class="tray-stack tray-stack--sm">
+          <h2 class="subtitle"><a href="/shop/caviar-100">Snail caviar, 100&nbsp;g</a></h2>
+          <p class="tray-soft">Batch 14, about twenty servings</p>
+        </div>
+        <div class="tray-feature__end tray-row tray-row--between">
+          <p class="subtitle tray-num">$112</p>
+          <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" aria-label="Add to cart: snail caviar, 100 g, batch 14">Add to cart</button>
+        </div>
+      </article>
+      <article class="tray-card tray-feature">
+        <div class="tray-slot tray-ratio tray-ratio--photo"></div>
+        <div class="tray-stack tray-stack--sm">
+          <h2 class="subtitle"><a href="/shop/tasting-set">Tasting set</a></h2>
+          <p class="tray-soft">Three 30&nbsp;g jars, one a week</p>
+        </div>
+        <div class="tray-feature__end tray-row tray-row--between">
+          <p class="subtitle tray-num">$105</p>
+          <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" aria-label="Add to cart: tasting set">Add to cart</button>
+        </div>
+      </article>
+      <article class="tray-card tray-feature">
+        <div class="tray-slot tray-ratio tray-ratio--photo"></div>
+        <div class="tray-stack tray-stack--sm">
+          <h2 class="subtitle"><a href="/shop/caviar-50-batch-13">Snail caviar, 50&nbsp;g</a></h2>
+          <p class="tray-row tray-row--sm"><span class="tray-soft">Batch 13, two jars left</span><span class="tray-badge">Last jars</span></p>
+        </div>
+        <div class="tray-feature__end tray-row tray-row--between">
+          <p class="subtitle tray-num">$59</p>
+          <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" aria-label="Add to cart: snail caviar, 50 g, batch 13">Add to cart</button>
+        </div>
+      </article>
+      <article class="tray-card tray-feature">
+        <div class="tray-slot tray-ratio tray-ratio--photo"></div>
+        <div class="tray-stack tray-stack--sm">
+          <h2 class="subtitle"><a href="/shop/spoon">Mother&#8209;of&#8209;pearl spoon</a></h2>
+          <p class="tray-soft">12&nbsp;cm, carved by hand</p>
+        </div>
+        <div class="tray-feature__end tray-row tray-row--between">
+          <p class="subtitle tray-num">$14</p>
+          <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" aria-label="Add to cart: mother-of-pearl spoon">Add to cart</button>
+        </div>
+      </article>
+      <article class="tray-card tray-feature">
+        <div class="tray-slot tray-ratio tray-ratio--photo"></div>
+        <div class="tray-stack tray-stack--sm">
+          <h2 class="subtitle"><a href="/shop/travel-bag">Chilled travel bag</a></h2>
+          <p class="tray-soft">Keeps four jars cold for a day</p>
+        </div>
+        <div class="tray-feature__end tray-row tray-row--between">
+          <p class="subtitle tray-num">$12</p>
+          <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" aria-label="Add to cart: chilled travel bag">Add to cart</button>
+        </div>
+      </article>
+    </div>
+
+    <div class="tray-row tray-row--between" style="padding-block: var(--space-4) var(--space-12)">
+      <p class="caption tray-muted">1 to 8 of 10 products. Prices include VAT.</p>
+      <nav aria-label="Pages">
+        <ul class="tray-pages">
+          <li><a class="tray-page tray-page--step" role="link" aria-disabled="true"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-left"/></svg>Previous</a></li>
+          <li><a class="tray-page" href="?page=1" aria-current="page">1</a></li>
+          <li><a class="tray-page" href="?page=2">2</a></li>
+          <li><a class="tray-page tray-page--step" href="?page=2">Next<svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</main>
+
+<footer class="tray-footer tray-container">
+  <div class="tray-footer__top">
+    <div class="tray-footer__brand">
+      <a class="tray-wordmark" href="/">Perly Farm</a>
+      <p>Snail caviar from a small farm near Kyiv, collected by hand and sold by the numbered batch.</p>
+    </div>
+    <nav class="tray-footer__col" aria-label="Shop">
+      <h3>Shop</h3>
+      <a href="/shop/caviar">Caviar</a>
+      <a href="/shop/gifts">Gift sets</a>
+      <a href="/shop/tasting">Tasting sets</a>
+      <a href="/shop/tools">Spoons and tools</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="Help">
+      <h3>Help</h3>
+      <a href="/delivery">Delivery and pickup</a>
+      <a href="/serving">Storage and serving</a>
+      <a href="/returns">Returns</a>
+      <a href="/contact">Contact us</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="The farm">
+      <h3>The farm</h3>
+      <a href="/farm">How we keep the snails</a>
+      <a href="/batches">Batches</a>
+      <a href="/visit">Visit the farm shop</a>
+    </nav>
+  </div>
+  <div class="tray-footer__bottom">
+    <p>&copy; 2026 Perly Farm, Farm road 4, Kyiv region. The farm, its products and every figure on this page are demo data.</p>
+    <ul class="tray-footer__legal" role="list">
+      <li><a href="/privacy">Privacy</a></li>
+      <li><a href="/terms">Terms of sale</a></li>
+    </ul>
+  </div>
+</footer>
+<script src="../components/bundle.js"></script>
+</body>
+</html>
+```

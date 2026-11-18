@@ -7,8 +7,7 @@ import { cx, type TrayEventName } from './util';
 /* Shared by the menus (Select, Combobox, Command, DropdownMenu, ContextMenu, Menubar, NavigationMenu, Calendar, DatePicker).
    Not exported from the package. */
 
-/** useLayoutEffect in the browser, useEffect on a server: the DOM work here must land before the first paint. */
-export const useIsoLayoutEffect = typeof window !== 'undefined' ? React.useLayoutEffect : React.useEffect;
+export { useIsoLayoutEffect } from './util';
 
 /** One ref callback that fills our own ref and the one forwarded to us. Keeps working when the root element is replaced (a `key` change). */
 export function useMergedRef<T>(own: React.MutableRefObject<T | null>, forwarded: React.ForwardedRef<T>): React.RefCallback<T> {

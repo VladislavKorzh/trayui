@@ -20,12 +20,16 @@
     view.setAttribute('role', 'log');
     view.addEventListener('scroll', paint, { passive: true });
     if (jump) jump.addEventListener('click', function () { toEnd(true); });
+    /* Any change of what is in it is followed while the reader is at the end: a new row, words streamed into the last
+       message (as new nodes, or a text that grows in place). Only new rows at the end count as new messages: words streamed
+       into a message are not one, and older messages loaded above are not new. */
     new MutationObserver(function (records) {
-      var added = records.reduce(function (n, r) { return n + r.addedNodes.length; }, 0);
-      if (!added) return;
-      if (root.__pinned) { toEnd(false); } else { fresh += added; }
+      var thread = $('.tray-thread', view) || view, added = [];
+      records.forEach(function (r) { [].forEach.call(r.addedNodes, function (n) { if (n.nodeType === 1 && n.parentNode === thread) added.push(n); }); });
+      var rows = added.filter(function (n) { for (var s = n.nextElementSibling; s; s = s.nextElementSibling) if (added.indexOf(s) < 0) return false; return true; }).length;
+      if (root.__pinned) { toEnd(false); } else { fresh += rows; }
       paint();
-    }).observe(view, { childList: true, subtree: true });
+    }).observe(view, { childList: true, subtree: true, characterData: true });
     view.addEventListener('scroll', function () { root.__pinned = atEnd(); }, { passive: true });
     root.__pinned = root.dataset.start !== 'top';
     watch(view, function () { if (root.__pinned) toEnd(false); paint(); });
@@ -55,7 +59,9 @@
      move between them; [data-progress] and .tray-steps follow; a [data-done] block shows the answers and takes focus, so it is read.
      Fires tray:complete with detail.answers. */
   UI.register('questionnaire', function (root) {
-    var steps = $$('.tray-questionnaire__step', root), done = $('[data-done]', root), back = $('[data-back]', root), next = $('[data-next]', root);
+    /* A filled pill carries data-done too: the block of answers is the [data-done] outside the pills. */
+    var done = $$('[data-done]', root).filter(function (n) { return !n.closest('.tray-steps'); })[0];
+    var steps = $$('.tray-questionnaire__step', root), back = $('[data-back]', root), next = $('[data-next]', root);
     var progress = $('[data-progress]', root), pills = $$('.tray-steps span', root), foot = $('.tray-questionnaire__foot', root), i = 0;
     /* Where focus goes in a question: the answer already chosen, or its first field. */
     function field(step) { return step && ($('input[type="radio"]:checked', step) || $('input:not([hidden]), textarea:not([hidden])', step)); }

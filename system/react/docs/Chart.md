@@ -42,7 +42,7 @@ import { Chart } from 'trayui-react/charts';
 One series is drawn in ink, or in yellow on an ink card (`<Card tone="inverse">`): a single series never takes a data colour. Two to four series take the data colours in order, and a fifth is "Other" in hint grey. A colour belongs to its series, so filtering one out must not repaint the others. Text is never set in a series colour; a swatch beside it carries the identity. Every chart with several series gets a legend, a tooltip and a table view.
 
 ## Behaviour
-Recharts draws the chart, and draws it again whenever a prop changes. Pointing at the plot shows a crosshair or a highlighted column and a tooltip with every series at that point. The plot is focusable: the left and right arrows move through the points and the tooltip follows. On a donut the other parts fade under the pointer. "Show the figures" opens the same data as a table; `table={false}` leaves it out.
+Recharts draws the chart, and draws it again whenever a prop changes. Pointing at the plot shows a crosshair or a highlighted column and a tooltip with every series at that point. The drawing is one image, named by `summary`, and one stop for Tab: the arrow keys move through the points (the first press goes to the labelled peak, a donut goes round), Home and End go to the first and the last, and Escape lets go. The tooltip follows, and a polite live region beside the drawing says each point in words ("May: 22 kg", "Mar: 2026 6 kg, 2025 5 kg", "Jars: 57 kg, 55%"). Right to left, ArrowLeft moves on. On a donut the other parts fade under the pointer. "Show the figures" opens the same data as a table; `table={false}` leaves it out.
 
 ## A chart of your own
 For anything `Chart` does not draw, compose a Recharts chart inside `ChartContainer`, which gives it the same frame, colours, tooltip and key. The marks take their colour from `var(--color-<key>)`, one for each key of `config`.
@@ -64,7 +64,7 @@ const config = { jars: { label: 'Jars' }, shop: { label: 'Farm shop' } } satisfi
 </ChartContainer>
 ```
 
-- `ChartContainer`: `config`, `title`, `caption`, `summary`, `height`, `round` (a centred square, for a pie, a radial or a radar chart), `legend`, `footer`.
+- `ChartContainer`: `config`, `title`, `caption`, `summary`, `height`, `round` (a centred square, for a pie, a radial or a radar chart), `legend`, `footer`. `walk` (`{ count, say, start, wrap }`) makes your drawing the image the keys walk, as `Chart` does; give the Recharts chart `accessibilityLayer={false}` with it, so Recharts' own stop for Tab is not inside the image. Without `walk` the drawing is a group named by `summary`, with Recharts' own keyboard layer.
 - `ChartTooltipContent`: `unit`, `indicator` ('swatch', 'line', 'dashed'), `hideLabel`, `hideIndicator`, `labelFormatter`, `valueFormatter`, `total`, `nameKey`.
 - `ChartCenter`: a figure and its name in the middle of a donut or a radial chart. `ChartFigures`: the figures as a table.
 - The stylesheet restyles what Recharts draws (ticks, grid, lines, areas, the cursor). You pass the geometry: `maxBarSize={24}`, `radius={[4, 4, 0, 0]}`, `dot={false}`, `startAngle={90}` and `endAngle={-270}` on a pie.

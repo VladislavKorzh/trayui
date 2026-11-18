@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx } from '../lib/util';
 import { MenuItems } from '../lib/menus';
@@ -6,7 +7,7 @@ import { Avatar } from './Avatar';
 import type { MenuItem } from './DropdownMenu';
 
 export interface UserMenuProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'onSelect' | 'children'> {
-  /** The person signed in: "Oksana Franko". It heads the menu in bold and names the avatar button, "Account: Oksana Franko". */
+  /** The person signed in: "Oksana Franko". It heads the menu in bold and names the avatar button, "Account: Oksana Franko, OF". */
   name: string;
   /** The line under the name: their e-mail, so a person with two accounts can tell them apart. */
   email?: React.ReactNode;
@@ -46,7 +47,8 @@ export const UserMenu = React.forwardRef<HTMLSpanElement, UserMenuProps>(functio
   const letters = initials ?? initialsOf(name);
   return (
     <span ref={setRef} className={cx('tray-anchor', className)} data-tray="menu" {...rest}>
-      <button className="tray-avatar" type="button" aria-haspopup="menu" aria-label={`Account: ${name}`}>
+      {/* The name ends with the initials it shows, so the words on the button are in its name (WCAG 2.5.3). */}
+      <button className="tray-avatar" type="button" aria-haspopup="menu" aria-label={src ? `Account: ${name}` : `Account: ${name}, ${letters}`}>
         {src ? <img src={src} alt="" /> : letters}
       </button>
       <div

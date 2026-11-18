@@ -1,0 +1,554 @@
+# Table with status tabs and a details sheet
+
+Deliveries of the day in a table filtered by tabs with counts; each order opens its details in a sheet.
+
+A table of the day's work split by status, for a dispatch or support queue. Tabs carry a count each, from All to Late and Delivered, and each tab shows its own table. The order number in every row is a button that opens a sheet at the side with the order's progress as a vertical stepper, the address, a phone link and one action for its state; a late order adds an alert at the top. Pick it when the next step depends on the status; for search and bulk work, use the [table with filters and bulk actions](https://trayui.com/blocks/table-01.md).
+
+The sheet is the browser's modal dialog, named by the order number: focus moves into it, Escape closes it, and focus goes back to the row's button. The tabs follow the arrow keys. On a narrow screen the strip of tabs scrolls sideways and fades at its end, each table scrolls inside its panel, and the sheet takes the whole width.
+
+It is made of these components: [App Shell](https://trayui.com/components/app-shell.md), [Sidebar](https://trayui.com/components/sidebar.md), [Dropdown Menu](https://trayui.com/components/dropdown-menu.md), [Workspace Switcher](https://trayui.com/components/workspace-switcher.md), [Avatar](https://trayui.com/components/avatar.md), [Badge](https://trayui.com/components/badge.md), [Usage Meter](https://trayui.com/components/usage-meter.md), [Progress](https://trayui.com/components/progress.md), [Top Bar](https://trayui.com/components/top-bar.md), [Button](https://trayui.com/components/button.md), [Breadcrumb](https://trayui.com/components/breadcrumb.md), [Kbd](https://trayui.com/components/kbd.md), [Page Header](https://trayui.com/components/page-header.md), [Tabs](https://trayui.com/components/tabs.md), [Table](https://trayui.com/components/table.md), [Sheet](https://trayui.com/components/sheet.md), [Dialog](https://trayui.com/components/dialog.md), [Stepper](https://trayui.com/components/stepper.md), [Description List](https://trayui.com/components/description-list.md), [Alert](https://trayui.com/components/alert.md).
+
+Behaviours it uses: `dialog`, `menu`, `open`, `sidebar-sheet`, `sidebar-toggle`, `strip`, `tabs`.
+
+Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Table with status tabs and a details sheet</title>
+<meta name="description" content="Deliveries of the day in a table filtered by tabs with counts; each order opens its details in a sheet.">
+<meta name="tray-category" content="Tables">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app tray-app--inset">
+  <div class="tray-app__side">
+    <nav class="tray-sidebar" id="nav" aria-label="Main">
+      <div class="tray-sidebar__head" style="padding-inline: 0">
+        <div class="tray-anchor tray-anchor--block" data-tray="menu">
+          <button class="tray-switcher" type="button"><span class="tray-avatar tray-avatar--sm tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-person__text"><b>Perly Farm</b><small>Shop plan</small></span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chevrons-up-down"/></svg></button>
+          <div class="tray-pop">
+            <div class="tray-list">
+              <p class="tray-list__label">Workspaces</p>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="true"><span class="tray-avatar tray-avatar--xs tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-option__text">Perly Farm</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">MB</span><span class="tray-option__text">Meadow Bakery</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">HC</span><span class="tray-option__text">Hill Cheese</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <hr class="tray-list__rule">
+              <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New workspace</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tray-sidebar__scroll">
+        <div class="tray-sidebar__group">
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg><span>Orders</span><span class="tray-badge tray-badge--count">12</span></a>
+          <a class="tray-sidebar__item" href="#" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg><span>Deliveries</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-users"/></svg><span>Customers</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span>Batches</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chart-column"/></svg><span>Reports</span></a>
+        </div>
+        <div class="tray-sidebar__group">
+          <p class="tray-sidebar__label">Workspace</p>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user-plus"/></svg><span>Team</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg><span>Billing</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-settings"/></svg><span>Settings</span></a>
+        </div>
+      </div>
+      <div class="tray-sidebar__foot">
+        <div class="tray-usage tray-usage--sm" style="flex: 1">
+          <div class="tray-progress">
+            <span class="tray-progress__name">Orders</span>
+            <span class="tray-progress__value">842 of 1,000</span>
+            <span class="tray-progress__bar" role="meter" aria-label="Orders this month" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="842" style="--tray-v: 84"></span>
+          </div>
+          <a class="label" href="#">Upgrade the plan</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <header class="tray-topbar">
+      <div class="tray-topbar__start">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the navigation"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+        <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon tray-app__collapse" type="button" data-tray="sidebar-toggle" aria-controls="nav" aria-label="Collapse the sidebar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-panel-left"/></svg></button>
+        <nav aria-label="Breadcrumb"><ol class="tray-crumbs tray-crumbs--fold"><li><a href="#">Perly Farm</a></li><li><span aria-current="page">Deliveries</span></li></ol></nav>
+      </div>
+      <div class="tray-topbar__end">
+        <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
+        <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 2 unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip">2</span></span>
+        <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko, OF">OF</button>
+      </div>
+    </header>
+    <main class="tray-app__content">
+      <div class="tray-pagehead">
+        <div class="tray-pagehead__row">
+          <div class="tray-pagehead__text">
+            <h1 class="title">Deliveries</h1>
+            <p>Friday 27 November. Open an order to see its box. Demo data.</p>
+          </div>
+          <div class="tray-pagehead__actions">
+            <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-map-pin"/></svg>Print the route</button>
+            <button class="tray-btn tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg>Book a courier</button>
+          </div>
+        </div>
+      </div>
+      <div data-tray="tabs">
+        <div class="tray-tabs" role="tablist" aria-label="Deliveries by status" data-tray="strip">
+          <button class="tray-tab" role="tab" type="button" id="tab-all" aria-controls="panel-all" aria-selected="true">All<span class="tray-badge tray-badge--count">9</span></button>
+          <button class="tray-tab" role="tab" type="button" id="tab-packing" aria-controls="panel-packing">Packing<span class="tray-badge tray-badge--count">2</span></button>
+          <button class="tray-tab" role="tab" type="button" id="tab-way" aria-controls="panel-way">On the way<span class="tray-badge tray-badge--count">4</span></button>
+          <button class="tray-tab" role="tab" type="button" id="tab-late" aria-controls="panel-late">Late<span class="tray-badge tray-badge--count">1</span></button>
+          <button class="tray-tab" role="tab" type="button" id="tab-delivered" aria-controls="panel-delivered">Delivered<span class="tray-badge tray-badge--count">2</span></button>
+        </div>
+        <div class="tray-tabpanel" role="tabpanel" id="panel-all" aria-labelledby="tab-all">
+          <div class="tray-table-wrap" tabindex="0" role="region" aria-label="All deliveries today">
+            <table class="tray-table tray-table--hover tray-table--pad" aria-label="All deliveries today" style="min-inline-size: 48rem">
+              <thead>
+                <tr>
+                  <th scope="col">Order</th>
+                  <th scope="col">Customer</th>
+                  <th scope="col">Window</th>
+                  <th scope="col">Courier</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" data-num>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20371" aria-haspopup="dialog">PL-20371</button></th>
+                  <td><span class="tray-person__text"><span>Olena Bondar</span><small>Kharkiv, 1 × 50 g</small></span></td>
+                  <td><time datetime="2026-11-27T08:00">08:00–10:00</time></td>
+                  <td>Swift Post</td>
+                  <td><span class="tray-badge tray-badge--success"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg>Delivered</span></td>
+                  <td data-num>$68.00</td>
+                </tr>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20362" aria-haspopup="dialog">PL-20362</button></th>
+                  <td><span class="tray-person__text"><span>Viktor Marchenko</span><small>Odesa, 1 × 100 g</small></span></td>
+                  <td><time datetime="2026-11-27T09:00">09:00–11:00</time></td>
+                  <td>Swift Post</td>
+                  <td><span class="tray-badge tray-badge--success"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg>Delivered</span></td>
+                  <td data-num>$118.00</td>
+                </tr>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20421" data-open-first aria-haspopup="dialog">PL-20421</button></th>
+                  <td><span class="tray-person__text"><span>Taras Bondar</span><small>Kyiv, 2 × 30 g</small></span></td>
+                  <td><time datetime="2026-11-27T10:00">10:00–12:00</time></td>
+                  <td>Yurii Hnatiuk</td>
+                  <td><span class="tray-badge tray-badge--danger"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-clock"/></svg>Late</span></td>
+                  <td data-num>$85.00</td>
+                </tr>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20420" aria-haspopup="dialog">PL-20420</button></th>
+                  <td><span class="tray-person__text"><span>Anna Melnyk</span><small>Kyiv, 1 × 100 g</small></span></td>
+                  <td><time datetime="2026-11-27T11:00">11:00–13:00</time></td>
+                  <td>Yurii Hnatiuk</td>
+                  <td><span class="tray-badge tray-badge--ink">On the way</span></td>
+                  <td data-num>$118.00</td>
+                </tr>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20418" aria-haspopup="dialog">PL-20418</button></th>
+                  <td><span class="tray-person__text"><span>Ivan Petrenko</span><small>Lviv, 3 × 50 g</small></span></td>
+                  <td><time datetime="2026-11-27T12:00">12:00–14:00</time></td>
+                  <td>Swift Post</td>
+                  <td><span class="tray-badge tray-badge--ink">On the way</span></td>
+                  <td data-num>$186.00</td>
+                </tr>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20415" aria-haspopup="dialog">PL-20415</button></th>
+                  <td><span class="tray-person__text"><span>Halyna Rudenko</span><small>Lviv, 1 × 30 g, 1 × 50 g</small></span></td>
+                  <td><time datetime="2026-11-27T12:00">12:00–14:00</time></td>
+                  <td>Swift Post</td>
+                  <td><span class="tray-badge tray-badge--ink">On the way</span></td>
+                  <td data-num>$85.00</td>
+                </tr>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20424" aria-haspopup="dialog">PL-20424</button></th>
+                  <td><span class="tray-person__text"><span>Yulia Tkachenko</span><small>Dnipro, 1 × 30 g, 1 × 50 g</small></span></td>
+                  <td><time datetime="2026-11-27T13:00">13:00–15:00</time></td>
+                  <td>Swift Post</td>
+                  <td><span class="tray-badge tray-badge--ink">On the way</span></td>
+                  <td data-num>$106.00</td>
+                </tr>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20431" aria-haspopup="dialog">PL-20431</button></th>
+                  <td><span class="tray-person__text"><span>Dana Kovalenko</span><small>Kyiv, 4 × 50 g, gift box</small></span></td>
+                  <td><time datetime="2026-11-27T14:00">14:00–16:00</time></td>
+                  <td>Yurii Hnatiuk</td>
+                  <td><span class="tray-badge">Packing</span></td>
+                  <td data-num>$274.00</td>
+                </tr>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20430" aria-haspopup="dialog">PL-20430</button></th>
+                  <td><span class="tray-person__text"><span>Marta Hrytsenko</span><small>Odesa, 1 × 50 g</small></span></td>
+                  <td><time datetime="2026-11-27T15:00">15:00–18:00</time></td>
+                  <td>Swift Post</td>
+                  <td><span class="tray-badge">Packing</span></td>
+                  <td data-num>$68.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="tray-tabpanel" role="tabpanel" id="panel-packing" aria-labelledby="tab-packing" hidden>
+          <div class="tray-table-wrap" tabindex="0" role="region" aria-label="Deliveries today: packing">
+            <table class="tray-table tray-table--hover tray-table--pad" aria-label="Deliveries today: packing" style="min-inline-size: 48rem">
+              <thead>
+                <tr>
+                  <th scope="col">Order</th>
+                  <th scope="col">Customer</th>
+                  <th scope="col">Window</th>
+                  <th scope="col">Courier</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" data-num>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20431" aria-haspopup="dialog">PL-20431</button></th>
+                  <td><span class="tray-person__text"><span>Dana Kovalenko</span><small>Kyiv, 4 × 50 g, gift box</small></span></td>
+                  <td><time datetime="2026-11-27T14:00">14:00–16:00</time></td>
+                  <td>Yurii Hnatiuk</td>
+                  <td><span class="tray-badge">Packing</span></td>
+                  <td data-num>$274.00</td>
+                </tr>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20430" aria-haspopup="dialog">PL-20430</button></th>
+                  <td><span class="tray-person__text"><span>Marta Hrytsenko</span><small>Odesa, 1 × 50 g</small></span></td>
+                  <td><time datetime="2026-11-27T15:00">15:00–18:00</time></td>
+                  <td>Swift Post</td>
+                  <td><span class="tray-badge">Packing</span></td>
+                  <td data-num>$68.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="tray-tabpanel" role="tabpanel" id="panel-way" aria-labelledby="tab-way" hidden>
+          <div class="tray-table-wrap" tabindex="0" role="region" aria-label="Deliveries today: on the way">
+            <table class="tray-table tray-table--hover tray-table--pad" aria-label="Deliveries today: on the way" style="min-inline-size: 48rem">
+              <thead>
+                <tr>
+                  <th scope="col">Order</th>
+                  <th scope="col">Customer</th>
+                  <th scope="col">Window</th>
+                  <th scope="col">Courier</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" data-num>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20420" aria-haspopup="dialog">PL-20420</button></th>
+                  <td><span class="tray-person__text"><span>Anna Melnyk</span><small>Kyiv, 1 × 100 g</small></span></td>
+                  <td><time datetime="2026-11-27T11:00">11:00–13:00</time></td>
+                  <td>Yurii Hnatiuk</td>
+                  <td><span class="tray-badge tray-badge--ink">On the way</span></td>
+                  <td data-num>$118.00</td>
+                </tr>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20418" aria-haspopup="dialog">PL-20418</button></th>
+                  <td><span class="tray-person__text"><span>Ivan Petrenko</span><small>Lviv, 3 × 50 g</small></span></td>
+                  <td><time datetime="2026-11-27T12:00">12:00–14:00</time></td>
+                  <td>Swift Post</td>
+                  <td><span class="tray-badge tray-badge--ink">On the way</span></td>
+                  <td data-num>$186.00</td>
+                </tr>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20415" aria-haspopup="dialog">PL-20415</button></th>
+                  <td><span class="tray-person__text"><span>Halyna Rudenko</span><small>Lviv, 1 × 30 g, 1 × 50 g</small></span></td>
+                  <td><time datetime="2026-11-27T12:00">12:00–14:00</time></td>
+                  <td>Swift Post</td>
+                  <td><span class="tray-badge tray-badge--ink">On the way</span></td>
+                  <td data-num>$85.00</td>
+                </tr>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20424" aria-haspopup="dialog">PL-20424</button></th>
+                  <td><span class="tray-person__text"><span>Yulia Tkachenko</span><small>Dnipro, 1 × 30 g, 1 × 50 g</small></span></td>
+                  <td><time datetime="2026-11-27T13:00">13:00–15:00</time></td>
+                  <td>Swift Post</td>
+                  <td><span class="tray-badge tray-badge--ink">On the way</span></td>
+                  <td data-num>$106.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="tray-tabpanel" role="tabpanel" id="panel-late" aria-labelledby="tab-late" hidden>
+          <div class="tray-table-wrap" tabindex="0" role="region" aria-label="Deliveries today: late">
+            <table class="tray-table tray-table--hover tray-table--pad" aria-label="Deliveries today: late" style="min-inline-size: 48rem">
+              <thead>
+                <tr>
+                  <th scope="col">Order</th>
+                  <th scope="col">Customer</th>
+                  <th scope="col">Window</th>
+                  <th scope="col">Courier</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" data-num>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20421" data-open-first aria-haspopup="dialog">PL-20421</button></th>
+                  <td><span class="tray-person__text"><span>Taras Bondar</span><small>Kyiv, 2 × 30 g</small></span></td>
+                  <td><time datetime="2026-11-27T10:00">10:00–12:00</time></td>
+                  <td>Yurii Hnatiuk</td>
+                  <td><span class="tray-badge tray-badge--danger"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-clock"/></svg>Late</span></td>
+                  <td data-num>$85.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="tray-tabpanel" role="tabpanel" id="panel-delivered" aria-labelledby="tab-delivered" hidden>
+          <div class="tray-table-wrap" tabindex="0" role="region" aria-label="Deliveries today: delivered">
+            <table class="tray-table tray-table--hover tray-table--pad" aria-label="Deliveries today: delivered" style="min-inline-size: 48rem">
+              <thead>
+                <tr>
+                  <th scope="col">Order</th>
+                  <th scope="col">Customer</th>
+                  <th scope="col">Window</th>
+                  <th scope="col">Courier</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" data-num>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20371" aria-haspopup="dialog">PL-20371</button></th>
+                  <td><span class="tray-person__text"><span>Olena Bondar</span><small>Kharkiv, 1 × 50 g</small></span></td>
+                  <td><time datetime="2026-11-27T08:00">08:00–10:00</time></td>
+                  <td>Swift Post</td>
+                  <td><span class="tray-badge tray-badge--success"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg>Delivered</span></td>
+                  <td data-num>$68.00</td>
+                </tr>
+                <tr>
+                  <th scope="row"><button class="tray-btn tray-btn--link" type="button" data-tray="open" data-target="#box-20362" aria-haspopup="dialog">PL-20362</button></th>
+                  <td><span class="tray-person__text"><span>Viktor Marchenko</span><small>Odesa, 1 × 100 g</small></span></td>
+                  <td><time datetime="2026-11-27T09:00">09:00–11:00</time></td>
+                  <td>Swift Post</td>
+                  <td><span class="tray-badge tray-badge--success"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg>Delivered</span></td>
+                  <td data-num>$118.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<dialog class="tray-sheet" id="box-20371" data-tray="dialog" aria-labelledby="box-20371-title">
+  <div class="tray-dialog__head">
+    <div>
+      <h2 class="title" id="box-20371-title">PL-20371</h2>
+      <p class="tray-dialog__text">Olena Bondar, Kharkiv</p>
+    </div>
+    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-close aria-label="Close"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button>
+  </div>
+  <div class="tray-dialog__body">
+    <ol class="tray-stepper tray-stepper--v" aria-label="Delivery of PL-20371" role="list">
+      <li data-done><span class="tray-step"><span class="tray-step__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span><span class="tray-step__text">Packed<span class="tray-vh">, done</span><small>Thu, 17:40</small></span></span></li>
+      <li data-done><span class="tray-step"><span class="tray-step__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span><span class="tray-step__text">With the courier<span class="tray-vh">, done</span><small>Swift Post, Thu, 19:05</small></span></span></li>
+      <li data-done><span class="tray-step"><span class="tray-step__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span><span class="tray-step__text">Delivered<span class="tray-vh">, done</span><small>At 08:31, to Olena</small></span></span></li>
+    </ol>
+    <dl class="tray-dl tray-dl--stack tray-dl--plain">
+      <div><dt>Address</dt><dd>14 Clover Lane, flat 6, Kharkiv</dd></div>
+      <div><dt>Phone</dt><dd><a href="tel:+380007002146">+380 00 700 21 46</a></dd></div>
+      <div><dt>In the box</dt><dd>1 × 50 g, chilled; $68.00, paid</dd></div>
+    </dl>
+  </div>
+  <div class="tray-dialog__foot"><button class="tray-btn tray-btn--dark tray-btn--md tray-btn--block" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-receipt-text"/></svg>Send the receipt</button></div>
+</dialog>
+<dialog class="tray-sheet" id="box-20362" data-tray="dialog" aria-labelledby="box-20362-title">
+  <div class="tray-dialog__head">
+    <div>
+      <h2 class="title" id="box-20362-title">PL-20362</h2>
+      <p class="tray-dialog__text">Viktor Marchenko, Odesa</p>
+    </div>
+    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-close aria-label="Close"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button>
+  </div>
+  <div class="tray-dialog__body">
+    <ol class="tray-stepper tray-stepper--v" aria-label="Delivery of PL-20362" role="list">
+      <li data-done><span class="tray-step"><span class="tray-step__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span><span class="tray-step__text">Packed<span class="tray-vh">, done</span><small>Thu, 17:52</small></span></span></li>
+      <li data-done><span class="tray-step"><span class="tray-step__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span><span class="tray-step__text">With the courier<span class="tray-vh">, done</span><small>Swift Post, Thu, 19:05</small></span></span></li>
+      <li data-done><span class="tray-step"><span class="tray-step__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span><span class="tray-step__text">Delivered<span class="tray-vh">, done</span><small>At 09:58, to Viktor</small></span></span></li>
+    </ol>
+    <dl class="tray-dl tray-dl--stack tray-dl--plain">
+      <div><dt>Address</dt><dd>3 Saltmarsh Street, Odesa</dd></div>
+      <div><dt>Phone</dt><dd><a href="tel:+380007003318">+380 00 700 33 18</a></dd></div>
+      <div><dt>In the box</dt><dd>1 × 100 g, chilled; $118.00, paid</dd></div>
+    </dl>
+  </div>
+  <div class="tray-dialog__foot"><button class="tray-btn tray-btn--dark tray-btn--md tray-btn--block" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-receipt-text"/></svg>Send the receipt</button></div>
+</dialog>
+<dialog class="tray-sheet" id="box-20421" data-tray="dialog" aria-labelledby="box-20421-title">
+  <div class="tray-dialog__head">
+    <div>
+      <h2 class="title" id="box-20421-title">PL-20421</h2>
+      <p class="tray-dialog__text">Taras Bondar, Kyiv</p>
+    </div>
+    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-close aria-label="Close"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button>
+  </div>
+  <div class="tray-dialog__body">
+    <div class="tray-alert tray-alert--danger" role="status">
+      <span class="tray-alert__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-clock"/></svg></span>
+      <div class="tray-alert__body">
+        <p class="tray-alert__title">The window ended at 12:00</p>
+        <p class="tray-alert__text">Yurii is 10 minutes away. Tell Taras the box is coming.</p>
+      </div>
+    </div>
+    <ol class="tray-stepper tray-stepper--v" aria-label="Delivery of PL-20421" role="list">
+      <li data-done><span class="tray-step"><span class="tray-step__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span><span class="tray-step__text">Packed<span class="tray-vh">, done</span><small>08:40</small></span></span></li>
+      <li aria-current="step"><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">With the courier<small>Yurii, our van, since 09:30</small></span></span></li>
+      <li><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Delivered<small>Due by 12:00</small></span></span></li>
+    </ol>
+    <dl class="tray-dl tray-dl--stack tray-dl--plain">
+      <div><dt>Address</dt><dd>22 Mossy Bank Road, Kyiv</dd></div>
+      <div><dt>Phone</dt><dd><a href="tel:+380007005290">+380 00 700 52 90</a></dd></div>
+      <div><dt>In the box</dt><dd>2 × 30 g, chilled; $85.00, paid</dd></div>
+    </dl>
+  </div>
+  <div class="tray-dialog__foot"><button class="tray-btn tray-btn--dark tray-btn--md tray-btn--block" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-phone"/></svg>Call Yurii</button></div>
+</dialog>
+<dialog class="tray-sheet" id="box-20420" data-tray="dialog" aria-labelledby="box-20420-title">
+  <div class="tray-dialog__head">
+    <div>
+      <h2 class="title" id="box-20420-title">PL-20420</h2>
+      <p class="tray-dialog__text">Anna Melnyk, Kyiv</p>
+    </div>
+    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-close aria-label="Close"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button>
+  </div>
+  <div class="tray-dialog__body">
+    <ol class="tray-stepper tray-stepper--v" aria-label="Delivery of PL-20420" role="list">
+      <li data-done><span class="tray-step"><span class="tray-step__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span><span class="tray-step__text">Packed<span class="tray-vh">, done</span><small>08:55</small></span></span></li>
+      <li aria-current="step"><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">With the courier<small>Yurii, our van, since 09:30</small></span></span></li>
+      <li><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Delivered<small>Due by 13:00</small></span></span></li>
+    </ol>
+    <dl class="tray-dl tray-dl--stack tray-dl--plain">
+      <div><dt>Address</dt><dd>7 Willow Yard, flat 12, Kyiv</dd></div>
+      <div><dt>Phone</dt><dd><a href="tel:+380007001864">+380 00 700 18 64</a></dd></div>
+      <div><dt>In the box</dt><dd>1 × 100 g, chilled; $118.00, paid</dd></div>
+    </dl>
+  </div>
+  <div class="tray-dialog__foot"><button class="tray-btn tray-btn--dark tray-btn--md tray-btn--block" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg>Track the box</button></div>
+</dialog>
+<dialog class="tray-sheet" id="box-20418" data-tray="dialog" aria-labelledby="box-20418-title">
+  <div class="tray-dialog__head">
+    <div>
+      <h2 class="title" id="box-20418-title">PL-20418</h2>
+      <p class="tray-dialog__text">Ivan Petrenko, Lviv</p>
+    </div>
+    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-close aria-label="Close"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button>
+  </div>
+  <div class="tray-dialog__body">
+    <ol class="tray-stepper tray-stepper--v" aria-label="Delivery of PL-20418" role="list">
+      <li data-done><span class="tray-step"><span class="tray-step__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span><span class="tray-step__text">Packed<span class="tray-vh">, done</span><small>Thu, 18:10</small></span></span></li>
+      <li aria-current="step"><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">With the courier<small>Swift Post, since 07:20</small></span></span></li>
+      <li><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Delivered<small>Due by 14:00</small></span></span></li>
+    </ol>
+    <dl class="tray-dl tray-dl--stack tray-dl--plain">
+      <div><dt>Address</dt><dd>41 Quince Street, Lviv</dd></div>
+      <div><dt>Phone</dt><dd><a href="tel:+380007004712">+380 00 700 47 12</a></dd></div>
+      <div><dt>In the box</dt><dd>3 × 50 g, chilled; $186.00, paid</dd></div>
+    </dl>
+  </div>
+  <div class="tray-dialog__foot"><button class="tray-btn tray-btn--dark tray-btn--md tray-btn--block" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg>Track the box</button></div>
+</dialog>
+<dialog class="tray-sheet" id="box-20415" data-tray="dialog" aria-labelledby="box-20415-title">
+  <div class="tray-dialog__head">
+    <div>
+      <h2 class="title" id="box-20415-title">PL-20415</h2>
+      <p class="tray-dialog__text">Halyna Rudenko, Lviv</p>
+    </div>
+    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-close aria-label="Close"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button>
+  </div>
+  <div class="tray-dialog__body">
+    <ol class="tray-stepper tray-stepper--v" aria-label="Delivery of PL-20415" role="list">
+      <li data-done><span class="tray-step"><span class="tray-step__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span><span class="tray-step__text">Packed<span class="tray-vh">, done</span><small>Thu, 18:24</small></span></span></li>
+      <li aria-current="step"><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">With the courier<small>Swift Post, since 07:20</small></span></span></li>
+      <li><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Delivered<small>Due by 14:00</small></span></span></li>
+    </ol>
+    <dl class="tray-dl tray-dl--stack tray-dl--plain">
+      <div><dt>Address</dt><dd>9 Snail Hill, flat 3, Lviv</dd></div>
+      <div><dt>Phone</dt><dd><a href="tel:+380007006105">+380 00 700 61 05</a></dd></div>
+      <div><dt>In the box</dt><dd>1 × 30 g, 1 × 50 g, chilled; $85.00, paid</dd></div>
+    </dl>
+  </div>
+  <div class="tray-dialog__foot"><button class="tray-btn tray-btn--dark tray-btn--md tray-btn--block" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg>Track the box</button></div>
+</dialog>
+<dialog class="tray-sheet" id="box-20424" data-tray="dialog" aria-labelledby="box-20424-title">
+  <div class="tray-dialog__head">
+    <div>
+      <h2 class="title" id="box-20424-title">PL-20424</h2>
+      <p class="tray-dialog__text">Yulia Tkachenko, Dnipro</p>
+    </div>
+    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-close aria-label="Close"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button>
+  </div>
+  <div class="tray-dialog__body">
+    <ol class="tray-stepper tray-stepper--v" aria-label="Delivery of PL-20424" role="list">
+      <li data-done><span class="tray-step"><span class="tray-step__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span><span class="tray-step__text">Packed<span class="tray-vh">, done</span><small>Thu, 18:31</small></span></span></li>
+      <li aria-current="step"><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">With the courier<small>Swift Post, since 07:45</small></span></span></li>
+      <li><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Delivered<small>Due by 15:00</small></span></span></li>
+    </ol>
+    <dl class="tray-dl tray-dl--stack tray-dl--plain">
+      <div><dt>Address</dt><dd>58 Riverbed Avenue, Dnipro</dd></div>
+      <div><dt>Phone</dt><dd><a href="tel:+380007002937">+380 00 700 29 37</a></dd></div>
+      <div><dt>In the box</dt><dd>1 × 30 g, 1 × 50 g, chilled; $106.00, paid</dd></div>
+    </dl>
+  </div>
+  <div class="tray-dialog__foot"><button class="tray-btn tray-btn--dark tray-btn--md tray-btn--block" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg>Track the box</button></div>
+</dialog>
+<dialog class="tray-sheet" id="box-20431" data-tray="dialog" aria-labelledby="box-20431-title">
+  <div class="tray-dialog__head">
+    <div>
+      <h2 class="title" id="box-20431-title">PL-20431</h2>
+      <p class="tray-dialog__text">Dana Kovalenko, Kyiv</p>
+    </div>
+    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-close aria-label="Close"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button>
+  </div>
+  <div class="tray-dialog__body">
+    <ol class="tray-stepper tray-stepper--v" aria-label="Delivery of PL-20431" role="list">
+      <li aria-current="step"><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Packed<small>Bohdan is packing it now</small></span></span></li>
+      <li><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">With the courier<small>Yurii, our van collects it at 14:00</small></span></span></li>
+      <li><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Delivered<small>Between 14:00 and 16:00</small></span></span></li>
+    </ol>
+    <dl class="tray-dl tray-dl--stack tray-dl--plain">
+      <div><dt>Address</dt><dd>16 Fieldstone Street, Kyiv</dd></div>
+      <div><dt>Phone</dt><dd><a href="tel:+380007009021">+380 00 700 90 21</a></dd></div>
+      <div><dt>In the box</dt><dd>4 × 50 g, gift box, chilled; $274.00, paid</dd></div>
+    </dl>
+  </div>
+  <div class="tray-dialog__foot"><button class="tray-btn tray-btn--dark tray-btn--md tray-btn--block" type="button" data-close><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg>Mark as packed</button></div>
+</dialog>
+<dialog class="tray-sheet" id="box-20430" data-tray="dialog" aria-labelledby="box-20430-title">
+  <div class="tray-dialog__head">
+    <div>
+      <h2 class="title" id="box-20430-title">PL-20430</h2>
+      <p class="tray-dialog__text">Marta Hrytsenko, Odesa</p>
+    </div>
+    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-close aria-label="Close"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button>
+  </div>
+  <div class="tray-dialog__body">
+    <ol class="tray-stepper tray-stepper--v" aria-label="Delivery of PL-20430" role="list">
+      <li aria-current="step"><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Packed<small>Bohdan is packing it now</small></span></span></li>
+      <li><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">With the courier<small>Swift Post collects it at 14:00</small></span></span></li>
+      <li><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Delivered<small>Between 15:00 and 18:00</small></span></span></li>
+    </ol>
+    <dl class="tray-dl tray-dl--stack tray-dl--plain">
+      <div><dt>Address</dt><dd>5 Pebble Street, Odesa</dd></div>
+      <div><dt>Phone</dt><dd><a href="tel:+380007007450">+380 00 700 74 50</a></dd></div>
+      <div><dt>In the box</dt><dd>1 × 50 g, chilled; $68.00, paid</dd></div>
+    </dl>
+  </div>
+  <div class="tray-dialog__foot"><button class="tray-btn tray-btn--dark tray-btn--md tray-btn--block" type="button" data-close><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg>Mark as packed</button></div>
+</dialog>
+<script src="../components/bundle.js"></script>
+</body>
+</html>
+```

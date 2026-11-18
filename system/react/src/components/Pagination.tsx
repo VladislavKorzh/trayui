@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { useControlled } from '../lib/util';
 import { Icon } from './Icon';
@@ -58,7 +59,15 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(functio
     const go = extra.disabled ? undefined : () => setPage(to);
     if (href) {
       return (
-        <a className={className} href={extra.disabled ? undefined : href(to)} aria-disabled={extra.disabled ? true : undefined} onClick={go} {...a11y}>
+        // A step that is off loses its href, and with it the role of a link: role="link" keeps it one, with its name, off.
+        <a
+          className={className}
+          href={extra.disabled ? undefined : href(to)}
+          role={extra.disabled ? 'link' : undefined}
+          aria-disabled={extra.disabled ? true : undefined}
+          onClick={go}
+          {...a11y}
+        >
           {content}
         </a>
       );

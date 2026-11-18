@@ -81,8 +81,9 @@
 /* ---------- Input OTP ---------- */
 
 /* A code is read left to right in every language: the cells keep that order in a right-to-left page too. */
-.tray-otp { display: inline-flex; align-items: center; gap: var(--space-2); direction: ltr; }
-.tray-otp input { inline-size: 52px; block-size: var(--size-lg); padding: 0; border: 0; border-radius: var(--radius-control); background: var(--tray-fill); color: var(--ink); caret-color: var(--ink); font: 700 1.375rem/1 var(--font-sans); font-variant-numeric: tabular-nums; text-align: center; }
+/* On a narrow phone the cells share the width there is, rather than run past the edge of the screen. */
+.tray-otp { display: inline-flex; align-items: center; gap: var(--space-2); max-inline-size: 100%; direction: ltr; }
+.tray-otp input { flex: 0 1 52px; inline-size: 52px; min-inline-size: 0; block-size: var(--size-lg); padding: 0; border: 0; border-radius: var(--radius-control); background: var(--tray-fill); color: var(--ink); caret-color: var(--ink); font: 700 1.375rem/1 var(--font-sans); font-variant-numeric: tabular-nums; text-align: center; }
 .tray-otp input:focus-visible { outline: 2px solid var(--ink); outline-offset: 0; }
 .tray-otp[aria-invalid="true"] input { outline: 2px solid var(--danger); outline-offset: -2px; }
 .tray-otp[aria-invalid="true"] input:focus-visible { outline: 2px solid var(--ink); outline-offset: 0; box-shadow: inset 0 0 0 2px var(--danger); }

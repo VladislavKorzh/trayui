@@ -9,7 +9,7 @@ A scroll area keeps a long list or a wide row inside a fixed box, with a thin sc
 ## Use
 ```tsx
 <ScrollArea label="Pickup points" maxHeight="13rem">       {/* vertical: at most 13rem, then it scrolls */}
-  <ul className="tray-items tray-items--ruled">…</ul>
+  <ul className="tray-items tray-items--ruled" role="list">…</ul>
 </ScrollArea>
 
 <ScrollArea label="Filters" orientation="horizontal">      {/* sideways: its child stays on one line */}

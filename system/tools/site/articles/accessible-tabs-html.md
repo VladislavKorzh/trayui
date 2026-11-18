@@ -136,7 +136,7 @@ Write the strip and the panels, with `data-tray="tabs"` on the wrapper:
 </div>
 ```
 
-The script writes `aria-selected` and `tabindex` on every tab, so the tabs you leave unmarked start as `false` and `-1`, shows the panel of the tab marked `aria-selected="true"` (or of the first), and handles the keys above, automatic activation and right to left. It fires `tray:change` on the wrapper with `detail.tab`, the selected tab's `id`, after each choice; since the next release the tab it starts on fires nothing (0.2.0 fired once at load for it).
+The script writes `aria-selected` and `tabindex` on every tab, so the tabs you leave unmarked start as `false` and `-1`, shows the panel of the tab marked `aria-selected="true"` (or of the first), and handles the keys above, automatic activation and right to left. It fires `tray:change` on the wrapper with `detail.tab`, the selected tab's `id`, after each choice; since version 0.3.0 the tab it starts on fires nothing (0.2.0 fired once at load for it).
 
 The tabs are 44px high. Focus draws the 3px ring inside the tab, and the selected tab is solid ink: a pill behind it slides to the next tab chosen, following `aria-selected`, so a tab selected from your own script moves it too. A panel chosen by a press fades in; under `prefers-reduced-motion: reduce` the pill moves at once and the panel appears without fading. For navigation, write `<nav class="tray-tabs" aria-label="…">` with `<a class="tray-tab">` links and `aria-current` on the current one; it needs no script. A strip that may not fit takes `data-tray="strip"`: it scrolls sideways and fades at its end while tabs run past it.
 

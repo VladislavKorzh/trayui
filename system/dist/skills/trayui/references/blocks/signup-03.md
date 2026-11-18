@@ -1,0 +1,78 @@
+# Sign-up page on a tray
+
+A white sign-up panel on a grey ground, with Google and Apple shown and four more accounts in a menu, and the terms and privacy notice below.
+
+The ground of this sign-up page is grey, and the registration form is a white panel with the wordmark centred above it. The line on the terms and the privacy notice moves out of the form to the foot of the page, and the link to sign in sits under the heading, so the panel ends on the account buttons.
+
+Choose it to match [the sign-in page on a tray](https://trayui.com/blocks/login-03.md), or when six account buttons would crowd the form: Google and Apple stay in view and "More" holds the other four, in one row of three at every width. The behaviour gives "More" `aria-haspopup="menu"` and `aria-expanded`, and its name, "More accounts to continue with", starts with the word it shows, so a person using voice control can say "More". The menu opens upwards, the arrow keys move through its accounts, and Escape puts focus back on the button.
+
+It is made of these components: [Auth Form](https://trayui.com/components/auth-form.md), [Field](https://trayui.com/components/field.md), [Label](https://trayui.com/components/label.md), [Input](https://trayui.com/components/input.md), [Input Group](https://trayui.com/components/input-group.md), [Button](https://trayui.com/components/button.md), [Separator](https://trayui.com/components/separator.md), [Dropdown Menu](https://trayui.com/components/dropdown-menu.md).
+
+Behaviours it uses: `menu`, `reveal`.
+
+Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign-up page on a tray</title>
+<meta name="description" content="A white sign-up panel on a grey ground, with Google and Apple shown and four more accounts in a menu, and the terms and privacy notice below.">
+<meta name="tray-category" content="Signup">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-screen tray-screen--tray">
+  <main class="tray-screen__body tray-screen__body--center">
+    <a class="tray-wordmark" href="/" style="justify-self: center">Counter</a>
+    <form class="tray-panel tray-auth" action="/signup" method="post">
+      <div class="tray-auth__head">
+        <h1 class="title">Create an account</h1>
+        <p>Already have one? <a href="/signin">Sign in</a></p>
+      </div>
+      <div class="tray-stack">
+        <div class="tray-field">
+          <label class="tray-label" for="email">Work email</label>
+          <input class="tray-input" id="email" name="email" type="email" autocomplete="username" placeholder="you@farm.example" required>
+        </div>
+        <div class="tray-field">
+          <label class="tray-label" for="password">Password</label>
+          <div class="tray-input-group">
+            <input class="tray-input" id="password" name="password" type="password" spellcheck="false" autocapitalize="none" autocomplete="new-password" minlength="12" aria-describedby="password-hint" required>
+            <button class="tray-input-group__btn" type="button" data-tray="reveal" aria-label="Show password"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></button>
+          </div>
+          <p class="tray-field__hint" id="password-hint">At least 12 characters.</p>
+        </div>
+      </div>
+      <button class="tray-btn tray-btn--block" type="submit">Create the account</button>
+      <div class="tray-stack tray-stack--sm">
+        <p class="tray-rule tray-rule--label">or continue with</p>
+        <div class="tray-providers tray-providers--row" role="group" aria-label="Sign up with another account">
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/google" aria-label="Continue with Google">Google</a>
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signup/apple" aria-label="Continue with Apple">Apple</a>
+          <div class="tray-anchor tray-anchor--block" data-tray="menu">
+            <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" aria-label="More accounts to continue with">More<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-chevron-down"/></svg></button>
+            <div class="tray-pop tray-pop--end tray-pop--top">
+              <div class="tray-list">
+                <a class="tray-option" role="menuitem" href="/signup/facebook">Facebook</a>
+                <a class="tray-option" role="menuitem" href="/signup/telegram">Telegram</a>
+                <a class="tray-option" role="menuitem" href="/signup/linkedin">LinkedIn</a>
+                <a class="tray-option" role="menuitem" href="/signup/microsoft">Microsoft</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </main>
+  <footer class="tray-screen__foot">
+    <p>By signing up you accept the <a href="/terms">terms</a> and the <a href="/privacy">privacy&nbsp;notice</a>.</p>
+  </footer>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>
+```

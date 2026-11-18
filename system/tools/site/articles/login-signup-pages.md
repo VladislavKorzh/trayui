@@ -77,7 +77,7 @@ for (const button of document.querySelectorAll('[data-tray="reveal"]')) {
 }
 ```
 
-Tray UI's version also swaps the icon between `eye` and `eye-off` and, since the next release, turns the field back to `type="password"` when the form is sent and when Back brings the page from the browser's cache. On the text type a field is spellchecked and capitalised, so the blocks give it `spellcheck="false"` and `autocapitalize="none"`. [Show password: aria-pressed or a new label](#a-show-password-button) compares this with the other pattern, a name that changes and no `aria-pressed`.
+Tray UI's version also swaps the icon between `eye` and `eye-off` and, since version 0.3.0, turns the field back to `type="password"` when the form is sent and when Back brings the page from the browser's cache. On the text type a field is spellchecked and capitalised, so the blocks give it `spellcheck="false"` and `autocapitalize="none"`. [Show password: aria-pressed or a new label](#a-show-password-button) compares this with the other pattern, a name that changes and no `aria-pressed`.
 
 ## Errors
 

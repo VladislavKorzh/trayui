@@ -4,6 +4,7 @@ import { Badge, Button, Card, DropdownMenu, NotificationCenter, TopBar, UserMenu
 export function OverThePage() {
   return (
     <TopBar
+      fold
       breadcrumb={[{ label: 'Perly Farm', href: '#' }, { label: 'Orders', href: '#' }, { label: 'PL-20431' }]}
       search="Search orders"
       actions={[

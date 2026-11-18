@@ -23,9 +23,9 @@ Link the three files, in this order:
 <!doctype html>
 <html lang="en" data-theme="light">
 <head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.2.0/tokens.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.2.0/components/bundle.css">
-  <script src="https://cdn.jsdelivr.net/npm/trayui@0.2.0/components/bundle.js" defer></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.3.0/tokens.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.3.0/components/bundle.css">
+  <script src="https://cdn.jsdelivr.net/npm/trayui@0.3.0/components/bundle.js" defer></script>
 </head>
 ```
 
@@ -49,6 +49,17 @@ With a bundler, install them from npm (`npm install trayui`) and import `trayui/
 That is a grey tray on the white page, a white field in it, and the one yellow button. Components that need a script take `data-tray`, as in `<div data-tray="tabs">`, and wire themselves. If you add markup after the page has loaded, call `TrayUI.init(root)` on it.
 
 The files in `system/dist/blocks/` open as they are: start a screen from the nearest one.
+
+## Add with the CLI
+
+```sh
+npx trayui init              # the three files and the font, in trayui/
+npx trayui add login-01      # a block beside your pages, its links pointed at trayui/
+npx trayui diff              # what you changed, and what a new release changed
+npx trayui check page.html   # the markup checked against the system's rules
+```
+
+In a React app (Vite, Next.js) the same commands copy the source of components and blocks into `src/components/trayui/`, as files you own: `npx trayui add button tabs login-01`. `npx trayui update` brings them to a new release and keeps every file you changed. The items are also a registry in shadcn's format, so `npx shadcn add https://trayui.com/r/login-01.json` works too. It needs Node 18 or later and nothing else; [the CLI page](https://trayui.com/docs/cli) lists the commands. Its source is [`system/cli`](system/cli).
 
 ## React
 
@@ -94,7 +105,7 @@ The rules of the system live in the repository:
 
 The documentation site, [trayui.com](https://trayui.com), has a live example of every component and block and a playground for most. It is built from this repository, and anyone can build and run it locally; [CONTRIBUTING.md](CONTRIBUTING.md) says how.
 
-For an AI agent, the site has [llms.txt](https://trayui.com/llms.txt), an index of every page, and `llms-full.txt`, the rules, the guides and the markup of every component in one plain file. Every page is also Markdown at its address with `.md` added.
+For an AI agent, there is a skill: `SKILL.md` with the rules, every page of the site as Markdown, and a checker the agent runs on what it writes. Install it in Claude Code with `claude plugin marketplace add https://trayui.com/skills/marketplace.json` and `claude plugin install trayui@trayui`, upload [trayui.zip](https://trayui.com/skills/trayui.zip) to claude.ai, or copy it into a project with `npx trayui skill`; [the agents page](https://trayui.com/docs/agents) says more. The site also has [llms.txt](https://trayui.com/llms.txt), an index of every page, and `llms-full.txt`, the rules, the guides and the markup of every component in one plain file. Every page is also Markdown at its address with `.md` added.
 
 ## What is where
 
@@ -104,6 +115,8 @@ For an AI agent, the site has [llms.txt](https://trayui.com/llms.txt), an index 
 | `system/src/` | What the bundle is built from: the stylesheets (`css/`), the behaviours (`js/`), the icons. |
 | `system/project/` | The system as it is written: the brand book, `tokens.json`, the guides, a guide and a preview for every component, and the blocks. |
 | `system/react/` | `trayui-react`: the components for React, and the charts (`trayui-react/charts`). |
+| `system/cli/` | The `trayui` command (`npx trayui`) and the markup checker it and the skill run. |
+| `system/skill/` | The skill for agents, as it is written: the build adds every page of the site and the checker. |
 | `system/tools/` | The build, the documentation site and the checks. |
 
 ## Contributing

@@ -6,6 +6,8 @@
 .tray-message--top { align-items: flex-start; }
 .tray-message__content { display: grid; gap: 6px; justify-items: start; min-inline-size: 0; max-inline-size: min(100%, 34rem); }
 .tray-message--end .tray-message__content { justify-items: end; }
+/* Each part hugs its content but never grows past the column: a code block's long line scrolls inside the block. */
+.tray-message__content > * { max-inline-size: 100%; }
 .tray-message__head { display: flex; align-items: baseline; gap: var(--space-2); color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
 .tray-message__head b { color: var(--ink); font-weight: 600; }
 .tray-message__foot { display: flex; align-items: center; gap: var(--space-1); color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
@@ -93,7 +95,8 @@
 
 /* ---------- Trace: what an agent did, step by step ---------- */
 
-.tray-trace { position: relative; display: grid; margin: 0; padding: 0; list-style: none; }
+/* One column that may be narrower than its widest line: a step's output scrolls inside its code block. */
+.tray-trace { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); margin: 0; padding: 0; list-style: none; }
 .tray-trace::before { content: ""; position: absolute; inset-block: 20px; inset-inline-start: 15.5px; inline-size: 1px; background: var(--hairline); }
 .tray-trace__line { position: relative; display: flex; align-items: center; gap: var(--space-3); min-block-size: var(--size-xs); color: var(--ink-soft); font: 400 .9375rem/1.3 var(--font-sans); }
 .tray-trace__icon { flex: none; display: grid; place-items: center; inline-size: 32px; block-size: 32px; border-radius: var(--radius-chip); background: var(--tray-fill); color: var(--ink); }
@@ -103,6 +106,9 @@
 .tray-trace__line[data-status="running"] .tray-trace__title { color: var(--ink); }
 .tray-trace__line[data-status="failed"] .tray-trace__icon, .tray-trace__line[data-status="failed"] .tray-trace__title b { color: var(--danger); }
 .tray-trace__detail { margin: var(--space-1) 0 var(--space-3) 44px; }
+/* The output inside its step's <li>, so the list holds one item per step: it takes a row of its own under the title. */
+.tray-trace__line:has(> .tray-trace__detail) { flex-wrap: wrap; row-gap: var(--space-1); }
+.tray-trace__line > .tray-trace__detail { flex: 1 0 calc(100% - 44px); min-inline-size: 0; margin-block: 0 var(--space-3); }
 .tray-trace-group > summary { display: inline-flex; align-items: center; gap: var(--space-2); min-block-size: var(--size-hit); color: var(--ink-soft); font: 500 .9375rem/1.3 var(--font-sans); list-style: none; cursor: pointer; border-radius: var(--radius-mark); }
 .tray-trace-group > summary::-webkit-details-marker { display: none; }
 .tray-trace-group > summary .tray-icon { transition: transform var(--duration-move) var(--ease); }

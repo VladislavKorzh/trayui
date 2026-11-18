@@ -1,0 +1,361 @@
+# Table with sortable columns and row menus
+
+A table of customers with avatars, columns that sort, a search and a menu on each row, beside a sidebar folded to a rail.
+
+A data table of records to look up, sort and act on one by one, such as customers or accounts. Each row starts with an avatar and a name over an email, and ends in a menu to open the record, start an order, write an email or remove it, the last in the danger colour. Every column sorts, and Spent starts sorted from the most. The sidebar is folded to a rail of icons with tooltips, which leaves the table more width, and the pager reads "Page 1 of 53" between two arrows. Pick it over the [table with filters and bulk actions](https://trayui.com/blocks/table-01.md) when nobody needs to select rows.
+
+Each menu button is named for its row, as in "Actions for Bistro Kalyna", and the menus of the last four rows open upwards. In the rail every link keeps its name for a screen reader. Below 56rem the rail gives way to a menu button, and the sheet it opens shows the full labels.
+
+It is made of these components: [App Shell](https://trayui.com/components/app-shell.md), [Sidebar](https://trayui.com/components/sidebar.md), [Dropdown Menu](https://trayui.com/components/dropdown-menu.md), [Workspace Switcher](https://trayui.com/components/workspace-switcher.md), [Avatar](https://trayui.com/components/avatar.md), [Tooltip](https://trayui.com/components/tooltip.md), [Badge](https://trayui.com/components/badge.md), [Top Bar](https://trayui.com/components/top-bar.md), [Button](https://trayui.com/components/button.md), [Breadcrumb](https://trayui.com/components/breadcrumb.md), [Kbd](https://trayui.com/components/kbd.md), [Page Header](https://trayui.com/components/page-header.md), [Data Table](https://trayui.com/components/data-table.md), [Input Group](https://trayui.com/components/input-group.md), [Input](https://trayui.com/components/input.md), [Table](https://trayui.com/components/table.md), [Empty](https://trayui.com/components/empty.md), [Pagination](https://trayui.com/components/pagination.md).
+
+Behaviours it uses: `datatable`, `menu`, `sidebar-sheet`, `sidebar-toggle`, `tooltip`.
+
+Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Table with sortable columns and row menus</title>
+<meta name="description" content="A table of customers with avatars, columns that sort, a search and a menu on each row, beside a sidebar folded to a rail.">
+<meta name="tray-category" content="Tables">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app">
+  <div class="tray-app__side">
+    <nav class="tray-sidebar" id="nav" aria-label="Main" data-collapsed>
+      <div class="tray-sidebar__head" style="padding-inline: 0">
+        <div class="tray-anchor tray-anchor--block" data-tray="menu">
+          <button class="tray-switcher" type="button"><span class="tray-avatar tray-avatar--sm tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-person__text"><b>Perly Farm</b><small>Shop plan</small></span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chevrons-up-down"/></svg></button>
+          <div class="tray-pop">
+            <div class="tray-list">
+              <p class="tray-list__label">Workspaces</p>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="true"><span class="tray-avatar tray-avatar--xs tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-option__text">Perly Farm</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">MB</span><span class="tray-option__text">Meadow Bakery</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">HC</span><span class="tray-option__text">Hill Cheese</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <hr class="tray-list__rule">
+              <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New workspace</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tray-sidebar__scroll">
+        <div class="tray-sidebar__group">
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Home"><a class="tray-sidebar__item" href="#" aria-label="Home"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a></span>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Orders"><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg><span>Orders</span><span class="tray-badge tray-badge--count">12<span class="tray-vh"> to pack</span></span></a></span>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Deliveries"><a class="tray-sidebar__item" href="#" aria-label="Deliveries"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg><span>Deliveries</span></a></span>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Customers"><a class="tray-sidebar__item" href="#" aria-label="Customers" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-users"/></svg><span>Customers</span></a></span>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Batches"><a class="tray-sidebar__item" href="#" aria-label="Batches"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span>Batches</span></a></span>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Reports"><a class="tray-sidebar__item" href="#" aria-label="Reports"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chart-column"/></svg><span>Reports</span></a></span>
+        </div>
+        <div class="tray-sidebar__group">
+          <p class="tray-sidebar__label">Workspace</p>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Team"><a class="tray-sidebar__item" href="#" aria-label="Team"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user-plus"/></svg><span>Team</span></a></span>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Billing"><a class="tray-sidebar__item" href="#" aria-label="Billing"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg><span>Billing</span></a></span>
+          <span class="tray-anchor tray-anchor--block" data-tray="tooltip" data-tip="Settings"><a class="tray-sidebar__item" href="#" aria-label="Settings"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-settings"/></svg><span>Settings</span></a></span>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <header class="tray-topbar">
+      <div class="tray-topbar__start">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the navigation"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+        <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon tray-app__collapse" type="button" data-tray="sidebar-toggle" aria-controls="nav" aria-label="Expand the sidebar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-panel-left"/></svg></button>
+        <nav aria-label="Breadcrumb"><ol class="tray-crumbs tray-crumbs--fold"><li><a href="#">Perly Farm</a></li><li><span aria-current="page">Customers</span></li></ol></nav>
+      </div>
+      <div class="tray-topbar__end">
+        <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search customers"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search customers</span><kbd class="tray-kbd">/</kbd></button>
+        <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 2 unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip">2</span></span>
+        <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko, OF">OF</button>
+      </div>
+    </header>
+    <main class="tray-app__content">
+      <div class="tray-pagehead">
+        <div class="tray-pagehead__row">
+          <div class="tray-pagehead__text">
+            <h1 class="title">Customers</h1>
+            <p>Everyone who has ordered from the farm, those who spent the most first. Demo data.</p>
+          </div>
+          <div class="tray-pagehead__actions">
+            <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-upload"/></svg>Import</button>
+            <button class="tray-btn tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user-plus"/></svg>Add a customer</button>
+          </div>
+        </div>
+        <p class="tray-pagehead__meta"><span><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-users"/></svg>521 customers</span><span><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-building"/></svg>24 restaurants and shops</span><span><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-rotate-cw"/></svg>61% have ordered twice or more</span></p>
+      </div>
+      <div class="tray-datatable" id="customers" data-tray="datatable">
+        <div class="tray-datatable__bar">
+          <div class="tray-input-group tray-input-group--sm"><span class="tray-input-group__addon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg></span><input class="tray-input" type="search" placeholder="Search by name, email or city" aria-label="Search customers" data-filter></div>
+          <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-download"/></svg>Export</button>
+        </div>
+        <div class="tray-table-wrap" tabindex="0" role="region" aria-label="Customers">
+          <table class="tray-table tray-table--hover tray-table--pad" aria-label="Customers" style="min-inline-size: 50rem">
+            <thead>
+              <tr>
+                <th scope="col"><button class="tray-sort" type="button">Customer<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-arrow-up-down"/></svg></button></th>
+                <th scope="col"><button class="tray-sort" type="button">Type<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-arrow-up-down"/></svg></button></th>
+                <th scope="col"><button class="tray-sort" type="button">City<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-arrow-up-down"/></svg></button></th>
+                <th scope="col" data-num><button class="tray-sort" type="button">Orders<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-arrow-up-down"/></svg></button></th>
+                <th scope="col" data-num aria-sort="descending"><button class="tray-sort" type="button">Spent<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-arrow-down"/></svg></button></th>
+                <th scope="col"><button class="tray-sort" type="button">Last order<svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-arrow-up-down"/></svg></button></th>
+                <th scope="col"><span class="tray-vh">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row" data-value="Bistro Kalyna"><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">BK</span><span class="tray-person__text"><b>Bistro Kalyna</b><small>orders@kalyna.example</small></span></span></th>
+                <td data-value="Restaurant"><span class="tray-badge tray-badge--ink">Restaurant</span></td>
+                <td>Kyiv</td>
+                <td data-num>46</td>
+                <td data-num data-value="14820">$14,820</td>
+                <td data-value="2026-11-25"><time datetime="2026-11-25">25 Nov</time></td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for Bistro Kalyna"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user"/></svg><span class="tray-option__text">Open the customer</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New order</span></button>
+                        <a class="tray-option" role="menuitem" href="mailto:orders@kalyna.example"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-mail"/></svg><span class="tray-option__text">Write an email</span></a>
+                        <hr class="tray-list__rule">
+                        <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-trash-2"/></svg><span class="tray-option__text">Remove the customer</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" data-value="Linden Kitchen"><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">LK</span><span class="tray-person__text"><b>Linden Kitchen</b><small>chef@linden.example</small></span></span></th>
+                <td data-value="Restaurant"><span class="tray-badge tray-badge--ink">Restaurant</span></td>
+                <td>Lviv</td>
+                <td data-num>31</td>
+                <td data-num data-value="9640">$9,640</td>
+                <td data-value="2026-11-24"><time datetime="2026-11-24">24 Nov</time></td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for Linden Kitchen"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user"/></svg><span class="tray-option__text">Open the customer</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New order</span></button>
+                        <a class="tray-option" role="menuitem" href="mailto:chef@linden.example"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-mail"/></svg><span class="tray-option__text">Write an email</span></a>
+                        <hr class="tray-list__rule">
+                        <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-trash-2"/></svg><span class="tray-option__text">Remove the customer</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" data-value="Harbour Room"><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">HR</span><span class="tray-person__text"><b>Harbour Room</b><small>kitchen@harbour.example</small></span></span></th>
+                <td data-value="Restaurant"><span class="tray-badge tray-badge--ink">Restaurant</span></td>
+                <td>Odesa</td>
+                <td data-num>22</td>
+                <td data-num data-value="7150">$7,150</td>
+                <td data-value="2026-11-19"><time datetime="2026-11-19">19 Nov</time></td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for Harbour Room"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user"/></svg><span class="tray-option__text">Open the customer</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New order</span></button>
+                        <a class="tray-option" role="menuitem" href="mailto:kitchen@harbour.example"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-mail"/></svg><span class="tray-option__text">Write an email</span></a>
+                        <hr class="tray-list__rule">
+                        <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-trash-2"/></svg><span class="tray-option__text">Remove the customer</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" data-value="Dana Kovalenko"><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">DK</span><span class="tray-person__text"><b>Dana Kovalenko</b><small>dana@kovalenko.example</small></span></span></th>
+                <td data-value="Person"><span class="tray-badge">Person</span></td>
+                <td>Kyiv</td>
+                <td data-num>14</td>
+                <td data-num data-value="1912">$1,912</td>
+                <td data-value="2026-11-27"><time datetime="2026-11-27">27 Nov</time></td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for Dana Kovalenko"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user"/></svg><span class="tray-option__text">Open the customer</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New order</span></button>
+                        <a class="tray-option" role="menuitem" href="mailto:dana@kovalenko.example"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-mail"/></svg><span class="tray-option__text">Write an email</span></a>
+                        <hr class="tray-list__rule">
+                        <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-trash-2"/></svg><span class="tray-option__text">Remove the customer</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" data-value="Green Shelf"><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">GS</span><span class="tray-person__text"><b>Green Shelf</b><small>hello@greenshelf.example</small></span></span></th>
+                <td data-value="Shop"><span class="tray-badge">Shop</span></td>
+                <td>Kharkiv</td>
+                <td data-num>9</td>
+                <td data-num data-value="1604">$1,604</td>
+                <td data-value="2026-11-12"><time datetime="2026-11-12">12 Nov</time></td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for Green Shelf"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user"/></svg><span class="tray-option__text">Open the customer</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New order</span></button>
+                        <a class="tray-option" role="menuitem" href="mailto:hello@greenshelf.example"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-mail"/></svg><span class="tray-option__text">Write an email</span></a>
+                        <hr class="tray-list__rule">
+                        <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-trash-2"/></svg><span class="tray-option__text">Remove the customer</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" data-value="Ivan Petrenko"><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">IP</span><span class="tray-person__text"><b>Ivan Petrenko</b><small>ivan.p@mail.example</small></span></span></th>
+                <td data-value="Person"><span class="tray-badge">Person</span></td>
+                <td>Lviv</td>
+                <td data-num>11</td>
+                <td data-num data-value="1386">$1,386</td>
+                <td data-value="2026-11-27"><time datetime="2026-11-27">27 Nov</time></td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for Ivan Petrenko"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user"/></svg><span class="tray-option__text">Open the customer</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New order</span></button>
+                        <a class="tray-option" role="menuitem" href="mailto:ivan.p@mail.example"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-mail"/></svg><span class="tray-option__text">Write an email</span></a>
+                        <hr class="tray-list__rule">
+                        <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-trash-2"/></svg><span class="tray-option__text">Remove the customer</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" data-value="Bohdan Shevchuk"><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">BS</span><span class="tray-person__text"><b>Bohdan Shevchuk</b><small>bohdan@shevchuk.example</small></span></span></th>
+                <td data-value="Person"><span class="tray-badge">Person</span></td>
+                <td>Kyiv</td>
+                <td data-num>8</td>
+                <td data-num data-value="1210">$1,210</td>
+                <td data-value="2026-11-27"><time datetime="2026-11-27">27 Nov</time></td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for Bohdan Shevchuk"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end tray-pop--top">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user"/></svg><span class="tray-option__text">Open the customer</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New order</span></button>
+                        <a class="tray-option" role="menuitem" href="mailto:bohdan@shevchuk.example"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-mail"/></svg><span class="tray-option__text">Write an email</span></a>
+                        <hr class="tray-list__rule">
+                        <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-trash-2"/></svg><span class="tray-option__text">Remove the customer</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" data-value="Olena Bondar"><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">OB</span><span class="tray-person__text"><b>Olena Bondar</b><small>olena.bondar@mail.example</small></span></span></th>
+                <td data-value="Person"><span class="tray-badge">Person</span></td>
+                <td>Kharkiv</td>
+                <td data-num>7</td>
+                <td data-num data-value="894">$894</td>
+                <td data-value="2026-11-27"><time datetime="2026-11-27">27 Nov</time></td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for Olena Bondar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end tray-pop--top">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user"/></svg><span class="tray-option__text">Open the customer</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New order</span></button>
+                        <a class="tray-option" role="menuitem" href="mailto:olena.bondar@mail.example"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-mail"/></svg><span class="tray-option__text">Write an email</span></a>
+                        <hr class="tray-list__rule">
+                        <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-trash-2"/></svg><span class="tray-option__text">Remove the customer</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" data-value="Viktor Marchenko"><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">VM</span><span class="tray-person__text"><b>Viktor Marchenko</b><small>viktor@marchenko.example</small></span></span></th>
+                <td data-value="Person"><span class="tray-badge">Person</span></td>
+                <td>Odesa</td>
+                <td data-num>6</td>
+                <td data-num data-value="702">$702</td>
+                <td data-value="2026-11-27"><time datetime="2026-11-27">27 Nov</time></td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for Viktor Marchenko"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end tray-pop--top">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user"/></svg><span class="tray-option__text">Open the customer</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New order</span></button>
+                        <a class="tray-option" role="menuitem" href="mailto:viktor@marchenko.example"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-mail"/></svg><span class="tray-option__text">Write an email</span></a>
+                        <hr class="tray-list__rule">
+                        <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-trash-2"/></svg><span class="tray-option__text">Remove the customer</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" data-value="Larysa Koval"><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">LK</span><span class="tray-person__text"><b>Larysa Koval</b><small>larysa.koval@mail.example</small></span></span></th>
+                <td data-value="Person"><span class="tray-badge">Person</span></td>
+                <td>Lviv</td>
+                <td data-num>4</td>
+                <td data-num data-value="455">$455</td>
+                <td data-value="2026-11-27"><time datetime="2026-11-27">27 Nov</time></td>
+                <td class="tray-table__act">
+                  <span class="tray-anchor" data-tray="menu">
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Actions for Larysa Koval"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-ellipsis"/></svg></button>
+                    <div class="tray-pop tray-pop--end tray-pop--top">
+                      <div class="tray-list">
+                        <a class="tray-option" role="menuitem" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user"/></svg><span class="tray-option__text">Open the customer</span></a>
+                        <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New order</span></button>
+                        <a class="tray-option" role="menuitem" href="mailto:larysa.koval@mail.example"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-mail"/></svg><span class="tray-option__text">Write an email</span></a>
+                        <hr class="tray-list__rule">
+                        <button class="tray-option tray-option--danger" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-trash-2"/></svg><span class="tray-option__text">Remove the customer</span></button>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+              <tr data-empty hidden>
+                <td colspan="7">
+                  <div class="tray-empty">
+                    <span class="tray-empty__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg></span>
+                    <div class="tray-empty__text">
+                      <p class="control">No customer matches that search</p>
+                      <p>Try a part of the name, or the city.</p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tray-datatable__foot">
+          <span>10 of 521 customers</span>
+          <nav aria-label="Pages">
+            <ul class="tray-pages">
+              <li><a class="tray-page tray-page--step" role="link" aria-disabled="true" aria-label="Previous page"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-left"/></svg></a></li>
+              <li><span class="tray-pages__status">Page 1 of 53</span></li>
+              <li><a class="tray-page tray-page--step" href="#" aria-label="Next page"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>
+```

@@ -10,28 +10,11 @@ export interface ShellState {
   collapsed: boolean;
   setCollapsed: (next: boolean) => void;
   openMenu: () => void;
+  /** Whether the navigation is open in its Sheet, on a phone: the menu button reports it with aria-expanded. */
+  menuOpen: boolean;
 }
 
 export const ShellContext = React.createContext<ShellState | null>(null);
-
-/* The width below which the app shell hides its sidebar (`@media (max-width: 56rem)` in 80-saas.css). */
-const NARROW = '(max-width: 56rem)';
-
-function watchNarrow(onChange: () => void): () => void {
-  if (typeof window === 'undefined' || !window.matchMedia) return () => {};
-  const mq = window.matchMedia(NARROW);
-  mq.addEventListener('change', onChange);
-  return () => mq.removeEventListener('change', onChange);
-}
-
-/** True while the window is narrow enough for the app shell to hide its sidebar. False on a server. */
-export function useNarrow(): boolean {
-  return React.useSyncExternalStore(
-    watchNarrow,
-    () => typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia(NARROW).matches,
-    () => false,
-  );
-}
 
 /** One or two capitals from a name: "Perly Farm" gives "PF", "Oksana" gives "O". */
 export function initialsOf(name: string): string {

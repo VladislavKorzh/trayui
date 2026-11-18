@@ -1,7 +1,8 @@
+'use client';
 import * as React from 'react';
 import type { IconSource } from '../lib/icon';
 import { cx } from '../lib/util';
-import { ShellContext, initialsOf, useNarrow } from '../lib/shell';
+import { ShellContext, initialsOf } from '../lib/shell';
 import { Breadcrumb, type BreadcrumbItem } from './Breadcrumb';
 import { Button } from './Button';
 import { Icon } from './Icon';
@@ -21,7 +22,7 @@ export interface TopBarAction {
 }
 
 export interface TopBarUser {
-  /** The person's full name, read as "Account: Oksana Franko". */
+  /** The person's full name, read as "Account: Oksana Franko, OF": the initials the avatar shows end the name. */
   name: string;
   /** One or two initials on the avatar: "OF". Default: from the name. */
   initials?: string;
@@ -44,6 +45,11 @@ export interface TopBarProps extends Omit<React.HTMLAttributes<HTMLElement>, 'ti
   search?: string;
   /** The key that opens the search, shown in a Kbd at the end of the button and listened for on the page (outside fields). Default '/'. Empty for none. */
   searchKey?: string;
+  /**
+   * Below 48rem the bar folds to fit a phone: the breadcrumb keeps only the current page and the search only its icon.
+   * What is hidden stays for a screen reader: the search is still named by its words.
+   */
+  fold?: boolean;
   /** Called when the search button is pressed, or the `searchKey` is typed outside a field: open the Command panel here. */
   onSearch?: () => void;
   /** Square icon buttons at the end, before `end`, each with an optional yellow count: at most three. */
@@ -70,11 +76,10 @@ function isTyping(target: EventTarget | null): boolean {
  * Use it as the `topbar` of an AppShell, or at the top of a card for a page of its own; the page's primary action belongs to the PageHeader, not here.
  */
 export const TopBar = React.forwardRef<HTMLElement, TopBarProps>(function TopBar(
-  { breadcrumb, title, back, children, search, searchKey = '/', onSearch, actions, end, user, sticky, sidebarToggle = true, headingLevel = 2, className, ...rest },
+  { breadcrumb, title, back, children, search, searchKey = '/', fold, onSearch, actions, end, user, sticky, sidebarToggle = true, headingLevel = 2, className, ...rest },
   ref,
 ) {
   const shell = React.useContext(ShellContext);
-  const narrow = useNarrow();
   const H = `h${headingLevel}` as 'h2';
 
   // The search key opens the search from anywhere on the page but a field.
@@ -95,18 +100,27 @@ export const TopBar = React.forwardRef<HTMLElement, TopBarProps>(function TopBar
   const toggle =
     shell && sidebarToggle ? (
       <>
-        <Button variant="ghost" size="xs" icon="menu" className="tray-app__menu" aria-label="Open the menu" aria-haspopup="dialog" onClick={shell.openMenu} />
-        {narrow ? null : (
-          <Button
-            variant="ghost"
-            size="xs"
-            icon="panel-left"
-            aria-controls={shell.sidebarId}
-            aria-expanded={!shell.collapsed}
-            aria-label={shell.collapsed ? 'Expand the sidebar' : 'Collapse the sidebar'}
-            onClick={() => shell.setCollapsed(!shell.collapsed)}
-          />
-        )}
+        <Button
+          variant="quiet"
+          size="sm"
+          icon="menu"
+          className="tray-app__menu"
+          aria-label="Open the navigation"
+          aria-haspopup="dialog"
+          aria-expanded={shell.menuOpen}
+          onClick={shell.openMenu}
+        />
+        {/* tray-app__collapse: hidden below 56rem, where the sidebar leaves the page and nothing is left to collapse. */}
+        <Button
+          variant="ghost"
+          size="xs"
+          icon="panel-left"
+          className="tray-app__collapse"
+          aria-controls={shell.sidebarId}
+          aria-expanded={!shell.collapsed}
+          aria-label={shell.collapsed ? 'Expand the sidebar' : 'Collapse the sidebar'}
+          onClick={() => shell.setCollapsed(!shell.collapsed)}
+        />
       </>
     ) : null;
 
@@ -122,7 +136,7 @@ export const TopBar = React.forwardRef<HTMLElement, TopBarProps>(function TopBar
             <span className="tray-vh">{back.label}</span>
           </a>
         ) : null}
-        {breadcrumb && breadcrumb.length ? <Breadcrumb items={breadcrumb} /> : null}
+        {breadcrumb && breadcrumb.length ? <Breadcrumb items={breadcrumb} fold={fold} /> : null}
         {title != null ? (
           <H className="nav" style={{ fontWeight: 600 }}>
             {title}
@@ -133,7 +147,14 @@ export const TopBar = React.forwardRef<HTMLElement, TopBarProps>(function TopBar
       {hasEnd ? (
         <div className="tray-topbar__end">
           {search != null ? (
-            <button className="tray-topbar__search" type="button" aria-keyshortcuts={listen ? searchKey : undefined} onClick={() => onSearch?.()}>
+            // Named by its words alone (the key is said by aria-keyshortcuts), also when it folds to its icon.
+            <button
+              className={cx('tray-topbar__search', fold && 'tray-topbar__search--fold')}
+              type="button"
+              aria-label={search}
+              aria-keyshortcuts={listen ? searchKey : undefined}
+              onClick={() => onSearch?.()}
+            >
               <Icon name="search" />
               <span>{search}</span>
               {searchKey ? <Kbd>{searchKey}</Kbd> : null}
@@ -155,7 +176,13 @@ export const TopBar = React.forwardRef<HTMLElement, TopBarProps>(function TopBar
           ))}
           {end}
           {user ? (
-            <button className="tray-avatar" type="button" aria-label={`Account: ${user.name}`} onClick={user.onClick}>
+            // The name ends with the initials it shows, so the words on the button are in its name (WCAG 2.5.3).
+            <button
+              className="tray-avatar"
+              type="button"
+              aria-label={user.src ? `Account: ${user.name}` : `Account: ${user.name}, ${user.initials ?? initialsOf(user.name)}`}
+              onClick={user.onClick}
+            >
               {user.src ? <img src={user.src} alt="" /> : user.initials ?? initialsOf(user.name)}
             </button>
           ) : null}

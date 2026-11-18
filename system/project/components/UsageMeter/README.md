@@ -9,13 +9,13 @@ A usage meter shows how much of a plan's allowance is used: a Progress bar per l
     <span class="tray-progress__name">Orders this month</span>
     <span class="tray-progress__value">842 of 1,000</span>
     <span class="tray-progress__bar" role="meter" aria-label="Orders this month"
-          aria-valuemin="0" aria-valuemax="1000" aria-valuenow="842" style="--tray-v: 84"></span>
+          aria-valuemin="0" aria-valuemax="1000" aria-valuenow="842" aria-valuetext="842 of 1,000" style="--tray-v: 84"></span>
   </div>
   <div class="tray-progress" data-level="high">
     <span class="tray-progress__name">Team seats</span>
     <span class="tray-progress__value">5 of 5</span>
     <span class="tray-progress__bar" role="meter" aria-label="Team seats"
-          aria-valuemin="0" aria-valuemax="5" aria-valuenow="5" style="--tray-v: 100"></span>
+          aria-valuemin="0" aria-valuemax="5" aria-valuenow="5" aria-valuetext="5 of 5" style="--tray-v: 100"></span>
     <span class="tray-progress__note">… Every seat is taken. Add seats to invite more people.</span>
   </div>
 </div>

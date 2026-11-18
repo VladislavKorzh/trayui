@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx } from '../lib/util';
 import { Icon } from './Icon';
@@ -33,7 +34,7 @@ export const Stepper = React.forwardRef<HTMLOListElement, StepperProps>(function
   ref,
 ) {
   return (
-    <ol ref={ref} className={cx('tray-stepper', orientation === 'vertical' && 'tray-stepper--v', className)} {...rest}>
+    <ol ref={ref} className={cx('tray-stepper', orientation === 'vertical' && 'tray-stepper--v', className)} role="list" {...rest}>
       {steps.map((s, i) => {
         const done = i < current;
         const here = i === current;

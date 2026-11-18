@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, useBehaviour, useControlled, useForwardedRef, useUid } from '../lib/util';
 import { Badge } from './Badge';

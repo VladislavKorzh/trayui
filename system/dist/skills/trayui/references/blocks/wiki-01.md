@@ -1,0 +1,253 @@
+# Wiki page
+
+A handbook page beside a tree of pages: who edited it last, an infobox, numbered steps, a callout, a table and a question on whether it helped.
+
+A page of a team wiki, an internal handbook or a knowledge base: the screen people open to follow a procedure. The tree of sections at the side shows where the page sits, its folder open and the page marked current. The head carries the breadcrumb, History and Edit, who edited last and when, and the reading time. The body has an at-a-glance box, what to check before you start, numbered steps, a warning, a table and related pages, with an "On this page" list beside it.
+
+Of the three wiki screens this is the page itself; [the wiki home](https://trayui.com/blocks/wiki-02.md) is the way in and [the page history](https://trayui.com/blocks/wiki-03.md) shows how it changed. Below 76rem the "On this page" list moves under the article, and below 56rem the tree opens from the menu button as a sheet. The question at the end is a fieldset of two radios: choosing one shows a box for a reason, and sending moves focus to the thanks, so it is read.
+
+It is made of these components: [App Shell](https://trayui.com/components/app-shell.md), [Top Bar](https://trayui.com/components/top-bar.md), [Button](https://trayui.com/components/button.md), [Kbd](https://trayui.com/components/kbd.md), [Avatar](https://trayui.com/components/avatar.md), [Sidebar](https://trayui.com/components/sidebar.md), [Badge](https://trayui.com/components/badge.md), [Page Header](https://trayui.com/components/page-header.md), [Breadcrumb](https://trayui.com/components/breadcrumb.md), [Card](https://trayui.com/components/card.md), [Description List](https://trayui.com/components/description-list.md), [Alert](https://trayui.com/components/alert.md), [Table](https://trayui.com/components/table.md), [Item](https://trayui.com/components/item.md), [Feedback Widget](https://trayui.com/components/feedback-widget.md), [Field](https://trayui.com/components/field.md), [Label](https://trayui.com/components/label.md), [Textarea](https://trayui.com/components/textarea.md).
+
+Behaviours it uses: `feedback`, `sidebar-sheet`.
+
+Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wiki page</title>
+<meta name="description" content="A handbook page beside a tree of pages: who edited it last, an infobox, numbered steps, a callout, a table and a question on whether it helped.">
+<meta name="tray-category" content="Wiki">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app tray-app--header">
+  <header class="tray-topbar tray-app__header">
+    <div class="tray-topbar__start">
+      <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the pages"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+      <a class="tray-wordmark" href="wiki-02.html">Handbook</a>
+    </div>
+    <div class="tray-topbar__end">
+      <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search the handbook"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search the handbook</span><kbd class="tray-kbd">/</kbd></button>
+      <button class="tray-avatar" type="button" aria-label="Account: Iryna Bondar, IB">IB</button>
+    </div>
+  </header>
+  <div class="tray-app__side">
+    <nav class="tray-sidebar" id="nav" aria-label="Handbook pages">
+      <div class="tray-sidebar__scroll">
+        <div class="tray-sidebar__group">
+          <a class="tray-sidebar__item" href="wiki-02.html"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-clock"/></svg><span>Recent changes</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bookmark"/></svg><span>Saved pages</span><span class="tray-badge tray-badge--count">4</span></a>
+        </div>
+        <div class="tray-sidebar__group">
+          <p class="tray-sidebar__label">Sections</p>
+          <ul class="tray-tree">
+            <li>
+              <details>
+                <summary class="tray-sidebar__item"><svg class="tray-icon tray-icon--sm tray-sidebar__caret" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-sun"/></svg><span>Snails</span></summary>
+                <ul>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Beds and soil</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Feeding</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Winter rest</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Health checks</span></a></li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <details open>
+                <summary class="tray-sidebar__item"><svg class="tray-icon tray-icon--sm tray-sidebar__caret" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-sparkle"/></svg><span>Caviar</span></summary>
+                <ul>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Collecting eggs</span></a></li>
+                  <li><a class="tray-sidebar__item" href="wiki-01.html" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Grading a batch</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Salting the eggs</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Batch numbers</span></a></li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <details open>
+                <summary class="tray-sidebar__item"><svg class="tray-icon tray-icon--sm tray-sidebar__caret" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg><span>Cold chain</span></summary>
+                <ul>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>The cold room</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Packing a box</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Courier handover</span></a></li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary class="tray-sidebar__item"><svg class="tray-icon tray-icon--sm tray-sidebar__caret" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-shopping-bag"/></svg><span>Farm shop</span></summary>
+                <ul>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Opening hours</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Tastings</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Payments</span></a></li>
+                </ul>
+              </details>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <main class="tray-app__content">
+      <div class="tray-pagehead">
+        <nav aria-label="Breadcrumb">
+          <ol class="tray-crumbs">
+            <li><a href="wiki-02.html">Handbook</a></li>
+            <li><a href="#">Caviar</a></li>
+            <li><span aria-current="page">Grading a batch</span></li>
+          </ol>
+        </nav>
+        <div class="tray-pagehead__row">
+          <div class="tray-pagehead__text">
+            <h1 class="title">Grading a batch</h1>
+            <p>How we sort one collection of eggs into three grades and write the batch down.</p>
+          </div>
+          <div class="tray-pagehead__actions">
+            <a class="tray-btn tray-btn--quiet tray-btn--sm" href="wiki-03.html"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-clock"/></svg>History</a>
+            <a class="tray-btn tray-btn--sm" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-pencil"/></svg>Edit</a>
+          </div>
+        </div>
+        <p class="tray-pagehead__meta"><span><span class="tray-avatar tray-avatar--xs" aria-hidden="true">OM</span><span>Last edited by Oleh Marchenko on <time datetime="2026-11-14T16:20">14 November 2026</time></span></span><span><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-book"/></svg>Six minutes to read</span></p>
+      </div>
+
+      <div class="tray-with-aside tray-with-aside--narrow tray-with-aside--late">
+        <article class="tray-stack" style="gap: var(--space-12)">
+          <div class="tray-prose">
+            <p class="lead tray-soft">Grading takes two people about three hours for 6&nbsp;kg of eggs. Do it on the day of the last collection of a batch, in the cold room, and finish before anyone salts a single egg.</p>
+
+            <div class="tray-card tray-stack" id="glance">
+              <p class="subtitle">At a glance</p>
+              <dl class="tray-dl">
+                <div><dt>Current batch</dt><dd><span>Batch 14, graded on <time datetime="2026-11-06">6 November</time></span></dd></div>
+                <div><dt>Who</dt><dd>Two people, one at the sieves and one at the scales</dd></div>
+                <div><dt>Where</dt><dd>The cold room, at 2 to 4&nbsp;&deg;C</dd></div>
+                <div><dt>Tools</dt><dd>Sieves of 3 and 3.5&nbsp;mm, the scales, three trays</dd></div>
+                <div><dt>Grades</dt><dd><span class="tray-badge">A</span><span class="tray-badge">B</span><span class="tray-badge">C</span></dd></div>
+              </dl>
+            </div>
+
+            <h2 class="subtitle" id="before">Before you start</h2>
+            <ul class="tray-list-plain">
+              <li>The thermometer in the cold room reads between 2 and 4&nbsp;&deg;C.</li>
+              <li>The sieves, the trays and the spoon are washed and dry. Water left on a sieve makes the eggs stick and crack.</li>
+              <li>The batch book is open at a new page, with the batch number at the top.</li>
+            </ul>
+
+            <h2 class="subtitle" id="grade">Grade the eggs</h2>
+            <ol class="tray-list-plain">
+              <li>Stack the 3.5&nbsp;mm sieve on the 3&nbsp;mm sieve, over the C tray.</li>
+              <li>Tip the eggs of one collection onto the top sieve, no more than 500&nbsp;g at a time.</li>
+              <li>Shake the sieves gently for 40 seconds. Longer shaking cracks the shells.</li>
+              <li>Move what stays on the top sieve to the A tray, and what stays on the lower sieve to the B tray.</li>
+              <li>Look over the A tray with the lamp and move any egg that is cracked, flat or grey to C.</li>
+              <li>Weigh each tray without its lid and write the three weights in the batch book.</li>
+            </ol>
+            <div class="tray-alert" role="note">
+              <span class="tray-alert__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-triangle-alert"/></svg></span>
+              <div class="tray-alert__body">
+                <p class="tray-alert__title">Keep the eggs below 4&nbsp;&deg;C the whole time</p>
+                <p class="tray-alert__text">Eggs that sit above 4&nbsp;&deg;C for more than 20 minutes go to grade C, however good they look. If the door was left open, read the thermometer before you go on.</p>
+              </div>
+            </div>
+
+            <h2 class="subtitle" id="grades">The three grades</h2>
+            <p>The size decides the grade first, then the look. When in doubt, choose the lower grade.</p>
+            <div class="tray-table-wrap">
+              <table class="tray-table" aria-label="The three grades">
+                <thead>
+                  <tr>
+                    <th scope="col">Grade</th>
+                    <th scope="col">Size</th>
+                    <th scope="col">Look</th>
+                    <th scope="col">Goes into</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">A</th>
+                    <td>3.5 to 4&nbsp;mm</td>
+                    <td>Round, even, pearl white</td>
+                    <td>50&nbsp;g and 100&nbsp;g jars</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">B</th>
+                    <td>3 to 3.5&nbsp;mm</td>
+                    <td>Even, a little smaller</td>
+                    <td>30&nbsp;g jars</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">C</th>
+                    <td>Under 3&nbsp;mm</td>
+                    <td>Cracked, flat or grey</td>
+                    <td>The farm kitchen, never sold</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h2 class="subtitle" id="record">Write the batch down</h2>
+            <p>In the batch book, under the batch number, write the date, the three weights and the names of the two people who graded. Then enter the same weights in the shop under Batches, so the jars can go on sale.</p>
+            <p>Batch 14 came to 4.1&nbsp;kg of A, 1.6&nbsp;kg of B and 0.5&nbsp;kg of C. That filled 412 jars once salted.</p>
+          </div>
+
+          <section class="tray-stack" aria-labelledby="related">
+            <h2 class="subtitle" id="related">Related pages</h2>
+            <ul class="tray-items" role="list">
+              <li><a class="tray-item" href="#"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-sparkle"/></svg></span><span class="tray-item__body"><span class="tray-item__title">Collecting eggs</span><span class="tray-item__text">Caviar, the step before this one</span></span><span class="tray-item__end"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></span></a></li>
+              <li><a class="tray-item" href="#"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-sparkle"/></svg></span><span class="tray-item__body"><span class="tray-item__title">Salting the eggs</span><span class="tray-item__text">Caviar, the step after this one</span></span><span class="tray-item__end"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></span></a></li>
+              <li><a class="tray-item" href="#"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg></span><span class="tray-item__body"><span class="tray-item__title">The cold room</span><span class="tray-item__text">Cold chain, how to read and log the thermometer</span></span><span class="tray-item__end"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></span></a></li>
+            </ul>
+          </section>
+
+          <form class="tray-card tray-feedback" data-tray="feedback" action="/handbook/feedback" method="post">
+            <div class="tray-stack tray-stack--sm" data-feedback="ask">
+              <fieldset class="tray-scale">
+                <legend class="tray-legend subtitle">Was this page useful?</legend>
+                <label><input type="radio" name="rating" value="yes"><span>Yes</span></label>
+                <label><input type="radio" name="rating" value="no"><span>No</span></label>
+              </fieldset>
+            </div>
+            <div class="tray-stack" data-feedback="more" hidden>
+              <div class="tray-field">
+                <label class="tray-label" for="feedback-why">What should the page say? <span class="tray-label__opt">(optional)</span></label>
+                <textarea class="tray-textarea" id="feedback-why" name="comment"></textarea>
+              </div>
+              <div>
+                <button class="tray-btn tray-btn--quiet tray-btn--sm" type="submit">Send the answer</button>
+              </div>
+            </div>
+            <p data-feedback="thanks" hidden>Thank you. Oleh reads every answer and mends the page.</p>
+          </form>
+        </article>
+
+        <aside class="tray-with-aside__aside" aria-label="About this page">
+          <nav class="tray-sidebar tray-sidebar--plain" aria-label="On this page">
+            <div class="tray-sidebar__group">
+              <p class="tray-sidebar__label">On this page</p>
+              <a class="tray-sidebar__item" href="#glance"><span>At a glance</span></a>
+              <a class="tray-sidebar__item" href="#before"><span>Before you start</span></a>
+              <a class="tray-sidebar__item" href="#grade"><span>Grade the eggs</span></a>
+              <a class="tray-sidebar__item" href="#grades"><span>The three grades</span></a>
+              <a class="tray-sidebar__item" href="#record"><span>Write the batch down</span></a>
+              <a class="tray-sidebar__item" href="#related"><span>Related pages</span></a>
+            </div>
+          </nav>
+        </aside>
+      </div>
+    </main>
+    <footer class="tray-screen__foot">
+      <p>The Perly Farm handbook, written by the farm team. Every name and figure here is demo data.</p>
+    </footer>
+  </div>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>
+```

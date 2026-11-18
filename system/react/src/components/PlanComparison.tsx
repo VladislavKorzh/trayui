@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { cx } from '../lib/util';
+import { cx, useUid } from '../lib/util';
+import { wideRegion } from '../lib/data';
 import { Icon } from './Icon';
 
 /** One column of the comparison: a plan, in the order of the pricing cards. */
@@ -41,14 +42,16 @@ export interface PlanComparisonProps extends Omit<React.TableHTMLAttributes<HTML
   notIncludedLabel?: string;
   /** A BCP 47 tag for number values. Default 'en-US': "1,000". */
   locale?: string;
+  /** The table's name, a `<caption>` hidden from sight that a screen reader says: "The plans compared". Or name it with `aria-label`. */
+  caption?: React.ReactNode;
 }
 
 /**
  * The plan comparison is the full table under the pricing cards: every feature as a row, every plan as a column, a check, a dash or a number in each cell.
- * It sits in a wrapper that scrolls sideways on a phone; `className`, `aria-label` and the ref go to the `<table>`.
+ * It sits in a wrapper that scrolls sideways on a phone, a region named as the table is; `className`, `aria-label` and the ref go to the `<table>`.
  */
 export const PlanComparison = React.forwardRef<HTMLTableElement, PlanComparisonProps>(function PlanComparison(
-  { plans, rows, featureLabel = 'Feature', includedLabel = 'Included', notIncludedLabel = 'Not included', locale = 'en-US', className, ...rest },
+  { plans, rows, featureLabel = 'Feature', includedLabel = 'Included', notIncludedLabel = 'Not included', locale = 'en-US', caption, className, ...rest },
   ref,
 ) {
   const feat = (i: number) => (plans[i]?.featured ? '' : undefined);
@@ -74,6 +77,7 @@ export const PlanComparison = React.forwardRef<HTMLTableElement, PlanComparisonP
       </td>
     );
   };
+  const captionId = useUid('compare-caption');
   // A <tbody> per group: a group's heading (scope="rowgroup") then names its own rows, not every row after it.
   const sections: { start: number; rows: typeof rows }[] = [];
   rows.forEach((row, r) => {
@@ -81,8 +85,14 @@ export const PlanComparison = React.forwardRef<HTMLTableElement, PlanComparisonP
     sections[sections.length - 1].rows.push(row);
   });
   return (
-    <div className="tray-table-wrap">
+    // A comparison is wider than a phone: its wrap is a region named as the table is, which the keyboard reaches and scrolls.
+    <div className="tray-table-wrap" {...wideRegion(caption != null ? captionId : undefined, rest)}>
       <table ref={ref} className={cx('tray-compare', className)} {...rest}>
+        {caption != null ? (
+          <caption className="tray-vh" id={captionId}>
+            {caption}
+          </caption>
+        ) : null}
         <thead>
           <tr>
             <th scope="col">

@@ -5,7 +5,7 @@ The user menu opens from the avatar at the end of the top bar: who is signed in,
 ## Markup
 ```html
 <span class="tray-anchor" data-tray="menu">
-  <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko">OF</button>
+  <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko, OF">OF</button>
   <div class="tray-pop tray-pop--end">
     <div class="tray-pop__head">
       <span class="tray-avatar" aria-hidden="true">OF</span>
@@ -26,7 +26,7 @@ The user menu opens from the avatar at the end of the top bar: who is signed in,
 Listen for `tray:select` on the anchor to act on an item. The theme item is a `menuitemcheckbox`: it fires `tray:change` instead, with `detail.checked`; set `data-theme` on `<html>` from it.
 
 ## Accessibility
-- It is a Dropdown Menu: the avatar button gets `aria-haspopup="menu"` and `aria-expanded`, and since it shows only initials its `aria-label` names the person. The panel is a `menu` of `menuitem` and `menuitemcheckbox` items.
+- It is a Dropdown Menu: the avatar button gets `aria-haspopup="menu"` and `aria-expanded`, and since it shows only initials its `aria-label` names the person and ends with those initials ("Account: Oksana Franko, OF"), as the Avatar says, so a person who speaks to the computer can say what they see. The panel is a `menu` of `menuitem` and `menuitemcheckbox` items.
 - The head is not an item, so a screen reader inside the menu would never reach it: the behaviour names the menu by its `tray-person__text` instead, and the name and email are read as the menu opens ("Oksana Franko oksana@perly.example, menu").
 - `Enter`, `Space` or `ArrowDown` opens the menu with focus on the first item. `ArrowUp` and `ArrowDown` move round the items, `Home` and `End` jump, and `Escape` closes the menu and returns focus to the avatar.
 - Choosing a `menuitem` closes the menu and returns focus too. The theme item flips its `aria-checked` instead, which is announced, and the menu stays open. A check and a semibold label show its state, not a colour.

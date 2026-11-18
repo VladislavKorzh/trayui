@@ -4,7 +4,7 @@ keywords: [field, form, label, hint, error, validation]
 ---
 # Field
 
-A field is one question in a form: a label, its control, and one line of help or error beneath. The control inside is linked to the label and the message by itself.
+A field is one question in a form: a label, its control, and one line of help or error beneath. The control inside is linked to the label and the message by itself. The label is a `<label for>` the control; for a group of inputs, such as Input OTP, it is a span the group is named by (`aria-labelledby`).
 
 ## Use
 ```tsx

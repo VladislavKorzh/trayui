@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import type { IconSource } from '../lib/icon';
 import { cx, useBehaviour, useControlled, useForwardedRef, useUid } from '../lib/util';

@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import type { IconSource } from '../lib/icon';
 import { cx, useControlled, useUid } from '../lib/util';
@@ -88,7 +89,7 @@ export const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(function Side
     const props = {
       className: 'tray-sidebar__item',
       'aria-current': v === current ? ('page' as const) : undefined,
-      'aria-label': rail && !sub ? it.label : undefined,
+      // in the rail the label and the count are hidden from sight only, so the item keeps its name from them ("Orders 12")
       onClick: (e: React.MouseEvent<HTMLElement>) => {
         it.onClick?.(e);
         setCurrent(v);

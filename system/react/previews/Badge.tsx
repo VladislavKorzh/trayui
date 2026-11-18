@@ -24,8 +24,9 @@ export function Status() {
 export function Counts() {
   return (
     <div className="tray-row tray-row--sm">
-      <span className="tray-row tray-row--sm nav">Orders <Badge count>12</Badge></span>
-      <span className="tray-row tray-row--sm nav">Messages <Badge count tone="ink">3</Badge></span>
+      {/* A count is a bare number: the hidden words say what it counts. */}
+      <span className="tray-row tray-row--sm nav">Orders <Badge count>12<span className="tray-vh"> orders to pack</span></Badge></span>
+      <span className="tray-row tray-row--sm nav">Messages <Badge count tone="ink">3<span className="tray-vh"> unread messages</span></Badge></span>
     </div>
   );
 }

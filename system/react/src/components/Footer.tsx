@@ -68,7 +68,7 @@ export const Footer = React.forwardRef<HTMLElement, FooterProps>(function Footer
         <div className="tray-footer__bottom">
           {copyright != null ? <p>{copyright}</p> : null}
           {legal && legal.length ? (
-            <ul className="tray-footer__legal">
+            <ul className="tray-footer__legal" role="list">
               {legal.map((l, k) => (
                 <li key={k}>
                   <a href={l.href}>{l.label}</a>

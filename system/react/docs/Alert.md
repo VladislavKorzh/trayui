@@ -26,7 +26,7 @@ An alert is a message that stays in the page until its cause is gone: a tray row
 
 Each tone has its own icon (info, circle-alert, circle-check); pass `icon` for a better one. Small buttons go under the text with `actions`; one button beside the text goes in `end`.
 
-A danger alert takes `role="alert"`, which interrupts a screen reader; the others take `role="status"`. Pass `role` to change it.
+A danger alert takes `role="alert"`, which interrupts a screen reader; the others take `role="status"`. Pass `role` to change it. `titleId` gives the title an id, for a field the alert is about to point at with `aria-describedby`.
 
 ## Alert, Toast or Field error
 An alert belongs to a page or a card and stays. A Toast confirms something that already happened and leaves by itself. An error about one field goes under that field.

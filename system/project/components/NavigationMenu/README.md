@@ -19,7 +19,7 @@ The navigation menu is the header of a site: the wordmark, a strip of links, and
 The links are Tabs in a tray strip. A link that has children is a button that opens a roomy panel under it: `tray-nav__panel` lays out one featured card and a list of two-line links (`tray-option tray-option--two`). The panel is a disclosure, not a menu: Tab moves through its links, Escape closes it.
 
 ## Behaviour
-- From 76rem the header is one row. Below that the strip (`tray-nav__strip`) takes a second row of its own and scrolls sideways when its links do not fit (`data-tray="strip"` fades its end).
+- From 76rem the header is one row. Below that the strip (`tray-nav__strip`) takes a second row of its own and scrolls sideways when its links do not fit. A strip of links alone may also be `tray-tabs` with `data-tray="strip"`, which fades its end while links run past it, as the article blocks do. Below 76rem a panel opens from the start edge of the header, under the strip, so the scrolling strip does not cut it.
 - The current section is marked with `aria-current`.
 
 ## Accessibility

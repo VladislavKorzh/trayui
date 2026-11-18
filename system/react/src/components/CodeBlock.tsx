@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, useBehaviour, useForwardedRef, useUid } from '../lib/util';
 import { Icon } from './Icon';

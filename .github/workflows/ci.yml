@@ -31,7 +31,9 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
-          cache-dependency-path: system/react/package-lock.json
+          cache-dependency-path: |
+            system/react/package-lock.json
+            system/tests/package-lock.json
 
       - name: Install the Python tools and Google Chrome
         run: |
@@ -49,6 +51,6 @@ jobs:
       - name: The built files in the repository are up to date
         run: |
           if ! git diff --exit-code --stat -- system; then
-            echo "::error::Run python3 system/tools/build.py and commit what it changed."
+            echo "::error::Run python3 system/tools/build.py and python3 system/tools/site.py, and commit what they changed."
             exit 1
           fi

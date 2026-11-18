@@ -59,7 +59,7 @@ Show the value next to the label as well. Tray UI's rule for the slider is that 
 
 The element for a value worked out from inputs is `<output for>`. MDN gives `<output>` the implicit role `status`, and adds: "Many browsers implement this element as an `aria-live` region." Chrome does: in its accessibility tree an `<output>` is a status with a polite live setting. Every change to its text is then a status message of its own, on top of the slider's value text, and the same words can reach a screen reader twice.
 
-Tray UI's [Slider](#c-slider) writes the value into an `<output for>`, and since the next release marks it `aria-hidden="true"`, so the words are read once, from the slider. The catalogue block, `catalog-02`, shows its price in a plain `span` marked `aria-hidden="true"` and leaves the speaking to the slider's `aria-valuetext` in the same way. When a slider says its own value, a plain element beside it, which is not a live region, is the quieter choice, and the examples below use a `span`. Keep `<output>` for a result that no single control says, such as a total worked out from several fields.
+Tray UI's [Slider](#c-slider) writes the value into an `<output for>`, and since version 0.3.0 marks it `aria-hidden="true"`, so the words are read once, from the slider. The catalogue block, `catalog-02`, shows its price in a plain `span` marked `aria-hidden="true"` and leaves the speaking to the slider's `aria-valuetext` in the same way. When a slider says its own value, a plain element beside it, which is not a live region, is the quieter choice, and the examples below use a `span`. Keep `<output>` for a result that no single control says, such as a total worked out from several fields.
 
 ## Keep the text in step
 

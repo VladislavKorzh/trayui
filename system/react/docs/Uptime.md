@@ -12,7 +12,7 @@ Uptime shows whether a service is working now and how it did over the last 90 da
   <Uptime name="Order API" share="99.94% up" incidents={{ 12: 'degraded', 47: 'down' }} />   {/* days ago: what happened */}
   <Uptime name="Courier tracking" state="slow" stateText="Slow since 09:40"
           share="99.71% up" incidents={{ 0: 'degraded' }} legend />                          {/* the key, once, under the last */}
-  <ul className="tray-items tray-items--ruled">                                                   {/* the incidents, in words */}
+  <ul className="tray-items tray-items--ruled" role="list">                                                   {/* the incidents, in words */}
     <Item size="sm" title="Order API was down for 18 minutes" text="29 September, 03:10 to 03:28. A database update ran long." />
   </ul>
 </div>

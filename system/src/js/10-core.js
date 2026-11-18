@@ -74,7 +74,7 @@
       if (!open && focusBack) trigger.focus();
       fire(trigger, open ? 'open' : 'close');
     }
-    if (!panel.hasAttribute('data-open')) panel.hidden = true; else { open = true; }
+    if (!panel.hasAttribute('data-open')) panel.hidden = true; else { open = true; fit(panel); }
     trigger.setAttribute('aria-expanded', String(open));
     if (!opts.manual) trigger.addEventListener('click', function () { set(!open); });
     document.addEventListener('pointerdown', function (e) { if (open && !panel.contains(e.target) && !trigger.contains(e.target)) set(false); });
@@ -137,7 +137,34 @@
     el.setAttribute('data-closing', '');
     settle(el, function () { if (el.hasAttribute('data-closing')) { el.removeAttribute('data-closing'); el.hidden = true; } });
   }
-  function show(el) { el.removeAttribute('data-closing'); el.hidden = false; }
+  function show(el) { el.removeAttribute('data-closing'); el.hidden = false; fit(el); }
+
+  /* fit(panel): a floating panel (.tray-pop) that CSS places under its trigger, and that would leave the window sideways,
+     moves back inside it, 8px from the edge, but never past the other edge: by a margin on the side it is placed from.
+     It is measured without its entrance scale (offsetLeft, offsetWidth), and fitted again when the window changes size or
+     the font arrives. A panel that fits is left where CSS put it. */
+  var fitting = false;
+  function fit(el) {
+    if (!el || !el.classList || !el.classList.contains('tray-pop')) return;
+    if (!fitting) {
+      fitting = true;
+      var all = function () { $$('.tray-pop').forEach(function (p) { if (!p.hidden) fit(p); }); };
+      window.addEventListener('resize', all);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(all);
+    }
+    el.style.marginLeft = el.style.marginRight = '';
+    var host = el.offsetParent;
+    if (el.hidden || !host) return;
+    var gap = 8, room = document.documentElement.clientWidth;
+    function left() { return host.getBoundingClientRect().left + host.clientLeft + el.offsetLeft; }
+    var l = left(), w = el.offsetWidth, dx = 0;
+    if (l + w > room - gap) dx = room - gap - (l + w);
+    if (l + dx < gap) dx = gap - l;
+    if (Math.abs(dx) < 1) return;
+    el.style.marginLeft = dx + 'px';
+    /* placed from its right edge (tray-pop--end, or the start of a right-to-left page), a left margin does not move it */
+    if (Math.abs(left() - (l + dx)) > 1) { el.style.marginLeft = ''; el.style.marginRight = -dx + 'px'; }
+  }
   /* shut(dialog, value): a dialog goes away with its exit transition, then closes. */
   function shut(d, value) {
     if (!d.open || d.hasAttribute('data-closing')) return;

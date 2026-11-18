@@ -14,8 +14,10 @@ A badge is a short word or a number on a small chip: a status, a tag, a count.
 <Badge tone="danger" icon="circle-x">Failed</Badge>
 <Badge tone="accent">New</Badge>
 <Badge tone="off">Invited</Badge>
-<Badge count>12</Badge>
+<Badge count>12<span className="tray-vh"> orders to pack</span></Badge>   {/* a bare number: say what it counts */}
 ```
+
+A badge is plain text with no role: a screen reader reads its word where it stands. A count is a bare number, so say what it counts, in the name of the tab or item it sits on or in a `tray-vh` span inside it.
 
 ## Do and don't
 - Do give a status a word and, for success and danger, an icon: colour never stands alone.

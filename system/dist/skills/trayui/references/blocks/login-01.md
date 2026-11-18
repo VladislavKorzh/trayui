@@ -1,0 +1,68 @@
+# Sign-in form
+
+The plainest sign-in: a card centred on the page with email, a password you can show, a link for a forgotten one and six other accounts to use.
+
+The default login page for a product where people sign in with an email and a password. The card carries the wordmark, which links home, and the "Forgot it?" link sits on the line of the password label. The six other accounts come after the main button, as short names two or three across, and the foot of the card links to the sign-up page.
+
+Start here and reach for a sibling only when the page needs more: [a cover beside the form](https://trayui.com/blocks/login-02.md) to show the product, [a link by email](https://trayui.com/blocks/login-05.md) instead of a password, or [account buttons first](https://trayui.com/blocks/login-06.md). The card is 27rem wide at most and fills the width of a phone. The email field has `autocomplete="username"` and the password `current-password`, so a password manager fills both. The eye button switches the password to plain text and back; it keeps the name "Show password", and `aria-pressed` says whether the password shows.
+
+It is made of these components: [Card](https://trayui.com/components/card.md), [Auth Form](https://trayui.com/components/auth-form.md), [Field](https://trayui.com/components/field.md), [Label](https://trayui.com/components/label.md), [Input](https://trayui.com/components/input.md), [Input Group](https://trayui.com/components/input-group.md), [Button](https://trayui.com/components/button.md), [Separator](https://trayui.com/components/separator.md).
+
+Behaviours it uses: `reveal`.
+
+Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign-in form</title>
+<meta name="description" content="The plainest sign-in: a card centred on the page with email, a password you can show, a link for a forgotten one and six other accounts to use.">
+<meta name="tray-category" content="Login">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-screen">
+  <main class="tray-screen__body tray-screen__body--center">
+    <form class="tray-card tray-auth" action="/signin" method="post">
+      <a class="tray-wordmark" href="/">Counter</a>
+      <div class="tray-auth__head">
+        <h1 class="title">Sign in</h1>
+        <p>Welcome back to Perly Farm.</p>
+      </div>
+      <div class="tray-stack">
+        <div class="tray-field">
+          <label class="tray-label" for="email">Email</label>
+          <input class="tray-input" id="email" name="email" type="email" autocomplete="username" placeholder="you@farm.example" required>
+        </div>
+        <div class="tray-field">
+          <div class="tray-auth__row"><label class="tray-label" for="password">Password</label><a href="/reset">Forgot it?</a></div>
+          <div class="tray-input-group">
+            <input class="tray-input" id="password" name="password" type="password" spellcheck="false" autocapitalize="none" autocomplete="current-password" required>
+            <button class="tray-input-group__btn" type="button" data-tray="reveal" aria-label="Show password"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <button class="tray-btn tray-btn--block" type="submit">Sign in</button>
+      <div class="tray-stack tray-stack--sm">
+        <p class="tray-rule tray-rule--label">or continue with</p>
+        <div class="tray-providers" role="group" aria-label="Sign in with another account">
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/google" aria-label="Continue with Google">Google</a>
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/apple" aria-label="Continue with Apple">Apple</a>
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/facebook" aria-label="Continue with Facebook">Facebook</a>
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/telegram" aria-label="Continue with Telegram">Telegram</a>
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/linkedin" aria-label="Continue with LinkedIn">LinkedIn</a>
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/signin/microsoft" aria-label="Continue with Microsoft">Microsoft</a>
+        </div>
+      </div>
+      <p class="tray-auth__foot">New here? <a href="/signup">Create an account</a></p>
+    </form>
+  </main>
+</div>
+<script src="../components/bundle.js"></script>
+</body>
+</html>
+```

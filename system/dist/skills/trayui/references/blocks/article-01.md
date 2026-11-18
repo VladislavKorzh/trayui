@@ -1,0 +1,211 @@
+# Long read with contents
+
+A long read: standfirst, byline, a wide lead picture, the contents at the side, prose with a pull quote and figures, then tags and share links.
+
+An article page for a long feature: a season's story, a case study, a guide that readers come back to. It opens with the headline, a standfirst, the author, the date and the reading time, then a picture across the whole width. Below the picture the text and its contents split into two columns, and the contents lists every section, with the sub-sections under them, as links to their headings.
+
+Pick it over [the article with key facts](https://trayui.com/blocks/article-02.md) when the piece is read from start to end rather than scanned for one answer, and put [the end of an article](https://trayui.com/blocks/article-03.md) under it for the author, the comments and what to read next. From 56rem the contents takes a third of the width and stays in view while you scroll; on a narrower screen it comes first, above the opening paragraph. The headings step from h1 to h2 to h3 without a gap, the same two levels the contents shows.
+
+It is made of these components: [Navigation Menu](https://trayui.com/components/navigation-menu.md), [Tabs](https://trayui.com/components/tabs.md), [Button](https://trayui.com/components/button.md), [Breadcrumb](https://trayui.com/components/breadcrumb.md), [Avatar](https://trayui.com/components/avatar.md), [Sidebar](https://trayui.com/components/sidebar.md), [Card](https://trayui.com/components/card.md), [Testimonial](https://trayui.com/components/testimonial.md), [Description List](https://trayui.com/components/description-list.md), [Footer](https://trayui.com/components/footer.md).
+
+Behaviours it uses: `copy`, `strip`.
+
+Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Long read with contents</title>
+<meta name="description" content="A long read: standfirst, byline, a wide lead picture, the contents at the side, prose with a pull quote and figures, then tags and share links.">
+<meta name="tray-category" content="Article">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<header class="tray-nav tray-container">
+  <a class="tray-wordmark" href="#">Perly Farm</a>
+  <nav class="tray-nav__strip" aria-label="Main">
+    <ul class="tray-nav__links tray-tabs" data-tray="strip">
+      <li><a class="tray-tab" href="#">Caviar</a></li>
+      <li><a class="tray-tab" href="#">The farm</a></li>
+      <li><a class="tray-tab" href="articles-01.html" aria-current="true">Journal</a></li>
+      <li><a class="tray-tab" href="#">Visit us</a></li>
+    </ul>
+  </nav>
+  <div class="tray-nav__actions">
+    <a class="tray-btn tray-btn--sm" href="#">Order a jar</a>
+  </div>
+</header>
+
+<main class="tray-container">
+  <nav aria-label="Breadcrumb">
+    <ol class="tray-crumbs">
+      <li><a href="articles-01.html">Journal</a></li>
+      <li><a href="#">Farming</a></li>
+      <li><span aria-current="page">From egg to jar</span></li>
+    </ol>
+  </nav>
+
+  <article aria-labelledby="title">
+    <header class="tray-section__head" style="padding-block-start: var(--space-6)">
+      <h1 class="headline" id="title">From egg to jar: a year in the snail beds</h1>
+      <p class="lead tray-soft">The man who keeps our snails walks through one year of them, from the April morning they wake to the November week the last pearls are graded.</p>
+      <div class="tray-row">
+        <span class="tray-person">
+          <span class="tray-avatar" aria-hidden="true">TL</span>
+          <span class="tray-person__text"><b>Taras Lysenko</b><small>Keeps the snail beds</small></span>
+        </span>
+        <span class="tray-row tray-row--sm caption tray-muted"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-calendar"/></svg><time datetime="2026-09-24">24 September 2026</time></span>
+        <span class="tray-row tray-row--sm caption tray-muted"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-clock"/></svg>14 minutes to read</span>
+      </div>
+    </header>
+
+    <figure class="tray-stack tray-stack--sm">
+      <div class="tray-slot tray-slot--video"></div>
+      <figcaption class="caption tray-muted">The north beds in early June, under their shade nets. Each bed is 12 metres long and holds about 4,000 snails.</figcaption>
+    </figure>
+
+    <div class="tray-section tray-bento">
+      <nav class="tray-sidebar tray-sidebar--plain tray-span-4" aria-label="Contents" style="position: sticky; inset-block-start: var(--space-6); align-self: start">
+        <div class="tray-sidebar__group">
+          <p class="tray-sidebar__label">Contents</p>
+          <a class="tray-sidebar__item" href="#beds"><span>The beds</span></a>
+          <ul class="tray-sidebar__sub tray-sidebar__sub--text">
+            <li><a class="tray-sidebar__item" href="#soil">Soil, shade and a net</a></li>
+            <li><a class="tray-sidebar__item" href="#count">Four thousand to a bed</a></li>
+          </ul>
+          <a class="tray-sidebar__item" href="#spring"><span>Spring: waking up</span></a>
+          <a class="tray-sidebar__item" href="#laying"><span>Summer: the laying</span></a>
+          <ul class="tray-sidebar__sub tray-sidebar__sub--text">
+            <li><a class="tray-sidebar__item" href="#nest">Finding a nest</a></li>
+            <li><a class="tray-sidebar__item" href="#lifting">Lifting the eggs</a></li>
+          </ul>
+          <a class="tray-sidebar__item" href="#grading"><span>Autumn: grading and salting</span></a>
+          <a class="tray-sidebar__item" href="#winter"><span>Winter: the quiet months</span></a>
+        </div>
+      </nav>
+
+      <div class="tray-span-8 tray-stack tray-stack--lg">
+        <div class="tray-prose">
+          <p>We keep the snails in eleven open-air beds on the south slope behind the farmhouse, a ten-minute walk from the cold room. Everything in a jar of Perly caviar starts there, and almost everything that goes wrong with a batch can be traced back to a bed: too wet, too crowded, too much sun. So this is a year told from the beds.</p>
+
+          <h2 class="subtitle" id="beds">The beds</h2>
+          <p>A snail needs three things from its bed: soft ground to dig in, leaves to hide under, and air that never dries out. We spent most of our first season learning how much of each.</p>
+          <h3 class="action" id="soil">Soil, shade and a net</h3>
+          <p>Each bed is a strip of loose, chalky soil 12 metres long and 1.5 metres wide, sown with clover and radish for the snails to eat and shelter in. A fine net on low posts runs round every bed: it keeps the snails in and the thrushes out. Over the north beds we stretch a shade net from June to August, when the sun would bake the top of the soil into a crust no snail can dig through.</p>
+          <h3 class="action" id="count">Four thousand to a bed</h3>
+          <p>We count about 4,000 grown snails to a bed, or roughly 220 to a square metre. More than that and they stop laying. We learned this the hard way in 2024, when two crowded beds gave us half the eggs of the others.</p>
+
+          <h2 class="subtitle" id="spring">Spring: waking up</h2>
+          <p>The snails sleep through winter sealed inside their shells, a hand's depth under the soil. They wake when the ground warms past 10&nbsp;&deg;C, which near Kyiv is usually the second week of April. The first morning is hard to miss: after a night of rain the beds are suddenly full of moving shells, and the clover we sowed in March is gone by lunch.</p>
+          <p>For the first month they only eat and mate. We feed them twice a day, at dusk and again before dawn, because in daylight they do almost nothing at all.</p>
+
+          <h2 class="subtitle" id="laying">Summer: the laying</h2>
+          <p>Laying starts in late May and runs to the end of August. A snail digs a hole about 4&nbsp;cm deep with its foot, lays 80 to 120 eggs in it and covers it again. Each egg is a white pearl 3 to 4 millimetres across. Left alone they hatch in two or three weeks; for caviar we have to find them within a day.</p>
+          <figure class="tray-card tray-card--inverse tray-testimonial">
+            <blockquote>&ldquo;A good nest looks like a handful of pearls dropped into wet sand. Once you have seen one, you never walk past one again.&rdquo;</blockquote>
+            <figcaption class="tray-person">
+              <span class="tray-avatar" aria-hidden="true">DK</span>
+              <span class="tray-person__text"><b>Dana Kovalenko</b><small>Grades every batch</small></span>
+            </figcaption>
+          </figure>
+          <h3 class="action" id="nest">Finding a nest</h3>
+          <p>We walk every bed at first light, slowly, looking for a small round patch of freshly turned soil with a snail resting beside it. A snail that has just laid is tired and does not crawl away, and that is often the surest sign. In a good week of June we find about 300 nests a day across the eleven beds.</p>
+          <h3 class="action" id="lifting">Lifting the eggs</h3>
+          <p>Each nest is lifted with a soft plastic spoon into a cold tray, never by hand: the shells are thin, and the warmth of a palm starts them ageing. The trays reach the cold room within twenty minutes. There the eggs are rinsed in cold water, picked clean of soil and counted.</p>
+
+          <h2 class="subtitle" id="grading">Autumn: grading and salting</h2>
+          <p>By September the laying is over and the work moves indoors. Every egg from the summer is pasteurised at a low heat and then graded by hand on three sieves before it is salted. Batch 14, the one in the shop now, went through the sieves in the last week of October. This is what we look for in a pearl:</p>
+          <ul class="tray-list-plain">
+            <li>Size between 3 and 4&nbsp;mm. Smaller pearls taste of little; larger ones are often two eggs grown together.</li>
+            <li>An even, milky white. A yellow or grey tinge means the nest was found too late.</li>
+            <li>A whole, firm shell. A soft or cracked pearl goes to the kitchen, not into a jar.</li>
+            <li>A clean smell, like a forest floor after rain. Anything sharper and the whole tray is set aside.</li>
+          </ul>
+          <figure class="tray-stack tray-stack--sm">
+            <div class="tray-slots">
+              <div class="tray-slot tray-slot--video"></div>
+              <div class="tray-slot tray-slot--video"></div>
+            </div>
+            <figcaption class="caption tray-muted">The three sieves, at 3, 3.5 and 4&nbsp;mm, and a tray of graded pearls from batch 14 waiting for the salt.</figcaption>
+          </figure>
+          <p>The pearls are salted at 3 per cent, enough to keep them and little enough to keep their taste, and spooned into jars of 30, 50 and 100&nbsp;g. Each jar is sealed, numbered with its batch and labelled by hand. Batch 14 came to 1,240 jars.</p>
+
+          <h2 class="subtitle" id="winter">Winter: the quiet months</h2>
+          <p>In late November the soil cools below 8&nbsp;&deg;C and the snails begin to seal themselves in. We stop feeding, take down the shade nets and lay straw over every bed. Until April the farm's work is in the cold room and the shop: the last jars of the year leave in December, and then we wait for the ground to warm again.</p>
+          <p>People ask whether we miss the snails in winter. A little. But a farm that rests for four months starts the spring with snails that lay well, and that is most of the trade.</p>
+        </div>
+
+        <footer class="tray-prose">
+          <dl class="tray-dl tray-dl--stack">
+            <div>
+              <dt>Tags</dt>
+              <dd>
+                <a class="tray-btn tray-btn--quiet tray-btn--sm" href="#">Snail beds</a>
+                <a class="tray-btn tray-btn--quiet tray-btn--sm" href="#">Seasons</a>
+                <a class="tray-btn tray-btn--quiet tray-btn--sm" href="#">Grading</a>
+                <a class="tray-btn tray-btn--quiet tray-btn--sm" href="#">Batch 14</a>
+              </dd>
+            </div>
+            <div>
+              <dt>Share</dt>
+              <dd>
+                <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" data-tray="copy" data-target="#article-link"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-link"/></svg><span data-label>Copy the link</span></button>
+                <a class="tray-btn tray-btn--quiet tray-btn--sm" href="mailto:?subject=From%20egg%20to%20jar%3A%20a%20year%20in%20the%20snail%20beds&amp;body=https%3A%2F%2Fperly.example%2Fjournal%2Ffrom-egg-to-jar"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-mail"/></svg>Send by email</a>
+                <span id="article-link" hidden>https://perly.example/journal/from-egg-to-jar</span>
+              </dd>
+            </div>
+          </dl>
+        </footer>
+      </div>
+    </div>
+  </article>
+</main>
+
+<footer class="tray-footer tray-container">
+  <div class="tray-footer__top">
+    <div class="tray-footer__brand">
+      <a class="tray-wordmark" href="#">Perly Farm</a>
+      <p>Snail caviar from a small farm near Kyiv. The farm shop at Farm road 4 opens Thursday to Sunday, 10:00 to 18:00.</p>
+    </div>
+    <nav class="tray-footer__col" aria-label="Caviar">
+      <h3>Caviar</h3>
+      <a href="#">Jars and prices</a>
+      <a href="#">Gift boxes</a>
+      <a href="#">Delivery</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="Journal">
+      <h3>Journal</h3>
+      <a href="#">Farming</a>
+      <a href="#">Kitchen</a>
+      <a href="#">News</a>
+      <a href="articles-03.html">Archive</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="The farm">
+      <h3>The farm</h3>
+      <a href="#">Our story</a>
+      <a href="#">Visit us</a>
+      <a href="#">Work with us</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="Help">
+      <h3>Help</h3>
+      <a href="article-02.html">Storing a jar</a>
+      <a href="#">Returns</a>
+      <a href="#">Contact</a>
+    </nav>
+  </div>
+  <div class="tray-footer__bottom">
+    <p>&copy; 2026 Perly Farm. Every name, date and figure on this page is demo data.</p>
+    <ul class="tray-footer__legal" role="list">
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms</a></li>
+    </ul>
+  </div>
+</footer>
+<script src="../components/bundle.js"></script>
+</body>
+</html>
+```

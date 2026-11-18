@@ -50,7 +50,7 @@ python3 tools/check.py      # every check, as CI runs them; --fast skips the bro
 | A block | `system/project/blocks/<name>.html` | `system/dist/blocks/` |
 | The site | `system/tools/site/` and `system/tools/site.py` | `system/site/` (not kept in git) |
 
-Built files are kept in the repository: `system/dist/`, `system/project/guides/0-components.md` and `5-blocks.md`, `system/project/assets/Icons/`, and `system/react/styles/`, `src/runtime.ts`, `src/icons.ts` and `src/index.ts`. Rebuild with `python3 system/tools/build.py` and commit what it changed with your change. CI fails when they are out of date.
+Built files are kept in the repository: `system/dist/`, `system/project/guides/0-components.md` and `5-blocks.md`, `system/project/assets/Icons/`, and `system/react/styles/`, `src/runtime.ts`, `src/icons.ts` and `src/index.ts`. `system/dist/skills/` is written by the site's build. Rebuild with `python3 system/tools/build.py` and `python3 system/tools/site.py`, and commit what they changed with your change. CI fails when they are out of date.
 
 ## How the system is written
 

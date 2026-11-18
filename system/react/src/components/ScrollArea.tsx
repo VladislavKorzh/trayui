@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { cx } from '../lib/util';
-import { toLength } from '../lib/chat';
+import { cx, toLength } from '../lib/util';
 
 export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Names the area for screen readers: "Pickup points", "Filters". Required: the area is a focusable region the keyboard can scroll. */

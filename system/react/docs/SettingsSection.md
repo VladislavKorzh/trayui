@@ -15,7 +15,7 @@ A settings section is one topic of a settings page: its name and a line of expla
     { title: 'Print a label for every order', description: 'On the printer by the packing table.', control: <Switch defaultChecked onCheckedChange={save} /> },
     { title: 'Hold orders placed after', description: 'Later orders go to the next courier day.',
       control: <NativeSelect size="sm" options={['12:00', '14:00', '16:00']} defaultValue="14:00" /> },
-    { title: 'Courier days', description: 'Tuesday, Thursday and Saturday.', control: <Button variant="quiet" size="xs">Change</Button> },
+    { title: 'Courier days', description: 'Tuesday, Thursday and Saturday.', control: <Button variant="quiet" size="xs" aria-label="Change the courier days">Change</Button> },
   ]}
 />
 

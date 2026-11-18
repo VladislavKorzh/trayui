@@ -26,12 +26,15 @@ The top bar is the row above the content: where you are at the start edge; searc
 
 ## Parts
 - **Start**: a Breadcrumb (`breadcrumb`), or the page's `title` when it has no parent, with an optional `back` arrow before it and `children` after it, such as a status badge.
-- **Search** (`search`): looks like a field and is a button; `onSearch` opens the Command panel, in a Dialog. Its key, `searchKey` (default `/`), shows in a Kbd and opens the search from anywhere on the page but a field.
+- **Search** (`search`): looks like a field and is a button; `onSearch` opens the Command panel, in a Dialog. Its key, `searchKey` (default `/`), shows in a Kbd and opens the search from anywhere on the page but a field. The button is named by its words, and `aria-keyshortcuts` says the key while `onSearch` listens for it.
 - **Icon buttons** (`actions`): square quiet buttons, at most three. A `count` shows in the yellow pip on the corner and in the button's name ("Notifications, 2 unread"); 0 hides the pip.
 - **End** (`end`): a NotificationCenter, a UserMenu, or the page's own small buttons.
 - **Account** (`user`): the avatar as a plain button. For the account's menu, put a UserMenu in `end` instead.
 
 The bar has no fill of its own: it sits on the page. `sticky` keeps it at the top and gives it the colour of its ground. Inside an AppShell it starts with the button that collapses the sidebar; `sidebarToggle={false}` leaves it out.
+
+## On a phone
+Below 48rem a full bar does not fit a phone: `fold` folds it, so the breadcrumb keeps only the current page and the search only its icon. What is hidden is hidden from sight only: the trail and the search keep their names.
 
 ## Do and don't
 - Do keep the bar to one row: at most three icon buttons and the avatar at the end.

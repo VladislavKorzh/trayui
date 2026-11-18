@@ -1,0 +1,215 @@
+# Author page
+
+One author's page: avatar, role, a short bio and links, three figures about their writing, their posts as cards with pages, and the other authors.
+
+An author page or contributor profile for a blog with several writers. A card at the top holds the avatar, name and role, a short bio, a link to write to the author, and three figures: how many posts, the most read one, and when the writing began. Under it come the author's posts, the newest as a wide card with a picture and three more in a row, then Newer and Older steps around "Page 1 of 6", and cards for the other authors with their counts.
+
+Use it when readers follow a byline: [the blog home](https://trayui.com/blocks/blog-01.md) lists everyone's posts, and [the tag page](https://trayui.com/blocks/blog-03.md) gathers one subject. Below 56rem the wide card puts its picture above its text and the row of three stacks. The author's name is the page's one h1, the posts and the other authors are h2 sections named by their headings, and each post title is an h3.
+
+It is made of these components: [Navigation Menu](https://trayui.com/components/navigation-menu.md), [Tabs](https://trayui.com/components/tabs.md), [Button](https://trayui.com/components/button.md), [Breadcrumb](https://trayui.com/components/breadcrumb.md), [Card](https://trayui.com/components/card.md), [Avatar](https://trayui.com/components/avatar.md), [Stat Card](https://trayui.com/components/stat-card.md), [Badge](https://trayui.com/components/badge.md), [Pagination](https://trayui.com/components/pagination.md), [Footer](https://trayui.com/components/footer.md).
+
+Behaviours it uses: `strip`.
+
+Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Author page</title>
+<meta name="description" content="One author's page: avatar, role, a short bio and links, three figures about their writing, their posts as cards with pages, and the other authors.">
+<meta name="tray-category" content="Blog">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<header class="tray-nav tray-container">
+  <a class="tray-wordmark" href="#">Perly Farm</a>
+  <nav class="tray-nav__strip" aria-label="Main">
+    <ul class="tray-nav__links tray-tabs" data-tray="strip">
+      <li><a class="tray-tab" href="#">Shop</a></li>
+      <li><a class="tray-tab" href="blog-01.html" aria-current="true">Field notes</a></li>
+      <li><a class="tray-tab" href="#">Visit the farm</a></li>
+      <li><a class="tray-tab" href="#">About us</a></li>
+    </ul>
+  </nav>
+  <div class="tray-nav__actions">
+    <a class="tray-btn tray-btn--sm" href="#">Order a jar</a>
+  </div>
+</header>
+
+<main class="tray-container">
+  <div class="tray-stack">
+    <nav aria-label="Breadcrumb">
+      <ol class="tray-crumbs">
+        <li><a href="blog-01.html">Field notes</a></li>
+        <li><a href="#">Authors</a></li>
+        <li><span aria-current="page">Dana Kovalenko</span></li>
+      </ol>
+    </nav>
+
+    <section class="tray-card" aria-labelledby="author-name">
+      <div class="tray-stack tray-stack--lg">
+        <div class="tray-row">
+          <span class="tray-avatar tray-avatar--lg" aria-hidden="true">DK</span>
+          <div class="tray-stack tray-stack--sm">
+            <h1 class="headline" id="author-name">Dana Kovalenko</h1>
+            <p class="lead tray-soft">Head of snail care</p>
+          </div>
+        </div>
+        <div class="tray-prose">
+          <p>Dana started the farm with her brother in 2021, with 400 snails in two beds behind the house. Today she looks after nine beds and about 9,000 snails, and she writes about the seasons: when the snails wake, what they eat in a dry July, and how we put them to bed in November.</p>
+        </div>
+        <div class="tray-row tray-row--sm">
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="mailto:dana@perly.example"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-mail"/></svg>Write to Dana</a>
+          <a class="tray-btn tray-btn--quiet tray-btn--sm" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-calendar"/></svg>Book a tour of the beds</a>
+        </div>
+        <div class="tray-stats">
+          <div class="tray-stat">
+            <p class="tray-stat__label">Posts</p>
+            <p class="tray-stat__value">23</p>
+            <p class="tray-stat__foot">Three of them since September</p>
+          </div>
+          <div class="tray-stat">
+            <p class="tray-stat__label">Readers' favourite</p>
+            <p class="tray-stat__value">2,140 <small>reads</small></p>
+            <p class="tray-stat__foot"><a href="#">Why we collect the eggs by hand</a></p>
+          </div>
+          <div class="tray-stat">
+            <p class="tray-stat__label">Writing since</p>
+            <p class="tray-stat__value">March 2022</p>
+            <p class="tray-stat__foot">Her first post: the first 400 snails</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="tray-section" aria-labelledby="posts-title">
+    <div class="tray-section__head">
+      <h2 class="title" id="posts-title">Dana's posts</h2>
+      <p class="lead tray-soft">23 posts, the newest first, most of them about the seasons.</p>
+    </div>
+    <div class="tray-stack tray-stack--lg">
+      <a class="tray-card" href="#">
+        <div class="tray-bento">
+          <div class="tray-slot tray-slot--video tray-span-7"></div>
+          <div class="tray-stack tray-span-5">
+            <p class="caption tray-muted"><time datetime="2026-11-12">12 November 2026</time>, five minutes to read</p>
+            <h3 class="title" id="dana-1">The snails have gone to sleep for the winter</h3>
+            <p class="tray-soft">Below 8&nbsp;&deg;C the snails seal their shells with a white lid and stop eating. We carried the last beds into the barn on Monday, and the farm stays quiet until March.</p>
+            <span class="tray-row tray-row--sm"><span class="tray-badge">Seasons</span><span class="tray-badge">Snail care</span></span>
+          </div>
+        </div>
+      </a>
+      <div class="tray-bento">
+        <a class="tray-card tray-span-4" href="#">
+          <div class="tray-stack">
+            <div class="tray-slot tray-slot--video"></div>
+            <p class="caption tray-muted"><time datetime="2026-10-07">7 October 2026</time></p>
+            <h3 class="subtitle" id="dana-2">Why we collect the eggs by hand</h3>
+            <p class="tray-soft">Each clutch of about 80 eggs is lifted with a soft spoon, rinsed in cold water and counted.</p>
+            <span class="tray-row tray-row--sm"><span class="tray-badge">Harvest</span><span class="tray-badge">Snail care</span></span>
+          </div>
+        </a>
+        <a class="tray-card tray-span-4" href="#">
+          <div class="tray-stack">
+            <div class="tray-slot tray-slot--video"></div>
+            <p class="caption tray-muted"><time datetime="2026-09-16">16 September 2026</time></p>
+            <h3 class="subtitle" id="dana-3">A wet September in the beds</h3>
+            <p class="tray-soft">Three weeks of rain, two beds moved under the roof, and fewer eggs than we hoped for.</p>
+            <span class="tray-row tray-row--sm"><span class="tray-badge">Seasons</span></span>
+          </div>
+        </a>
+        <a class="tray-card tray-span-4" href="#">
+          <div class="tray-stack">
+            <div class="tray-slot tray-slot--video"></div>
+            <p class="caption tray-muted"><time datetime="2026-08-02">2 August 2026</time></p>
+            <h3 class="subtitle" id="dana-4">Feeding 9,000 snails on a hot day</h3>
+            <p class="tray-soft">Above 25&nbsp;&deg;C they hide and stop eating, so on hot days we feed them after dark.</p>
+            <span class="tray-row tray-row--sm"><span class="tray-badge">Snail care</span></span>
+          </div>
+        </a>
+      </div>
+      <div class="tray-row tray-row--between">
+        <p class="caption tray-muted">Posts 1 to 4 of 23</p>
+        <nav aria-label="Pages">
+          <ul class="tray-pages">
+            <li><a class="tray-page tray-page--step" role="link" aria-disabled="true"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-left"/></svg>Newer</a></li>
+            <li><span class="tray-pages__status">Page 1 of 6</span></li>
+            <li><a class="tray-page tray-page--step" href="?page=2">Older<svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <section class="tray-section" aria-labelledby="authors-title" style="padding-block-start: 0">
+    <div class="tray-section__head">
+      <h2 class="title" id="authors-title">The other authors</h2>
+    </div>
+    <div class="tray-bento">
+      <a class="tray-card tray-span-4" href="#">
+        <div class="tray-stack">
+          <span class="tray-person"><span class="tray-avatar" aria-hidden="true">OM</span><span class="tray-person__text"><b>Oleh Marchenko</b><small>Grading and the cold room</small></span></span>
+          <p class="tray-soft">Writes about the eggs after they leave the soil: grading, salting and the batch book.</p>
+          <p class="caption tray-muted">9 posts, the latest on 5 November</p>
+        </div>
+      </a>
+      <a class="tray-card tray-span-4" href="#">
+        <div class="tray-stack">
+          <span class="tray-person"><span class="tray-avatar" aria-hidden="true">IB</span><span class="tray-person__text"><b>Iryna Bondar</b><small>The farm shop and markets</small></span></span>
+          <p class="tray-soft">Runs the counter at Farm road 4 and the market stall, and keeps a list of what visitors ask.</p>
+          <p class="caption tray-muted">6 posts, the latest on 29 October</p>
+        </div>
+      </a>
+      <a class="tray-card tray-span-4" href="#">
+        <div class="tray-stack">
+          <span class="tray-person"><span class="tray-avatar" aria-hidden="true">TL</span><span class="tray-person__text"><b>Taras Lysenko</b><small>Delivery and the chilled box</small></span></span>
+          <p class="tray-soft">Packs the orders and drives the van. Tests every box at 0 to 4&nbsp;&deg;C before it goes out.</p>
+          <p class="caption tray-muted">3 posts, the latest on 21 October</p>
+        </div>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="tray-footer tray-container">
+  <div class="tray-footer__top">
+    <div class="tray-footer__brand">
+      <a class="tray-wordmark" href="#">Perly Farm</a>
+      <p>White caviar from land snails, raised in open-air beds near Kyiv.</p>
+    </div>
+    <nav class="tray-footer__col" aria-label="Shop">
+      <h3>Shop</h3>
+      <a href="#">Jars of caviar</a>
+      <a href="#">Gift boxes</a>
+      <a href="#">Delivery</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="Farm">
+      <h3>Farm</h3>
+      <a href="#">Visit us</a>
+      <a href="blog-01.html">Field notes</a>
+      <a href="#">About us</a>
+    </nav>
+    <nav class="tray-footer__col" aria-label="Help">
+      <h3>Help</h3>
+      <a href="#">Storing a jar</a>
+      <a href="#">Returns</a>
+      <a href="#">Contact us</a>
+    </nav>
+  </div>
+  <div class="tray-footer__bottom">
+    <p>&copy; 2026 Perly Farm, Farm road 4. Every name and figure here is demo data.</p>
+    <ul class="tray-footer__legal" role="list">
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms of sale</a></li>
+    </ul>
+  </div>
+</footer>
+<script src="../components/bundle.js"></script>
+</body>
+</html>
+```

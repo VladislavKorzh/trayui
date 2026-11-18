@@ -4,7 +4,7 @@ export function OrderDetails() {
   return (
     <div className="tray-row" style={{ alignItems: 'flex-start' }}>
       <DescriptionList
-        style={{ flex: '1 1 14rem', minInlineSize: '24rem' }}
+        style={{ flex: '1 1 14rem', minInlineSize: 'min(24rem, 100%)' }}
         items={[
           { term: 'Customer', value: <a href="#">Dana Kovalenko</a> },
           { term: 'Status', value: <Badge>To pack</Badge> },

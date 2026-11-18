@@ -74,6 +74,7 @@ export const UsageMeter = React.forwardRef<HTMLDivElement, UsageMeterProps>(func
               aria-valuemin={0}
               aria-valuemax={limit}
               aria-valuenow={used}
+              aria-valuetext={typeof text === 'string' ? text : undefined}
               style={{ '--tray-v': Math.round(share * 100) } as React.CSSProperties}
             />
             {item.note != null ? (

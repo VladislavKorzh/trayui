@@ -1,6 +1,7 @@
+'use client';
 import * as React from 'react';
 import type { IconSource } from '../lib/icon';
-import { cx } from '../lib/util';
+import { cx, useIsoLayoutEffect } from '../lib/util';
 import { Alert } from './Alert';
 import { Button } from './Button';
 import { Icon } from './Icon';
@@ -59,7 +60,7 @@ export const UpgradePrompt = React.forwardRef<HTMLDivElement, UpgradePromptProps
   const H = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
   // `inert` is set on the element itself: React 18 does not know the attribute and React 19 reads it as a boolean.
   const picture = React.useRef<HTMLDivElement | null>(null);
-  React.useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     picture.current?.setAttribute('inert', '');
   }, [variant]);
 

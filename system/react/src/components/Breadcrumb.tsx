@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, useBehaviour, useForwardedRef } from '../lib/util';
 import { Button } from './Button';
@@ -26,6 +27,8 @@ export interface BreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
   label?: string;
   /** The aria-label of the "more" button of a shortened trail. Default 'Show the levels between'. */
   moreLabel?: string;
+  /** Below 48rem only the current page is shown, so a top bar fits a phone; the other levels stay in the trail for a screen reader. */
+  fold?: boolean;
 }
 
 /**
@@ -33,7 +36,7 @@ export interface BreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
  * Use it on pages below the top level; it shows hierarchy, never the steps of a flow or history.
  */
 export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(function Breadcrumb(
-  { items, maxItems, back, label = 'Breadcrumb', moreLabel = 'Show the levels between', className, ...rest },
+  { items, maxItems, back, label = 'Breadcrumb', moreLabel = 'Show the levels between', fold, className, ...rest },
   forwarded,
 ) {
   const ref = useForwardedRef(forwarded);
@@ -65,7 +68,7 @@ export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(functio
 
   return (
     <nav ref={ref as React.RefObject<HTMLElement>} aria-label={label} className={className} {...rest}>
-      <ol className="tray-crumbs">
+      <ol className={cx('tray-crumbs', fold && 'tray-crumbs--fold')}>
         {shorten ? (
           <>
             {level(items[0], 0, false)}

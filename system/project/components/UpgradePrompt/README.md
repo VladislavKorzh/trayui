@@ -19,7 +19,7 @@ An upgrade prompt stands where a feature would be when the plan does not have it
 | Form | Use |
 | --- | --- |
 | `tray-card tray-upsell` | In place of a whole section the plan lacks. |
-| `tray-alert tray-alert--accent` | One line inside a page, when a limit was reached. It is the Alert. |
+| `tray-alert tray-alert--accent` | One line inside a page, when a limit was reached. It is the Alert, with `role="status"`. |
 | `tray-locked` | Over a preview of the feature: `tray-locked__content` is dimmed and takes `inert`; `tray-locked__prompt tray-raised tray-upsell` floats on it. |
 
 The dimmed preview must be `inert` and `aria-hidden="true"`: it is a picture of the feature, not the feature.

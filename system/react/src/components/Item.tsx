@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import type { IconSource } from '../lib/icon';
 import { cx } from '../lib/util';
@@ -23,15 +24,16 @@ export interface ItemProps extends Omit<React.HTMLAttributes<HTMLElement>, 'titl
   /** With `href`: the link's relation, such as 'noopener'. */
   rel?: string;
   /**
-   * The element that holds the row. 'li' (the default) for a row inside `<ul className="tray-items">` (filled rows, 8px apart)
-   * or `<ul className="tray-items tray-items--ruled">` (no fill, hairlines between rows). 'div' for a single row on its own.
+   * The element that holds the row. 'li' (the default) for a row inside `<ul className="tray-items" role="list">` (filled rows, 8px apart)
+   * or `<ul className="tray-items tray-items--ruled" role="list">` (no fill, hairlines between rows). 'div' for a single row on its own.
    */
   as?: 'li' | 'div';
 }
 
 /**
  * An item is one row of a list: a media tile, a title with a line of detail, and something at the end.
- * Put items in `<ul className="tray-items">` for grey rows, or `<ul className="tray-items tray-items--ruled">` for hairline rows in a long list on the page.
+ * Put items in `<ul className="tray-items" role="list">` for grey rows, or `<ul className="tray-items tray-items--ruled" role="list">` for hairline rows in a long list on the page.
+ * The role keeps it a list for Safari, which drops the list of a `ul` without markers.
  * With `href` or `onClick` the whole row is a link or a button.
  */
 export const Item = React.forwardRef<HTMLElement, ItemProps>(function Item(

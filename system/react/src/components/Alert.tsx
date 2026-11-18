@@ -24,6 +24,8 @@ export interface AlertProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   end?: React.ReactNode;
   /** 'alert' interrupts a screen reader: for an error that appears after an action. 'status' waits its turn. Default 'alert' for danger, 'status' otherwise. */
   role?: 'alert' | 'status';
+  /** An id for the title, so a field the alert is about can point at it with `aria-describedby`. */
+  titleId?: string;
 }
 
 const defaultIcon: Record<AlertTone, IconName> = { neutral: 'info', danger: 'circle-alert', success: 'circle-check', accent: 'info' };
@@ -32,14 +34,16 @@ const defaultIcon: Record<AlertTone, IconName> = { neutral: 'info', danger: 'cir
  * An alert is a message that stays in the page until its cause is gone: a tray row with an icon tile, a title and a sentence.
  * It belongs to a page or a card; use a Toast for something that already happened, and a Field error for one field.
  */
-export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert({ tone = 'neutral', icon, title, actions, end, role, className, children, ...rest }, ref) {
+export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert({ tone = 'neutral', icon, title, actions, end, role, titleId, className, children, ...rest }, ref) {
   return (
     <div ref={ref} className={cx('tray-alert', tone !== 'neutral' && `tray-alert--${tone}`, className)} role={role ?? (tone === 'danger' ? 'alert' : 'status')} {...rest}>
       <span className="tray-alert__icon">
         <Icon name={icon ?? defaultIcon[tone]} />
       </span>
       <div className="tray-alert__body">
-        <p className="tray-alert__title">{title}</p>
+        <p className="tray-alert__title" id={titleId}>
+          {title}
+        </p>
         {children != null ? <p className="tray-alert__text">{children}</p> : null}
         {actions != null ? <div className="tray-alert__actions">{actions}</div> : null}
       </div>

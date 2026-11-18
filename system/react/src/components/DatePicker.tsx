@@ -1,6 +1,7 @@
+'use client';
 import * as React from 'react';
 import { useFieldControl } from '../lib/field';
-import { cx, runtime, useBehaviour, useControlled } from '../lib/util';
+import { cx, useBehaviour, useControlled } from '../lib/util';
 import { calendarHandle, useTrayOn, useIsoLayoutEffect, useMergedRef } from '../lib/menus';
 import { Button } from './Button';
 import { Icon } from './Icon';
@@ -71,10 +72,22 @@ export interface DatePickerProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   onOpenChange?: (open: boolean) => void;
 }
 
+/** A day or a period in words, as the runtime's formatDate writes it ("18 Nov 2026", "1–15 Nov 2026"); here so that a server writes it too. */
+function formatDate(value: string, locale: string): string {
+  const day = (s: string) => {
+    const p = s.split('-');
+    return new Date(+p[0], +p[1] - 1, +(p[2] || 1));
+  };
+  const fmt: Intl.DateTimeFormat & { formatRange?: (from: Date, to: Date) => string } = new Intl.DateTimeFormat(locale || 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  const [start, end] = value.split('/');
+  if (end && fmt.formatRange) return fmt.formatRange(day(start), day(end));
+  return fmt.format(day(start));
+}
+
 /** What the field shows, as the datepicker behaviour writes it: the date, the range, "18 Nov 2026 – …" halfway through a range, or the placeholder. */
 function shown(value: string, locale: string, placeholder: string): string {
   if (!value) return placeholder;
-  const format = (v: string) => (typeof runtime.formatDate === 'function' ? runtime.formatDate(v, locale) : v);
+  const format = (v: string) => formatDate(v, locale);
   const [start, end] = value.split('/');
   if (value.indexOf('/') < 0 || end) return format(value);
   return format(start) + ' – …';
@@ -173,7 +186,10 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(func
         {...field}
       >
         <Icon name="calendar" />
-        <span className="tray-select-trigger__value">{text}</span>
+        {/* A server's Intl may space a period differently from the browser's; the effect above writes the browser's words. */}
+        <span className="tray-select-trigger__value" suppressHydrationWarning>
+          {text}
+        </span>
       </button>
       <div
         className={cx('tray-pop tray-pop--roomy', align === 'end' && 'tray-pop--end')}

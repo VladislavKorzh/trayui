@@ -33,10 +33,10 @@ The auth form is the card a person meets before the product: sign in or create a
 - `signin`: an email and the current password, with a reveal button (Input Group) and an optional "Forgot it?" link. Button "Sign in".
 - `signup`: an email and a new password with its rule as `passwordHint`. `nameLabel` adds a first field for the farm or shop name. Button "Create the account".
 
-Every field carries its `autocomplete` (`username`, `current-password`, `new-password`, `organization`) and a `name`, so the browser's password manager works. Pass `children` for an extra field, such as a one-time code.
+Every field carries its `autocomplete` (`username`, `current-password`, `new-password`, `organization`) and a `name`, so the browser's password manager works. Pass `children` for an extra field, such as a one-time code. The password that can be shown turns spell checking and capitals off, and its reveal button keeps its name, "Show password", while `aria-pressed` says the password shows ("Show password, pressed").
 
 ## Errors
-An error for the whole form is a danger Alert between the head and the first field: `error` is its title, `errorText` what to do. An error for one field sits under it (`fieldErrors`); `true` rings the field without a line, when the alert already says why.
+An error for the whole form is a danger Alert between the head and the first field: `error` is its title, `errorText` what to do. An error for one field sits under it (`fieldErrors`); `true` rings the field without a line, when the alert already says why, and the field points at the alert's title (`aria-describedby`), so it is read with the field. The Alert is read when it comes into the page, as after a send checked in the browser; one that is already there as the page loads, rendered on a server with the page that answers the send, is not announced, so move focus to the form's alert as that page loads.
 
 ## Layout
 The card is 27rem wide at most and centred. Use `headingLevel={2}` when it shares the page with other headings.

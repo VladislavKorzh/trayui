@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, useControlled } from '../lib/util';
 import { initialsOf, usePopAnchor } from '../lib/shell';
@@ -72,11 +73,10 @@ export const WorkspaceSwitcher = React.forwardRef<HTMLDivElement, WorkspaceSwitc
     handle()?.close(true);
   };
 
-  const accessibleName = here ? here.name + (typeof here.detail === 'string' ? ', ' + here.detail : '') : undefined;
-
   return (
     <div ref={setRef} className={cx('tray-anchor tray-anchor--block', className)} data-tray="menu" {...rest}>
-      <button className="tray-switcher" type="button" aria-haspopup="menu" aria-label={accessibleName}>
+      {/* Named by its words, "Perly Farm Shop plan", also in a collapsed sidebar, where they are hidden from sight only (WCAG 2.5.3). */}
+      <button className="tray-switcher" type="button" aria-haspopup="menu">
         <Avatar size="sm" tone="ink" initials={here ? here.initials ?? initialsOf(here.name) : undefined} src={here?.src} />
         <span className="tray-person__text">
           <b>{here?.name}</b>

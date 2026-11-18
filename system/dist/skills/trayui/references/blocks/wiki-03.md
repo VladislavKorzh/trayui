@@ -1,0 +1,305 @@
+# Page history
+
+The history of a handbook page: revisions with the date, author, summary and size of each, two ticked to compare, and the difference line by line.
+
+The revision history of a wiki page, for checking what changed and who changed it. The head counts the revisions and the people who made them. The table gives each revision its number, date, author, summary and the words it added or removed, with a View button, and the current one wears a badge. Under it, the difference between the two ticked revisions is set out line by line: added lines start with + and removed ones with -, so the change does not rest on colour.
+
+Open it from the History button of [the wiki page](https://trayui.com/blocks/wiki-01.md); [the wiki home](https://trayui.com/blocks/wiki-02.md) shows recent edits across all pages, this screen the whole life of one. The table is at least 54rem wide, so on a narrow screen it scrolls sideways inside its frame. Only two revisions stay ticked, as a third lets go of the first. The line beside Compare selected is a polite live region that names the pair, and the form does not send with fewer than two.
+
+It is made of these components: [App Shell](https://trayui.com/components/app-shell.md), [Top Bar](https://trayui.com/components/top-bar.md), [Button](https://trayui.com/components/button.md), [Kbd](https://trayui.com/components/kbd.md), [Avatar](https://trayui.com/components/avatar.md), [Sidebar](https://trayui.com/components/sidebar.md), [Badge](https://trayui.com/components/badge.md), [Page Header](https://trayui.com/components/page-header.md), [Breadcrumb](https://trayui.com/components/breadcrumb.md), [Table](https://trayui.com/components/table.md), [Checkbox](https://trayui.com/components/checkbox.md), [Tooltip](https://trayui.com/components/tooltip.md), [Pagination](https://trayui.com/components/pagination.md), [Code Block](https://trayui.com/components/code-block.md).
+
+Behaviours it uses: `copy`, `sidebar-sheet`, `tooltip`.
+
+Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page history</title>
+<meta name="description" content="The history of a handbook page: revisions with the date, author, summary and size of each, two ticked to compare, and the difference line by line.">
+<meta name="tray-category" content="Wiki">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app tray-app--header">
+  <header class="tray-topbar tray-app__header">
+    <div class="tray-topbar__start">
+      <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the pages"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+      <a class="tray-wordmark" href="wiki-02.html">Handbook</a>
+    </div>
+    <div class="tray-topbar__end">
+      <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search the handbook"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search the handbook</span><kbd class="tray-kbd">/</kbd></button>
+      <button class="tray-avatar" type="button" aria-label="Account: Iryna Bondar, IB">IB</button>
+    </div>
+  </header>
+  <div class="tray-app__side">
+    <nav class="tray-sidebar" id="nav" aria-label="Handbook pages">
+      <div class="tray-sidebar__scroll">
+        <div class="tray-sidebar__group">
+          <a class="tray-sidebar__item" href="wiki-02.html"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-clock"/></svg><span>Recent changes</span></a>
+          <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bookmark"/></svg><span>Saved pages</span><span class="tray-badge tray-badge--count">4</span></a>
+        </div>
+        <div class="tray-sidebar__group">
+          <p class="tray-sidebar__label">Sections</p>
+          <ul class="tray-tree">
+            <li>
+              <details>
+                <summary class="tray-sidebar__item"><svg class="tray-icon tray-icon--sm tray-sidebar__caret" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-sun"/></svg><span>Snails</span></summary>
+                <ul>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Beds and soil</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Feeding</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Winter rest</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Health checks</span></a></li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <details open>
+                <summary class="tray-sidebar__item"><svg class="tray-icon tray-icon--sm tray-sidebar__caret" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-sparkle"/></svg><span>Caviar</span></summary>
+                <ul>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Collecting eggs</span></a></li>
+                  <li><a class="tray-sidebar__item" href="wiki-01.html" aria-current="true"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Grading a batch</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Salting the eggs</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Batch numbers</span></a></li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <details open>
+                <summary class="tray-sidebar__item"><svg class="tray-icon tray-icon--sm tray-sidebar__caret" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg><span>Cold chain</span></summary>
+                <ul>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>The cold room</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Packing a box</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Courier handover</span></a></li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary class="tray-sidebar__item"><svg class="tray-icon tray-icon--sm tray-sidebar__caret" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-shopping-bag"/></svg><span>Farm shop</span></summary>
+                <ul>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Opening hours</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Tastings</span></a></li>
+                  <li><a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg><span>Payments</span></a></li>
+                </ul>
+              </details>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <main class="tray-app__content">
+      <div class="tray-pagehead">
+        <nav aria-label="Breadcrumb">
+          <ol class="tray-crumbs">
+            <li><a href="wiki-02.html">Handbook</a></li>
+            <li><a href="#">Caviar</a></li>
+            <li><a href="wiki-01.html">Grading a batch</a></li>
+            <li><span aria-current="page">History</span></li>
+          </ol>
+        </nav>
+        <div class="tray-pagehead__row">
+          <div class="tray-pagehead__text">
+            <h1 class="title">History of Grading a batch</h1>
+            <p>Every saved change to the page, the newest first. Tick two revisions and compare them.</p>
+          </div>
+          <div class="tray-pagehead__actions">
+            <a class="tray-btn tray-btn--quiet tray-btn--sm" href="wiki-01.html"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-file"/></svg>Open the page</a>
+          </div>
+        </div>
+        <p class="tray-pagehead__meta"><span><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-clock"/></svg>18 revisions since 12 March 2025</span><span><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-users"/></svg>4 people have edited it</span></p>
+      </div>
+
+      <form class="tray-stack" id="compare" action="/handbook/grading-a-batch/compare" method="get">
+        <div class="tray-table-wrap" tabindex="0" role="region" aria-label="Revisions of Grading a batch">
+          <table class="tray-table tray-table--hover tray-table--pad" aria-label="Revisions of Grading a batch" style="min-inline-size: 54rem">
+            <thead>
+              <tr>
+                <th scope="col" class="tray-table__check"><span class="tray-vh">Compare</span></th>
+                <th scope="col">Revision</th>
+                <th scope="col">Date</th>
+                <th scope="col">Author</th>
+                <th scope="col">Summary</th>
+                <th scope="col" data-num>Size change</th>
+                <th scope="col"><span class="tray-vh">View</span></th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr aria-selected="true">
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" name="rev" value="18" aria-label="Compare revision 18" checked><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row">18&nbsp;<span class="tray-badge">Current</span></th>
+                  <td><time datetime="2026-11-14T16:20">14&nbsp;Nov&nbsp;2026,&nbsp;16:20</time></td>
+                  <td><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">OM</span><span>Oleh&nbsp;Marchenko</span></span></td>
+                  <td>Added the 20-minute rule for eggs above 4&nbsp;&deg;C, and the lamp in step 5</td>
+                  <td data-num>+41 words</td>
+                  <td class="tray-table__act"><span class="tray-anchor" data-tray="tooltip" data-tip="View revision 18"><a class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" href="#" aria-label="View revision 18"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></a></span></td>
+                </tr>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" name="rev" value="17" aria-label="Compare revision 17"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row">17</th>
+                  <td><time datetime="2026-11-09T11:05">9&nbsp;Nov&nbsp;2026,&nbsp;11:05</time></td>
+                  <td><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">IB</span><span>Iryna&nbsp;Bondar</span></span></td>
+                  <td>Shake for 40 seconds, as found in the September trial</td>
+                  <td data-num>+5 words</td>
+                  <td class="tray-table__act"><span class="tray-anchor" data-tray="tooltip" data-tip="View revision 17"><a class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" href="#" aria-label="View revision 17"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></a></span></td>
+                </tr>
+                <tr aria-selected="true">
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" name="rev" value="16" aria-label="Compare revision 16" checked><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row">16</th>
+                  <td><time datetime="2026-11-06T18:40">6&nbsp;Nov&nbsp;2026,&nbsp;18:40</time></td>
+                  <td><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">OM</span><span>Oleh&nbsp;Marchenko</span></span></td>
+                  <td>Weights of batch 14</td>
+                  <td data-num>+36 words</td>
+                  <td class="tray-table__act"><span class="tray-anchor" data-tray="tooltip" data-tip="View revision 16"><a class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" href="#" aria-label="View revision 16"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></a></span></td>
+                </tr>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" name="rev" value="15" aria-label="Compare revision 15"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row">15</th>
+                  <td><time datetime="2026-11-02T09:15">2&nbsp;Nov&nbsp;2026,&nbsp;09:15</time></td>
+                  <td><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">TL</span><span>Taras&nbsp;Lysenko</span></span></td>
+                  <td>Shorter steps: the sieves now come first</td>
+                  <td data-num>&minus;40 words</td>
+                  <td class="tray-table__act"><span class="tray-anchor" data-tray="tooltip" data-tip="View revision 15"><a class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" href="#" aria-label="View revision 15"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></a></span></td>
+                </tr>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" name="rev" value="14" aria-label="Compare revision 14"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row">14</th>
+                  <td><time datetime="2026-10-20T14:02">20&nbsp;Oct&nbsp;2026,&nbsp;14:02</time></td>
+                  <td><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">DK</span><span>Dana&nbsp;Kovalenko</span></span></td>
+                  <td>Named the two sieves by their size</td>
+                  <td data-num>+8 words</td>
+                  <td class="tray-table__act"><span class="tray-anchor" data-tray="tooltip" data-tip="View revision 14"><a class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" href="#" aria-label="View revision 14"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></a></span></td>
+                </tr>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" name="rev" value="13" aria-label="Compare revision 13"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row">13</th>
+                  <td><time datetime="2026-09-02T10:30">2&nbsp;Sep&nbsp;2026,&nbsp;10:30</time></td>
+                  <td><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">OM</span><span>Oleh&nbsp;Marchenko</span></span></td>
+                  <td>Grade C goes to the farm kitchen and is never sold</td>
+                  <td data-num>+22 words</td>
+                  <td class="tray-table__act"><span class="tray-anchor" data-tray="tooltip" data-tip="View revision 13"><a class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" href="#" aria-label="View revision 13"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></a></span></td>
+                </tr>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" name="rev" value="12" aria-label="Compare revision 12"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row">12</th>
+                  <td><time datetime="2026-07-18T16:45">18&nbsp;Jul&nbsp;2026,&nbsp;16:45</time></td>
+                  <td><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">IB</span><span>Iryna&nbsp;Bondar</span></span></td>
+                  <td>Table of the three grades</td>
+                  <td data-num>+120 words</td>
+                  <td class="tray-table__act"><span class="tray-anchor" data-tray="tooltip" data-tip="View revision 12"><a class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" href="#" aria-label="View revision 12"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></a></span></td>
+                </tr>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" name="rev" value="11" aria-label="Compare revision 11"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row">11</th>
+                  <td><time datetime="2026-06-03T08:50">3&nbsp;Jun&nbsp;2026,&nbsp;08:50</time></td>
+                  <td><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">OM</span><span>Oleh&nbsp;Marchenko</span></span></td>
+                  <td>Took out the old 2.5&nbsp;mm sieve</td>
+                  <td data-num>&minus;64 words</td>
+                  <td class="tray-table__act"><span class="tray-anchor" data-tray="tooltip" data-tip="View revision 11"><a class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" href="#" aria-label="View revision 11"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></a></span></td>
+                </tr>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" name="rev" value="10" aria-label="Compare revision 10"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row">10</th>
+                  <td><time datetime="2026-04-28T09:30">28&nbsp;Apr&nbsp;2026,&nbsp;09:30</time></td>
+                  <td><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">DK</span><span>Dana&nbsp;Kovalenko</span></span></td>
+                  <td>Checked for the new season, steps unchanged</td>
+                  <td data-num>+2 words</td>
+                  <td class="tray-table__act"><span class="tray-anchor" data-tray="tooltip" data-tip="View revision 10"><a class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" href="#" aria-label="View revision 10"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></a></span></td>
+                </tr>
+                <tr>
+                  <td class="tray-table__check"><label class="tray-check"><input type="checkbox" name="rev" value="9" aria-label="Compare revision 9"><span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span></label></td>
+                  <th scope="row">9</th>
+                  <td><time datetime="2025-11-14T15:10">14&nbsp;Nov&nbsp;2025,&nbsp;15:10</time></td>
+                  <td><span class="tray-person"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">OM</span><span>Oleh&nbsp;Marchenko</span></span></td>
+                  <td>Weights of batch 11</td>
+                  <td data-num>+30 words</td>
+                  <td class="tray-table__act"><span class="tray-anchor" data-tray="tooltip" data-tip="View revision 9"><a class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" href="#" aria-label="View revision 9"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></a></span></td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tray-row tray-row--between">
+          <div class="tray-row">
+            <button class="tray-btn tray-btn--sm" type="submit"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-columns-2"/></svg>Compare selected</button>
+            <p class="caption tray-soft" id="picked" aria-live="polite">Revisions 16 and 18 are ticked.</p>
+          </div>
+          <nav aria-label="Pages">
+            <ul class="tray-pages">
+              <li><a class="tray-page tray-page--step" role="link" aria-disabled="true" aria-label="Newer revisions"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-left"/></svg></a></li>
+              <li><span class="tray-pages__status">Page 1 of 2</span></li>
+              <li><a class="tray-page tray-page--step" href="?page=2" aria-label="Older revisions"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></a></li>
+            </ul>
+          </nav>
+        </div>
+      </form>
+
+      <section class="tray-stack" aria-labelledby="diff-title">
+        <div class="tray-stack tray-stack--sm">
+          <h2 class="subtitle" id="diff-title">Revision 16 against revision 18</h2>
+          <p class="tray-soft">From Oleh Marchenko's weights of 6 November to his change of 14 November, with Iryna Bondar's change of 9 November between them: 7 lines added and 2 removed. Lines that start with <span class="tray-code-inline">+</span> were added, and lines that start with <span class="tray-code-inline">-</span> were removed.</p>
+        </div>
+        <div class="tray-code" dir="ltr">
+          <div class="tray-code__head">
+            <span>grading-a-batch.md, revisions 16 to 18</span>
+            <button class="tray-btn tray-btn--ghost tray-btn--xs" type="button" data-tray="copy" data-target="#diff"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-copy"/></svg><span data-label>Copy</span></button>
+          </div>
+          <pre tabindex="0" aria-label="Changes between revision 16 and revision 18"><code id="diff"><span class="hljs-meta">@@ -21,10 +21,15 @@ Grade the eggs</span>
+ ## Grade the eggs
+ 
+ 1. Stack the 3.5 mm sieve on the 3 mm sieve, over the C tray.
+ 2. Tip the eggs of one collection onto the top sieve, no more than 500 g at a time.
+<span class="hljs-deletion">-3. Shake the sieves for about a minute.</span>
+<span class="hljs-addition">+3. Shake the sieves gently for 40 seconds. Longer shaking cracks the shells.</span>
+ 4. Move what stays on the top sieve to the A tray, and what stays on the lower sieve to the B tray.
+<span class="hljs-deletion">-5. Look over the A tray and take out any cracked eggs.</span>
+<span class="hljs-addition">+5. Look over the A tray with the lamp and move any egg that is cracked, flat or grey to C.</span>
+ 6. Weigh each tray without its lid and write the three weights in the batch book.
+<span class="hljs-addition">+</span>
+<span class="hljs-addition">+&gt; **Keep the eggs below 4 &deg;C the whole time.**</span>
+<span class="hljs-addition">+&gt; Eggs that sit above 4 &deg;C for more than 20 minutes go to grade C,</span>
+<span class="hljs-addition">+&gt; however good they look. If the door was left open, read the</span>
+<span class="hljs-addition">+&gt; thermometer before you go on.</span>
+ 
+ ## The three grades</code></pre>
+        </div>
+      </section>
+    </main>
+    <footer class="tray-screen__foot">
+      <p>The Perly Farm handbook, written by the farm team. Every name and figure here is demo data.</p>
+    </footer>
+  </div>
+</div>
+<script>
+/* Keeps two revisions ticked at most: ticking a third lets go of the one ticked first. The line under the table says what is ticked,
+   and the form explains, rather than sends, when fewer than two are ticked. */
+(function () {
+  var form = document.getElementById('compare'), note = document.getElementById('picked');
+  var order = [].slice.call(form.querySelectorAll('input[name="rev"]:checked')).map(function (c) { return c.value; });
+  function say() {
+    var picked = order.slice().sort(function (a, b) { return a - b; });
+    note.textContent = picked.length === 2 ? 'Revisions ' + picked[0] + ' and ' + picked[1] + ' are ticked.'
+      : picked.length === 1 ? 'Revision ' + picked[0] + ' is ticked. Tick one more to compare.' : 'Tick two revisions to compare them.';
+  }
+  form.addEventListener('change', function (e) {
+    var box = e.target;
+    if (box.name !== 'rev') return;
+    order = order.filter(function (v) { return v !== box.value; });
+    if (box.checked) order.push(box.value);
+    if (order.length > 2) { var first = order.shift(); form.querySelector('input[name="rev"][value="' + first + '"]').checked = false; }
+    [].forEach.call(form.querySelectorAll('input[name="rev"]'), function (c) { c.closest('tr').setAttribute('aria-selected', String(c.checked)); });
+    say();
+  });
+  form.addEventListener('submit', function (e) { if (order.length !== 2) { e.preventDefault(); say(); } });
+})();
+</script>
+<script src="../components/bundle.js"></script>
+</body>
+</html>
+```

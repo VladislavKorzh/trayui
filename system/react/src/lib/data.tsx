@@ -37,3 +37,9 @@ export function sortKey(v: string): number | string {
   const n = parseFloat(v.replace(/[^0-9.-]/g, ''));
   return /^[^a-z]*[0-9]/i.test(v) && !isNaN(n) ? n : v.toLowerCase();
 }
+
+/** The wrap of a table that may be wider than the screen: a region the keyboard reaches, named as the table is. */
+export function wideRegion(captionId: string | undefined, table: React.AriaAttributes): React.HTMLAttributes<HTMLDivElement> {
+  const labelledBy = captionId ?? table['aria-labelledby'];
+  return { role: 'region', tabIndex: 0, 'aria-labelledby': labelledBy, 'aria-label': labelledBy ? undefined : table['aria-label'] };
+}

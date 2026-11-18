@@ -9,17 +9,46 @@ export function cx(...parts: ClassValue[]): string | undefined {
   return out || undefined;
 }
 
+/** Turns a number into a CSS length (px); passes strings through. */
+export function toLength(v: string | number | undefined): string | undefined {
+  if (v === undefined) return undefined;
+  return typeof v === 'number' ? `${v}px` : v;
+}
+
+const LAZY = Symbol.for('react.lazy');
+type Lazy = { $$typeof: symbol; _payload: unknown; _init: (payload: unknown) => unknown };
+const isThenable = (v: unknown): v is PromiseLike<unknown> => !!v && typeof (v as { then?: unknown }).then === 'function';
+
+/**
+ * The node itself, for a component that reads or copies an element it was given (a trigger, an icon, a control).
+ * An element that a Server Component passes may reach the browser as a lazy reference to it, still on its way
+ * (Next.js sends large pages in parts): React draws such a reference, but cloneElement and isValidElement do not see an
+ * element in it. Call it while rendering: it waits for the element as React would (React 19's `use`).
+ */
+export function resolveNode<T extends React.ReactNode>(node: T): T {
+  if (!node || typeof node !== 'object' || (node as unknown as Lazy).$$typeof !== LAZY) return node;
+  const lazy = node as unknown as Lazy;
+  const use = (React as unknown as { use?: (p: PromiseLike<unknown>) => unknown }).use;
+  return (use && isThenable(lazy._payload) ? use(lazy._payload) : lazy._init(lazy._payload)) as T;
+}
+
 /** An id that is safe in a CSS selector and stable between server and client. */
 export function useUid(prefix = 'tray'): string {
   return prefix + '-' + React.useId().replace(/[^a-zA-Z0-9]/g, '');
 }
 
+/** useLayoutEffect in the browser, useEffect on a server (where React 18 warns about a layout effect): for DOM work that must land before the first paint. */
+export const useIsoLayoutEffect: typeof React.useLayoutEffect = typeof window !== 'undefined' ? React.useLayoutEffect : React.useEffect;
+
 /**
  * Wires up the system's own behaviours (the elements that carry `data-tray`) under the referenced element, once it is mounted.
- * Pass `deps` to wire again after the markup changes.
+ * Pass `deps` to wire again after the markup changes. Every component that has a behaviour calls it on its root; call it
+ * yourself on markup written by hand, such as a block pasted into a component. Wiring twice does nothing.
+ * It runs in an effect, after React has hydrated a server-rendered page, so the markup the server sent is what React finds.
  */
 export function useBehaviour<T extends Element>(ref: React.RefObject<T | null>, deps: React.DependencyList = []): void {
   React.useEffect(() => {
+    UI.sprite?.(); // the icon sprite, added once the runtime loads; again here if a render has taken it away
     if (ref.current) UI.init(ref.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
@@ -62,7 +91,10 @@ export function useTrayEvent<T extends Element>(
   }, [ref, name, own, ...(options.deps ?? [])]);
 }
 
-/** Calls one of the system's functions: `chart`, `calendar`, `toast`, `formatDate`. */
+/**
+ * The system's own functions: `init` wires the behaviours under an element (what `useBehaviour` does in an effect),
+ * `chart`, `calendar`, `toast` and `formatDate`. In the browser only: on a server it is an empty object.
+ */
 export const runtime: {
   init(root?: Element | Document): void;
   chart(el: Element, config: unknown): { update(config: unknown): void };

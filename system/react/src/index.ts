@@ -109,3 +109,5 @@ export * from './components/VideoPlayer';
 export * from './components/WorkspaceSwitcher';
 export type { IconName } from './icons';
 export type { IconSource } from './lib/icon';
+/* For markup written by hand, such as a block pasted into a component: wire its behaviours, hear their events, call the runtime. */
+export { runtime, useBehaviour, useTrayEvent, type TrayEventName } from './lib/util';

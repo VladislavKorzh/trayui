@@ -23,6 +23,8 @@ A progress bar shows how much of a known whole is done: an 8px pill in `track`, 
 - `meter` gives the bar `role="meter"` instead of `progressbar`, for a level that is not a task: stock left, a rating, a share.
 - `tone="accent"` fills in yellow, only for the single bar on an ink card.
 
+The bar is named by `aria-label`, or by `label` when it is text, and carries `aria-valuemin`, `aria-valuemax` and `aria-valuenow`. When `valueText` is not the percentage, the bar also says it as `aria-valuetext`, after the percentage: "68%: 132 of 412 jars left".
+
 ## Do and don't
 - Do write the value in words when it is not a percentage: "132 of 412 jars left".
 - Do use ink for the fill; yellow only on an ink card.

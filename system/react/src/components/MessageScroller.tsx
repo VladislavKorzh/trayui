@@ -1,6 +1,6 @@
+'use client';
 import * as React from 'react';
-import { cx, useBehaviour, useForwardedRef } from '../lib/util';
-import { toLength } from '../lib/chat';
+import { cx, toLength, useBehaviour, useForwardedRef } from '../lib/util';
 import { Button } from './Button';
 import { Icon } from './Icon';
 

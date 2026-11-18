@@ -3,7 +3,7 @@ import { PlanComparison } from 'trayui-react';
 export function Comparison() {
   return (
     <PlanComparison
-      aria-label="What each plan includes"
+      caption="The plans compared"
       plans={[
         { name: 'Stall', price: '$0' },
         { name: 'Shop', price: '$29 a month', featured: true },

@@ -29,7 +29,7 @@ A table sets figures in rows and columns: hairline rows, quiet heads, numbers al
 - The caption is the table's title, in `subtitle` type. Without one, give the table an `aria-label`.
 - Heads are `label` type in soft ink; cells are `nav` size; row heads and the footer are semibold.
 - A numeric column (`numeric`, or `data-num` on hand-written cells) is right-aligned with tabular figures.
-- The table sits in a wrapper that scrolls sideways on a phone instead of breaking the page. `className`, `aria-label` and the ref go to the `<table>`.
+- The table sits in a wrapper that scrolls sideways on a phone instead of breaking the page. `className`, `aria-label` and the ref go to the `<table>`. When the table may be wider than the screen, pass `wide`: the wrapper becomes a region named as the table is (by its caption or its `aria-label`), which the keyboard reaches with Tab and scrolls with the arrow keys.
 
 ## Variants
 `compact` tightens the rows, for dense data in a side panel. `hover` tints the row under the pointer, for rows that open something. `pad` insets the first and last cells when rows are tinted; use it with `hover`.

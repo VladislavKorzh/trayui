@@ -819,7 +819,7 @@ def build():
         return text
 
     # ---------- the docs section: the site's own pages, the foundations, the guides of the system ----------
-    doc_names = [n for n in ('introduction', 'installation', 'theming', 'react', 'tailwind-figma', 'from-tailwind', 'agents') if (SRC / 'pages' / f'{n}.md').exists()]
+    doc_names = [n for n in ('introduction', 'installation', 'cli', 'theming', 'react', 'tailwind-figma', 'from-tailwind', 'agents') if (SRC / 'pages' / f'{n}.md').exists()]
     docs = [read_page(SRC / 'pages' / f'{n}.md', 'd-' + n, '') for n in doc_names]
     for d in docs:
         d['src'] = [f'system/tools/site/pages/{d["id"][2:]}.md']
@@ -827,7 +827,7 @@ def build():
     for d in docs:
         d['summary'], d['guide'] = fill(d['summary']), fill(d['guide'])
     themes = theme_data(tok)
-    docs.insert(3, {'id': 'd-themes', 'title': 'Themes', 'group': '', 'html': themes_page(themes), 'wide': True, 'src': ['system/project/tokens.json'],
+    docs.insert(next(i for i, d in enumerate(docs) if d['id'] == 'd-theming') + 1, {'id': 'd-themes', 'title': 'Themes', 'group': '', 'html': themes_page(themes), 'wide': True, 'src': ['system/project/tokens.json'],
                     'summary': f'{len(themes["list"])} themes to choose from, and a maker for your own: four colours in, a whole theme out.'})
     foundations = [{'id': 'f-colours', 'title': 'Colours', 'summary': f'The {len(tok["color"]["tokens"])} colour tokens in the Light and the Dark theme, and what each is for.', 'html': colours_page(tok)},
                    {'id': 'f-type', 'title': 'Typography', 'summary': 'The type styles of the system: one family, Onest, in two voices, and the size, line height and weight of every class.', 'html': type_page(tok)},
@@ -1195,8 +1195,9 @@ def build():
              'components': f'All {len(comps)} components in plain HTML and CSS - Tray UI', 'blocks': f'{len(blocks)} page blocks in plain HTML and CSS - Tray UI',
              'charts': f'{len(charts)} React chart examples with Recharts - Tray UI', 'b-login': 'Sign-in and sign-up pages in HTML and CSS - Tray UI',
              'b-sidebar': 'Sidebar layouts in HTML and CSS - Tray UI', 'd-introduction': 'Tray UI docs: an introduction to the design system',
-             'd-installation': 'Install Tray UI: link three files, no build step', 'd-changelog': 'Tray UI changelog: what changed in each version',
-             'd-from-tailwind': 'Coming from Tailwind: a plain CSS alternative - Tray UI', 'd-agents': 'Tray UI for AI agents: llms.txt and Markdown pages',
+             'd-installation': 'Install Tray UI: link three files, no build step', 'd-cli': 'Add Tray UI with a CLI: npx trayui init, add, check',
+             'd-changelog': 'Tray UI changelog: what changed in each version',
+             'd-from-tailwind': 'Coming from Tailwind: a plain CSS alternative - Tray UI', 'd-agents': 'Tray UI for AI agents: a skill, llms.txt and Markdown',
              'd-react': 'Tray UI in React: typed components and charts', 'd-themes': f'{len(themes["list"])} themes and a theme maker - Tray UI',
              'd-theming': 'Theming with CSS custom properties - Tray UI', 'f-type': 'Typography: type styles and the Onest font - Tray UI',
              'f-colours': 'Colour tokens in the light and dark theme - Tray UI', 'f-icons': f'{len(icons)} Lucide icons, built in - Tray UI',
@@ -1450,7 +1451,7 @@ def build():
     # the download: dist/ as one archive, with the blocks beside the three files
     with zipfile.ZipFile(OUT / facts['zip'], 'w', zipfile.ZIP_DEFLATED) as z:
         for f in sorted(DIST.rglob('*')):
-            if f.is_file() and not f.name.startswith('.'):
+            if f.is_file() and not f.name.startswith('.') and f.relative_to(DIST).parts[0] != 'skills':  # the skill has an archive of its own, skills/trayui.zip
                 z.write(f, f'trayui/{f.relative_to(DIST)}')
 
     # llms.txt: the index of the system for an agent, in the form llmstxt.org sets out; llms-full.txt: all of it in one file
@@ -1460,6 +1461,9 @@ def build():
     notes = (('- From npm: `npm install trayui` for the three files, `npm install trayui-react` for React (it needs `react` and `react-dom`, and `recharts` for the charts).\n'
               if NPM else '- The React package, `trayui-react`, is not published on npm yet. Do not install a package of that name from npm: it would not be this one. '
               'The React page says where it is.\n')
+             + f'- `npx trayui init` and `npx trayui add <name>` put the files, a block or, in React, the source of a component into a project; `npx trayui check page.html` checks markup against the rules ([the CLI]({base}/docs/cli.md)).\n'
+             f'- The same items are a registry in shadcn\'s format: [{base}/r/registry.json]({base}/r/registry.json) (React) and [{base}/r/html/registry.json]({base}/r/html/registry.json) (plain HTML), as in `npx shadcn add {base}/r/login-01.json`.\n'
+             f'- A skill for agents, with the rules, every page as Markdown and the checker: [{base}/skills/trayui.zip]({base}/skills/trayui.zip) ([how to install it]({base}/docs/agents.md)).\n'
              + '- Counter and Perly Farm, the brands in the examples, are invented, and so is every name and figure in them.\n'
              '- Use only classes that exist; where a layout needs a value no class gives, use a token (`var(--space-6)`), never a literal colour or size.\n')
     intro = (f'# Tray UI\n\n> A design system in plain HTML and CSS: {len(comps)} components, {len(blocks)} blocks, {len(icons)} icons and {len(themes["list"])} themes, '
@@ -1485,10 +1489,11 @@ def build():
                  f'- [{facts["zip"]}]({base}/{facts["zip"]}): the three files, the font and the {len(blocks)} blocks\n')
     (OUT / 'llms.txt').write_text(''.join(lines), encoding='utf-8')
 
-    full = [intro + notes + '\nThe sections: installation, the rules (the brand book), the guides, theming, React, Tailwind and Figma, '
+    full = [intro + notes + '\nThe sections: installation, the CLI, the rules (the brand book), the guides, theming, React, Tailwind and Figma, '
             'coming from Tailwind, for AI agents, the component index, the guidelines of every component, the blocks, charts in React, and the changelog.\n']
     doc = lambda ident, title=None: headings(f'# {title or index[ident]["title"]}\n\n' + mds[ident].split('\n', 1)[1].strip(), 2)
     full.append(doc('d-installation'))
+    full.append(doc('d-cli'))
     full.append(doc('g-brand', 'Rules: the brand book'))
     full += [doc(g['id']) for g in guides if g['id'] != 'g-brand']
     full += [doc(i) for i in ('d-theming', 'd-themes', 'd-react', 'd-tailwind-figma', 'd-from-tailwind', 'd-agents') if i in mds and mds[i]]
@@ -1501,12 +1506,23 @@ def build():
     full.append(doc('d-changelog'))
     (OUT / 'llms-full.txt').write_text(to_md('\n\n'.join(part.strip() for part in full) + '\n'), encoding='utf-8')
 
+    # the skill for agents, from the Markdown of the pages just written: dist/skills/trayui (the package carries it), and
+    # skills/trayui.zip, both a skill for claude.ai and a Claude Code plugin, with the marketplace.json that lists it
+    import skill
+    skilled = skill.write(OUT, DIST, facts)
+    # the registry in shadcn's format, for npx trayui and npx shadcn: r/ (React: the core, every component as its source,
+    # every block as a component) and r/html/ (the three files and every block as a page)
+    import registry
+    registered = registry.write(OUT, f'{facts["site"]}/r' if facts['site'] else None)
+
     size = sum(f.stat().st_size for f in OUT.rglob('*') if f.is_file())
     first = sum((OUT / f).stat().st_size for f in ('index.html', files['site.css'], files['site.js'], data, files['tokens.css'], files['components/bundle.css'], files['components/bundle.js']))
     print(bundled)
     print(bundled_code)
     print(said)
     print(f'site: {len(plays)} playgrounds')
+    print(f'site: the registry at r/, {registered["react"]} React items and {registered["html"]} plain HTML ones')
+    print(f'site: the skill, {skilled["references"]} pages and the checker in dist/skills/trayui ({skilled["kb"]} KB), skills/trayui.zip ({skilled["zip_kb"]} KB)')
     print(f'site: {len(index)} pages ({len(comps)} components, {len(blocks)} blocks, {len(charts)} charts, {len(docs) + len(foundations) + len(guides)} docs), '
           f'{len(runs)} preview scripts; first load {first // 1024} KB, all {size // 1024} KB in {len(list(OUT.rglob("*.*")))} files')
     for line in skipped:

@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, useTrayEvent, useBehaviour, useControlled, useForwardedRef, useUid } from '../lib/util';
 import { Badge } from './Badge';
@@ -105,13 +106,12 @@ export const PricingTable = React.forwardRef<HTMLDivElement, PricingTableProps>(
   // the behaviour reports the period too (tray:change); onPeriodChange comes from the switch, so the event is only kept from bubbling
   useTrayEvent(ref, 'change', undefined, { own: true });
   useBehaviour(ref);
-  // a period set from outside, or new prices: the behaviour repaints on a change event from the checked radio
-  const mounted = React.useRef(false);
+  // a period set from outside, or new prices: the behaviour repaints on a change event from the checked radio. What was
+  // last painted is kept, not whether the effect ran before: StrictMode runs it twice on mount, which is no change.
+  const painted = React.useRef({ period, texts });
   React.useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-      return;
-    }
+    if (painted.current.period === period && painted.current.texts === texts) return;
+    painted.current = { period, texts };
     ref.current?.querySelector<HTMLInputElement>(`input[type="radio"][name="${name}"]:checked`)?.dispatchEvent(new Event('change', { bubbles: true }));
   }, [ref, name, period, texts]);
   const showSwitch = switcher ?? plans.some((p) => typeof p.price !== 'string' || (p.per != null && typeof p.per !== 'string'));
@@ -124,7 +124,11 @@ export const PricingTable = React.forwardRef<HTMLDivElement, PricingTableProps>(
             aria-label={periodLabel}
             name={name}
             value={period}
-            onChange={(v) => setPeriod(v as BillingPeriod)}
+            onChange={(v) => {
+              // the switch's own change event has already repainted the prices (and said them): nothing to send again
+              painted.current = { period: v as BillingPeriod, texts };
+              setPeriod(v as BillingPeriod);
+            }}
             items={[
               { value: 'monthly', label: periodLabels?.monthly ?? 'Monthly' },
               { value: 'yearly', label: periodLabels?.yearly ?? 'Yearly' },
@@ -166,7 +170,7 @@ export const PricingTable = React.forwardRef<HTMLDivElement, PricingTableProps>(
             >
               {plan.action}
             </Button>
-            <ul className="tray-ticks">
+            <ul className="tray-ticks" role="list">
               {plan.features.map((f, i) => {
                 const feat = typeof f === 'string' ? { text: f } : f;
                 return (

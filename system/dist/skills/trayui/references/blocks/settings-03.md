@@ -1,0 +1,233 @@
+# Security and the danger zone
+
+Two-step sign-in, the devices you are signed in on, and deleting the workspace behind a dialog that asks you to type its name.
+
+A security settings page with a danger zone at its foot. Two-step sign-in lists the authenticator app, the backup codes left and a switch for a code by text; the password card offers a passkey and sign-in alerts; and a list shows every device signed in, each with its own Sign out, plus one button for all the others. The last card hands the workspace to someone else or deletes it. Pick it for actions rather than fields: the [profile settings](https://trayui.com/blocks/settings-01.md) are the page to fill in and save.
+
+Delete opens an alert dialog that starts on the safe button and asks for the workspace's name. A wrong name marks the field invalid, says what to type and puts focus back in it, and a press on the veil does not close the dialog. Each Sign out has hidden words that name its device. On a phone the dialog's two buttons stack, each the full width.
+
+It is made of these components: [App Shell](https://trayui.com/components/app-shell.md), [Top Bar](https://trayui.com/components/top-bar.md), [Button](https://trayui.com/components/button.md), [Breadcrumb](https://trayui.com/components/breadcrumb.md), [Kbd](https://trayui.com/components/kbd.md), [Avatar](https://trayui.com/components/avatar.md), [Sidebar](https://trayui.com/components/sidebar.md), [Badge](https://trayui.com/components/badge.md), [Page Header](https://trayui.com/components/page-header.md), [Tabs](https://trayui.com/components/tabs.md), [Card](https://trayui.com/components/card.md), [Switch](https://trayui.com/components/switch.md), [Separator](https://trayui.com/components/separator.md), [Item](https://trayui.com/components/item.md), [Dialog](https://trayui.com/components/dialog.md), [Description List](https://trayui.com/components/description-list.md), [Field](https://trayui.com/components/field.md), [Label](https://trayui.com/components/label.md), [Input](https://trayui.com/components/input.md).
+
+Behaviours it uses: `dialog`, `open`, `sidebar-sheet`, `strip`.
+
+Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security and the danger zone</title>
+<meta name="description" content="Two-step sign-in, the devices you are signed in on, and deleting the workspace behind a dialog that asks you to type its name.">
+<meta name="tray-category" content="Settings">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app tray-app--header">
+  <header class="tray-topbar tray-app__header">
+    <div class="tray-topbar__start" style="gap: var(--space-5)">
+      <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the navigation"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+      <a class="tray-wordmark" href="#">Counter</a>
+      <nav class="tray-topbar__wide" aria-label="Breadcrumb"><ol class="tray-crumbs"><li><a href="#">Settings</a></li><li><span aria-current="page">Security</span></li></ol></nav>
+    </div>
+    <div class="tray-topbar__end">
+      <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
+      <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 1 unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip">1</span></span>
+      <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko, OF">OF</button>
+    </div>
+  </header>
+  <div class="tray-app__side">
+    <nav class="tray-sidebar" id="nav" aria-label="Main">
+      <div class="tray-sidebar__group">
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg><span>Orders</span><span class="tray-badge tray-badge--count">12</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-users"/></svg><span>Customers</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span>Batches</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chart-column"/></svg><span>Reports</span></a>
+      </div>
+      <div class="tray-sidebar__group">
+        <p class="tray-sidebar__label">Shop</p>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-tag"/></svg><span>Products</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg><span>Delivery</span></a>
+      </div>
+      <div class="tray-sidebar__group">
+        <p class="tray-sidebar__label">Workspace</p>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user-plus"/></svg><span>Team</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg><span>Billing</span></a>
+        <a class="tray-sidebar__item" href="#" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-settings"/></svg><span>Settings</span></a>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <main class="tray-app__content">
+      <div class="tray-pagehead">
+        <div class="tray-pagehead__row">
+          <div class="tray-pagehead__text">
+            <h1 class="title">Security</h1>
+            <p>How you sign in to Perly Farm, and where you are signed in now.</p>
+          </div>
+        </div>
+        <p class="tray-pagehead__meta"><span><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-log-in"/></svg>Last sign-in today at 08:12, from Kyiv</span></p>
+        <nav class="tray-tabs" data-tray="strip" aria-label="Your settings">
+          <a class="tray-tab" href="#">Profile</a>
+          <a class="tray-tab" href="#">Notifications</a>
+          <a class="tray-tab" href="#" aria-current="page">Security</a>
+        </nav>
+      </div>
+      <div class="tray-bento">
+        <section class="tray-card tray-span-7" aria-labelledby="sec-2fa">
+          <div class="tray-card__head">
+            <div>
+              <div class="tray-row tray-row--sm">
+                <h2 class="subtitle" id="sec-2fa">Two-step sign-in</h2>
+                <span class="tray-badge tray-badge--success"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-shield-check"/></svg>On</span>
+              </div>
+              <p class="tray-soft">After your password, Counter asks for a code from your phone.</p>
+            </div>
+          </div>
+          <div class="tray-setting">
+            <div class="tray-setting__text"><b>Authenticator app</b><small id="sec-app-note">Added on 3 March 2026, on iPhone 15.</small></div>
+            <div class="tray-setting__control"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" aria-describedby="sec-app-note">Change<span class="tray-vh"> the authenticator app</span></button></div>
+          </div>
+          <div class="tray-setting">
+            <div class="tray-setting__text"><b>Backup codes</b><small id="sec-codes-note">8 of 10 left. Each one works once.</small></div>
+            <div class="tray-setting__control"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" aria-describedby="sec-codes-note">Show the codes</button></div>
+          </div>
+          <div class="tray-setting">
+            <div class="tray-setting__text"><b id="sec-sms">A text when the app is lost</b><small id="sec-sms-note">A code to the number ending in 27.</small></div>
+            <div class="tray-setting__control"><label class="tray-switch"><input type="checkbox" role="switch" aria-labelledby="sec-sms" aria-describedby="sec-sms-note" checked><span class="tray-switch__track"></span></label></div>
+          </div>
+          <p class="caption tray-muted" style="margin-block-start: var(--space-5)">Perly Farm asks every owner and manager to keep two-step sign-in on.</p>
+        </section>
+        <section class="tray-card tray-span-5 tray-stack tray-stack--lg" aria-labelledby="sec-password">
+          <div class="tray-stack tray-stack--sm">
+            <h2 class="subtitle" id="sec-password">Password</h2>
+            <p class="tray-soft">Changed on 12 July, 4 months ago. A passkey lets you sign in with a fingerprint instead.</p>
+          </div>
+          <div class="tray-row tray-row--sm">
+            <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-key"/></svg>Change the password</button>
+            <button class="tray-btn tray-btn--ghost tray-btn--sm" type="button"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg>Add a passkey</button>
+          </div>
+          <hr class="tray-rule">
+          <label class="tray-switch"><input type="checkbox" role="switch" checked><span class="tray-switch__track"></span><span class="tray-switch__text"><b>Sign-in alerts</b><small>An email when a new device signs in.</small></span></label>
+        </section>
+        <section class="tray-card" aria-labelledby="sec-devices">
+          <div class="tray-card__head">
+            <div>
+              <h2 class="subtitle" id="sec-devices">Where you are signed in</h2>
+              <p class="tray-soft" id="device-count">On 4 devices. Sign out of any you no longer use, or do not know.</p>
+            </div>
+            <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" id="sign-out-all"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-log-out"/></svg>Sign out of all others</button>
+          </div>
+          <ul class="tray-items tray-items--ruled" id="devices" role="list">
+            <li class="tray-item tray-item--sm">
+              <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-monitor"/></svg></span>
+              <span class="tray-item__body"><span class="tray-item__title">MacBook Air</span><span class="tray-item__text">Chrome in Kyiv, now</span></span>
+              <span class="tray-item__end"><span class="tray-badge">This device</span></span>
+            </li>
+            <li class="tray-item tray-item--sm" data-device="iPhone 15">
+              <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-phone"/></svg></span>
+              <span class="tray-item__body"><span class="tray-item__title">iPhone 15</span><span class="tray-item__text">Counter app in Kyiv, 2 hours ago</span></span>
+              <span class="tray-item__end"><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button">Sign out<span class="tray-vh"> of iPhone 15</span></button></span>
+            </li>
+            <li class="tray-item tray-item--sm" data-device="the packing table PC">
+              <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-monitor"/></svg></span>
+              <span class="tray-item__body"><span class="tray-item__title">Packing table PC</span><span class="tray-item__text">Edge at the farm, yesterday at 17:40</span></span>
+              <span class="tray-item__end"><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button">Sign out<span class="tray-vh"> of the packing table PC</span></button></span>
+            </li>
+            <li class="tray-item tray-item--sm" data-device="the Windows laptop">
+              <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-globe"/></svg></span>
+              <span class="tray-item__body"><span class="tray-item__title">Windows laptop</span><span class="tray-item__text">Firefox in Odesa, 3 days ago, the first time from there</span></span>
+              <span class="tray-item__end"><button class="tray-btn tray-btn--ghost tray-btn--xs" type="button">Sign out<span class="tray-vh"> of the Windows laptop</span></button></span>
+            </li>
+          </ul>
+        </section>
+        <section class="tray-card" aria-labelledby="sec-danger">
+          <div class="tray-card__head">
+            <div>
+              <h2 class="subtitle" id="sec-danger">Hand over or delete Perly Farm</h2>
+              <p class="tray-soft">These change the workspace for all 5 people. Each one asks once more.</p>
+            </div>
+          </div>
+          <div class="tray-setting">
+            <div class="tray-setting__text"><b>Transfer the ownership</b><small id="sec-owner-note">Dana Kovalenko becomes the owner, and you stay on as a manager.</small></div>
+            <div class="tray-setting__control"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" aria-describedby="sec-owner-note">Transfer to Dana</button></div>
+          </div>
+          <div class="tray-setting">
+            <div class="tray-setting__text"><b>Delete the workspace</b><small id="sec-delete-note">1,284 orders, 312 customers and 46 invoices go for good, and the shop closes.</small></div>
+            <div class="tray-setting__control"><button class="tray-btn tray-btn--danger tray-btn--xs" type="button" aria-describedby="sec-delete-note" data-tray="open" data-target="#delete-ws" data-open-first>Delete Perly Farm</button></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+<dialog class="tray-dialog" id="delete-ws" role="alertdialog" data-tray="dialog" aria-labelledby="del-title" aria-describedby="del-text">
+  <div class="tray-dialog__head">
+    <div>
+      <h2 class="subtitle" id="del-title">Delete Perly Farm?</h2>
+      <p class="tray-dialog__text" id="del-text">This goes for all 5 people, and the shop at perly.counter.example closes. It cannot be undone.</p>
+    </div>
+  </div>
+  <div class="tray-dialog__body tray-stack tray-stack--lg">
+    <dl class="tray-dl tray-dl--plain">
+      <div><dt>Orders</dt><dd class="tray-num">1,284</dd></div>
+      <div><dt>Customers</dt><dd class="tray-num">312</dd></div>
+      <div><dt>Invoices</dt><dd class="tray-num">46</dd></div>
+    </dl>
+    <div class="tray-field">
+      <label class="tray-label" for="del-name">Type the name of the workspace</label>
+      <input class="tray-input" id="del-name" autocomplete="off" spellcheck="false" aria-describedby="del-hint">
+      <p class="tray-field__hint" id="del-hint">Perly Farm, as it is written here.</p>
+    </div>
+  </div>
+  <div class="tray-dialog__foot">
+    <button class="tray-btn tray-btn--quiet tray-btn--md" type="button" data-close autofocus>Keep Perly Farm</button>
+    <button class="tray-btn tray-btn--danger tray-btn--md" type="button" id="del-go">Delete Perly Farm</button>
+  </div>
+</dialog>
+<script src="../components/bundle.js"></script>
+<script>
+(function () {
+  /* Signing a device out takes its row away and counts what is left. */
+  var list = document.getElementById('devices'), count = document.getElementById('device-count');
+  function recount() {
+    var n = list.children.length;
+    count.textContent = n === 1 ? 'Only on this device.' : 'On ' + n + ' devices. Sign out of any you no longer use, or do not know.';
+  }
+  list.addEventListener('click', function (e) {
+    var row = e.target.closest('[data-device]');
+    if (!row || !e.target.closest('button')) return;
+    var name = row.getAttribute('data-device');
+    row.remove(); recount();
+    TrayUI.toast({ title: 'Signed out', text: 'Counter on ' + name + ' asks for the password again.' });
+  });
+  document.getElementById('sign-out-all').addEventListener('click', function () {
+    [].forEach.call(list.querySelectorAll('[data-device]'), function (row) { row.remove(); });
+    recount();
+    TrayUI.toast({ title: 'Signed out everywhere else', text: 'Only this MacBook stays signed in.' });
+  });
+
+  /* The workspace goes only when its name is typed as it is written; a wrong name says what to type. */
+  var dialog = document.getElementById('delete-ws'), field = document.getElementById('del-name'), hint = document.getElementById('del-hint');
+  function plain() { field.removeAttribute('aria-invalid'); hint.className = 'tray-field__hint'; hint.textContent = 'Perly Farm, as it is written here.'; }
+  field.addEventListener('input', plain);
+  dialog.addEventListener('close', function () { field.value = ''; plain(); });
+  document.getElementById('del-go').addEventListener('click', function () {
+    if (field.value.trim() === 'Perly Farm') {
+      dialog.close('delete');
+      TrayUI.toast({ title: 'Perly Farm is being deleted', text: 'Everyone in it gets an email when it is gone.' });
+      return;
+    }
+    field.setAttribute('aria-invalid', 'true');
+    hint.className = 'tray-field__error';
+    hint.textContent = field.value.trim() ? 'That is not the name. Type Perly Farm, with the capitals.' : 'Type Perly Farm to delete it.';
+    field.focus();
+  });
+})();
+</script>
+</body>
+</html>
+```

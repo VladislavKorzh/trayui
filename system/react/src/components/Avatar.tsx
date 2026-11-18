@@ -22,7 +22,7 @@ export interface AvatarProps extends React.HTMLAttributes<HTMLSpanElement> {
 
 /**
  * An avatar stands for a person or a team: a softly squared tile with a photo or initials.
- * Put the name next to it whenever there is room. Overlap several in a `<div className="tray-avatar-group">`.
+ * Put the name next to it whenever there is room. Overlap several in a `<div className="tray-avatar-group" role="group" aria-label="Packing team, 6 people">`.
  */
 export const Avatar = React.forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
   { initials, src, alt = '', icon, size = 'md', tone = 'tray', label, className, children, ...rest },

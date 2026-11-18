@@ -1,0 +1,283 @@
+# Profile settings
+
+A personal profile in sections: a photo to upload, name and contact, language and time, and one bar that saves every change.
+
+Account settings for a person's own profile, in four sections: the photo, the name and role, the contact details, and the language and time. Each section sets a title and a sentence of why beside a card of fields, and one bar at the end saves the whole form. Its note counts what differs from the saved profile, as in "1 unsaved change: the photo", and Discard puts every field back. Pick it for a form people fill in and then save; for switches that save one by one, see the [notifications by channel](https://trayui.com/blocks/settings-02.md). Tabs under the heading lead to the three settings pages.
+
+The note is a `role="status"` region, so each new count is read. The name, email and phone fields carry `autocomplete` tokens, and the note for the team counts its 160 characters. Below 56rem each section's title and sentence stand over its fields, as in every [settings section](https://trayui.com/components/settings-section.md).
+
+It is made of these components: [App Shell](https://trayui.com/components/app-shell.md), [Sidebar](https://trayui.com/components/sidebar.md), [Dropdown Menu](https://trayui.com/components/dropdown-menu.md), [Workspace Switcher](https://trayui.com/components/workspace-switcher.md), [Avatar](https://trayui.com/components/avatar.md), [Badge](https://trayui.com/components/badge.md), [Top Bar](https://trayui.com/components/top-bar.md), [Button](https://trayui.com/components/button.md), [Breadcrumb](https://trayui.com/components/breadcrumb.md), [Kbd](https://trayui.com/components/kbd.md), [Page Header](https://trayui.com/components/page-header.md), [Tabs](https://trayui.com/components/tabs.md), [Settings Section](https://trayui.com/components/settings-section.md), [Card](https://trayui.com/components/card.md), [Field](https://trayui.com/components/field.md), [Label](https://trayui.com/components/label.md), [File Upload](https://trayui.com/components/file-upload.md), [Attachment](https://trayui.com/components/attachment.md), [Progress](https://trayui.com/components/progress.md), [Input](https://trayui.com/components/input.md), [Textarea](https://trayui.com/components/textarea.md), [Checkbox](https://trayui.com/components/checkbox.md), [Native Select](https://trayui.com/components/native-select.md), [Toggle Group](https://trayui.com/components/toggle-group.md).
+
+Behaviours it uses: `count`, `dropzone`, `menu`, `sidebar-sheet`, `strip`.
+
+Copy the page into a project that links `tokens.css`, `components/bundle.css` and `components/bundle.js`; the paths in its `<head>` assume it sits one folder below them.
+
+```html
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profile settings</title>
+<meta name="description" content="A personal profile in sections: a photo to upload, name and contact, language and time, and one bar that saves every change.">
+<meta name="tray-category" content="Settings">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+</head>
+<body>
+<div class="tray-app">
+  <div class="tray-app__side">
+    <nav class="tray-sidebar" id="nav" aria-label="Main">
+      <div class="tray-sidebar__head" style="padding-inline: 0">
+        <div class="tray-anchor tray-anchor--block" data-tray="menu">
+          <button class="tray-switcher" type="button"><span class="tray-avatar tray-avatar--sm tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-person__text"><b>Perly Farm</b><small>Shop plan</small></span><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chevrons-up-down"/></svg></button>
+          <div class="tray-pop">
+            <div class="tray-list">
+              <p class="tray-list__label">Workspaces</p>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="true"><span class="tray-avatar tray-avatar--xs tray-avatar--ink" aria-hidden="true">PF</span><span class="tray-option__text">Perly Farm</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <button class="tray-option" type="button" role="menuitemradio" data-group="workspace" aria-checked="false"><span class="tray-avatar tray-avatar--xs" aria-hidden="true">MB</span><span class="tray-option__text">Meadow Bakery</span><svg class="tray-icon tray-option__check" aria-hidden="true"><use href="#tray-i-check"/></svg></button>
+              <hr class="tray-list__rule">
+              <button class="tray-option" type="button" role="menuitem"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-plus"/></svg><span class="tray-option__text">New workspace</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tray-sidebar__group">
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-house"/></svg><span>Home</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg><span>Orders</span><span class="tray-badge tray-badge--count">12</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-users"/></svg><span>Customers</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg><span>Batches</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-chart-column"/></svg><span>Reports</span></a>
+      </div>
+      <div class="tray-sidebar__group">
+        <p class="tray-sidebar__label">Workspace</p>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-user-plus"/></svg><span>Team</span></a>
+        <a class="tray-sidebar__item" href="#"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-credit-card"/></svg><span>Billing</span></a>
+        <a class="tray-sidebar__item" href="#" aria-current="page"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-settings"/></svg><span>Settings</span></a>
+      </div>
+      <div class="tray-sidebar__foot">
+        <div class="tray-sidebar__user">
+          <span class="tray-avatar tray-avatar--sm tray-avatar--ink" aria-hidden="true">OF</span>
+          <span class="tray-person__text"><b>Oksana Franko</b><small>Owner</small></span>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="tray-app__main">
+    <header class="tray-topbar">
+      <div class="tray-topbar__start">
+        <button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon tray-app__menu" type="button" data-tray="sidebar-sheet" aria-controls="nav" aria-label="Open the navigation"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-menu"/></svg></button>
+        <nav aria-label="Breadcrumb"><ol class="tray-crumbs tray-crumbs--fold"><li><a href="#">Perly Farm</a></li><li><a href="#">Settings</a></li><li><span aria-current="page">Profile</span></li></ol></nav>
+      </div>
+      <div class="tray-topbar__end">
+        <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
+        <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 2 unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip">2</span></span>
+        <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko, OF">OF</button>
+      </div>
+    </header>
+    <main class="tray-app__content">
+      <div class="tray-pagehead">
+        <div class="tray-pagehead__row">
+          <div class="tray-pagehead__text">
+            <h1 class="title">Your profile</h1>
+            <p>How the team sees you on orders, notes and the packing list.</p>
+          </div>
+        </div>
+        <nav class="tray-tabs" data-tray="strip" aria-label="Your settings">
+          <a class="tray-tab" href="#" aria-current="page">Profile</a>
+          <a class="tray-tab" href="#">Notifications</a>
+          <a class="tray-tab" href="#">Security</a>
+        </nav>
+      </div>
+      <form id="profile" action="/settings/profile" method="post">
+        <section class="tray-settings" aria-labelledby="set-photo">
+          <div class="tray-settings__intro">
+            <h2 class="subtitle" id="set-photo">Photo</h2>
+            <p>Shown beside your name on orders, notes and the team list. A square photo of your face works best.</p>
+          </div>
+          <div class="tray-settings__body">
+            <div class="tray-card tray-stack tray-stack--lg">
+              <div class="tray-row">
+                <span class="tray-avatar tray-avatar--lg tray-avatar--ink" aria-hidden="true">OF</span>
+                <div class="tray-stack tray-stack--sm" style="flex: 1 1 12rem; gap: 2px">
+                  <p class="control">Oksana Franko</p>
+                  <p class="caption tray-muted">Your initials stand in until the photo is saved.</p>
+                </div>
+              </div>
+              <div class="tray-field">
+                <span class="tray-label" id="photo-label">New photo</span>
+                <div class="tray-drop" data-tray="dropzone" data-list="#photo-list" data-max-mb="5" data-too-large="Too large. Choose a photo under {max} MB.">
+                  <span class="tray-drop__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-upload"/></svg></span>
+                  <p class="tray-drop__text"><b>Drop a photo here or <u>choose a file</u></b><small id="photo-note">PNG or JPG, square, up to 5 MB</small></p>
+                  <input type="file" accept="image/png, image/jpeg" aria-labelledby="photo-label" aria-describedby="photo-note">
+                </div>
+                <div class="tray-attachments" id="photo-list" style="margin-block-start: var(--space-3)">
+                  <div class="tray-attachment">
+                    <span class="tray-attachment__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-image"/></svg></span>
+                    <span class="tray-attachment__body"><span class="tray-attachment__name">oksana-in-the-snail-house.jpg</span><span class="tray-attachment__meta">2.1 MB, uploading, 64%</span><span class="tray-progress__bar" role="progressbar" aria-label="Uploading oksana-in-the-snail-house.jpg" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64" style="--tray-v: 64"></span></span>
+                    <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-photo-cancel aria-label="Cancel the upload of oksana-in-the-snail-house.jpg"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="tray-settings" aria-labelledby="set-name">
+          <div class="tray-settings__intro">
+            <h2 class="subtitle" id="set-name">Name and role</h2>
+            <p>Your name goes on the receipts you send and the notes you leave on orders.</p>
+          </div>
+          <div class="tray-settings__body">
+            <div class="tray-card">
+              <div class="tray-fields">
+                <div class="tray-field">
+                  <label class="tray-label" for="first-name">First name</label>
+                  <input class="tray-input" id="first-name" name="first-name" value="Oksana" autocomplete="given-name">
+                </div>
+                <div class="tray-field">
+                  <label class="tray-label" for="last-name">Last name</label>
+                  <input class="tray-input" id="last-name" name="last-name" value="Franko" autocomplete="family-name">
+                </div>
+                <div class="tray-field">
+                  <label class="tray-label" for="receipt-name">Name on receipts</label>
+                  <input class="tray-input" id="receipt-name" name="receipt-name" value="Oksana at Perly Farm" aria-describedby="receipt-name-hint">
+                  <p class="tray-field__hint" id="receipt-name-hint">Customers see it at the foot of every receipt.</p>
+                </div>
+                <div class="tray-field">
+                  <label class="tray-label" for="job">Job title <span class="tray-label__opt">(optional)</span></label>
+                  <input class="tray-input" id="job" name="job" value="Farm manager" autocomplete="organization-title" aria-describedby="job-hint">
+                  <p class="tray-field__hint" id="job-hint">Your role in Counter is Owner. Only another owner can change it.</p>
+                </div>
+                <div class="tray-field tray-field--full">
+                  <label class="tray-label" for="team-note">A note for the team <span class="tray-label__opt">(optional)</span></label>
+                  <textarea class="tray-textarea" id="team-note" name="team-note" rows="3" maxlength="160" data-tray="count">Mornings in the snail houses, afternoons at the packing table. Call me about any order over $500.</textarea>
+                  <div class="tray-field__foot"><span class="tray-field__count"></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="tray-settings" aria-labelledby="set-contact">
+          <div class="tray-settings__intro">
+            <h2 class="subtitle" id="set-contact">Contact</h2>
+            <p>Where Counter and the team reach you. Customers never see these.</p>
+          </div>
+          <div class="tray-settings__body">
+            <div class="tray-card">
+              <div class="tray-fields">
+                <div class="tray-field">
+                  <label class="tray-label" for="email">Email</label>
+                  <input class="tray-input" id="email" name="email" type="email" value="oksana@perly.example" autocomplete="email" aria-describedby="email-hint">
+                  <p class="tray-field__hint" id="email-hint">A new address counts once you open the link we send to it.</p>
+                </div>
+                <div class="tray-field">
+                  <label class="tray-label" for="phone">Phone</label>
+                  <input class="tray-input" id="phone" name="phone" type="tel" value="+380 00 555 01 27" autocomplete="tel" inputmode="tel" aria-describedby="phone-hint">
+                  <p class="tray-field__hint" id="phone-hint">Couriers call it when a delivery goes wrong.</p>
+                </div>
+                <div class="tray-field tray-field--full">
+                  <label class="tray-check">
+                    <input type="checkbox" name="phone-to-team" checked>
+                    <span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span>
+                    <span class="tray-check__text">Show my phone to the team<small>Packers can call you from any order.</small></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="tray-settings" aria-labelledby="set-region">
+          <div class="tray-settings__intro">
+            <h2 class="subtitle" id="set-region">Language and time</h2>
+            <p>How Counter writes dates and hours for you. The courier's pick-up stays in the farm's time.</p>
+          </div>
+          <div class="tray-settings__body">
+            <div class="tray-card">
+              <div class="tray-fields">
+                <div class="tray-field">
+                  <label class="tray-label" for="language">Language</label>
+                  <span class="tray-select"><select id="language" name="language"><option selected>English</option><option>Ukrainian</option><option>Polish</option></select></span>
+                </div>
+                <div class="tray-field">
+                  <label class="tray-label" for="zone">Time zone</label>
+                  <span class="tray-select"><select id="zone" name="zone"><option>London, UTC+0</option><option>Warsaw, UTC+1</option><option selected>Kyiv, UTC+2</option></select></span>
+                </div>
+                <div class="tray-field">
+                  <span class="tray-label" id="clock-label">Clock</span>
+                  <div class="tray-seg tray-seg--fill" role="radiogroup" aria-labelledby="clock-label">
+                    <label class="tray-seg__item"><input type="radio" name="clock" value="24" checked><span>14:00</span></label>
+                    <label class="tray-seg__item"><input type="radio" name="clock" value="12"><span>2:00 pm</span></label>
+                  </div>
+                </div>
+                <div class="tray-field">
+                  <span class="tray-label" id="week-label">Week starts on</span>
+                  <div class="tray-seg tray-seg--fill" role="radiogroup" aria-labelledby="week-label">
+                    <label class="tray-seg__item"><input type="radio" name="week" value="mon" checked><span>Monday</span></label>
+                    <label class="tray-seg__item"><input type="radio" name="week" value="sun"><span>Sunday</span></label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <div class="tray-card" style="margin-block-start: var(--space-10); padding: var(--space-4) var(--space-4) var(--space-4) var(--space-6)">
+          <div class="tray-settings__foot">
+            <span class="tray-settings__note" id="profile-note" role="status">1 unsaved change: the photo</span>
+            <button class="tray-btn tray-btn--ghost tray-btn--sm" type="reset">Discard</button>
+            <button class="tray-btn tray-btn--sm" type="submit">Save the changes</button>
+          </div>
+        </div>
+      </form>
+    </main>
+  </div>
+</div>
+<script src="../components/bundle.js"></script>
+<script>
+/* The bar counts what differs from the saved profile; "Save the changes" keeps it and "Discard" puts it back. Nothing is sent. */
+(function () {
+  var form = document.getElementById('profile');
+  var note = document.getElementById('profile-note');
+  var list = document.getElementById('photo-list');
+  var names = { 'first-name': 'the first name', 'last-name': 'the last name', 'receipt-name': 'the name on receipts', job: 'the job title', 'team-note': 'the note', email: 'the email', phone: 'the phone', 'phone-to-team': 'who sees the phone', language: 'the language', zone: 'the time zone', clock: 'the clock', week: 'the first day of the week' };
+  function changed() {
+    var out = [];
+    [].forEach.call(form.elements, function (el) {
+      if (!el.name || !names[el.name] || out.indexOf(names[el.name]) > -1) return;
+      var moved = el.type === 'checkbox' || el.type === 'radio' ? el.checked !== el.defaultChecked
+        : el.tagName === 'SELECT' ? [].some.call(el.options, function (o) { return o.selected !== o.defaultSelected; })
+        : el.value !== el.defaultValue;
+      if (moved) out.push(names[el.name]);
+    });
+    if (list.children.length) out.unshift('the photo');
+    return out;
+  }
+  /* The note is a status line: it is written only when its words change, so a key that changes nothing in it (one more
+     letter of the same name) is not read again. */
+  function paint() {
+    var c = changed();
+    var words = c.length ? c.length + (c.length === 1 ? ' unsaved change: ' : ' unsaved changes: ') + c.slice(0, 3).join(', ') + (c.length > 3 ? ' and more' : '') : 'Everything is saved';
+    if (note.textContent !== words) note.textContent = words;
+  }
+  form.addEventListener('input', paint);
+  form.addEventListener('change', paint);
+  form.addEventListener('tray:change', paint);
+  list.addEventListener('click', function (e) {
+    if (e.target.closest('[data-photo-cancel]')) { e.target.closest('.tray-attachment').remove(); paint(); }
+  });
+  form.addEventListener('reset', function () { list.innerHTML = ''; setTimeout(paint); });
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    [].forEach.call(form.elements, function (el) {
+      if (el.type === 'checkbox' || el.type === 'radio') el.defaultChecked = el.checked;
+      else if (el.tagName === 'SELECT') [].forEach.call(el.options, function (o) { o.defaultSelected = o.selected; });
+      else if ('defaultValue' in el) el.defaultValue = el.value;
+    });
+    list.innerHTML = '';
+    paint();
+    TrayUI.toast({ tone: 'success', title: 'Profile saved', text: 'The team sees the new details now.' });
+  });
+})();
+</script>
+</body>
+</html>
+```

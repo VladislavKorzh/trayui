@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import type { IconSource } from '../lib/icon';
 import { cx, useControlled } from '../lib/util';
@@ -49,21 +50,20 @@ function StepIcon({ step }: { step: TraceStep }) {
 export const Trace = React.forwardRef<HTMLElement, TraceProps>(function Trace({ steps, summary, open, defaultOpen = true, onOpenChange, className, ...rest }, ref) {
   const [isOpen, setOpen] = useControlled(open, defaultOpen, onOpenChange);
   const list = (cls?: string, props?: React.HTMLAttributes<HTMLOListElement>, olRef?: React.Ref<HTMLOListElement>) => (
-    <ol ref={olRef} className={cx('tray-trace', cls)} {...props}>
+    <ol ref={olRef} className={cx('tray-trace', cls)} role="list" {...props}>
       {steps.map((s, i) => (
-        <React.Fragment key={i}>
-          <li className="tray-trace__line" data-status={s.status && s.status !== 'done' ? s.status : undefined}>
-            <span className="tray-trace__icon">
-              <StepIcon step={s} />
-            </span>
-            <span className="tray-trace__title">
-              <b>{s.verb}</b>
-              {s.text != null ? <> {s.text}</> : null}
-            </span>
-            {s.time != null ? <span className="tray-trace__meta">{s.time}</span> : null}
-          </li>
-          {s.detail != null ? <li className="tray-trace__detail">{s.detail}</li> : null}
-        </React.Fragment>
+        // One item per step: its output sits at the end of its own line, where it takes a row under the title.
+        <li key={i} className="tray-trace__line" data-status={s.status && s.status !== 'done' ? s.status : undefined}>
+          <span className="tray-trace__icon">
+            <StepIcon step={s} />
+          </span>
+          <span className="tray-trace__title">
+            <b>{s.verb}</b>
+            {s.text != null ? <> {s.text}</> : null}
+          </span>
+          {s.time != null ? <span className="tray-trace__meta">{s.time}</span> : null}
+          {s.detail != null ? <div className="tray-trace__detail">{s.detail}</div> : null}
+        </li>
       ))}
     </ol>
   );

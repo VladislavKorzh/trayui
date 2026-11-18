@@ -22,7 +22,7 @@
   </nav>
   <div class="tray-nav__actions">
     <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search the shop"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search the shop</span><kbd class="tray-kbd">/</kbd></button>
-    <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/cart" aria-current="page" id="cart-link" aria-label="Cart, 4 items"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-shopping-bag"/></svg>Cart<span class="tray-badge tray-badge--count tray-badge--ink" id="cart-count">4</span></a>
+    <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/cart" aria-current="page" id="cart-link"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-shopping-bag"/></svg>Cart<span class="tray-badge tray-badge--count tray-badge--ink" id="cart-count">4<span class="tray-vh"> items</span></span></a>
   </div>
 </header>
 
@@ -159,17 +159,17 @@
           <li class="tray-item" data-add="line-spoon">
             <div class="tray-slot tray-slot--line tray-ratio tray-ratio--square"></div>
             <span class="tray-item__body"><span class="tray-item__title">A second spoon</span><span class="tray-item__text">One each at the table, and the courier is free</span></span>
-            <span class="tray-item__end"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" aria-label="Add a second mother-of-pearl spoon for $14">Add for $14</button></span>
+            <span class="tray-item__end"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" aria-label="Add for $14: a second mother-of-pearl spoon">Add for $14</button></span>
           </li>
           <li class="tray-item" data-add="line-jar30">
             <div class="tray-slot tray-slot--line tray-ratio tray-ratio--square"></div>
             <span class="tray-item__body"><span class="tray-item__title">Snail caviar, 30&nbsp;g</span><span class="tray-item__text">Open it the week after, and it is just as fresh</span></span>
-            <span class="tray-item__end"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" aria-label="Add a 30 g jar for $38">Add for $38</button></span>
+            <span class="tray-item__end"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" aria-label="Add for $38: a 30 g jar">Add for $38</button></span>
           </li>
           <li class="tray-item" data-add="line-gift">
             <div class="tray-slot tray-slot--line tray-ratio tray-ratio--square"></div>
             <span class="tray-item__body"><span class="tray-item__title">Gift box</span><span class="tray-item__text">For someone else: a 50&nbsp;g jar, two spoons and a card</span></span>
-            <span class="tray-item__end"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" aria-label="Add a gift box for $96">Add for $96</button></span>
+            <span class="tray-item__end"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" aria-label="Add for $96: a gift box">Add for $96</button></span>
           </li>
         </ul>
       </section>
@@ -253,8 +253,8 @@
     var discount = Math.round(sum * off / 100), courier = sum >= FREE_FROM ? 0 : COURIER, name = NUMBERS[count] || count + ' things';
     $('items-name').textContent = name;
     $('cart-lead').textContent = count ? name + ', packed together in one chilled box.' : 'Nothing in it yet.';
-    $('cart-count').textContent = count || '';
-    $('cart-link').setAttribute('aria-label', 'Cart, ' + count + (count === 1 ? ' item' : ' items'));
+    /* the count, and for a screen reader what it counts: the button is named "Cart 3 items" by its own words */
+    $('cart-count').innerHTML = count ? count + '<span class="tray-vh"> ' + (count === 1 ? 'item' : 'items') + '</span>' : '';
     $('subtotal').textContent = money(sum);
     $('promo-line').hidden = !off;
     $('promo-sum').textContent = '−' + money(discount);

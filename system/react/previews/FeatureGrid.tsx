@@ -10,7 +10,7 @@ export function Bento() {
           text: 'From the shop, the phone and the market stall, in the order they must leave.',
           span: 7,
           end: (
-            <ul className="tray-items">
+            <ul className="tray-items" role="list">
               <Item size="sm" title="PL-20431, Dana Kovalenko" end={<Badge>To pack</Badge>} />
               <Item size="sm" title="PL-20418, Ivan Petrenko" end={<Badge tone="ink">With the courier</Badge>} />
             </ul>

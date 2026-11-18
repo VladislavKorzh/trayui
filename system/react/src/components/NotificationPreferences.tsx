@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { cx, useControlled } from '../lib/util';
 import { Checkbox } from './Checkbox';
@@ -52,6 +53,8 @@ export interface NotificationPreferencesProps extends Omit<React.TableHTMLAttrib
   groups: NotificationGroup[];
   /** The head of the first column. Default "Tell me when". */
   heading?: React.ReactNode;
+  /** The table's name, a `<caption>` hidden from sight that a screen reader says. Default "Notifications". Or name it with `aria-label`. */
+  caption?: React.ReactNode;
   /** Which channels are on, for a controlled grid. Pass it with `onChange`. Locked channels count as on whatever it says. */
   value?: NotificationValue;
   /** Which channels are on at first, for an uncontrolled grid. Default none: never pre-check marketing email. */
@@ -66,7 +69,7 @@ export interface NotificationPreferencesProps extends Omit<React.TableHTMLAttrib
  * It sits in a wrapper that scrolls sideways on a phone; `className` and the ref go to the `<table>`.
  */
 export const NotificationPreferences = React.forwardRef<HTMLTableElement, NotificationPreferencesProps>(function NotificationPreferences(
-  { channels, groups, heading = 'Tell me when', value, defaultValue = {}, onChange, className, ...rest },
+  { channels, groups, heading = 'Tell me when', caption = 'Notifications', value, defaultValue = {}, onChange, className, ...rest },
   ref,
 ) {
   const [current, setCurrent] = useControlled<NotificationValue>(value, defaultValue);
@@ -80,6 +83,7 @@ export const NotificationPreferences = React.forwardRef<HTMLTableElement, Notifi
   return (
     <div className="tray-table-wrap">
       <table ref={ref} className={cx('tray-matrix', className)} {...rest}>
+        {caption != null && !rest['aria-label'] && !rest['aria-labelledby'] ? <caption className="tray-vh">{caption}</caption> : null}
         <thead>
           <tr>
             <th scope="col">{heading}</th>
