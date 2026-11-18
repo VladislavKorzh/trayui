@@ -135,7 +135,7 @@ A [Tooltip](#c-tooltip) is an anchor around one control, with the words in `data
 
 The script builds the bubble, a `span` with `role="tooltip"` and an `id`, and points the control's `aria-describedby` at it. `data-keys` adds a key cap for each word, and `data-side="bottom"` puts the bubble under the control. The bubble is solid `ink` with text in the page's colour and 12px corners. Change `data-tip` and the bubble follows, so a copy button can say "Copied" after a click.
 
-Tray UI keeps `aria-describedby` and solves the repeated name another way. When the words of `data-tip` are the control's name, the script writes them into an attribute, and CSS draws them as generated content with an empty text alternative:
+Tray UI keeps `aria-describedby` and solves the repeated name another way. When the control's name already holds the words of `data-tip` ("Orders" on a link named "Orders, 12 to pack"), the script writes them into an attribute, and CSS draws them as generated content with an empty text alternative:
 
 ```css
 .tray-tooltip__said::before { content: attr(data-said); content: attr(data-said) / ""; }
@@ -143,6 +143,6 @@ Tray UI keeps `aria-describedby` and solves the repeated name another way. When 
 
 The eye sees "Search" and the key caps; the description holds only the keys. Chrome's accessibility tree shows the button above with the name "Search" and the description "Ctrl K". `aria-hidden` would not do it: while the bubble is hidden, Chrome computes the description from all of it, `aria-hidden` parts included, and gives "Search Ctrl K". The first `content` line is for a browser that does not know the `/ ""` form.
 
-The bubble shows at once on hover and on focus. Its `::after` bridges the 8px gap, and it goes 150 milliseconds after the pointer has left the control and the bubble both, unless the control has focus. Version 0.2.0 brought this: "a tooltip stays while the pointer moves onto it." Escape hides it while focus stays on the control. Its Escape listener is on the anchor, so it hears the key only while focus is inside; a bubble shown by the pointer alone goes when the pointer leaves. It does not stop the key either, so in a dialog the same press closes the dialog too. Under `prefers-reduced-motion: reduce` it only fades, in a tenth of a second.
+The bubble shows at once on hover and on focus. Its `::after` bridges the 8px gap, and it goes 150 milliseconds after the pointer has left the control and the bubble both, unless the control has focus. Version 0.2.0 brought this: "a tooltip stays while the pointer moves onto it." Since the next release Escape hides it wherever focus is, as above: the script listens on the document while the bubble shows, and stops the key, so in a dialog the first press hides the bubble and the second closes the dialog. In 0.2.0 the listener was on the anchor and let the key through. Under `prefers-reduced-motion: reduce` it only fades, in a tenth of a second.
 
 For a toggletip, use a [Popover](#c-popover). A popover of text alone has no control to take focus, so its script makes the panel a `dialog`, named by its title and described by its text, and moves focus to it, so the explanation is read as it opens. The [sidebar that collapses to icons](#b-sidebar-06) shows a tooltip on each item of its rail.

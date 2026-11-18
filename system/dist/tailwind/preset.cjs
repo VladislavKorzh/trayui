@@ -5,7 +5,10 @@
 //   module.exports = { presets: [require('./tailwind/preset.cjs')], content: ['./src/**/*.html'] };
 //
 // Link tokens.css on the page as well: every value here reads one of its custom properties, so a theme changes them.
-// The spacing scale of Tailwind (p-1 is 4px) is the system's own. dark: is for whatever sits in a dark theme.
+// The spacing scale of Tailwind (p-1 is 4px) is the system's own. dark: is for whatever sits in a dark theme, a light
+// theme set within a dark one included. There are no screens for the system's widths: Tailwind 3 takes an arbitrary
+// width in px only, beside its own screens in px, and one min-[34rem]: turns every min- and max- variant off. Write
+//   min-[544px]: (34rem), min-[640px]: (40rem), min-[896px]: (56rem), min-[1216px]: (76rem)
 module.exports = {
   "darkMode": [
     "variant",

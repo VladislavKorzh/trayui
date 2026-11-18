@@ -126,11 +126,13 @@ Version 0.2.0 took the same care to the motion written in the components' own ru
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-  .tray-btn:active, .tray-btn-group__item:active, .tray-toggle:active, .tray-seg__item:active span { transform: none; }
-  .tray-btn, .tray-btn-group__item, .tray-toggle, .tray-switch__track::before, .tray-tile .tray-icon,
+  .tray-btn:active, .tray-btn-group__item:active, .tray-toggle:active, .tray-input-group__btn:active { transform: none; }
+  .tray-btn, .tray-btn-group__item, .tray-toggle, .tray-input-group__btn, .tray-switch__track::before, .tray-tile .tray-icon,
   summary.tray-sidebar__label > .tray-icon, .tray-sidebar__caret, .tray-trace-group > summary .tray-icon { transition-property: background-color, color, filter; }
   .tray-progress__bar::before, .tray-checklist *, .tray-sidebar, .tray-app__side { transition: none; }
 }
 ```
+
+The block above is as the next release has it. In 0.2.0 the button inside an [Input Group](#c-input-group) still shrank under a press, and the block reset a press on a segment's `span` that nothing set. The "Latest" button of a message scroller was centred with `transform: translateX(-50%)`, so the reset took the centring away with the press, and the button jumped 38 pixels sideways; it is now centred by its margins.
 
 Measured in Chrome under `reduce`: a pressed button keeps its size, the knob of a [Switch](#c-switch) and the chevrons of a [Sidebar](#c-sidebar) carry no transform transition, a [Progress](#c-progress) bar and a folding sidebar have no transition at all, and a [Spinner](#c-spinner) takes 2.4 seconds a turn. The scripts read the setting too: a carousel, a lightbox and the "Latest" button of a message scroller jump instead of scrolling, and a [Toast](#c-toast) appears and goes at once, as [Toast notifications that screen readers announce](#a-toast-notifications-screen-readers) shows. The [Accessibility](#g-accessibility) guide lists what changes under `reduce`.

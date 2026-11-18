@@ -19,12 +19,24 @@
     function all() { return series.reduce(function (a, s) { return a.concat(s.values); }, []); }
     $$('[data-gen]', el).forEach(function (n) { if (n.parentNode === el) el.removeChild(n); });
     el.classList.add('tray-chart');
+    /* The figure is named by its caption: browsers do not all take a figure's name from its figcaption, so it is said
+       with aria-labelledby. */
+    var caption = $(':scope > figcaption', el);
+    if (caption && !el.hasAttribute('aria-label') && !el.hasAttribute('aria-labelledby')) { caption.id = caption.id || uid('tray-chart-title'); el.setAttribute('aria-labelledby', caption.id); }
     el.classList.toggle('tray-chart--single', series.length === 1 && type !== 'donut' && !(type === 'radial' && series[0].values.length > 1));
     var summary = cfg.summary || (type + ' chart. ' + series.map(function (s) { return s.name + ': ' + labels.map(function (l, i) { return l + ' ' + val(s.values[i]); }).join(', '); }).join('. '));
     /* What the arrow keys reach is said through this region. It sits in the figure, beside the drawing: the children of a
        role="img" are presentational, so a region inside it would never be heard. */
     var live = make('span', 'tray-vh');
     live.setAttribute('aria-live', 'polite');
+
+    /* On touch a tap shows the values under it until the next tap elsewhere: a finger that lifts is not a pointer that
+       leaves. lingers(box, clear) gives the pointerleave handler, which clears for a mouse or a pen only. */
+    function lingers(box, clear) {
+      function away(e) { if (!box.contains(e.target)) { document.removeEventListener('pointerdown', away); clear(); } }
+      box.addEventListener('pointerdown', function (e) { if (e.pointerType === 'touch') document.addEventListener('pointerdown', away); });
+      return function (e) { if (e.pointerType !== 'touch') clear(); };
+    }
 
     function legend(names) {
       var ul = make('ul', 'tray-chart__legend');
@@ -123,7 +135,7 @@
       }
       plot.addEventListener('pointermove', function (e) { show(at(e)); });
       plot.addEventListener('pointerdown', function (e) { show(at(e)); });
-      plot.addEventListener('pointerleave', hide);
+      plot.addEventListener('pointerleave', lingers(plot, hide));
       plot.addEventListener('blur', hide);
       plot.addEventListener('keydown', function (e) {
         var rtl = getComputedStyle(plot).direction === 'rtl', step = { ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 }[e.key];
@@ -173,7 +185,7 @@
         if (announce && i != null) live.textContent = labels[i] + ': ' + val(vals[i]) + ', ' + Math.round(vals[i] / total * 100) + '%';
       }
       round.addEventListener('pointerover', function (e) { var seg = e.target.closest && e.target.closest('.tray-chart__seg'); show(seg ? +seg.dataset.i : null); });
-      round.addEventListener('pointerleave', function () { show(null); });
+      round.addEventListener('pointerleave', lingers(round, function () { show(null); }));
       round.addEventListener('blur', function () { show(null); });
       round.addEventListener('keydown', function (e) {
         var step = { ArrowLeft: -1, ArrowUp: -1, ArrowRight: 1, ArrowDown: 1 }[e.key];
@@ -235,11 +247,14 @@
         tip.style.transform = 'translate(-50%, -50%)';
         if (announce) live.textContent = labels[i] + ': ' + series.map(function (s) { return s.name + ' ' + val(s.values[i]); }).join(', ');
       }
-      round.addEventListener('pointermove', function (e) {
+      function point(e) {
         var box = round.getBoundingClientRect(), a = Math.atan2(e.clientY - box.top - box.height / 2, e.clientX - box.left - box.width / 2) + Math.PI / 2;
         show(Math.round(((a + Math.PI * 2) % (Math.PI * 2)) / (Math.PI * 2) * n) % n);
-      });
-      round.addEventListener('pointerleave', function () { show(null); });
+      }
+      /* a tap moves nothing: it shows the spoke under it as it lands */
+      round.addEventListener('pointermove', point);
+      round.addEventListener('pointerdown', point);
+      round.addEventListener('pointerleave', lingers(round, function () { show(null); }));
       round.addEventListener('blur', function () { show(null); });
       round.addEventListener('keydown', function (e) {
         var step = { ArrowLeft: -1, ArrowUp: -1, ArrowRight: 1, ArrowDown: 1 }[e.key];
@@ -307,7 +322,9 @@
         var th = btn.closest('th'), i = [].indexOf.call(th.parentNode.children, th), dir = th.getAttribute('aria-sort') === 'ascending' ? 'descending' : 'ascending';
         $$('th', table.tHead).forEach(function (h) { h.removeAttribute('aria-sort'); var u = $('.tray-sort use', h); if (u) u.setAttribute('href', '#tray-i-arrow-up-down'); });
         th.setAttribute('aria-sort', dir);
-        $('use', btn).setAttribute('href', '#tray-i-arrow-' + (dir === 'ascending' ? 'up' : 'down'));
+        /* the icon is optional: aria-sort on the head says the order, the arrow only shows it */
+        var use = $('use', btn);
+        if (use) use.setAttribute('href', '#tray-i-arrow-' + (dir === 'ascending' ? 'up' : 'down'));
         rows.sort(function (a, b) { var x = key(a.children[i]), y = key(b.children[i]); return (x > y ? 1 : x < y ? -1 : 0) * (dir === 'ascending' ? 1 : -1); });
         rows.forEach(function (r) { body.insertBefore(r, empty || null); });
         page = 0; paint();

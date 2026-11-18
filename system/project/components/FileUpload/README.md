@@ -8,10 +8,19 @@ File upload is a tray with a dashed edge that takes files dropped on it or chose
   <span class="tray-label" id="up-label">Product photos</span>
   <div class="tray-drop" data-tray="dropzone" data-list="#up-list" data-max-mb="10">
     <span class="tray-drop__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-upload"/></svg></span>
-    <p class="tray-drop__text"><b>Drop photos here or <u>choose files</u></b><small>PNG or JPG, up to 10 MB each</small></p>
-    <input type="file" multiple accept="image/png, image/jpeg" aria-labelledby="up-label">
+    <p class="tray-drop__text"><b>Drop photos here or <u>choose files</u></b><small id="up-note">PNG or JPG, up to 10 MB each</small></p>
+    <input type="file" multiple accept="image/png, image/jpeg" aria-labelledby="up-label" aria-describedby="up-note">
   </div>
-  <div class="tray-attachments" id="up-list"></div>
+  <div class="tray-attachments" id="up-list">
+    <div class="tray-attachment">
+      …image icon…
+      <span class="tray-attachment__body">
+        <span class="tray-attachment__name">jar-50g-open.jpg</span><span class="tray-attachment__meta">Uploading, 64%</span>
+        <span class="tray-progress__bar" role="progressbar" aria-label="Uploading jar-50g-open.jpg" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64" style="--tray-v: 64"></span>
+      </span>
+      <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" aria-label="Cancel the upload of jar-50g-open.jpg">…x…</button>
+    </div>
+  </div>
 </div>
 ```
 ## Behaviour

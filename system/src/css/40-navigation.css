@@ -22,15 +22,15 @@
   transition: background-color var(--duration-fill) var(--ease), color var(--duration-fill) var(--ease);
 }
 .tray-tab:hover { background: var(--tray-ground); }
-.tray-tab[aria-selected="true"], .tray-tab[aria-current] { background: var(--ink); color: var(--tray-on-ink); }
+.tray-tab[aria-selected="true"], .tray-tab[aria-current]:not([aria-current="false"]) { background: var(--ink); color: var(--tray-on-ink); }
 .tray-tab:focus-visible { outline-offset: -3px; }
-.tray-tab[aria-selected="true"]:focus-visible, .tray-tab[aria-current]:focus-visible { outline-color: var(--tray-on-ink); }
+.tray-tab[aria-selected="true"]:focus-visible, .tray-tab[aria-current]:not([aria-current="false"]):focus-visible { outline-color: var(--tray-on-ink); }
 .tray-tab:disabled { opacity: var(--opacity-disabled); cursor: not-allowed; background: none; }
 .tray-tab .tray-badge--count { background: var(--tray-ground); }
-.tray-tab[aria-selected="true"] .tray-badge--count, .tray-tab[aria-current] .tray-badge--count { background: var(--tray-on-ink); color: var(--ink); }
+.tray-tab[aria-selected="true"] .tray-badge--count, .tray-tab[aria-current]:not([aria-current="false"]) .tray-badge--count { background: var(--tray-on-ink); color: var(--ink); }
 /* While tabs run past the end edge, the strip fades there to show that it scrolls. */
 .tray-tabs.is-clipped { -webkit-mask-image: linear-gradient(to right, var(--ink) calc(100% - 56px), transparent); mask-image: linear-gradient(to right, var(--ink) calc(100% - 56px), transparent); }
-[dir="rtl"] .tray-tabs.is-clipped { -webkit-mask-image: linear-gradient(to left, var(--ink) calc(100% - 56px), transparent); mask-image: linear-gradient(to left, var(--ink) calc(100% - 56px), transparent); }
+.tray-tabs.is-clipped:dir(rtl) { -webkit-mask-image: linear-gradient(to left, var(--ink) calc(100% - 56px), transparent); mask-image: linear-gradient(to left, var(--ink) calc(100% - 56px), transparent); }
 .tray-tabpanel { padding-block-start: var(--space-5); }
 .tray-tabpanel:focus-visible { border-radius: var(--radius-mark); }
 
@@ -39,7 +39,7 @@
 .tray-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; padding: 0; list-style: none; color: var(--ink-soft); font: 500 1rem/1.3 var(--font-sans); }
 .tray-crumbs li { display: inline-flex; align-items: center; gap: var(--space-2); min-block-size: var(--size-hit); }
 .tray-crumbs li + li::before { content: ""; inline-size: 7px; block-size: 7px; margin-inline-end: var(--space-1); border-inline-end: 2px solid var(--ink-hint); border-block-start: 2px solid var(--ink-hint); transform: rotate(45deg); }
-[dir="rtl"] .tray-crumbs li + li::before { transform: rotate(-45deg); }
+.tray-crumbs li + li:dir(rtl)::before { transform: rotate(-45deg); }
 .tray-crumbs a { color: inherit; text-decoration: none; border-radius: var(--radius-mark); }
 .tray-crumbs a:hover { color: var(--ink); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .2em; }
 .tray-crumbs [aria-current="page"] { color: var(--ink); font-weight: 600; }

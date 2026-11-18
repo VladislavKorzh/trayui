@@ -16,7 +16,7 @@
     <a class="tray-back" href="/shop"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-arrow-left"/></svg>Keep shopping</a>
   </header>
   <main class="tray-screen__body">
-    <ol class="tray-stepper tray-stepper--fold" aria-label="Checkout">
+    <ol class="tray-stepper tray-stepper--fold" aria-label="Checkout" role="list">
       <li aria-current="step"><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Cart</span></span></li>
       <li><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Delivery and payment</span></span></li>
       <li><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Confirmation</span></span></li>
@@ -27,7 +27,7 @@
           <h1 class="title">Your cart</h1>
           <p class="tray-soft">Jars from batch 14, collected on 2 November. We pack them in one chilled box.</p>
         </div>
-        <ul class="tray-items" aria-label="Jars in the cart">
+        <ul class="tray-items" aria-label="Jars in the cart" role="list">
           <li class="tray-item" data-price="3800">
             <span class="tray-item__body">
               <span class="tray-item__title">Snail caviar, 30 g</span>
@@ -71,7 +71,7 @@
         <div class="tray-progress">
           <span class="tray-progress__name">Free courier from $300</span>
           <span class="tray-progress__value" id="free-value">$268 of $300</span>
-          <span class="tray-progress__bar" id="free-bar" role="meter" aria-label="Towards free delivery" aria-valuemin="0" aria-valuemax="300" aria-valuenow="268" style="--tray-v: 89"></span>
+          <span class="tray-progress__bar" id="free-bar" role="meter" aria-label="Towards free delivery" aria-valuemin="0" aria-valuemax="300" aria-valuenow="268" aria-valuetext="$268 of $300" style="--tray-v: 89"></span>
           <span class="tray-progress__note" id="free-note"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-truck"/></svg>Add $32.00 more and the courier is free.</span>
         </div>
         <div class="tray-stack tray-stack--sm">
@@ -91,7 +91,7 @@
       <aside class="tray-with-aside__aside" aria-label="Summary">
         <form class="tray-card tray-summary" action="/checkout" method="get" style="padding: var(--space-7)">
           <h2 class="subtitle">Summary</h2>
-          <ul class="tray-summary__lines">
+          <ul class="tray-summary__lines" role="list">
             <li class="tray-summary__line"><span id="jars-name">Four jars</span><span id="jars-sum">$268.00</span></li>
             <li class="tray-summary__line" id="gift-line" hidden><span>Gift box</span><span>$6.00</span></li>
             <li class="tray-summary__line" id="promo-line" hidden><span>Promo code AUTUMN10<small>10% off the jars</small></span><span id="promo-sum">&minus;$26.80</span></li>
@@ -103,8 +103,9 @@
               <button class="tray-input-group__btn" type="button" id="promo-apply">Apply</button>
             </div>
             <p class="tray-field__hint" id="promo-message">The code is on the card in your last box.</p>
+            <span class="tray-vh" role="status" id="promo-said"></span>
           </div>
-          <p class="tray-summary__total" aria-live="polite"><span>Total</span><span id="total">$277.00</span></p>
+          <p class="tray-summary__total" aria-live="polite" aria-atomic="true"><span>Total</span><span id="total">$277.00</span></p>
           <button class="tray-btn tray-btn--block" type="submit">Choose the delivery</button>
           <p class="tray-summary__note"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-clock"/></svg>Order by 12:00 for delivery today.</p>
         </form>
@@ -148,17 +149,22 @@
     bar.style.setProperty('--tray-v', Math.min(100, Math.round(sum / FREE_FROM * 100)));
     bar.setAttribute('aria-valuenow', Math.min(300, dollars));
     $('free-value').textContent = sum >= FREE_FROM ? 'Reached' : '$' + dollars + ' of $300';
+    bar.setAttribute('aria-valuetext', sum >= FREE_FROM ? 'Reached, the courier is free' : '$' + dollars + ' of $300');
     $('free-note').lastChild.textContent = sum >= FREE_FROM ? 'The courier is free for this order.' : 'Add ' + money(FREE_FROM - sum) + ' more and the courier is free.';
   }
   document.addEventListener('tray:change', function (e) { if (cart.contains(e.target)) work(); });
   gift.addEventListener('change', work);
+  /* A code taken is said through a status line, while focus stays on Apply. A code refused sends focus back to the field,
+     which is then read as invalid, with the reason, ready to be corrected. */
   $('promo-apply').addEventListener('click', function () {
     var code = promo.value.trim().toUpperCase(), ok = code === CODE;
     off = ok ? 10 : 0;
     promo.setAttribute('aria-invalid', String(!ok));
     message.className = ok ? 'tray-field__hint' : 'tray-field__error';
     message.textContent = ok ? 'AUTUMN10 takes 10% off the jars.' : code ? 'We do not know this code. Check the spelling on the card.' : 'Enter the code from the card in your last box.';
+    $('promo-said').textContent = ok ? message.textContent : '';
     work();
+    if (!ok) promo.focus();
   });
 })();
 </script>

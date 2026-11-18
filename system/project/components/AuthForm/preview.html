@@ -11,17 +11,17 @@
 <p class="tray-rule tray-rule--label">or</p>
 <div class="tray-stack">
 <div class="tray-field"><label class="tray-label" for="au-email">Email</label><input class="tray-input" id="au-email" type="email" autocomplete="username" value="oksana@perly.example"></div>
-<div class="tray-field"><div class="tray-auth__row"><label class="tray-label" for="au-pass">Password</label><a href="#" style="margin-block-end: var(--space-2); font-size: .9375rem">Forgot it?</a></div><div class="tray-input-group"><input class="tray-input" id="au-pass" type="password" autocomplete="current-password" value="example-password"><button class="tray-input-group__btn" type="button" data-tray="reveal" aria-label="Show password"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></button></div></div>
+<div class="tray-field"><div class="tray-auth__row"><label class="tray-label" for="au-pass">Password</label><a href="#" style="margin-block-end: var(--space-2); font-size: .9375rem">Forgot it?</a></div><div class="tray-input-group"><input class="tray-input" id="au-pass" type="password" spellcheck="false" autocapitalize="none" autocomplete="current-password" value="example-password"><button class="tray-input-group__btn" type="button" data-tray="reveal" aria-label="Show password"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></button></div></div>
 </div>
 <button class="tray-btn tray-btn--block" type="submit">Sign in</button>
 <p class="tray-auth__foot">New here? <a href="#">Create an account</a></p>
 </form>
 <form class="tray-card tray-auth" style="flex: 1 1 22rem; padding: var(--space-8)" onsubmit="return false">
 <div class="tray-auth__head"><h2 class="title">Create an account</h2><p>Free for 14 days. No card needed.</p></div>
-<div class="tray-alert tray-alert--danger" role="alert"><span class="tray-alert__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-circle-alert"/></svg></span><div class="tray-alert__body"><p class="tray-alert__title">That email already has an account</p><p class="tray-alert__text"><a href="#">Sign in</a> or use another email.</p></div></div>
+<div class="tray-alert tray-alert--danger" role="alert" tabindex="-1"><span class="tray-alert__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-circle-alert"/></svg></span><div class="tray-alert__body"><p class="tray-alert__title" id="au-email2e">That email already has an account</p><p class="tray-alert__text"><a href="#">Sign in</a> or use another email.</p></div></div>
 <div class="tray-stack">
 <div class="tray-field"><label class="tray-label" for="au-farm">Farm or shop name</label><input class="tray-input" id="au-farm" autocomplete="organization" value="Meadow Bakery"></div>
-<div class="tray-field"><label class="tray-label" for="au-email2">Work email</label><input class="tray-input" id="au-email2" type="email" autocomplete="username" aria-invalid="true" value="oksana@perly.example"></div>
+<div class="tray-field"><label class="tray-label" for="au-email2">Work email</label><input class="tray-input" id="au-email2" type="email" autocomplete="username" aria-invalid="true" aria-describedby="au-email2e" value="oksana@perly.example"></div>
 <div class="tray-field"><label class="tray-label" for="au-pass2">Password</label><input class="tray-input" id="au-pass2" type="password" autocomplete="new-password" aria-describedby="au-pass2h"><p class="tray-field__hint" id="au-pass2h">At least 12 characters.</p></div>
 </div>
 <button class="tray-btn tray-btn--block" type="submit">Create the account</button>

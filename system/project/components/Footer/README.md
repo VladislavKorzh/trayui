@@ -18,7 +18,7 @@ The footer ends every public page: the name and a line about the product, the si
   </div>
   <div class="tray-footer__bottom">
     <p>&copy; 2026 Counter</p>
-    <ul class="tray-footer__legal"><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul>
+    <ul class="tray-footer__legal" role="list"><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul>
   </div>
 </footer>
 ```

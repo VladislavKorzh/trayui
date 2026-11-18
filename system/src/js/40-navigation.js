@@ -16,13 +16,15 @@
   /* Tabs: data-tray="tabs" on the wrapper of a [role=tablist] of [role=tab] buttons (each aria-controls a panel) and the panels. */
   UI.register('tabs', function (root) {
     var list = $('[role="tablist"]', root), tabs = $$('[role="tab"]', list);
-    function select(tab, focus) {
+    /* select(tab, focus, first): first is the tab set up at load, which is no change: it fires nothing and does not fade. */
+    function select(tab, focus, first) {
       tabs.forEach(function (t) {
         var on = t === tab, panel = document.getElementById(t.getAttribute('aria-controls'));
         t.setAttribute('aria-selected', String(on));
         t.setAttribute('tabindex', on ? '0' : '-1');
         if (panel) panel.hidden = !on;
       });
+      if (first) return;
       root.setAttribute('data-switched', '');  /* a panel shown by a choice fades in; the first one is simply there */
       if (focus) tab.focus();
       fire(root, 'change', { tab: tab.id || tab.getAttribute('aria-controls') });
@@ -36,7 +38,7 @@
       else if (e.key === 'End') to = live[live.length - 1];
       if (to) { e.preventDefault(); select(to, true); }
     });
-    select(tabs.filter(function (t) { return t.getAttribute('aria-selected') === 'true'; })[0] || tabs[0]);
+    select(tabs.filter(function (t) { return t.getAttribute('aria-selected') === 'true'; })[0] || tabs[0], false, true);
   });
 
   /* Strip: data-tray="strip" on a .tray-tabs that may overflow; marks it is-clipped while tabs run past the end edge. */
@@ -243,7 +245,7 @@
           fire(btn, 'close');
         });
         sheet.addEventListener('click', function (e) { if (e.target.closest('a[href]')) shut(sheet); });
-        if (window.matchMedia) window.matchMedia('(min-width: 56.0625rem)').addEventListener('change', function (e) { if (e.matches && sheet.open) sheet.close(); });
+        if (window.matchMedia) window.matchMedia('(min-width: 56rem)').addEventListener('change', function (e) { if (e.matches && sheet.open) sheet.close(); });
       }
       wasCollapsed = side.hasAttribute('data-collapsed');
       side.removeAttribute('data-collapsed');
@@ -279,14 +281,22 @@
       if (active) { active.setAttribute('data-active', ''); input.setAttribute('aria-activedescendant', active.id); if (active.scrollIntoView) active.scrollIntoView({ block: 'nearest' }); }
       else input.removeAttribute('aria-activedescendant');
     }
+    /* Focus stays in the field, where nothing reads the list as it narrows: a status line says how many options are left,
+       or the no-match sentence, when those words change. data-found words the count, "{n} found"; by default "1 match",
+       "3 matches". */
+    var tell = quietStatus(root);
+    function found(n) { return root.dataset.found ? root.dataset.found.replace('{n}', n) : n + (n === 1 ? ' match' : ' matches'); }
+    /* The filter and the value look at the option's name: the keys of its shortcut (G O) are not words to find it by. */
     function filter() {
       var q = input.value.trim().toLowerCase();
-      options().forEach(function (o) { o.hidden = !!q && o.textContent.toLowerCase().indexOf(q) < 0; });
+      options().forEach(function (o) { o.hidden = !!q && optionWords(o).toLowerCase().indexOf(q) < 0; });
       $$('[data-group]', list).forEach(function (g) { g.hidden = !$$('[role="option"]', g).some(function (o) { return !o.hidden; }); });
-      if (empty) empty.hidden = visible().length > 0;
+      var n = visible().length;
+      if (empty) empty.hidden = n > 0;
+      tell(!q ? '' : n ? found(n) : (empty ? empty.textContent.trim() : found(0)));
       setActive(visible()[0]);
     }
-    function run(o) { fire(root, 'select', { value: o.dataset.value || o.textContent.trim() }); }
+    function run(o) { fire(root, 'select', { value: o.dataset.value || optionWords(o) }); }
     input.addEventListener('input', filter);
     input.addEventListener('keydown', function (e) {
       var vis = visible(), i = vis.indexOf(active);

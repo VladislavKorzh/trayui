@@ -139,7 +139,7 @@
   .tray-switch__track::before { transition: transform var(--duration-move) var(--ease), inline-size var(--duration-press) var(--ease); }
   .tray-switch:not(:has(input:disabled)):active .tray-switch__track::before { inline-size: 32px; }
   .tray-switch:not(:has(input:disabled)):active input:checked + .tray-switch__track::before { transform: translateX(18px); }
-  [dir="rtl"] .tray-switch:not(:has(input:disabled)):active input:checked + .tray-switch__track::before { transform: translateX(-18px); }
+  .tray-switch:not(:has(input:disabled)):active input:checked + .tray-switch__track:dir(rtl)::before { transform: translateX(-18px); }
 }
 .tray-radio__ring { transition-property: border-width, border-color, background-color, scale; transition-duration: var(--duration-fill); transition-timing-function: var(--ease); }
 
@@ -203,8 +203,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   /* a press gives no more; the knob of a switch, a tile's plus, a chevron and a caret are at their place at once */
-  .tray-btn:active, .tray-btn-group__item:active, .tray-toggle:active, .tray-seg__item:active span { transform: none; }
-  .tray-btn, .tray-btn-group__item, .tray-toggle, .tray-switch__track::before, .tray-tile .tray-icon,
+  .tray-btn:active, .tray-btn-group__item:active, .tray-toggle:active, .tray-input-group__btn:active { transform: none; }
+  .tray-btn, .tray-btn-group__item, .tray-toggle, .tray-input-group__btn, .tray-switch__track::before, .tray-tile .tray-icon,
   summary.tray-sidebar__label > .tray-icon, .tray-sidebar__caret, .tray-trace-group > summary .tray-icon { transition-property: background-color, color, filter; }
   /* a bar fills, and a sidebar folds, without travelling */
   .tray-progress__bar::before, .tray-checklist *, .tray-sidebar, .tray-app__side { transition: none; }

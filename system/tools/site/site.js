@@ -172,13 +172,14 @@
     if (sec) document.documentElement.removeAttribute('data-home'); else document.documentElement.setAttribute('data-home', '');
   }
 
-  /* ---------- Search: every page of the site in one list ---------- */
+  /* ---------- Search: every page of the site in one list, but the later pages of a list (unlisted), which would only repeat it ---------- */
   (function () {
     var h = '';
     S.sections.forEach(function (sec) {
       h += '<div data-group><div class="tray-list__label">' + esc(sec.title) + '</div>';
       sec.nav.forEach(function (g) {
         g.items.forEach(function (it) {
+          if (it.unlisted) return;
           h += '<button type="button" class="tray-option" role="option" data-value="' + it.id + '"><span class="tray-option__text">' + esc(it.title) + '</span>' +
             (g.group || sec.tab === false ? '<span class="tray-option__meta">' + esc(sec.tab === false ? sec.title : g.group) + '</span>' : '') + '</button>';
         });
@@ -537,11 +538,16 @@
     link.href = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="10" fill="' + tile +
       '"/><rect x="8" y="14" width="16" height="10" rx="4" fill="' + bar + '"/></svg>');
   }
-  /* setTheme(id): the whole site in that theme, remembered for the next visit. */
-  function setTheme(id) {
+  /* setTheme(id): the whole site in that theme, remembered for the next visit. follow: the system's setting chose it, not
+     the visitor, so nothing is remembered and the site goes on following the setting. */
+  var chosen = false;
+  function setTheme(id, follow) {
     if (!known(id)) id = 'light';
     document.documentElement.setAttribute('data-theme', id);
-    try { localStorage.setItem('tray-site-theme', id); } catch (e) { /* the choice lasts for this visit only */ }
+    if (!follow) {
+      chosen = true;
+      try { localStorage.setItem('tray-site-theme', id); } catch (e) { /* the choice lasts for this visit only */ }
+    }
     paintThemeMenu();
     paintIcon();
     frames.forEach(function (fr) { if (!fr.theme && S.pages[fr.id]) fr.iframe.srcdoc = frameDoc(fr.id); });
@@ -563,6 +569,14 @@
     if (b) setTheme(b.getAttribute('data-value'));
   });
   if (!known(document.documentElement.getAttribute('data-theme'))) setTheme('light'); else { paintThemeMenu(); paintIcon(); }
+  /* Until the visitor chooses a theme, the site wears Light or Dark as their system asks (the script in <head> reads it
+     before the page is drawn), and follows the setting when it changes. */
+  var scheme = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+  if (scheme && scheme.addEventListener) scheme.addEventListener('change', function () {
+    var saved = null;
+    try { saved = localStorage.getItem('tray-site-theme'); } catch (e) { /* nothing kept */ }
+    if (!chosen && !saved) setTheme(scheme.matches ? 'dark' : 'light', true);
+  });
   S.theme = { list: THEMES, current: pageTheme, set: setTheme, own: ownTheme, setOwn: setOwnTheme };
 
   /* ---------- The Themes page: its script arrives with the page ---------- */
@@ -598,9 +612,11 @@
     });
   }
 
-  /* ---------- Keyboard: "/" and Ctrl or Command with K open the search ---------- */
+  /* ---------- Keyboard: "/" and Ctrl or Command with K open the search ----------
+     K in either case, so Shift and Caps Lock change nothing; on a layout whose letters are not Latin, the key where K is. */
   document.addEventListener('keydown', function (e) {
-    var k = e.key === 'k' && (e.metaKey || e.ctrlKey) && !e.altKey;
+    var key = String(e.key || '').toLowerCase();
+    var k = (key === 'k' || (e.code === 'KeyK' && !/^[a-z]$/.test(key))) && (e.metaKey || e.ctrlKey) && !e.altKey;
     var slash = e.key === '/' && !e.metaKey && !e.ctrlKey && !e.altKey && !(e.target.closest && e.target.closest('input, textarea, select, [contenteditable="true"]'));
     if ((!k && !slash) || full.open) return;
     e.preventDefault();

@@ -1,5 +1,7 @@
-/* Tray UI — component styles. Every colour, radius, size and space is a token from tokens.json;
-   local names start with --tray-. Loaded after tokens.css. Built from src/css by tools/build.py. */
+/* Tray UI — component styles. Every colour of the system is a token from tokens.json, and so are the corners (a
+   circle's 50% aside), the float shadow, the heights of controls and the steps of space between parts; type sizes
+   and the small measures inside a part (a 28px knob, 22px of padding, a 2px ring) are written in the rules. Local
+   names start with --tray-. Loaded after tokens.css. Built from src/css by tools/build.py. */
 
 /* ---------- Themes: light unless the theme is one of the dark ones ---------- */
 
@@ -63,11 +65,11 @@ mark { padding-inline: .12em; border-radius: var(--radius-mark); background: var
 .tray-clip { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tray-vh { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-/* Icons: a 20px box, drawn with a 2.2px round stroke in the text colour. */
+/* Icons: a 20px box, drawn with a round stroke in the text colour: 2.4 in the 24-unit drawing, 2px on the screen. */
 .tray-icon { flex: none; display: block; inline-size: var(--size-icon); block-size: var(--size-icon); fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .tray-icon--sm { inline-size: 16px; block-size: 16px; }
 .tray-icon--lg { inline-size: 28px; block-size: 28px; }
-[dir="rtl"] .tray-icon--flip { transform: scaleX(-1); }
+.tray-icon--flip:dir(rtl) { transform: scaleX(-1); }
 
 /* ---------- Grounds: a surface tells its children what they sit on ---------- */
 
@@ -381,7 +383,7 @@ mark { padding-inline: .12em; border-radius: var(--radius-mark); background: var
 .tray-select { position: relative; display: block; }
 .tray-select select { appearance: none; padding-inline-end: 48px; cursor: pointer; }
 .tray-select::after { content: ""; position: absolute; inset-inline-end: 20px; inset-block-start: calc(50% - 7px); inline-size: 9px; block-size: 9px; border-inline-end: 2px solid var(--ink); border-block-end: 2px solid var(--ink); transform: rotate(45deg); pointer-events: none; }
-[dir="rtl"] .tray-select::after { transform: rotate(-45deg) scaleX(-1); }
+.tray-select:dir(rtl)::after { transform: rotate(-45deg) scaleX(-1); }
 .tray-select--sm select { min-block-size: var(--size-sm); padding-inline: 14px 40px; border-radius: var(--radius-control); font-size: 1rem; }
 .tray-select--sm::after { inset-inline-end: 16px; }
 
@@ -412,7 +414,8 @@ mark { padding-inline: .12em; border-radius: var(--radius-mark); background: var
 
 /* ---------- Input OTP ---------- */
 
-.tray-otp { display: inline-flex; align-items: center; gap: var(--space-2); }
+/* A code is read left to right in every language: the cells keep that order in a right-to-left page too. */
+.tray-otp { display: inline-flex; align-items: center; gap: var(--space-2); direction: ltr; }
 .tray-otp input { inline-size: 52px; block-size: var(--size-lg); padding: 0; border: 0; border-radius: var(--radius-control); background: var(--tray-fill); color: var(--ink); caret-color: var(--ink); font: 700 1.375rem/1 var(--font-sans); font-variant-numeric: tabular-nums; text-align: center; }
 .tray-otp input:focus-visible { outline: 2px solid var(--ink); outline-offset: 0; }
 .tray-otp[aria-invalid="true"] input { outline: 2px solid var(--danger); outline-offset: -2px; }
@@ -467,7 +470,7 @@ mark { padding-inline: .12em; border-radius: var(--radius-mark); background: var
 .tray-switch__track::before { content: ""; display: block; inline-size: 26px; block-size: 26px; border-radius: 50%; background: var(--tray-on-ink); transition: transform var(--duration-move) var(--ease); }
 .tray-switch input:checked + .tray-switch__track { background: var(--ink); }
 .tray-switch input:checked + .tray-switch__track::before { transform: translateX(24px); }
-[dir="rtl"] .tray-switch input:checked + .tray-switch__track::before { transform: translateX(-24px); }
+.tray-switch input:checked + .tray-switch__track:dir(rtl)::before { transform: translateX(-24px); }
 .tray-switch input:focus-visible + .tray-switch__track { outline: 3px solid var(--ink); outline-offset: 3px; }
 .tray-switch:has(input:disabled) { opacity: var(--opacity-disabled); cursor: not-allowed; }
 .tray-switch--row { display: flex; justify-content: space-between; gap: var(--space-4); padding: var(--space-4) 18px; border-radius: var(--radius-input); background: var(--tray-fill); }
@@ -487,7 +490,7 @@ mark { padding-inline: .12em; border-radius: var(--radius-mark); background: var
 .tray-slider:focus-visible::-webkit-slider-thumb { outline: 3px solid var(--ink); outline-offset: 5px; }
 .tray-slider:focus-visible::-moz-range-thumb { outline: 3px solid var(--ink); outline-offset: 5px; }
 .tray-slider:disabled { opacity: var(--opacity-disabled); cursor: not-allowed; }
-[dir="rtl"] .tray-slider::-webkit-slider-runnable-track { background-position: 100% 0; }
+.tray-slider:dir(rtl)::-webkit-slider-runnable-track { background-position: 100% 0; }
 .tray-slider-field { display: grid; gap: var(--space-2); }
 .tray-slider-field__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); }
 .tray-slider-field__head output { font: 600 1.0625rem/1 var(--font-sans); font-variant-numeric: tabular-nums; }
@@ -523,8 +526,8 @@ mark { padding-inline: .12em; border-radius: var(--radius-mark); background: var
 .tray-cal__day[data-in-range]:nth-child(7n) { border-start-end-radius: var(--radius-control); border-end-end-radius: var(--radius-control); }
 .tray-cal__day[data-start] { background: linear-gradient(to right, transparent 50%, var(--tray-fill) 50%); }
 .tray-cal__day[data-end] { background: linear-gradient(to left, transparent 50%, var(--tray-fill) 50%); }
-[dir="rtl"] .tray-cal__day[data-start] { background: linear-gradient(to left, transparent 50%, var(--tray-fill) 50%); }
-[dir="rtl"] .tray-cal__day[data-end] { background: linear-gradient(to right, transparent 50%, var(--tray-fill) 50%); }
+.tray-cal__day[data-start]:dir(rtl) { background: linear-gradient(to left, transparent 50%, var(--tray-fill) 50%); }
+.tray-cal__day[data-end]:dir(rtl) { background: linear-gradient(to right, transparent 50%, var(--tray-fill) 50%); }
 .tray-cal__day[aria-pressed="true"] .tray-cal__num, .tray-cal__day[aria-pressed="true"]:hover .tray-cal__num { background: var(--ink); color: var(--tray-on-ink); }
 .tray-cal__day:focus-visible { outline: none; }
 .tray-cal__day:focus-visible .tray-cal__num { outline: 3px solid var(--ink); outline-offset: -3px; }
@@ -839,15 +842,15 @@ a.tray-item:hover, button.tray-item:hover { filter: brightness(.96); }
   transition: background-color var(--duration-fill) var(--ease), color var(--duration-fill) var(--ease);
 }
 .tray-tab:hover { background: var(--tray-ground); }
-.tray-tab[aria-selected="true"], .tray-tab[aria-current] { background: var(--ink); color: var(--tray-on-ink); }
+.tray-tab[aria-selected="true"], .tray-tab[aria-current]:not([aria-current="false"]) { background: var(--ink); color: var(--tray-on-ink); }
 .tray-tab:focus-visible { outline-offset: -3px; }
-.tray-tab[aria-selected="true"]:focus-visible, .tray-tab[aria-current]:focus-visible { outline-color: var(--tray-on-ink); }
+.tray-tab[aria-selected="true"]:focus-visible, .tray-tab[aria-current]:not([aria-current="false"]):focus-visible { outline-color: var(--tray-on-ink); }
 .tray-tab:disabled { opacity: var(--opacity-disabled); cursor: not-allowed; background: none; }
 .tray-tab .tray-badge--count { background: var(--tray-ground); }
-.tray-tab[aria-selected="true"] .tray-badge--count, .tray-tab[aria-current] .tray-badge--count { background: var(--tray-on-ink); color: var(--ink); }
+.tray-tab[aria-selected="true"] .tray-badge--count, .tray-tab[aria-current]:not([aria-current="false"]) .tray-badge--count { background: var(--tray-on-ink); color: var(--ink); }
 /* While tabs run past the end edge, the strip fades there to show that it scrolls. */
 .tray-tabs.is-clipped { -webkit-mask-image: linear-gradient(to right, var(--ink) calc(100% - 56px), transparent); mask-image: linear-gradient(to right, var(--ink) calc(100% - 56px), transparent); }
-[dir="rtl"] .tray-tabs.is-clipped { -webkit-mask-image: linear-gradient(to left, var(--ink) calc(100% - 56px), transparent); mask-image: linear-gradient(to left, var(--ink) calc(100% - 56px), transparent); }
+.tray-tabs.is-clipped:dir(rtl) { -webkit-mask-image: linear-gradient(to left, var(--ink) calc(100% - 56px), transparent); mask-image: linear-gradient(to left, var(--ink) calc(100% - 56px), transparent); }
 .tray-tabpanel { padding-block-start: var(--space-5); }
 .tray-tabpanel:focus-visible { border-radius: var(--radius-mark); }
 
@@ -856,7 +859,7 @@ a.tray-item:hover, button.tray-item:hover { filter: brightness(.96); }
 .tray-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; padding: 0; list-style: none; color: var(--ink-soft); font: 500 1rem/1.3 var(--font-sans); }
 .tray-crumbs li { display: inline-flex; align-items: center; gap: var(--space-2); min-block-size: var(--size-hit); }
 .tray-crumbs li + li::before { content: ""; inline-size: 7px; block-size: 7px; margin-inline-end: var(--space-1); border-inline-end: 2px solid var(--ink-hint); border-block-start: 2px solid var(--ink-hint); transform: rotate(45deg); }
-[dir="rtl"] .tray-crumbs li + li::before { transform: rotate(-45deg); }
+.tray-crumbs li + li:dir(rtl)::before { transform: rotate(-45deg); }
 .tray-crumbs a { color: inherit; text-decoration: none; border-radius: var(--radius-mark); }
 .tray-crumbs a:hover { color: var(--ink); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .2em; }
 .tray-crumbs [aria-current="page"] { color: var(--ink); font-weight: 600; }
@@ -958,7 +961,7 @@ a.tray-item:hover, button.tray-item:hover { filter: brightness(.96); }
 .tray-dialog__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); margin-block-end: var(--space-4); }
 .tray-dialog__head > div { display: grid; gap: var(--space-2); }
 .tray-dialog__head .tray-btn { margin: -8px -8px 0 0; }
-[dir="rtl"] .tray-dialog__head .tray-btn { margin: -8px 0 0 -8px; }
+.tray-dialog__head .tray-btn:dir(rtl) { margin: -8px 0 0 -8px; }
 .tray-dialog__text { color: var(--ink-soft); font: 400 1.0625rem/1.45 var(--font-sans); }
 .tray-dialog__body { display: grid; gap: var(--space-4); }
 .tray-dialog__foot { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); margin-block-start: var(--space-7); }
@@ -992,7 +995,7 @@ a.tray-item:hover, button.tray-item:hover { filter: brightness(.96); }
 .tray-tooltip--bottom::after { inset-block: auto 100%; }
 /* Words that only repeat the control's name: shown, with an empty text alternative, so a screen reader does not read them twice. */
 .tray-tooltip__said::before { content: attr(data-said); content: attr(data-said) / ""; }
-[dir="rtl"] .tray-tooltip { transform: translateX(50%); }
+.tray-tooltip:dir(rtl) { transform: translateX(50%); }
 .tray-tooltip--bottom { inset-block: calc(100% + var(--space-2)) auto; }
 .tray-tooltip .tray-kbd { margin-inline-start: var(--space-2); background: var(--tray-on-ink); color: var(--ink); }
 
@@ -1010,7 +1013,7 @@ a.tray-item:hover, button.tray-item:hover { filter: brightness(.96); }
 .tray-toast__title { font: 600 1rem/1.3 var(--font-sans); }
 .tray-toast__text { color: var(--ink-soft); font: 400 .9375rem/1.4 var(--font-sans); }
 .tray-toast__actions { display: flex; align-items: center; gap: var(--space-1); margin: -6px -8px -6px 0; }
-[dir="rtl"] .tray-toast__actions { margin: -6px 0 -6px -8px; }
+.tray-toast__actions:dir(rtl) { margin: -6px 0 -6px -8px; }
 .tray-toast--success > .tray-icon { color: var(--success); }
 .tray-toast--danger > .tray-icon { color: var(--danger); }
 /* A toast's coming and going: 92-motion.css. */
@@ -1040,6 +1043,11 @@ a.tray-item:hover, button.tray-item:hover { filter: brightness(.96); }
 .tray-chart__col--stack .tray-chart__bar { flex: none; inline-size: 100%; border-radius: var(--radius-mark); }
 .tray-chart__peak { position: absolute; inset-block-end: calc(100% + 6px); inset-inline-start: 50%; transform: translateX(-50%); color: var(--ink); font: 600 .875rem/1 var(--font-sans); white-space: nowrap; pointer-events: none; }
 .tray-chart__plot > svg, .tray-chart__round > svg { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; }
+/* The drawing of a line or an area is laid out left to right: right to left it turns over, so it runs under its labels,
+   its dots and its pointer, which follow the page's direction. */
+.tray-chart__plot > svg:dir(rtl) { scale: -1 1; }
+/* a peak's figure is centred over its point by a shift, which turns with the direction its inset-inline-start takes */
+.tray-chart__peak:dir(rtl) { transform: translateX(50%); }
 .tray-chart__line { fill: none; stroke: var(--tray-c); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
 .tray-chart__area { fill: var(--tray-c); fill-opacity: .14; stroke: none; }
 .tray-chart__dot { position: absolute; inline-size: 10px; block-size: 10px; margin: -5px; border-radius: 50%; background: var(--tray-c); box-shadow: 0 0 0 2px var(--tray-ground); pointer-events: none; }
@@ -1172,7 +1180,8 @@ th[aria-sort="ascending"] .tray-sort .tray-icon, th[aria-sort="descending"] .tra
 .tray-message:not(.tray-message--end) .tray-message__content > .tray-bubble:not(.tray-bubble--plain), .tray-message:not(.tray-message--end) .tray-bubble-group > .tray-bubble:last-child { border-end-start-radius: var(--radius-mark); }
 .tray-message--end .tray-message__content > .tray-bubble, .tray-message--end .tray-bubble-group > .tray-bubble:last-child { border-end-end-radius: var(--radius-mark); }
 .tray-bubble[data-clamp] > .tray-bubble__text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
-.tray-reactions { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+/* Rows of reactions that wrap stand 12px apart: the 44px targets reach 6px past each one, and meet without overlapping. */
+.tray-reactions { display: flex; flex-wrap: wrap; gap: calc(var(--size-hit) - 32px) var(--space-1); }
 .tray-reaction { display: inline-flex; align-items: center; gap: 6px; min-block-size: 32px; padding: 0 10px; border: 0; border-radius: var(--radius-chip); background: var(--tray-fill); color: var(--ink); font: 600 .875rem/1 var(--font-sans); font-variant-numeric: tabular-nums; cursor: pointer; transition: background-color var(--duration-fill) var(--ease), color var(--duration-fill) var(--ease); }
 .tray-reaction[aria-pressed="true"] { background: var(--ink); color: var(--tray-on-ink); }
 /* A reaction is 32px to the eye and 44px to a finger: the target reaches past its top and bottom. */
@@ -1195,8 +1204,9 @@ th[aria-sort="ascending"] .tray-sort .tray-icon, th[aria-sort="descending"] .tra
 .tray-scroller { position: relative; display: grid; block-size: var(--tray-scroller, 24rem); border-radius: var(--radius-panel); background: var(--tray-fill); }
 .tray-scroller__viewport { position: relative; padding: var(--space-5); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--control-off) transparent; }
 .tray-scroller__viewport:focus-visible { outline-offset: -3px; border-radius: var(--radius-panel); }
-.tray-scroller__jump { position: absolute; inset-block-end: var(--space-3); inset-inline-start: 50%; transform: translateX(-50%); box-shadow: var(--shadow-float); }
-.tray-scroller__jump:active { transform: translateX(-50%) scale(.97); }
+/* Centred by its margins, not by a transform, so the press of a button (a scale, or none with reduced motion) leaves it
+   where it is, and it stays in the middle right to left. */
+.tray-scroller__jump { position: absolute; inset-block-end: var(--space-3); inset-inline: 0; inline-size: fit-content; margin-inline: auto; box-shadow: var(--shadow-float); }
 .tray-scroller > .tray-scroller__viewport { --tray-ground: var(--tray-fill-up); --tray-fill: var(--tray-ground-up); }
 .tray-composer { display: flex; align-items: flex-end; gap: var(--space-2); padding: var(--space-2); border-radius: var(--radius-button); background: var(--tray-fill); }
 .tray-composer:focus-within { outline: 2px solid var(--ink); outline-offset: 0; }
@@ -1303,7 +1313,8 @@ th[aria-sort="ascending"] .tray-sort .tray-icon, th[aria-sort="descending"] .tra
 .tray-app--contained { min-block-size: 0; block-size: var(--tray-app-height, 40rem); border-radius: var(--radius-panel); overflow: hidden; }
 .tray-app--contained .tray-app__side { position: static; block-size: 100%; }
 .tray-app--contained .tray-app__main { position: relative; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--control-off) transparent; }
-@media (max-width: 56rem) {
+/* Below 56rem (bp-bento), where the bento stacks too: the two change at the same width. */
+@media (max-width: 55.99rem) {
   .tray-app { grid-template-columns: minmax(0, 1fr); }
   .tray-app__side { display: none; }
   .tray-app__menu { display: inline-flex; }
@@ -1313,6 +1324,11 @@ th[aria-sort="ascending"] .tray-sort .tray-icon, th[aria-sort="descending"] .tra
 
 .tray-topbar { display: flex; align-items: center; gap: var(--space-3); min-block-size: var(--size-lg); }
 .tray-topbar--sticky { position: sticky; inset-block-start: 0; z-index: var(--z-sticky); background: var(--tray-ground); }
+/* A sticky bar must not cover the control that has focus (WCAG 2.4.11): while the page has one, what the browser scrolls
+   into view stops below it. In a contained shell the column that scrolls keeps the padding. The rules weigh nothing, so
+   a page's own scroll padding wins. */
+:where(html:has(.tray-topbar--sticky:not(.tray-app--contained *))) { scroll-padding-block-start: calc(var(--size-lg) + var(--space-4)); }
+:where(.tray-app--contained .tray-app__main:has(> .tray-topbar--sticky)) { scroll-padding-block-start: calc(var(--size-lg) + var(--space-4)); }
 .tray-topbar__start { display: flex; align-items: center; gap: var(--space-2); min-inline-size: 0; }
 .tray-topbar__end { display: flex; align-items: center; gap: var(--space-2); margin-inline-start: auto; }
 .tray-topbar__end > :not(.tray-topbar__search) { flex: none; }
@@ -1586,7 +1602,7 @@ a.tray-stat:hover { filter: brightness(.96); }
 .tray-settings__body { display: grid; gap: var(--space-4); min-inline-size: 0; }
 .tray-settings__foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--space-2) var(--space-3); }
 .tray-settings__note { margin-inline-end: auto; color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
-@media (max-width: 56rem) {
+@media (max-width: 55.99rem) {
   .tray-settings { grid-template-columns: minmax(0, 1fr); }
 }
 .tray-setting { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3) var(--space-6); padding-block: var(--space-4); border-block-end: 1px solid var(--hairline); }
@@ -1608,7 +1624,9 @@ a.tray-stat:hover { filter: brightness(.96); }
 
 .tray-secret { display: inline-flex; align-items: center; gap: 2px; max-inline-size: 100%; min-block-size: var(--size-hit); padding-inline: var(--space-3); border-radius: var(--radius-control); background: var(--tray-fill); }
 .tray-secret code { flex: 1; min-inline-size: 0; overflow: hidden; color: var(--ink); font: 400 .9375rem/1.55 var(--font-mono); text-overflow: ellipsis; white-space: nowrap; }
-.tray-secret button { flex: none; display: grid; place-items: center; inline-size: var(--size-xs); block-size: var(--size-xs); padding: 0; border: 0; border-radius: var(--radius-chip); background: none; color: var(--ink-soft); cursor: pointer; }
+.tray-secret button { position: relative; flex: none; display: grid; place-items: center; inline-size: var(--size-xs); block-size: var(--size-xs); padding: 0; border: 0; border-radius: var(--radius-chip); background: none; color: var(--ink-soft); cursor: pointer; }
+/* Its buttons are 40px to the eye and 44px to a finger, as an extra small button is: the target reaches past each edge. */
+.tray-secret button::before { content: ""; position: absolute; inset: calc((var(--size-xs) - var(--size-hit)) / 2); }
 .tray-secret button:hover { background: var(--tray-fill); color: var(--ink); }
 .tray-secret:has(button) { padding-inline-end: 2px; }
 .tray-secret button[data-failed] { color: var(--danger); }
@@ -1783,8 +1801,8 @@ summary.tray-sidebar__label:hover { color: var(--ink); }
 summary.tray-sidebar__label:focus-visible { outline-offset: -3px; }
 summary.tray-sidebar__label > .tray-icon, .tray-sidebar__caret { transition: transform var(--duration-move) var(--ease); }
 details[open] > summary.tray-sidebar__label > .tray-icon, details[open] > summary > .tray-sidebar__caret { transform: rotate(90deg); }
-[dir="rtl"] summary.tray-sidebar__label > .tray-icon, [dir="rtl"] .tray-sidebar__caret { transform: scaleX(-1); }
-[dir="rtl"] details[open] > summary.tray-sidebar__label > .tray-icon, [dir="rtl"] details[open] > summary > .tray-sidebar__caret { transform: rotate(90deg); }
+summary.tray-sidebar__label > .tray-icon:dir(rtl), .tray-sidebar__caret:dir(rtl) { transform: scaleX(-1); }
+details[open] > summary.tray-sidebar__label > .tray-icon:dir(rtl), details[open] > summary > .tray-sidebar__caret:dir(rtl) { transform: rotate(90deg); }
 
 /* An item that opens a second level under it: <details class="tray-sidebar__more"><summary class="tray-sidebar__item">…icon, label, tray-sidebar__caret…</summary><ul class="tray-sidebar__sub">…</ul></details> */
 .tray-sidebar__more { display: block; }
@@ -1840,7 +1858,7 @@ summary.tray-sidebar__item { list-style: none; }
 .tray-sheet--nav .tray-pop--side { inset-block-start: calc(100% + var(--space-2)); inset-inline-start: 0; }
 .tray-sheet--nav .tray-sidebar__item[aria-expanded="true"] > .tray-sidebar__caret { transform: rotate(90deg); }
 /* The button that collapses the sidebar has nothing to collapse below 56rem, where tray-app__menu takes its place. */
-@media (max-width: 56rem) { .tray-app__collapse { display: none; } }
+@media (max-width: 55.99rem) { .tray-app__collapse { display: none; } }
 
 /* ---------- App shell: variants ---------- */
 
@@ -1856,6 +1874,8 @@ summary.tray-sidebar__item { list-style: none; }
 /* The header row keeps its own height; what the window has left goes to the content, however short the content is. */
 .tray-app--header { grid-template-rows: auto 1fr; row-gap: 0; padding-block-start: 0; }
 .tray-app__header { grid-column: 1 / -1; position: sticky; inset-block-start: 0; z-index: var(--z-sticky); padding-block: var(--space-2); background: var(--tray-ground); }
+/* The page scrolls under the header: what gets focus stops below it (WCAG 2.4.11), as under a sticky top bar. */
+:where(html:has(.tray-app--header:not(.tray-app--contained) > .tray-app__header)) { scroll-padding-block-start: calc(var(--size-lg) + 2 * var(--space-2) + var(--space-4)); }
 /* The content starts level with the sidebar, one space under the header. */
 .tray-app--header > .tray-app__main { padding-block-start: var(--space-4); }
 .tray-app--header:not(.tray-app--contained) > .tray-app__side { inset-block-start: calc(var(--size-lg) + var(--space-4)); block-size: calc(100dvh - var(--size-lg) - 2 * var(--space-4)); }
@@ -1870,7 +1890,7 @@ summary.tray-sidebar__item { list-style: none; }
 .tray-app--fill .tray-app__content { flex: 1; display: flex; flex-direction: column; gap: var(--space-4); min-block-size: 0; padding-block-end: 0; }
 .tray-app--fill .tray-scroller { flex: 1; block-size: auto; min-block-size: 12rem; }
 
-@media (min-width: 56.0625rem) {
+@media (min-width: 56rem) {
   /* The sidebar at the end: put tray-app__side after tray-app__main. Both: one before and one after. */
   .tray-app__side--double { display: flex; gap: var(--space-1); }
   .tray-app--end { grid-template-columns: minmax(0, 1fr) auto; }
@@ -1879,7 +1899,7 @@ summary.tray-sidebar__item { list-style: none; }
 
 /* With a sidebar on each side the end one may wait for room: tray-app__side--late shows from 80rem, and until then
    the button that opens it in a sheet (tray-app__menu--late) stays in the top bar. */
-@media (min-width: 56.0625rem) and (max-width: 79.99rem) {
+@media (min-width: 56rem) and (max-width: 79.99rem) {
   .tray-app--both:has(> .tray-app__side--late) { grid-template-columns: auto minmax(0, 1fr); }
   .tray-app__side--late { display: none; }
   .tray-app__menu--late { display: inline-flex; }
@@ -1927,10 +1947,10 @@ summary.tray-sidebar__item { list-style: none; }
 .tray-screen__half > .tray-screen__body { inline-size: 100%; padding-inline: var(--space-2); }
 /* The cover: a yellow, ink or leaf card that fills its half, with a statement at one end and a proof at the other. */
 .tray-screen__cover { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: var(--space-8); min-block-size: 22rem; }
-@media (min-width: 56.0625rem) {
+@media (min-width: 56rem) {
   .tray-screen--split { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 56rem) {
+@media (max-width: 55.99rem) {
   .tray-screen__half--wide { display: none; }
 }
 
@@ -1953,7 +1973,7 @@ summary.tray-sidebar__item { list-style: none; }
 .tray-auth-wide { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); inline-size: min(100%, 62rem); margin-inline: auto; padding: var(--space-2); }
 .tray-auth-wide__form { display: grid; align-content: center; padding: calc(var(--card-pad) - var(--space-2)); }
 .tray-auth-wide__media { display: flex; flex-direction: column; justify-content: space-between; gap: var(--space-8); min-block-size: 16rem; padding: var(--space-8); border-radius: calc(var(--radius-card) - var(--space-2)); }
-@media (min-width: 56.0625rem) {
+@media (min-width: 56rem) {
   .tray-auth-wide { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
@@ -2139,7 +2159,7 @@ summary.tray-sidebar__item { list-style: none; }
   .tray-switch__track::before { transition: transform var(--duration-move) var(--ease), inline-size var(--duration-press) var(--ease); }
   .tray-switch:not(:has(input:disabled)):active .tray-switch__track::before { inline-size: 32px; }
   .tray-switch:not(:has(input:disabled)):active input:checked + .tray-switch__track::before { transform: translateX(18px); }
-  [dir="rtl"] .tray-switch:not(:has(input:disabled)):active input:checked + .tray-switch__track::before { transform: translateX(-18px); }
+  .tray-switch:not(:has(input:disabled)):active input:checked + .tray-switch__track:dir(rtl)::before { transform: translateX(-18px); }
 }
 .tray-radio__ring { transition-property: border-width, border-color, background-color, scale; transition-duration: var(--duration-fill); transition-timing-function: var(--ease); }
 
@@ -2203,8 +2223,8 @@ summary.tray-sidebar__item { list-style: none; }
 
 @media (prefers-reduced-motion: reduce) {
   /* a press gives no more; the knob of a switch, a tile's plus, a chevron and a caret are at their place at once */
-  .tray-btn:active, .tray-btn-group__item:active, .tray-toggle:active, .tray-seg__item:active span { transform: none; }
-  .tray-btn, .tray-btn-group__item, .tray-toggle, .tray-switch__track::before, .tray-tile .tray-icon,
+  .tray-btn:active, .tray-btn-group__item:active, .tray-toggle:active, .tray-input-group__btn:active { transform: none; }
+  .tray-btn, .tray-btn-group__item, .tray-toggle, .tray-input-group__btn, .tray-switch__track::before, .tray-tile .tray-icon,
   summary.tray-sidebar__label > .tray-icon, .tray-sidebar__caret, .tray-trace-group > summary .tray-icon { transition-property: background-color, color, filter; }
   /* a bar fills, and a sidebar folds, without travelling */
   .tray-progress__bar::before, .tray-checklist *, .tray-sidebar, .tray-app__side { transition: none; }
@@ -2214,7 +2234,7 @@ summary.tray-sidebar__item { list-style: none; }
    The system draws most things as fills with no edge: a tray on the page, an ink fill for what is chosen. Each mode
    below keeps that readable when the fills are weak, are taken away, or do not print.
    More contrast also moves each grey one step towards the ink: tokens.css does that, theme by theme. Print takes the
-   light values of every token: tokens.css does that too. */
+   values of the Light theme for every token, whatever theme the page wears: tokens.css does that too. */
 
 /* ---------- More contrast (prefers-contrast: more): every fill gets an edge ---------- */
 
@@ -2250,16 +2270,17 @@ summary.tray-sidebar__item { list-style: none; }
   .tray-code, .tray-badge, .tray-kbd, .tray-avatar, .tray-tile, .tray-step__mark, .tray-context, .tray-sidebar, .tray-empty__icon, .tray-feed__mark, .tray-trace__icon,
   .tray-pop, .tray-dialog, .tray-sheet, .tray-drawer, .tray-toast, .tray-command, .tray-tooltip, .tray-tip { border: 1px solid CanvasText; }
   .tray-bubble--plain { border: 0; }
-  .tray-dialog::backdrop, .tray-sheet::backdrop, .tray-drawer::backdrop { background: rgb(0 0 0 / .6); }
+  /* The veil of a modal needs nothing here: the browser paints it in Canvas and keeps its alpha, so the page behind
+     fades towards Canvas. */
 
   /* what is chosen: the tab, the segment, the pressed toggle, the page you are on, the day picked */
-  .tray-toggle[aria-pressed="true"], .tray-seg__item input:checked + span, .tray-tab[aria-selected="true"], .tray-tab[aria-current], .tray-page[aria-current="page"],
+  .tray-toggle[aria-pressed="true"], .tray-seg__item input:checked + span, .tray-tab[aria-selected="true"], .tray-tab[aria-current]:not([aria-current="false"]), .tray-page[aria-current="page"],
   .tray-sidebar__item[aria-current], .tray-cal__day[aria-pressed="true"] .tray-cal__num, .tray-scale input:checked + span, .tray-reaction[aria-pressed="true"],
   .tray-stepper > li[aria-current] .tray-step__mark, .tray-task[data-done] .tray-task__mark, .tray-bubble--own {
     forced-color-adjust: none; border-color: SelectedItem; background: SelectedItem; color: SelectedItemText;
   }
-  .tray-tab[aria-selected="true"] .tray-badge, .tray-tab[aria-current] .tray-badge, .tray-sidebar__item[aria-current] .tray-badge { border-color: SelectedItemText; background: SelectedItemText; color: SelectedItem; }
-  .tray-tab[aria-selected="true"]:focus-visible, .tray-tab[aria-current]:focus-visible, .tray-sidebar__item[aria-current]:focus-visible,
+  .tray-tab[aria-selected="true"] .tray-badge, .tray-tab[aria-current]:not([aria-current="false"]) .tray-badge, .tray-sidebar__item[aria-current] .tray-badge { border-color: SelectedItemText; background: SelectedItemText; color: SelectedItem; }
+  .tray-tab[aria-selected="true"]:focus-visible, .tray-tab[aria-current]:not([aria-current="false"]):focus-visible, .tray-sidebar__item[aria-current]:focus-visible,
   .tray-cal__day[aria-pressed="true"]:focus-visible .tray-cal__num { outline-color: SelectedItemText; }
   .tray-seg__item input:focus-visible + span { outline-color: CanvasText; }
   /* the option under the keyboard or the pointer in a list, and the link to the page you are on in a menu */
@@ -2286,7 +2307,9 @@ summary.tray-sidebar__item { list-style: none; }
   .tray-slider::-moz-range-progress { background: SelectedItem; }
   .tray-slider::-webkit-slider-thumb { background: SelectedItem; box-shadow: 0 0 0 2px Canvas, 0 0 0 3px CanvasText; }
   .tray-slider::-moz-range-thumb { background: SelectedItem; box-shadow: 0 0 0 2px Canvas, 0 0 0 3px CanvasText; }
-  .tray-slider:focus-visible::-webkit-slider-thumb, .tray-slider:focus-visible::-moz-range-thumb { outline-color: CanvasText; }
+  /* one rule each: a browser drops a whole list that holds a pseudo-element it does not know */
+  .tray-slider:focus-visible::-webkit-slider-thumb { outline-color: CanvasText; }
+  .tray-slider:focus-visible::-moz-range-thumb { outline-color: CanvasText; }
 
   /* meters and steps: the track is an edge, what is done is solid */
   .tray-progress__bar, .tray-steps span, .tray-stepper > li::before { forced-color-adjust: none; background: Canvas; box-shadow: inset 0 0 0 1px CanvasText; }
@@ -2319,7 +2342,7 @@ summary.tray-sidebar__item { list-style: none; }
 }
 
 /* ---------- Print: ink on paper ----------
-   The page prints in the light values of its theme (tokens.css), whatever theme it wears on screen. Browsers leave fills
+   The page prints in the values of the Light theme (tokens.css), whatever theme it wears on screen. Browsers leave fills
    out of print, so a tray gets an edge instead; a fill that carries meaning (what is chosen, a bar of a chart, a meter,
    the ink card) prints as it is. The navigation and what floats over the page stay off paper. tray-noprint keeps anything
    else off paper; tray-print-only shows a thing on paper alone. */
@@ -2343,10 +2366,12 @@ summary.tray-sidebar__item { list-style: none; }
   .tray-input-group .tray-input, .tray-bubble--plain { border: 0; }
   .tray-btn:not(.tray-btn--ghost, .tray-btn--link) { border: 1px solid var(--ink); }
 
-  /* fills that carry meaning print as they are */
-  .tray-btn--dark, .tray-card--inverse, .tray-inverse, .tray-bubble--own, .tray-toggle[aria-pressed="true"], .tray-seg__item input:checked + span, .tray-tab[aria-selected="true"], .tray-tab[aria-current],
+  /* fills that carry meaning print as they are; the sliding pill (tray-glide) is the fill behind a chosen tab or
+     segment, whose text is light on it */
+  .tray-btn--dark, .tray-card--inverse, .tray-inverse, .tray-bubble--own, .tray-toggle[aria-pressed="true"], .tray-seg__item input:checked + span, .tray-tab[aria-selected="true"], .tray-tab[aria-current]:not([aria-current="false"]),
   .tray-page[aria-current="page"], .tray-sidebar__item[aria-current], .tray-cal__day, .tray-scale span, .tray-check__box, .tray-radio__ring, .tray-switch__track, .tray-slider,
-  .tray-progress__bar, .tray-steps, .tray-stepper, .tray-step__mark, .tray-task__mark, .tray-badge, .tray-avatar, .tray-swatch, .tray-chart, .tray-uptime, .tray-notice__mark {
+  .tray-progress__bar, .tray-steps, .tray-stepper, .tray-step__mark, .tray-task__mark, .tray-badge, .tray-avatar, .tray-swatch, .tray-chart, .tray-uptime, .tray-notice__mark,
+  .tray-glide {
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
 

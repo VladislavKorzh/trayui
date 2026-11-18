@@ -133,20 +133,32 @@ MIT. The typeface, Onest, is under the SIL Open Font License 1.1 (`fonts/OFL.txt
 """, encoding='utf-8')
 
 
+def lum(value):
+    """The relative luminance of a #rrggbb colour, as WCAG measures it."""
+    c = [int(value[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+    c = [x / 12.92 if x <= .04045 else ((x + .055) / 1.055) ** 2.4 for x in c]
+    return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]
+
+
+def contrast(a, b):
+    la, lb = lum(a), lum(b)
+    return (max(la, lb) + .05) / (min(la, lb) + .05)
+
+
 def dark_themes(tok):
     """The themes whose page is dark: white reads better on it than black does."""
-    def lum(value):
-        c = [int(value[i:i + 2], 16) / 255 for i in (1, 3, 5)]
-        c = [x / 12.92 if x <= .04045 else ((x + .055) / 1.055) ** 2.4 for x in c]
-        return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]
     page = next(t for t in tok['color']['tokens'] if t['name'] == 'page')['value']
     first = tok['color']['themes'][0]['id']
     return [t['id'] for t in tok['color']['themes'] if 1.05 / (lum(page.get(t['id'], page[first])) + .05) > (lum(page.get(t['id'], page[first])) + .05) / .05]
 
 
-# More contrast: a grey takes the value its theme gives the step after it, towards the ink. A rule stays at least 3:1.
+# More contrast: a grey takes the value its theme gives the step after it, towards the ink. The yellow card has greys of
+# its own (paper-*), which step the same way. A rule stays at least 3:1 on every ground it is drawn on (RULES): where the
+# next step is short of that in a theme (the hairline on a raised panel in a dark theme), it takes the step after.
 MORE = [('ink-soft', 'ink'), ('ink-muted', 'ink-soft'), ('ink-hint', 'ink-muted'), ('control-off', 'ink-hint'), ('rule-strong', 'ink-hint'),
-        ('hairline', 'control-off'), ('track', 'rule-strong'), ('on-dark-soft', 'on-inverse'), ('on-dark-muted', 'on-dark-soft'), ('dark-rule', 'on-dark-muted')]
+        ('hairline', 'control-off'), ('track', 'rule-strong'), ('on-dark-soft', 'on-inverse'), ('on-dark-muted', 'on-dark-soft'), ('dark-rule', 'on-dark-muted'),
+        ('paper-hairline', 'paper-soft'), ('paper-track', 'paper-soft')]
+RULES = {'hairline': ('page', 'surface', 'raised'), 'dark-rule': ('inverse', 'inverse-off'), 'paper-hairline': ('accent', 'paper', 'paper-tray')}
 
 
 def tokens_css(tok, font_base):
@@ -168,9 +180,23 @@ def tokens_css(tok, font_base):
     # maker does the same with MORE in tools/site/theme.js)
     value = lambda t, th: t['value'] if isinstance(t['value'], str) else t['value'].get(th, t['value'][first])
     colours = {t['name']: t for t in tok['color']['tokens']}
+    after = dict(MORE)
+
+    def hexed(name, th):
+        v = value(colours[name], th)
+        while v.startswith('{'):
+            v = value(colours[v[1:-1]], th)
+        return v
+
+    def step(a, b, th):
+        """The step a rule takes: b, or further towards the ink until it holds 3:1 on each of its grounds."""
+        grounds = [g for g in RULES.get(a, ()) if g in colours]
+        while grounds and b in after and min(contrast(hexed(b, th), hexed(g, th)) for g in grounds) < 3:
+            b = after[b]
+        return b
     blocks = []
     for th in themes:
-        rows = [f'    --{a}: {alias(value(colours[b], th))};' for a, b in MORE if a in colours and b in colours]
+        rows = [f'    --{a}: {alias(value(colours[step(a, b, th)], th))};' for a, b in MORE if a in colours and b in colours]
         blocks.append(f'  {":root, " if th == first else ""}[data-theme="{th}"] {{\n' + '\n'.join(rows) + '\n  }')
     out.append('@media (prefers-contrast: more) {\n' + '\n'.join(blocks) + '\n}')
     # print: ink on paper, so every themed token takes its value in the first (light) theme, whatever the page wears;
@@ -239,8 +265,10 @@ def build():
 
     # bundle.css
     css_parts = sorted((SRC / 'css').glob('*.css'))
-    css = '/* Tray UI — component styles. Every colour, radius, size and space is a token from tokens.json;\n' \
-          '   local names start with --tray-. Loaded after tokens.css. Built from src/css by tools/build.py. */\n\n'
+    css = '/* Tray UI — component styles. Every colour of the system is a token from tokens.json, and so are the corners (a\n' \
+          '   circle\'s 50% aside), the float shadow, the heights of controls and the steps of space between parts; type sizes\n' \
+          '   and the small measures inside a part (a 28px knob, 22px of padding, a 2px ring) are written in the rules. Local\n' \
+          '   names start with --tray-. Loaded after tokens.css. Built from src/css by tools/build.py. */\n\n'
     # Which themes are dark. tokens.css says it for each theme; these two rules, which give way to any other, are for a page
     # whose tokens come from somewhere else and do not say.
     css += ('/* ---------- Themes: light unless the theme is one of the dark ones ---------- */\n\n'

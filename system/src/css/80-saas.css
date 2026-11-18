@@ -16,7 +16,8 @@
 .tray-app--contained { min-block-size: 0; block-size: var(--tray-app-height, 40rem); border-radius: var(--radius-panel); overflow: hidden; }
 .tray-app--contained .tray-app__side { position: static; block-size: 100%; }
 .tray-app--contained .tray-app__main { position: relative; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--control-off) transparent; }
-@media (max-width: 56rem) {
+/* Below 56rem (bp-bento), where the bento stacks too: the two change at the same width. */
+@media (max-width: 55.99rem) {
   .tray-app { grid-template-columns: minmax(0, 1fr); }
   .tray-app__side { display: none; }
   .tray-app__menu { display: inline-flex; }
@@ -26,6 +27,11 @@
 
 .tray-topbar { display: flex; align-items: center; gap: var(--space-3); min-block-size: var(--size-lg); }
 .tray-topbar--sticky { position: sticky; inset-block-start: 0; z-index: var(--z-sticky); background: var(--tray-ground); }
+/* A sticky bar must not cover the control that has focus (WCAG 2.4.11): while the page has one, what the browser scrolls
+   into view stops below it. In a contained shell the column that scrolls keeps the padding. The rules weigh nothing, so
+   a page's own scroll padding wins. */
+:where(html:has(.tray-topbar--sticky:not(.tray-app--contained *))) { scroll-padding-block-start: calc(var(--size-lg) + var(--space-4)); }
+:where(.tray-app--contained .tray-app__main:has(> .tray-topbar--sticky)) { scroll-padding-block-start: calc(var(--size-lg) + var(--space-4)); }
 .tray-topbar__start { display: flex; align-items: center; gap: var(--space-2); min-inline-size: 0; }
 .tray-topbar__end { display: flex; align-items: center; gap: var(--space-2); margin-inline-start: auto; }
 .tray-topbar__end > :not(.tray-topbar__search) { flex: none; }
@@ -299,7 +305,7 @@ a.tray-stat:hover { filter: brightness(.96); }
 .tray-settings__body { display: grid; gap: var(--space-4); min-inline-size: 0; }
 .tray-settings__foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--space-2) var(--space-3); }
 .tray-settings__note { margin-inline-end: auto; color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
-@media (max-width: 56rem) {
+@media (max-width: 55.99rem) {
   .tray-settings { grid-template-columns: minmax(0, 1fr); }
 }
 .tray-setting { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3) var(--space-6); padding-block: var(--space-4); border-block-end: 1px solid var(--hairline); }
@@ -321,7 +327,9 @@ a.tray-stat:hover { filter: brightness(.96); }
 
 .tray-secret { display: inline-flex; align-items: center; gap: 2px; max-inline-size: 100%; min-block-size: var(--size-hit); padding-inline: var(--space-3); border-radius: var(--radius-control); background: var(--tray-fill); }
 .tray-secret code { flex: 1; min-inline-size: 0; overflow: hidden; color: var(--ink); font: 400 .9375rem/1.55 var(--font-mono); text-overflow: ellipsis; white-space: nowrap; }
-.tray-secret button { flex: none; display: grid; place-items: center; inline-size: var(--size-xs); block-size: var(--size-xs); padding: 0; border: 0; border-radius: var(--radius-chip); background: none; color: var(--ink-soft); cursor: pointer; }
+.tray-secret button { position: relative; flex: none; display: grid; place-items: center; inline-size: var(--size-xs); block-size: var(--size-xs); padding: 0; border: 0; border-radius: var(--radius-chip); background: none; color: var(--ink-soft); cursor: pointer; }
+/* Its buttons are 40px to the eye and 44px to a finger, as an extra small button is: the target reaches past each edge. */
+.tray-secret button::before { content: ""; position: absolute; inset: calc((var(--size-xs) - var(--size-hit)) / 2); }
 .tray-secret button:hover { background: var(--tray-fill); color: var(--ink); }
 .tray-secret:has(button) { padding-inline-end: 2px; }
 .tray-secret button[data-failed] { color: var(--danger); }

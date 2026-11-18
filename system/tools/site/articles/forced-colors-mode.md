@@ -145,7 +145,7 @@ The tab rules follow the example. A tab draws its focus ring inside its edge, ov
 
 ```css
 @media (forced-colors: active) {
-  .tray-tab[aria-selected="true"], .tray-tab[aria-current] {
+  .tray-tab[aria-selected="true"], .tray-tab[aria-current]:not([aria-current="false"]) {
     forced-color-adjust: none; border-color: SelectedItem; background: SelectedItem; color: SelectedItemText;
   }
   .tray-tab[aria-selected="true"] .tray-badge { border-color: SelectedItemText; background: SelectedItemText; color: SelectedItem; }

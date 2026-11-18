@@ -136,11 +136,11 @@
       /* the verdict changes only when what it says changes, so a screen reader hears it once, not on every step of a drag */
       var say = missed.length
         ? '<div class="tray-alert tray-alert--danger" role="status"><span class="tray-alert__icon">' + UI.icon('circle-alert') + '</span><div class="tray-alert__body"><p class="tray-alert__title">' +
-          missed.length + ' of ' + rows.length + ' rules ' + (missed.length === 1 ? 'is' : 'are') + ' missed</p><p class="tray-alert__text">' +
+          missed.length + ' of ' + rows.length + ' pairs ' + (missed.length === 1 ? 'misses its' : 'miss their') + ' contrast</p><p class="tray-alert__text">' +
           esc(missed.slice(0, 3).map(function (r) { return r.what + ' (' + r.token + ' on ' + r.on + '): ' + r.ratio.toFixed(2) + ', needs ' + r.need; }).join('. ')) +
           (missed.length > 3 ? ', and ' + (missed.length - 3) + ' more' : '') + '. Make the ink and the page further apart, or the accent brighter.</p></div></div>'
         : '<div class="tray-alert tray-alert--success" role="status"><span class="tray-alert__icon">' + UI.icon('circle-check') + '</span><div class="tray-alert__body"><p class="tray-alert__title">All ' + rows.length +
-          ' rules hold</p><p class="tray-alert__text">Text keeps its contrast on every ground of this ' + T.modeOf(t.page) + ' theme, and ink reads on the accent.</p></div></div>';
+          ' pairs hold their contrast</p><p class="tray-alert__text">Text keeps its contrast on every ground of this ' + T.modeOf(t.page) + ' theme, and ink reads on the accent.</p></div></div>';
       if (out.verdict.getAttribute('data-said') !== say) { out.verdict.innerHTML = say; out.verdict.setAttribute('data-said', say); }
       out.report.innerHTML = rows.map(function (r) {
         return '<tr><th scope="row">' + esc(r.what) + '</th><td><code class="tray-code-inline">' + r.token + '</code> on <code class="tray-code-inline">' + r.on + '</code></td><td data-num>' + r.ratio.toFixed(2) +

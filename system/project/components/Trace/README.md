@@ -6,7 +6,7 @@ A trace shows what an agent did on the way to an answer: one line per step, with
 ```html
 <details class="tray-trace-group" open>
   <summary>…chevron-right… Worked for 42 seconds, 5 steps</summary>
-  <ol class="tray-trace">
+  <ol class="tray-trace" role="list">
     <li class="tray-trace__line">
       <span class="tray-trace__icon">…icon…</span>
       <span class="tray-trace__title"><b>Read</b> orders-november.csv</span>

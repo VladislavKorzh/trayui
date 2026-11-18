@@ -79,11 +79,11 @@ A list of links that is a site's navigation belongs in `<nav>` anyway. Inside it
 O'Hara's advice ends with a caution from Adrian Roselli: a missing list role "may not be a big deal unless user testing says you really need a list." WebKit's change answered real complaints about too many list announcements, so `role="list"` on every `<ul>` in a page would bring them back.
 
 - **Worth the role.** A feed of events, search results, the releases of a changelog, the lines of an order: the count tells the person how much there is, and the end of the list tells them they are done.
-- **Not worth it.** Three legal links in a footer, the parts of one card, a row of buttons. Leave the list as a group, or reconsider whether it needed to be a list at all.
+- **Not worth it.** The parts of one card, a row of buttons. Leave the list as a group, or reconsider whether it needed to be a list at all.
 
 ## Lists in Tray UI
 
-Tray UI uses `role="list"`, and never the `::before` marker. Five components put it on a list that sits outside a `<nav>` and whose items matter one by one:
+Tray UI uses `role="list"`, and never the `::before` marker. It puts it on the lists that sit outside a `<nav>` and whose items matter one by one. Five components had it in version 0.2.0:
 
 | Component | The list |
 | --- | --- |
@@ -97,6 +97,6 @@ Each of their pages says why, in one sentence such as the Changelog's: "Safari s
 
 Lists of links inside a `<nav>` rely on WebKit's rule for navigation and carry no role: the [Breadcrumb](#c-breadcrumb) is an `<ol>` in `<nav aria-label="Breadcrumb">`, [Pagination](#c-pagination) a `<ul>` in `<nav aria-label="Pages">`, and the second level of the [Sidebar](#c-sidebar) a `<ul>` inside the sidebar's `<nav>`.
 
-Other lists in the system lose their markers to the stylesheet without the role in their examples, among them the rows of [Item](#c-item), the ticks of the [Pricing Table](#c-pricing-table), the steps of the [Stepper](#c-stepper) and the tasks of the [Onboarding Checklist](#c-onboarding-checklist). Where the count matters in your page, add `role="list"` to your own markup.
+The other lists that lose their markers to the stylesheet took the role in the next release, in their examples, their READMEs and the blocks: the rows of [Item](#c-item), the ticks of the [Pricing Table](#c-pricing-table), the steps of the [Stepper](#c-stepper), the tasks of the [Onboarding Checklist](#c-onboarding-checklist), the list of the [Notification Center](#c-notification-center), the key of [Uptime](#c-uptime), the legal links of the [Footer](#c-footer), which sit outside its `<nav>` columns, the steps of a [Trace](#c-trace) and the gallery of the [Lightbox](#c-lightbox). Where the count matters in a list of your own, add `role="list"` to your markup.
 
 The role came in with version 0.2.0. It was checked in Chrome and its accessibility tree, where it changes nothing, and not in Safari with VoiceOver: the choice rests on what WebKit says and on its code. The [Accessibility](#g-accessibility) guide has the rules every component follows.

@@ -68,7 +68,7 @@ def main():
     for theme, rows in out['reports'].items():
         bad = [r for r in rows if not r['ok']]
         tight = min(rows, key=lambda r: r['ratio'] / r['need'])
-        print(f'{theme:9} {len(rows)} rules, {len(bad)} missed; the tightest: {tight["token"]} on {tight["on"]} {tight["ratio"]:.2f} (needs {tight["need"]})')
+        print(f'{theme:9} {len(rows)} pairs, {len(bad)} missed; the tightest: {tight["token"]} on {tight["on"]} {tight["ratio"]:.2f} (needs {tight["need"]})')
         for r in bad:
             failed = True
             print(f'   MISSED {r["token"]} on {r["on"]}: {r["ratio"]:.2f}, needs {r["need"]}')

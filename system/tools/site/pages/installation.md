@@ -91,9 +91,9 @@ That is a grey tray on the white page, a white field in it, and the one yellow b
 
 ## Sizes
 
-| File | Compressed |
+| File | With gzip |
 | --- | --- |
-| `tokens.css` | 1 KB |
+| `tokens.css` | {{tokens_kb}} KB |
 | `components/bundle.css` | {{css_kb}} KB |
 | `components/bundle.js` | {{js_kb}} KB |
 

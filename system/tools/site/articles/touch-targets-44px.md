@@ -101,7 +101,7 @@ The function measures one line through the middle of each side. For a round or r
 
 ## Touch targets in Tray UI
 
-Tray UI sets its floor at the level AAA size. Its token `--size-hit` is 44px, described as "the smallest target: tabs, menu items, calendar days, icon buttons in a row", and the [Accessibility](#g-accessibility) guide says: "Nothing a finger must hit is smaller than 44px". Measured in Chrome with the function above, on the components' own examples, each of the three ways is in use.
+Tray UI sets its floor at the level AAA size. Its token `--size-hit` is 44px, described as "the smallest target for nearly everything: tabs, menu items, calendar days, icon buttons in a row", and the [Accessibility](#g-accessibility) guide gives 44px to buttons, fields, tabs, menu items, days and pages, then names the few that are smaller. Measured in Chrome with the function above, on the components' own examples, each of the three ways is in use.
 
 | Target | Drawn | Hit area | How |
 | --- | --- | --- | --- |
@@ -111,8 +111,9 @@ Tray UI sets its floor at the level AAA size. Its token `--size-hit` is 44px, de
 | Extra small button or toggle | 40px | 44px | `::before`, 2px out |
 | Remove button of a chip | 28 by 28 | 44 by 44 | `::before`, 8px out |
 | Reaction under a message | 32px tall | 44px tall | `::before`, 6px up and down |
+| Show and copy buttons of an API key | 40px | 44px | `::before`, 2px out |
 
-The three pseudo-elements take their 44 pixels from `--size-hit`:
+The pseudo-elements take their 44 pixels from `--size-hit`:
 
 ```css
 .tray-btn--xs, .tray-toggle--xs { position: relative; }
@@ -123,10 +124,13 @@ The three pseudo-elements take their 44 pixels from `--size-hit`:
 
 .tray-reaction { position: relative; }
 .tray-reaction::before { content: ""; position: absolute; inset: calc((32px - var(--size-hit)) / 2) 0; }
+
+.tray-secret button { position: relative; }
+.tray-secret button::before { content: ""; position: absolute; inset: calc((var(--size-xs) - var(--size-hit)) / 2); }
 ```
 
-A reaction reaches up and down only, since reactions sit 4 pixels apart in a row. A chip's remove button sits 6 pixels inside the end of its chip, so its 8 pixels reach 2 pixels past the chip, and chips stand 6 pixels apart in a [Tag Input](#c-tag-input) and 8 in a [Filter Bar](#c-filter-bar). The areas of the extra small sizes, chip buttons, reactions, footer links and the checkboxes of a matrix grew to 44 pixels in version 0.2.0, under "Easier to see and to hit".
+A reaction reaches up and down only, since reactions sit 4 pixels apart in a row. Rows of reactions that wrap stood 4 pixels apart as well, so each row's area reached 2 pixels into the other's buttons; since the next release they stand 12 pixels apart, the 6 pixels each one reaches, and the areas meet without overlapping. A chip's remove button sits 6 pixels inside the end of its chip, so its 8 pixels reach 2 pixels past the chip, and chips stand 6 pixels apart in a [Tag Input](#c-tag-input) and 8 in a [Filter Bar](#c-filter-bar). The areas of the extra small sizes, chip buttons, reactions, footer links and the checkboxes of a matrix grew to 44 pixels in version 0.2.0, under "Easier to see and to hit".
 
-Two targets stay under 44 pixels in one direction. A [Slider](#c-slider) is 28 pixels tall across its full width; 2.5.8 counts a control that picks a value by its position as one target, so its size is the whole track. The handle of [Resizable](#c-resizable) is 16 pixels wide and the full height of its panes; its page says that dragging is its only pointer route and suggests buttons that set fixed sizes where the size matters.
+A few targets stay under 44 pixels in one direction. The nested links of a [Sidebar](#c-sidebar), the rows of a file tree and the labels of its folding sections are 36-pixel rows as wide as the sidebar. A [Slider](#c-slider) is 28 pixels tall across its full width; 2.5.8 counts a control that picks a value by its position as one target, so its size is the whole track. The handle of [Resizable](#c-resizable) is 16 pixels wide and the full height of its panes; its page says that dragging is its only pointer route and suggests buttons that set fixed sizes where the size matters.
 
 The [Button](#c-button) page shows the extra small size, and [Installation](#d-installation) has the files to link.

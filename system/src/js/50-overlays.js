@@ -15,6 +15,10 @@
       pressedOutside = false;
     });
     d.addEventListener('cancel', function (e) {
+      /* data-static on an alert dialog refuses Escape. A browser lets a page refuse it only so many times: Chrome 157
+         refuses the first two presses and closes the dialog at the third, with a cancel event that cannot be cancelled,
+         whatever was clicked or pressed between. Escape is slowed, not stopped; the dialog then closes with an empty
+         returnValue, as Escape on any dialog does. */
       if (d.getAttribute('role') === 'alertdialog' && d.hasAttribute('data-static')) { e.preventDefault(); return; }
       /* Escape: where the browser cannot keep the dialog in the top layer while it leaves, it leaves first, then closes */
       if (!calm() && !topLayerExit()) { e.preventDefault(); shut(d, ''); }
@@ -84,14 +88,16 @@
     var target = root.querySelector('button, a, input, [tabindex]') || root, tip = document.createElement('span'), timer = null;
     tip.setAttribute('role', 'tooltip');
     tip.id = uid('tray-tooltip');
+    /* the words of a text, lower case, without their punctuation: "Orders, 12 to pack" is "orders 12 to pack" */
+    function plain(s) { return ' ' + String(s).toLowerCase().replace(/[\s!-\/:-@\[-`{-~ ‐-…]+/g, ' ').trim() + ' '; }
     function paint() {
       var words = root.dataset.tip || '', name = (target.getAttribute('aria-label') || target.textContent || '').trim();
       tip.className = 'tray-tooltip' + (root.dataset.side === 'bottom' ? ' tray-tooltip--bottom' : '');
       tip.textContent = words;
-      /* Words that only say the control's name again are for the eye alone: CSS draws them with no text for a screen
-         reader, so the name is not read a second time as the description, which keeps the keys. (aria-hidden would not
-         do: a description is read from a hidden bubble whole.) */
-      if (words.trim().toLowerCase() === name.toLowerCase()) {
+      /* Words that the control's name already holds ("Orders" for a link named "Orders, 12 to pack") are for the eye
+         alone: CSS draws them with no text for a screen reader, so they are not read a second time as the description,
+         which keeps the keys. (aria-hidden would not do: a description is read from a hidden bubble whole.) */
+      if (plain(words).trim() && plain(name).indexOf(plain(words)) >= 0) {
         var said = document.createElement('span');
         said.className = 'tray-tooltip__said';
         said.setAttribute('data-said', words);
@@ -107,12 +113,16 @@
       new MutationObserver(paint).observe(root, { attributes: true, attributeFilter: ['data-tip', 'data-keys', 'data-side'] });
       if (target !== root) new MutationObserver(paint).observe(target, { attributes: true, attributeFilter: ['aria-label'] });
     }
+    /* Escape hides a bubble wherever focus is, also when the pointer alone showed it (WCAG 1.4.13): the page listens
+       while the bubble shows. The key stops there, so a dialog around the tooltip stays open; the next Escape closes
+       it. A menu or a list that closes on the same key comes first. */
+    function key(e) { if (e.key === 'Escape' && !e.defaultPrevented) { e.preventDefault(); set(false); } }
     function set(open, wait) {
       clearTimeout(timer);
       if (root.hasAttribute('data-open')) return;
-      if (open) show(tip);
-      else if (wait) timer = setTimeout(function () { hide(tip); }, 150);
-      else hide(tip);
+      if (open) { show(tip); document.addEventListener('keydown', key); }
+      else if (wait) timer = setTimeout(function () { set(false); }, 150);
+      else { hide(tip); document.removeEventListener('keydown', key); }
     }
     /* The pointer can move onto the bubble and rest there (WCAG 1.4.13): it goes a moment after the pointer has left the
        control and the bubble both, and stays while the control has focus. */
@@ -120,7 +130,6 @@
     root.addEventListener('pointerleave', function () { if (!root.contains(document.activeElement)) set(false, true); });
     root.addEventListener('focusin', function () { set(true); });
     root.addEventListener('focusout', function () { if (!root.matches(':hover')) set(false); });
-    root.addEventListener('keydown', function (e) { if (e.key === 'Escape') set(false); });
   });
 
   /* Toast: TrayUI.toast({ title, text, tone: 'success' | 'danger', action: { label, onClick }, duration })

@@ -8,12 +8,12 @@ It is a white page, ink type in Onest, and goods set out in soft grey trays with
 
 - **108 components**, from a button to a data table: forms, navigation, overlays, data, conversation, and media (a lightbox, a video player). They also cover the frame of a product: app shell, billing, account, onboarding and public pages.
 - **64 blocks**: whole screens to copy, from a dashboard and settings to a shop, a checkout, articles, a blog and a wiki, plus fifteen sidebars and sign-in pages.
-- **10 themes**, six light and four dark, each measured against the system's 66 contrast rules. A theme maker derives your own from four colours.
+- **10 themes**, six light and four dark, each measured against the system's 32 contrast rules, which pair a colour with each ground it is read on: 66 pairs. A theme maker derives your own from four colours.
 - **Accessibility built in.** Keyboard support and accessible names follow [the accessibility guide](system/project/guides/3-accessibility.md), and the system answers more contrast, forced colours, print and reduced motion.
 - **Icons from [Lucide](https://lucide.dev)**: 118 built into the script, and in React any other from `react-icons/lu`.
 - **React**, as `trayui-react`: the same components, typed, over the same stylesheet. Its charts are drawn with [Recharts](https://recharts.github.io), with 58 examples.
 - **Tailwind and Figma**: the tokens as a Tailwind 4 theme, a Tailwind 3 preset and Figma variables with a mode for each theme.
-- **Three files**, about 70 KB compressed. No framework, no build step.
+- **Three files**, about 82 KB with gzip. No framework, no build step.
 
 ## Install
 

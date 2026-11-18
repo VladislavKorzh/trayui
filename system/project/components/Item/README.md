@@ -4,7 +4,7 @@ An item is one row of a list: a media tile, a title with a line of detail, and s
 
 ## Markup
 ```html
-<ul class="tray-items">
+<ul class="tray-items" role="list">
   <li class="tray-item">
     <span class="tray-item__media">…icon or avatar…</span>
     <span class="tray-item__body">

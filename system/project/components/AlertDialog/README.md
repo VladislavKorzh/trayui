@@ -17,7 +17,7 @@ The Dialog markup with `role="alertdialog"`, `aria-labelledby` and `aria-describ
   </div>
 </dialog>
 ```
-It differs from a Dialog in three ways: there is no close button in the corner, a click on the veil does not close it, and focus starts on the safe button: give it `autofocus`, as above. (Opened with `data-tray="open"`, a dialog whose markup has none starts there anyway.) Add `data-static` to make Escape do nothing as well, when even leaving needs a choice.
+It differs from a Dialog in three ways: there is no close button in the corner, a click on the veil does not close it, and focus starts on the safe button: give it `autofocus`, as above. (Opened with `data-tray="open"`, a dialog whose markup has none starts there anyway.) Add `data-static` to make Escape slower as well, when even leaving needs a choice: the first presses of Escape do nothing. A browser lets a page refuse a close request only a few times, so Escape is not stopped for ever: in Chrome 157 the third press closes the dialog, whatever was clicked or pressed between. It then closes with an empty `returnValue`, so treat a `close` whose `returnValue` is not one of your buttons' values as the safe choice.
 
 ## Writing it
 - The title is the question, with the name of the thing: "Delete order PL-20418?".
@@ -25,7 +25,7 @@ It differs from a Dialog in three ways: there is no close button in the corner, 
 - Each button repeats its own outcome: "Keep the order", "Delete order". Never "Yes" and "No".
 
 ## Accessibility
-It is the browser's own `<dialog>` with `role="alertdialog"`: the title named by `aria-labelledby` is its name, and the sentence named by `aria-describedby` is read after it. Opened with `showModal()`, it makes the page behind it inert. Focus starts on the safe button, `Tab` moves between the buttons, and `Escape` closes the dialog unless it has `data-static`. When it closes, the browser returns focus to the control that opened it. Under `prefers-reduced-motion: reduce` it only fades, in a tenth of a second.
+It is the browser's own `<dialog>` with `role="alertdialog"`: the title named by `aria-labelledby` is its name, and the sentence named by `aria-describedby` is read after it. Opened with `showModal()`, it makes the page behind it inert. Focus starts on the safe button, `Tab` moves between the buttons, and `Escape` closes the dialog; with `data-static` the first two presses do nothing and the third closes it (the browser's limit, measured in Chrome 157). When it closes, the browser returns focus to the control that opened it. Under `prefers-reduced-motion: reduce` it only fades, in a tenth of a second.
 
 ## Do and don't
 - Do use it only for what cannot be undone: delete, cancel a paid order, send to many people.

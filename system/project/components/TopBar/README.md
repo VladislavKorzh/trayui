@@ -29,7 +29,7 @@ The bar has no fill of its own: it sits on the page. `tray-topbar--sticky` keeps
 
 ## Accessibility
 - The breadcrumb is a `<nav>` named "Breadcrumb", and its last item carries `aria-current="page"`.
-- The search is a `<button>` named by its words. The system does not bind the key shown in its `tray-kbd`: listen for it in your own script. With `tray-topbar__search--fold` the words are hidden, so the button needs an `aria-label`.
+- The search is a `<button>` named by its words. The system does not bind the key shown in its `tray-kbd`: listen for it in your own script, and only then add `aria-keyshortcuts="/"`, which tells a screen reader that the key works. With `tray-topbar__search--fold` the words are hidden, so the button needs an `aria-label`.
 - Every icon button needs an `aria-label` ("Help", "More actions"), and the avatar button names the account ("Account: Oksana Franko").
 - A button with a pip says the count in its `aria-label` too ("Notifications, 2 unread"). Change that label whenever the count changes. The pip itself is `aria-hidden` (the script sets it on every `tray-pip` as well), so the number is not read a second time after the button.
 - The back link hides its arrow and says where it goes in a `tray-vh` span.

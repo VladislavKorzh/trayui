@@ -6,11 +6,11 @@ A checkbox turns one option on or off; a group of them lets several be on at onc
 ```html
 <label class="tray-check">
   <input type="checkbox">
-  <span class="tray-check__box">…the drawn tick…</span>
+  <span class="tray-check__box"><svg viewBox="0 0 20 20" aria-hidden="true"><path class="tray-check__tick" d="M4 10.5l4 4 8-9"/><path class="tray-check__dash" d="M5 10h10"/></svg></span>
   <span>Gift box</span>
 </label>
 ```
-The box is 26px with 4px corners: a `control-off` edge when empty, solid `ink` with a drawn tick when checked. Wrap two lines in `tray-check__text` with the second in `<small>`. Set `input.indeterminate = true` from script for a parent whose children are partly checked; the box then shows a dash.
+Copy the box as it is: the `<svg>` holds both marks, the tick (`tray-check__tick`) and the dash (`tray-check__dash`), and the stylesheet shows the one that fits. The box is 26px with 4px corners: a `control-off` edge when empty, solid `ink` with a drawn tick when checked. Wrap two lines in `tray-check__text` with the second in `<small>`. Set `input.indeterminate = true` from script for a parent whose children are partly checked; the box then shows a dash.
 
 ## States
 Keyboard focus draws the 3px ring around the box. `aria-invalid="true"` on the input turns the edge to 2px `danger` (a consent that was not given). A disabled checkbox dims with its text.

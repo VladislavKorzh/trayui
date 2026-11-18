@@ -172,13 +172,13 @@
             <h2 class="subtitle">Your order</h2>
             <a class="tray-btn tray-btn--link" href="/cart">Change</a>
           </div>
-          <ul class="tray-summary__lines">
+          <ul class="tray-summary__lines" role="list">
             <li class="tray-summary__line"><span>Snail caviar, 30 g<small>1 &times; $38.00</small></span><span>$38.00</span></li>
             <li class="tray-summary__line"><span>Snail caviar, 50 g<small>2 &times; $59.00</small></span><span>$118.00</span></li>
             <li class="tray-summary__line"><span>Snail caviar, 100 g<small>1 &times; $112.00</small></span><span>$112.00</span></li>
             <li class="tray-summary__line"><span id="way-name">Courier, chilled box<small id="way-when">Today, 16:00 to 18:00</small></span><span id="way-sum">$9.00</span></li>
           </ul>
-          <p class="tray-summary__total" aria-live="polite"><span>Total</span><span id="total">$277.00</span></p>
+          <p class="tray-summary__total" aria-live="polite" aria-atomic="true"><span>Total</span><span id="total">$277.00</span></p>
           <button class="tray-btn tray-btn--block" type="submit" form="checkout" id="pay">Pay $277.00</button>
           <p class="tray-summary__note"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-lock"/></svg>We never see the card number.</p>
         </div>
@@ -206,9 +206,11 @@
       slot.parentNode.querySelector('[data-today-off-text]').textContent = today ? 'Gone for today' : 'Five places left';
     });
     var slot = picked('slot'), day = picked('day').getAttribute('data-day');
-    $('address').hidden = !courier;
-    $('slots').hidden = !courier;
-    $('card').hidden = picked('pay').value !== 'card';
+    /* A group that is hidden is disabled too, so its fields are left out of what the form sends and out of its checks. */
+    var group = function (el, on) { el.hidden = !on; [].forEach.call(el.querySelectorAll('input, select, textarea'), function (f) { f.disabled = !on || (today && f.hasAttribute('data-today-off')); }); };
+    group($('address'), courier);
+    group($('slots'), courier);
+    group($('card'), picked('pay').value === 'card');
     $('way-name').firstChild.textContent = courier ? 'Courier, chilled box' : 'Farm shop pickup';
     $('way-when').textContent = day + ', ' + (courier && slot ? slot.parentNode.querySelector('b').textContent : 'from 10:00');
     $('way-sum').textContent = courier ? money(COURIER) : 'Free';

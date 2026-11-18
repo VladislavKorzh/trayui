@@ -174,7 +174,7 @@ Write the table inside a wrapper with `data-tray="datatable"`, and add the parts
 
 | Part | Markup |
 | --- | --- |
-| Sorting | A `<button class="tray-sort">` with the label and the `arrow-up-down` icon inside a column head. |
+| Sorting | A `<button class="tray-sort">` with the label, and optionally the `arrow-up-down` icon, inside a column head. |
 | Sort value | `data-value` on a cell whose text does not sort as written. |
 | Filter | `<input data-filter>`, with an `aria-label`: rows that do not contain its text are hidden. |
 | Selection | A checkbox with `data-select` in each row, one with `data-select-all` in the head. |

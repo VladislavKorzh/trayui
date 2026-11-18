@@ -202,7 +202,7 @@
         "value": 44,
         "unit": "px"
       },
-      "$description": "--size-hit. The smallest target: tabs, menu items, calendar days, icon buttons in a row."
+      "$description": "--size-hit. The smallest target for nearly everything: tabs, menu items, calendar days, icon buttons in a row."
     },
     "xs": {
       "$type": "dimension",

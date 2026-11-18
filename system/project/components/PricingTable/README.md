@@ -10,7 +10,7 @@ The pricing table sets the plans side by side: a card each with the name, the pr
       <label class="tray-seg__item"><input type="radio" name="period" value="monthly" checked><span>Monthly</span></label>
       <label class="tray-seg__item"><input type="radio" name="period" value="yearly"><span>Yearly</span></label>
     </div>
-    <span class="tray-badge">Two months free on yearly</span>
+    <span class="tray-badge">About two months free on yearly</span>
   </div>
   <div class="tray-plans">
     <article class="tray-card tray-card--accent tray-plan">
@@ -20,7 +20,7 @@ The pricing table sets the plans side by side: a card each with the name, the pr
         <p class="tray-plan__text">For a farm that ships every day.</p>
       </div>
       <a class="tray-btn tray-btn--dark tray-btn--md" href="/signup?plan=shop">Start with Shop</a>
-      <ul class="tray-ticks">
+      <ul class="tray-ticks" role="list">
         <li><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg>1,000 orders a month</li>
       </ul>
     </article>

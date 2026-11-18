@@ -125,7 +125,7 @@ Not every side column is the main navigation. Use `<nav>` when it holds links, `
 
 ## On a phone
 
-At 56rem and below, every sidebar of the shell leaves the page. A menu button in the top bar moves that same `<nav>` into a modal `<dialog>`, and puts it back when the dialog closes. Moving the element keeps one copy of the links to write and to mark with `aria-current`. A version of your own:
+Below 56rem, every sidebar of the shell leaves the page. A menu button in the top bar moves that same `<nav>` into a modal `<dialog>`, and puts it back when the dialog closes. Moving the element keeps one copy of the links to write and to mark with `aria-current`. A version of your own:
 
 ```js
 const menu = document.getElementById('menu'); // aria-controls="nav" aria-haspopup="dialog" aria-expanded="false"

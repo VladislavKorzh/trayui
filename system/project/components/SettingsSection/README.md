@@ -12,9 +12,9 @@ A settings section is one topic of a settings page: its name and a line of expla
   <div class="tray-settings__body">
     <div class="tray-card">
       <div class="tray-setting">
-        <div class="tray-setting__text"><b id="s1">Print a label for every order</b><small>On the printer by the packing table.</small></div>
+        <div class="tray-setting__text"><b id="s1">Print a label for every order</b><small id="s1-note">On the printer by the packing table.</small></div>
         <div class="tray-setting__control">
-          <label class="tray-switch"><input type="checkbox" role="switch" aria-labelledby="s1" checked><span class="tray-switch__track"></span></label>
+          <label class="tray-switch"><input type="checkbox" role="switch" aria-labelledby="s1" aria-describedby="s1-note" checked><span class="tray-switch__track"></span></label>
         </div>
       </div>
     </div>

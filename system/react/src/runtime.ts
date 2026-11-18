@@ -221,6 +221,11 @@ if (typeof document !== 'undefined') (function () {
       var code = cells.map(function (c) { return c.value; }).join('');
       if (code.length === cells.length) fire(root, 'complete', { value: code });
     }
+    /* What a cell keeps: digits while it is numeric (the default), else letters and digits. A code written "123-456" or
+       "AB 12" loses its hyphens and spaces, so no cell holds a separator and no character of the code is pushed out. */
+    function clean(cell, text) {
+      return String(text || '').replace(cell.getAttribute('inputmode') === 'numeric' ? /\D/g : /[\s!-\/:-@\[-`{-~·‐-―−]/g, '');
+    }
     /* A code that comes in one go fills the cells from cell i on, and focus goes to the cell after its last character. */
     function spread(i, text) {
       text.split('').slice(0, cells.length - i).forEach(function (ch, k) { cells[i + k].value = ch; });
@@ -242,23 +247,30 @@ if (typeof document !== 'undefined') (function () {
          in the first cell, and maxlength would cut it to one character. The input handler keeps one per cell. */
       cell.removeAttribute('maxlength');
       cell.setAttribute('aria-label', 'Character ' + (i + 1) + ' of ' + cells.length);
+      /* a key the cell does not take (a hyphen, a letter in a numeric cell) changes nothing */
+      cell.addEventListener('beforeinput', function (e) { if (e.inputType === 'insertText' && e.data && !clean(cell, e.data)) e.preventDefault(); });
       cell.addEventListener('input', function (e) {
-        var text = cell.value.replace(/\s/g, '');
+        var text = clean(cell, cell.value), key = e.data && e.data.length === 1 ? clean(cell, e.data) : null;
+        /* where the browser let a refused key in, the cell keeps what it held and focus stays */
+        if (key === '') { cell.value = text.slice(0, 1); return; }
         /* one key pressed in a cell that already held a character: the new one replaces it */
-        if (text.length > 1 && e.data && e.data.length === 1) text = e.data.replace(/\s/g, '');
+        if (text.length > 1 && key) text = key;
         if (text.length > 1) { spread(i, text); return; }
         cell.value = text;
         if (text && cells[i + 1]) cells[i + 1].focus();
         done();
       });
       cell.addEventListener('keydown', function (e) {
+        /* the cells always run left to right (the code keeps its order in a right-to-left page): the arrows go by the
+           side of the screen, back and forth along that row */
+        var rtl = getComputedStyle(root).direction === 'rtl', back = rtl ? 'ArrowRight' : 'ArrowLeft', forth = rtl ? 'ArrowLeft' : 'ArrowRight';
         if (e.key === 'Backspace' && !cell.value && cells[i - 1]) { cells[i - 1].focus(); cells[i - 1].value = ''; e.preventDefault(); }
-        if (e.key === 'ArrowLeft' && cells[i - 1]) cells[i - 1].focus();
-        if (e.key === 'ArrowRight' && cells[i + 1]) cells[i + 1].focus();
+        if (e.key === back && cells[i - 1]) { e.preventDefault(); cells[i - 1].focus(); }
+        if (e.key === forth && cells[i + 1]) { e.preventDefault(); cells[i + 1].focus(); }
       });
       cell.addEventListener('focus', function () { cell.select(); });
       cell.addEventListener('paste', function (e) {
-        var text = (e.clipboardData.getData('text') || '').replace(/\s/g, '');
+        var text = clean(cell, e.clipboardData.getData('text'));
         if (!text) return;
         e.preventDefault();
         spread(i, text);
@@ -266,9 +278,12 @@ if (typeof document !== 'undefined') (function () {
     });
   });
 
-  /* Slider: data-tray="slider" on <input type="range">. Fills the track and writes the value to the field's <output>. */
+  /* Slider: data-tray="slider" on <input type="range">. Fills the track and writes the value to the field's <output>.
+     The value is read once, from the slider itself as it moves (with its unit, in aria-valuetext). An <output> is a
+     status region and would read it a second time, so the one beside the label is for the eye alone: aria-hidden. */
   UI.register('slider', function (input) {
     var field = input.closest('.tray-slider-field'), out = field && $('output', field), unit = input.dataset.unit || '';
+    if (out) out.setAttribute('aria-hidden', 'true');
     function paint() {
       var min = +(input.min || 0), max = +(input.max || 100);
       input.style.setProperty('--tray-v', ((+input.value - min) / (max - min) * 100) + '%');
@@ -295,12 +310,17 @@ if (typeof document !== 'undefined') (function () {
        "Hide password, pressed". */
     if (!btn.hasAttribute('aria-label')) btn.setAttribute('aria-label', 'Show password');
     btn.setAttribute('aria-pressed', 'false');
-    btn.addEventListener('click', function () {
-      var show = input.type === 'password';
+    function set(show) {
       input.type = show ? 'text' : 'password';
       btn.setAttribute('aria-pressed', String(show));
       btn.innerHTML = icon(show ? 'eye-off' : 'eye');
-    });
+    }
+    btn.addEventListener('click', function () { set(input.type === 'password'); });
+    /* A password shown stays a password field where it matters: as the form is sent (so the browser treats it as one,
+       to save it and not to keep it as text), and on a page brought back by Back from the browser's cache. */
+    function conceal() { if (input.type !== 'password') set(false); }
+    if (input.form) input.form.addEventListener('submit', conceal);
+    window.addEventListener('pageshow', function (e) { if (e.persisted) conceal(); });
   });
 
   /* What names a control, as ids for aria-labelledby: its own aria-labelledby; else the control itself, when an
@@ -318,7 +338,7 @@ if (typeof document !== 'undefined') (function () {
     var ids = labelIds(control);
     if (ids.length) panel.setAttribute('aria-labelledby', ids.join(' '));
   }
-  /* A trigger that shows its value is named by its label and by that value, "Jar size, 50 g": a label names a button in
+  /* A trigger that shows its value is named by its label and by that value, "Jar size 50 g": a label names a button in
      place of its content, so the value would go unheard. With no label, the content names it, value and all. */
   function nameWithValue(trigger, valueEl) {
     var ids = labelIds(trigger);
@@ -326,6 +346,25 @@ if (typeof document !== 'undefined') (function () {
     valueEl.id = valueEl.id || uid('tray-value');
     if (ids.indexOf(valueEl.id) < 0) ids.push(valueEl.id);
     trigger.setAttribute('aria-labelledby', ids.join(' '));
+  }
+
+  /* The words of an option, what a filter looks in: its text, its two lines apart ("Anna Melnyk Packing", not "Anna
+     MelnykPacking"), and not the keys of a shortcut beside it (tray-option__meta). */
+  function optionWords(o) {
+    var box = $('.tray-option__text', o) || o, text = '';
+    [].forEach.call(box.childNodes, function (n) {
+      if (n.nodeType === 3) text += n.textContent;
+      else if (n.nodeType === 1 && !n.matches('.tray-option__meta, .tray-keys, kbd, svg')) text += /^(B|STRONG|SMALL|DIV|P)$/.test(n.tagName) ? ' ' + n.textContent + ' ' : n.textContent;
+    });
+    return text.replace(/\s+/g, ' ').trim();
+  }
+  /* A status line read politely, written only when its words change: the same words again are not read again. */
+  function quietStatus(parent) {
+    var line = document.createElement('span');
+    line.className = 'tray-vh';
+    line.setAttribute('role', 'status');
+    parent.appendChild(line);
+    return function (words) { if (line.textContent !== words) line.textContent = words; };
   }
 
   /* Select: data-tray="select" on the anchor that holds a .tray-select-trigger and a .tray-pop of [role=option]. A group of
@@ -354,9 +393,17 @@ if (typeof document !== 'undefined') (function () {
     panel.addEventListener('click', function (e) { var o = e.target.closest('[role="option"]'); if (o && o.getAttribute('aria-disabled') !== 'true') choose(o); });
     rove(panel, '[role="option"]');
     trigger.addEventListener('keydown', function (e) { if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); pop.open(); } });
+    /* Shift+Tab from an option would land on the trigger, which counts as inside, and leave the list open: it closes the
+       list as Tab does, and focus goes to the trigger, as in a menu. */
+    panel.addEventListener('keydown', function (e) { if (e.key === 'Tab' && e.shiftKey && pop.isOpen()) { e.preventDefault(); pop.close(true); } });
+    /* A letter goes to the next option that starts with it, after the one in focus, and round to the first again: the
+       same letter pressed again walks through them. An option that is off is passed over. */
     panel.addEventListener('keydown', function (e) {
-      if (e.key.length !== 1 || e.key === ' ') return;
-      var hit = options().filter(function (o) { return o.textContent.trim().toLowerCase().indexOf(e.key.toLowerCase()) === 0; })[0];
+      if (e.key.length !== 1 || e.key === ' ' || e.ctrlKey || e.metaKey || e.altKey) return;
+      var live = options().filter(function (o) { return !o.disabled && o.getAttribute('aria-disabled') !== 'true'; });
+      var hits = live.filter(function (o) { return o.textContent.trim().toLowerCase().indexOf(e.key.toLowerCase()) === 0; });
+      var from = live.indexOf(document.activeElement);
+      var hit = hits.filter(function (o) { return live.indexOf(o) > from; })[0] || hits[0];
       if (hit) hit.focus();
     });
   });
@@ -375,12 +422,9 @@ if (typeof document !== 'undefined') (function () {
     nameLike(panel, input);
     options().forEach(function (o) { o.id = o.id || uid('tray-option'); o.setAttribute('tabindex', '-1'); });
     /* The no-match sentence sits in the list, where nothing reads it while focus is in the input: a status line beside
-       the list says it as it appears. */
-    var said = document.createElement('span');
-    said.className = 'tray-vh';
-    said.setAttribute('role', 'status');
-    root.appendChild(said);
-    var pop = popup(input, panel, { manual: true, onClose: function () { said.textContent = ''; } });
+       the list says it as it appears, once, and not again at every key while nothing still matches. */
+    var tell = quietStatus(root);
+    var pop = popup(input, panel, { manual: true, onClose: function () { tell(''); } });
     function setActive(o) {
       if (active) active.removeAttribute('data-active');
       active = o || null;
@@ -389,8 +433,8 @@ if (typeof document !== 'undefined') (function () {
     }
     function filter() {
       var q = input.value.trim().toLowerCase(), shown = 0;
-      options().forEach(function (o) { var hit = !q || o.textContent.toLowerCase().indexOf(q) >= 0; o.hidden = !hit; if (hit) shown += 1; });
-      if (empty) { empty.hidden = shown > 0; said.textContent = shown ? '' : empty.textContent.trim(); }
+      options().forEach(function (o) { var hit = !q || optionWords(o).toLowerCase().indexOf(q) >= 0; o.hidden = !hit; if (hit) shown += 1; });
+      if (empty) { empty.hidden = shown > 0; tell(shown ? '' : empty.textContent.trim()); }
       setActive(visible()[0]);
     }
     function choose(o) {
@@ -444,10 +488,16 @@ if (typeof document !== 'undefined') (function () {
     var dowFmt = new Intl.DateTimeFormat(locale, { weekday: 'short' });
     var dayFmt = new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     var focusIso = null;
+    /* The month shown is said when a month button turns the page, since focus stays on the button: a polite line beside
+       the grid, kept while the grid is drawn again. (A key that turns the page moves focus to a day, whose name holds
+       its month.) */
+    var said = document.createElement('span');
+    said.className = 'tray-vh';
+    said.setAttribute('aria-live', 'polite');
 
     function value() { return !start ? '' : (mode === 'range' ? iso(start) + '/' + (end ? iso(end) : '') : iso(start)); }
     function render(keepFocus) {
-      var html = '<div class="tray-cal__months">';
+      var html = '';
       var tab = focusIso || (start && iso(start)) || iso(today);
       for (var m = 0; m < months; m += 1) {
         var first = new Date(view.getFullYear(), view.getMonth() + m, 1);
@@ -477,7 +527,9 @@ if (typeof document !== 'undefined') (function () {
         }
         html += '</div></div>';
       }
-      el.innerHTML = html + '</div>';
+      var box = $(':scope > .tray-cal__months', el);
+      if (!box) { el.textContent = ''; box = document.createElement('div'); box.className = 'tray-cal__months'; el.appendChild(box); el.appendChild(said); }
+      box.innerHTML = html;
       if (!$('[tabindex="0"]', el)) { var firstDay = $('.tray-cal__day:not([data-outside]):not(:disabled)', el); if (firstDay) firstDay.setAttribute('tabindex', '0'); }
       if (keepFocus && focusIso) { var target = $('[data-date="' + focusIso + '"]:not([data-outside])', el); if (target) target.focus(); }
     }
@@ -494,22 +546,35 @@ if (typeof document !== 'undefined') (function () {
     el.classList.add('tray-cal');
     el.addEventListener('click', function (e) {
       var nav = e.target.closest('[data-nav]'), day = e.target.closest('.tray-cal__day');
-      if (nav) { view = new Date(view.getFullYear(), view.getMonth() + (+nav.dataset.nav), 1); focusIso = null; render(); var again = $('[data-nav="' + nav.dataset.nav + '"]:not([data-ghost])', el); if (again) again.focus(); }
+      if (nav) {
+        view = new Date(view.getFullYear(), view.getMonth() + (+nav.dataset.nav), 1); focusIso = null; render();
+        var again = $('[data-nav="' + nav.dataset.nav + '"]:not([data-ghost])', el); if (again) again.focus();
+        said.textContent = $$('.tray-cal__title', el).map(function (t) { return t.textContent; }).join(', ');
+      }
       else if (day && !day.disabled) pick(parseDate(day.dataset.date));
     });
+    /* The same day n months on, or the last day of that month when it is shorter (31 January, then 28 February). */
+    function monthsOn(d, n) { var last = new Date(d.getFullYear(), d.getMonth() + n + 1, 0).getDate(); return new Date(d.getFullYear(), d.getMonth() + n, Math.min(d.getDate(), last)); }
+    /* The keys of a date picker's grid, as the ARIA practices set them: the arrows by a day and a week, Home and End to
+       the start and the end of the week, Page Up and Page Down by a month, with Shift by a year. Past min or max an
+       arrow stays put, and the other keys stop at the limit. */
     el.addEventListener('keydown', function (e) {
       var day = e.target.closest && e.target.closest('.tray-cal__day');
+      if (!day) return;
       /* in a right-to-left page the week runs from right to left, so the left arrow goes on to the next day */
       var back = getComputedStyle(el).direction === 'rtl' ? 1 : -1;
       var step = { ArrowLeft: back, ArrowRight: -back, ArrowUp: -7, ArrowDown: 7 }[e.key];
-      if (!day || !step) return;
+      var from = parseDate(day.dataset.date), to = null, dow = (from.getDay() - weekStart + 7) % 7;
+      if (step) to = new Date(from.getFullYear(), from.getMonth(), from.getDate() + step);
+      else if (e.key === 'Home' || e.key === 'End') to = new Date(from.getFullYear(), from.getMonth(), from.getDate() + (e.key === 'Home' ? -dow : 6 - dow));
+      else if (e.key === 'PageUp' || e.key === 'PageDown') to = monthsOn(from, (e.key === 'PageUp' ? -1 : 1) * (e.shiftKey ? 12 : 1));
+      if (!to) return;
       e.preventDefault();
-      var from = parseDate(day.dataset.date), to = new Date(from.getFullYear(), from.getMonth(), from.getDate() + step);
-      if ((min && to < min) || (max && to > max)) return;
+      if ((min && to < min) || (max && to > max)) { if (step) return; to = min && to < min ? min : max; }
       focusIso = iso(to);
       var lastShown = new Date(view.getFullYear(), view.getMonth() + months, 0);
-      if (to < view) view = new Date(view.getFullYear(), view.getMonth() - 1, 1);
-      else if (to > lastShown) view = new Date(view.getFullYear(), view.getMonth() + 1, 1);
+      if (to < view) view = new Date(to.getFullYear(), to.getMonth(), 1);
+      else if (to > lastShown) view = new Date(to.getFullYear(), to.getMonth() - months + 1, 1);
       render(true);
     });
     el.addEventListener('pointerover', function (e) {
@@ -590,7 +655,8 @@ if (typeof document !== 'undefined') (function () {
     handle.addEventListener('pointerdown', function (e) {
       handle.setPointerCapture(e.pointerId);
       var box = root.getBoundingClientRect();
-      var rtl = !!root.closest('[dir="rtl"]');
+      /* the direction the split is laid out in, as the keys read it: a dir="ltr" part of a right-to-left page is ltr */
+      var rtl = !vertical && getComputedStyle(root).direction === 'rtl';
       function move(ev) {
         if (vertical) set((ev.clientY - box.top) / box.height * 100);
         else set((rtl ? box.right - ev.clientX : ev.clientX - box.left) / box.width * 100);
@@ -623,7 +689,9 @@ if (typeof document !== 'undefined') (function () {
     }
     function paint() {
       var i = index(), n = slides().length, end = Math.abs(track.scrollLeft) + track.clientWidth >= track.scrollWidth - 2;
-      if (count) count.textContent = (i + 1) + ' / ' + n;
+      /* The count is the first slide in view, until the track can go no further: with several slides in view the last
+         ones are then in view too, and the count says the last, "5 / 5", as Next turns off. */
+      if (count) count.textContent = (end && i > 0 ? n : i + 1) + ' / ' + n;
       /* a button that turns off at an end while it has focus hands it to the other one, or to the track */
       if (prev && i === 0) rescue(prev, next && !end ? next : track);
       if (next && end) rescue(next, prev && i > 0 ? prev : track);
@@ -849,13 +917,15 @@ if (typeof document !== 'undefined') (function () {
   /* Tabs: data-tray="tabs" on the wrapper of a [role=tablist] of [role=tab] buttons (each aria-controls a panel) and the panels. */
   UI.register('tabs', function (root) {
     var list = $('[role="tablist"]', root), tabs = $$('[role="tab"]', list);
-    function select(tab, focus) {
+    /* select(tab, focus, first): first is the tab set up at load, which is no change: it fires nothing and does not fade. */
+    function select(tab, focus, first) {
       tabs.forEach(function (t) {
         var on = t === tab, panel = document.getElementById(t.getAttribute('aria-controls'));
         t.setAttribute('aria-selected', String(on));
         t.setAttribute('tabindex', on ? '0' : '-1');
         if (panel) panel.hidden = !on;
       });
+      if (first) return;
       root.setAttribute('data-switched', '');  /* a panel shown by a choice fades in; the first one is simply there */
       if (focus) tab.focus();
       fire(root, 'change', { tab: tab.id || tab.getAttribute('aria-controls') });
@@ -869,7 +939,7 @@ if (typeof document !== 'undefined') (function () {
       else if (e.key === 'End') to = live[live.length - 1];
       if (to) { e.preventDefault(); select(to, true); }
     });
-    select(tabs.filter(function (t) { return t.getAttribute('aria-selected') === 'true'; })[0] || tabs[0]);
+    select(tabs.filter(function (t) { return t.getAttribute('aria-selected') === 'true'; })[0] || tabs[0], false, true);
   });
 
   /* Strip: data-tray="strip" on a .tray-tabs that may overflow; marks it is-clipped while tabs run past the end edge. */
@@ -1076,7 +1146,7 @@ if (typeof document !== 'undefined') (function () {
           fire(btn, 'close');
         });
         sheet.addEventListener('click', function (e) { if (e.target.closest('a[href]')) shut(sheet); });
-        if (window.matchMedia) window.matchMedia('(min-width: 56.0625rem)').addEventListener('change', function (e) { if (e.matches && sheet.open) sheet.close(); });
+        if (window.matchMedia) window.matchMedia('(min-width: 56rem)').addEventListener('change', function (e) { if (e.matches && sheet.open) sheet.close(); });
       }
       wasCollapsed = side.hasAttribute('data-collapsed');
       side.removeAttribute('data-collapsed');
@@ -1112,14 +1182,22 @@ if (typeof document !== 'undefined') (function () {
       if (active) { active.setAttribute('data-active', ''); input.setAttribute('aria-activedescendant', active.id); if (active.scrollIntoView) active.scrollIntoView({ block: 'nearest' }); }
       else input.removeAttribute('aria-activedescendant');
     }
+    /* Focus stays in the field, where nothing reads the list as it narrows: a status line says how many options are left,
+       or the no-match sentence, when those words change. data-found words the count, "{n} found"; by default "1 match",
+       "3 matches". */
+    var tell = quietStatus(root);
+    function found(n) { return root.dataset.found ? root.dataset.found.replace('{n}', n) : n + (n === 1 ? ' match' : ' matches'); }
+    /* The filter and the value look at the option's name: the keys of its shortcut (G O) are not words to find it by. */
     function filter() {
       var q = input.value.trim().toLowerCase();
-      options().forEach(function (o) { o.hidden = !!q && o.textContent.toLowerCase().indexOf(q) < 0; });
+      options().forEach(function (o) { o.hidden = !!q && optionWords(o).toLowerCase().indexOf(q) < 0; });
       $$('[data-group]', list).forEach(function (g) { g.hidden = !$$('[role="option"]', g).some(function (o) { return !o.hidden; }); });
-      if (empty) empty.hidden = visible().length > 0;
+      var n = visible().length;
+      if (empty) empty.hidden = n > 0;
+      tell(!q ? '' : n ? found(n) : (empty ? empty.textContent.trim() : found(0)));
       setActive(visible()[0]);
     }
-    function run(o) { fire(root, 'select', { value: o.dataset.value || o.textContent.trim() }); }
+    function run(o) { fire(root, 'select', { value: o.dataset.value || optionWords(o) }); }
     input.addEventListener('input', filter);
     input.addEventListener('keydown', function (e) {
       var vis = visible(), i = vis.indexOf(active);
@@ -1150,6 +1228,10 @@ if (typeof document !== 'undefined') (function () {
       pressedOutside = false;
     });
     d.addEventListener('cancel', function (e) {
+      /* data-static on an alert dialog refuses Escape. A browser lets a page refuse it only so many times: Chrome 157
+         refuses the first two presses and closes the dialog at the third, with a cancel event that cannot be cancelled,
+         whatever was clicked or pressed between. Escape is slowed, not stopped; the dialog then closes with an empty
+         returnValue, as Escape on any dialog does. */
       if (d.getAttribute('role') === 'alertdialog' && d.hasAttribute('data-static')) { e.preventDefault(); return; }
       /* Escape: where the browser cannot keep the dialog in the top layer while it leaves, it leaves first, then closes */
       if (!calm() && !topLayerExit()) { e.preventDefault(); shut(d, ''); }
@@ -1219,14 +1301,16 @@ if (typeof document !== 'undefined') (function () {
     var target = root.querySelector('button, a, input, [tabindex]') || root, tip = document.createElement('span'), timer = null;
     tip.setAttribute('role', 'tooltip');
     tip.id = uid('tray-tooltip');
+    /* the words of a text, lower case, without their punctuation: "Orders, 12 to pack" is "orders 12 to pack" */
+    function plain(s) { return ' ' + String(s).toLowerCase().replace(/[\s!-\/:-@\[-`{-~ ‐-…]+/g, ' ').trim() + ' '; }
     function paint() {
       var words = root.dataset.tip || '', name = (target.getAttribute('aria-label') || target.textContent || '').trim();
       tip.className = 'tray-tooltip' + (root.dataset.side === 'bottom' ? ' tray-tooltip--bottom' : '');
       tip.textContent = words;
-      /* Words that only say the control's name again are for the eye alone: CSS draws them with no text for a screen
-         reader, so the name is not read a second time as the description, which keeps the keys. (aria-hidden would not
-         do: a description is read from a hidden bubble whole.) */
-      if (words.trim().toLowerCase() === name.toLowerCase()) {
+      /* Words that the control's name already holds ("Orders" for a link named "Orders, 12 to pack") are for the eye
+         alone: CSS draws them with no text for a screen reader, so they are not read a second time as the description,
+         which keeps the keys. (aria-hidden would not do: a description is read from a hidden bubble whole.) */
+      if (plain(words).trim() && plain(name).indexOf(plain(words)) >= 0) {
         var said = document.createElement('span');
         said.className = 'tray-tooltip__said';
         said.setAttribute('data-said', words);
@@ -1242,12 +1326,16 @@ if (typeof document !== 'undefined') (function () {
       new MutationObserver(paint).observe(root, { attributes: true, attributeFilter: ['data-tip', 'data-keys', 'data-side'] });
       if (target !== root) new MutationObserver(paint).observe(target, { attributes: true, attributeFilter: ['aria-label'] });
     }
+    /* Escape hides a bubble wherever focus is, also when the pointer alone showed it (WCAG 1.4.13): the page listens
+       while the bubble shows. The key stops there, so a dialog around the tooltip stays open; the next Escape closes
+       it. A menu or a list that closes on the same key comes first. */
+    function key(e) { if (e.key === 'Escape' && !e.defaultPrevented) { e.preventDefault(); set(false); } }
     function set(open, wait) {
       clearTimeout(timer);
       if (root.hasAttribute('data-open')) return;
-      if (open) show(tip);
-      else if (wait) timer = setTimeout(function () { hide(tip); }, 150);
-      else hide(tip);
+      if (open) { show(tip); document.addEventListener('keydown', key); }
+      else if (wait) timer = setTimeout(function () { set(false); }, 150);
+      else { hide(tip); document.removeEventListener('keydown', key); }
     }
     /* The pointer can move onto the bubble and rest there (WCAG 1.4.13): it goes a moment after the pointer has left the
        control and the bubble both, and stays while the control has focus. */
@@ -1255,7 +1343,6 @@ if (typeof document !== 'undefined') (function () {
     root.addEventListener('pointerleave', function () { if (!root.contains(document.activeElement)) set(false, true); });
     root.addEventListener('focusin', function () { set(true); });
     root.addEventListener('focusout', function () { if (!root.matches(':hover')) set(false); });
-    root.addEventListener('keydown', function (e) { if (e.key === 'Escape') set(false); });
   });
 
   /* Toast: TrayUI.toast({ title, text, tone: 'success' | 'danger', action: { label, onClick }, duration })
@@ -1342,12 +1429,24 @@ if (typeof document !== 'undefined') (function () {
     function all() { return series.reduce(function (a, s) { return a.concat(s.values); }, []); }
     $$('[data-gen]', el).forEach(function (n) { if (n.parentNode === el) el.removeChild(n); });
     el.classList.add('tray-chart');
+    /* The figure is named by its caption: browsers do not all take a figure's name from its figcaption, so it is said
+       with aria-labelledby. */
+    var caption = $(':scope > figcaption', el);
+    if (caption && !el.hasAttribute('aria-label') && !el.hasAttribute('aria-labelledby')) { caption.id = caption.id || uid('tray-chart-title'); el.setAttribute('aria-labelledby', caption.id); }
     el.classList.toggle('tray-chart--single', series.length === 1 && type !== 'donut' && !(type === 'radial' && series[0].values.length > 1));
     var summary = cfg.summary || (type + ' chart. ' + series.map(function (s) { return s.name + ': ' + labels.map(function (l, i) { return l + ' ' + val(s.values[i]); }).join(', '); }).join('. '));
     /* What the arrow keys reach is said through this region. It sits in the figure, beside the drawing: the children of a
        role="img" are presentational, so a region inside it would never be heard. */
     var live = make('span', 'tray-vh');
     live.setAttribute('aria-live', 'polite');
+
+    /* On touch a tap shows the values under it until the next tap elsewhere: a finger that lifts is not a pointer that
+       leaves. lingers(box, clear) gives the pointerleave handler, which clears for a mouse or a pen only. */
+    function lingers(box, clear) {
+      function away(e) { if (!box.contains(e.target)) { document.removeEventListener('pointerdown', away); clear(); } }
+      box.addEventListener('pointerdown', function (e) { if (e.pointerType === 'touch') document.addEventListener('pointerdown', away); });
+      return function (e) { if (e.pointerType !== 'touch') clear(); };
+    }
 
     function legend(names) {
       var ul = make('ul', 'tray-chart__legend');
@@ -1446,7 +1545,7 @@ if (typeof document !== 'undefined') (function () {
       }
       plot.addEventListener('pointermove', function (e) { show(at(e)); });
       plot.addEventListener('pointerdown', function (e) { show(at(e)); });
-      plot.addEventListener('pointerleave', hide);
+      plot.addEventListener('pointerleave', lingers(plot, hide));
       plot.addEventListener('blur', hide);
       plot.addEventListener('keydown', function (e) {
         var rtl = getComputedStyle(plot).direction === 'rtl', step = { ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 }[e.key];
@@ -1496,7 +1595,7 @@ if (typeof document !== 'undefined') (function () {
         if (announce && i != null) live.textContent = labels[i] + ': ' + val(vals[i]) + ', ' + Math.round(vals[i] / total * 100) + '%';
       }
       round.addEventListener('pointerover', function (e) { var seg = e.target.closest && e.target.closest('.tray-chart__seg'); show(seg ? +seg.dataset.i : null); });
-      round.addEventListener('pointerleave', function () { show(null); });
+      round.addEventListener('pointerleave', lingers(round, function () { show(null); }));
       round.addEventListener('blur', function () { show(null); });
       round.addEventListener('keydown', function (e) {
         var step = { ArrowLeft: -1, ArrowUp: -1, ArrowRight: 1, ArrowDown: 1 }[e.key];
@@ -1558,11 +1657,14 @@ if (typeof document !== 'undefined') (function () {
         tip.style.transform = 'translate(-50%, -50%)';
         if (announce) live.textContent = labels[i] + ': ' + series.map(function (s) { return s.name + ' ' + val(s.values[i]); }).join(', ');
       }
-      round.addEventListener('pointermove', function (e) {
+      function point(e) {
         var box = round.getBoundingClientRect(), a = Math.atan2(e.clientY - box.top - box.height / 2, e.clientX - box.left - box.width / 2) + Math.PI / 2;
         show(Math.round(((a + Math.PI * 2) % (Math.PI * 2)) / (Math.PI * 2) * n) % n);
-      });
-      round.addEventListener('pointerleave', function () { show(null); });
+      }
+      /* a tap moves nothing: it shows the spoke under it as it lands */
+      round.addEventListener('pointermove', point);
+      round.addEventListener('pointerdown', point);
+      round.addEventListener('pointerleave', lingers(round, function () { show(null); }));
       round.addEventListener('blur', function () { show(null); });
       round.addEventListener('keydown', function (e) {
         var step = { ArrowLeft: -1, ArrowUp: -1, ArrowRight: 1, ArrowDown: 1 }[e.key];
@@ -1630,7 +1732,9 @@ if (typeof document !== 'undefined') (function () {
         var th = btn.closest('th'), i = [].indexOf.call(th.parentNode.children, th), dir = th.getAttribute('aria-sort') === 'ascending' ? 'descending' : 'ascending';
         $$('th', table.tHead).forEach(function (h) { h.removeAttribute('aria-sort'); var u = $('.tray-sort use', h); if (u) u.setAttribute('href', '#tray-i-arrow-up-down'); });
         th.setAttribute('aria-sort', dir);
-        $('use', btn).setAttribute('href', '#tray-i-arrow-' + (dir === 'ascending' ? 'up' : 'down'));
+        /* the icon is optional: aria-sort on the head says the order, the arrow only shows it */
+        var use = $('use', btn);
+        if (use) use.setAttribute('href', '#tray-i-arrow-' + (dir === 'ascending' ? 'up' : 'down'));
         rows.sort(function (a, b) { var x = key(a.children[i]), y = key(b.children[i]); return (x > y ? 1 : x < y ? -1 : 0) * (dir === 'ascending' ? 1 : -1); });
         rows.forEach(function (r) { body.insertBefore(r, empty || null); });
         page = 0; paint();
@@ -1851,7 +1955,12 @@ if (typeof document !== 'undefined') (function () {
   /* pricing: a billing-period switch. Inside the wrapper, an element with data-monthly and data-yearly shows the text of the chosen period.
      Focus stays on the switch while the prices change, so a hidden status reads the new ones. */
   UI.register('pricing', function (root) {
-    var status = null;
+    /* The status region is there from the start, empty: a screen reader hears a live region only once it knows it, so
+       one made at the first change could lose the first prices. */
+    var status = document.createElement('span');
+    status.className = 'tray-vh';
+    status.setAttribute('role', 'status');
+    root.appendChild(status);
     function words(el) { return [].slice.call(el.childNodes).map(function (n) { return n.textContent.trim(); }).filter(Boolean).join(' '); }
     function spoken(on, period) {
       var label = on && on.closest('label') ? on.closest('label').textContent.trim() : period;
@@ -1874,7 +1983,6 @@ if (typeof document !== 'undefined') (function () {
       root.setAttribute('data-period', period);
       $$('[data-' + period + ']', root).forEach(function (n) { n.textContent = n.getAttribute('data-' + period); });
       if (!tell) return;
-      if (!status) { status = document.createElement('span'); status.className = 'tray-vh'; status.setAttribute('role', 'status'); root.appendChild(status); }
       say(status, spoken(on, period));
       fire(root, 'change', { period: period });
     }
@@ -1975,16 +2083,24 @@ if (typeof document !== 'undefined') (function () {
       if (said) say(live, said);
       fire(root, 'change', { values: values(), valid: !$('.tray-chip[data-invalid]', root) });
     }
-    /* add(raw): false when there is no room for it, so the caller keeps what was typed. */
-    function add(raw) {
-      var v = String(raw).trim().replace(/[,;]+$/, '');
-      if (!v) return true;
-      if (values().indexOf(v) >= 0) { say(live, v + ' is already in the list'); return true; }
-      if (values().length >= max) { say(live, v + ' not added: the limit is ' + max); return false; }
+    /* add(v, words): puts one value in, and what happened in words. False when there is no room for it. */
+    function add(v, words) {
+      if (values().indexOf(v) >= 0) { words.push(v + ' is already in the list'); return true; }
+      if (values().length >= max) return false;
       var bad = !ok(v);
       root.insertBefore(chipOf(v, null, bad ? wrong : null), input);
-      sync(v + ' added' + (bad ? ', ' + wrong : ''));
+      words.push(v + ' added' + (bad ? ', ' + wrong : ''));
       return true;
+    }
+    /* addAll(list): one value typed or a whole list pasted, said in one message ("jam added. honey added. salt added"),
+       so a pasted list is heard whole and not only its last value. Returns what did not fit, for the field to keep. */
+    function addAll(list) {
+      var words = [], before = values().length;
+      var left = list.map(function (v) { return String(v).trim().replace(/[,;]+$/, ''); }).filter(Boolean).filter(function (v) { return !add(v, words); });
+      if (left.length) words.push(left.join(', ') + ' not added: the limit is ' + max);
+      if (values().length !== before) sync(words.join('. '));
+      else if (words.length) say(live, words.join('. '));
+      return left;
     }
     function drop(chip) { var v = chip.getAttribute('data-value'); chip.remove(); sync(v + ' removed'); }
     root.addEventListener('click', function (e) {
@@ -1992,7 +2108,7 @@ if (typeof document !== 'undefined') (function () {
       if (x) { drop(x.closest('.tray-chip')); input.focus(); } else if (e.target === root) input.focus();
     });
     input.addEventListener('keydown', function (e) {
-      if ((e.key === 'Enter' || e.key === ',') && input.value.trim()) { e.preventDefault(); if (add(input.value)) input.value = ''; }
+      if ((e.key === 'Enter' || e.key === ',') && input.value.trim()) { e.preventDefault(); if (!addAll([input.value]).length) input.value = ''; }
       else if (e.key === 'Backspace' && !input.value) { var all = chips(); if (all.length) drop(all[all.length - 1]); }
     });
     input.addEventListener('paste', function (e) {
@@ -2000,10 +2116,10 @@ if (typeof document !== 'undefined') (function () {
       if (!/[,;\s]/.test(text.trim())) return;
       e.preventDefault();
       /* what does not fit stays in the field, so nothing pasted is lost */
-      var left = text.split(/[,;\s]+/).filter(function (v) { return !add(v); });
+      var left = addAll(text.split(/[,;\s]+/));
       if (left.length) input.value = left.join(', ');
     });
-    input.addEventListener('blur', function () { if (input.value.trim() && add(input.value)) input.value = ''; });
+    input.addEventListener('blur', function () { if (input.value.trim() && !addAll([input.value]).length) input.value = ''; });
     chips().forEach(function (c) {
       if (!c.hasAttribute('data-value')) c.setAttribute('data-value', c.textContent.trim());
       var x = $('.tray-chip__x', c);
@@ -2117,16 +2233,19 @@ if (typeof document !== 'undefined') (function () {
       var b = e.target.closest('[data-tour]');
       if (!b) return;
       var act = b.getAttribute('data-tour');
-      if (act === 'back' && at > 0) show(at - 1);
+      /* Back on the first step has nowhere to go and does nothing; only Next on the last step finishes the tour */
+      if (act === 'back') { if (at <= 0) return; show(at - 1); }
       else if (act === 'next' && at < steps.length - 1) show(at + 1);
-      else { end(act !== 'skip'); return; }
+      else if (act === 'next' || act === 'skip') { end(act === 'next'); return; }
+      else return;
       var go = $('[data-tour="next"]', steps[at]);
       if (go) go.focus();
       fire(root, 'change', { step: at + 1 });
     });
-    /* Escape in a step closes the tour, as Skip does. */
+    /* Escape anywhere in the area closes the tour, as Skip does: also from the part a step covers (on a phone the step
+       may lie over a control), where focus is not in the step. A menu or a list there closes first on its own Escape. */
     root.addEventListener('keydown', function (e) {
-      if (e.key !== 'Escape' || at < 0 || !steps[at] || !steps[at].contains(e.target)) return;
+      if (e.key !== 'Escape' || e.defaultPrevented || at < 0 || !steps[at]) return;
       e.preventDefault();
       end(false);
     });

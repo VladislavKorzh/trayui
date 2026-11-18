@@ -50,7 +50,12 @@
   /* pricing: a billing-period switch. Inside the wrapper, an element with data-monthly and data-yearly shows the text of the chosen period.
      Focus stays on the switch while the prices change, so a hidden status reads the new ones. */
   UI.register('pricing', function (root) {
-    var status = null;
+    /* The status region is there from the start, empty: a screen reader hears a live region only once it knows it, so
+       one made at the first change could lose the first prices. */
+    var status = document.createElement('span');
+    status.className = 'tray-vh';
+    status.setAttribute('role', 'status');
+    root.appendChild(status);
     function words(el) { return [].slice.call(el.childNodes).map(function (n) { return n.textContent.trim(); }).filter(Boolean).join(' '); }
     function spoken(on, period) {
       var label = on && on.closest('label') ? on.closest('label').textContent.trim() : period;
@@ -73,7 +78,6 @@
       root.setAttribute('data-period', period);
       $$('[data-' + period + ']', root).forEach(function (n) { n.textContent = n.getAttribute('data-' + period); });
       if (!tell) return;
-      if (!status) { status = document.createElement('span'); status.className = 'tray-vh'; status.setAttribute('role', 'status'); root.appendChild(status); }
       say(status, spoken(on, period));
       fire(root, 'change', { period: period });
     }
@@ -174,16 +178,24 @@
       if (said) say(live, said);
       fire(root, 'change', { values: values(), valid: !$('.tray-chip[data-invalid]', root) });
     }
-    /* add(raw): false when there is no room for it, so the caller keeps what was typed. */
-    function add(raw) {
-      var v = String(raw).trim().replace(/[,;]+$/, '');
-      if (!v) return true;
-      if (values().indexOf(v) >= 0) { say(live, v + ' is already in the list'); return true; }
-      if (values().length >= max) { say(live, v + ' not added: the limit is ' + max); return false; }
+    /* add(v, words): puts one value in, and what happened in words. False when there is no room for it. */
+    function add(v, words) {
+      if (values().indexOf(v) >= 0) { words.push(v + ' is already in the list'); return true; }
+      if (values().length >= max) return false;
       var bad = !ok(v);
       root.insertBefore(chipOf(v, null, bad ? wrong : null), input);
-      sync(v + ' added' + (bad ? ', ' + wrong : ''));
+      words.push(v + ' added' + (bad ? ', ' + wrong : ''));
       return true;
+    }
+    /* addAll(list): one value typed or a whole list pasted, said in one message ("jam added. honey added. salt added"),
+       so a pasted list is heard whole and not only its last value. Returns what did not fit, for the field to keep. */
+    function addAll(list) {
+      var words = [], before = values().length;
+      var left = list.map(function (v) { return String(v).trim().replace(/[,;]+$/, ''); }).filter(Boolean).filter(function (v) { return !add(v, words); });
+      if (left.length) words.push(left.join(', ') + ' not added: the limit is ' + max);
+      if (values().length !== before) sync(words.join('. '));
+      else if (words.length) say(live, words.join('. '));
+      return left;
     }
     function drop(chip) { var v = chip.getAttribute('data-value'); chip.remove(); sync(v + ' removed'); }
     root.addEventListener('click', function (e) {
@@ -191,7 +203,7 @@
       if (x) { drop(x.closest('.tray-chip')); input.focus(); } else if (e.target === root) input.focus();
     });
     input.addEventListener('keydown', function (e) {
-      if ((e.key === 'Enter' || e.key === ',') && input.value.trim()) { e.preventDefault(); if (add(input.value)) input.value = ''; }
+      if ((e.key === 'Enter' || e.key === ',') && input.value.trim()) { e.preventDefault(); if (!addAll([input.value]).length) input.value = ''; }
       else if (e.key === 'Backspace' && !input.value) { var all = chips(); if (all.length) drop(all[all.length - 1]); }
     });
     input.addEventListener('paste', function (e) {
@@ -199,10 +211,10 @@
       if (!/[,;\s]/.test(text.trim())) return;
       e.preventDefault();
       /* what does not fit stays in the field, so nothing pasted is lost */
-      var left = text.split(/[,;\s]+/).filter(function (v) { return !add(v); });
+      var left = addAll(text.split(/[,;\s]+/));
       if (left.length) input.value = left.join(', ');
     });
-    input.addEventListener('blur', function () { if (input.value.trim() && add(input.value)) input.value = ''; });
+    input.addEventListener('blur', function () { if (input.value.trim() && !addAll([input.value]).length) input.value = ''; });
     chips().forEach(function (c) {
       if (!c.hasAttribute('data-value')) c.setAttribute('data-value', c.textContent.trim());
       var x = $('.tray-chip__x', c);
@@ -316,16 +328,19 @@
       var b = e.target.closest('[data-tour]');
       if (!b) return;
       var act = b.getAttribute('data-tour');
-      if (act === 'back' && at > 0) show(at - 1);
+      /* Back on the first step has nowhere to go and does nothing; only Next on the last step finishes the tour */
+      if (act === 'back') { if (at <= 0) return; show(at - 1); }
       else if (act === 'next' && at < steps.length - 1) show(at + 1);
-      else { end(act !== 'skip'); return; }
+      else if (act === 'next' || act === 'skip') { end(act === 'next'); return; }
+      else return;
       var go = $('[data-tour="next"]', steps[at]);
       if (go) go.focus();
       fire(root, 'change', { step: at + 1 });
     });
-    /* Escape in a step closes the tour, as Skip does. */
+    /* Escape anywhere in the area closes the tour, as Skip does: also from the part a step covers (on a phone the step
+       may lie over a control), where focus is not in the step. A menu or a list there closes first on its own Escape. */
     root.addEventListener('keydown', function (e) {
-      if (e.key !== 'Escape' || at < 0 || !steps[at] || !steps[at].contains(e.target)) return;
+      if (e.key !== 'Escape' || e.defaultPrevented || at < 0 || !steps[at]) return;
       e.preventDefault();
       end(false);
     });

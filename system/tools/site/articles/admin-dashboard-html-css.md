@@ -64,7 +64,7 @@ These are Tray UI's rules for the shell, with the breakpoint that hides the side
   inline-size: min(100%, 72rem);
   margin-inline: auto;
 }
-@media (max-width: 56rem) {
+@media (max-width: 55.99rem) {
   .tray-app { grid-template-columns: minmax(0, 1fr); }
   .tray-app__side { display: none; }
 }
@@ -129,7 +129,7 @@ In Tray UI the button is `data-tray="sidebar-toggle"` with `aria-controls`, and 
 The bar says where the person is at its start and holds the tools at its end.
 
 - **The breadcrumb** is a `<nav aria-label="Breadcrumb">` around an ordered list, and its last item carries `aria-current="page"`.
-- **The search** is a button that looks like a field and opens a [Command](#c-command) panel. Its key hint, `/`, is drawn in a [Kbd](#c-kbd). Tray UI does not bind that key, and the block's button declares it with `aria-keyshortcuts="/"`, so your own script has to listen for it.
+- **The search** is a button that looks like a field and opens a [Command](#c-command) panel. Its key hint, `/`, is drawn in a [Kbd](#c-kbd). Tray UI does not bind that key, so your own script has to listen for it, and only then add `aria-keyshortcuts="/"` to the button, which tells a screen reader the key works. Since the next release the block's button no longer declares a key that nothing binds.
 - **Notifications** is an icon button named "Notifications, 2 unread". The yellow count on its corner is hidden from assistive technologies, so the number is not read a second time. Change the label whenever the count changes.
 - **The account** is the avatar as a button, named "Account: Oksana Franko".
 
@@ -234,7 +234,7 @@ The behaviour writes the counts and announces nothing, so the block gives both `
 
 ## On a phone
 
-At 56rem and below, 896 pixels at the default text size, the shell drops to one column and the sidebar leaves the page. A menu button in the top bar, `data-tray="sidebar-sheet"`, moves that same sidebar into a modal `<dialog>` from the start side, named "Main" after it. Focus moves in, Escape closes it and focus returns to the button, and following a link closes it too. The collapse button hides, since there is nothing beside the content to fold.
+Below 56rem, 896 pixels at the default text size, the shell drops to one column and the sidebar leaves the page. A menu button in the top bar, `data-tray="sidebar-sheet"`, moves that same sidebar into a modal `<dialog>` from the start side, named "Main" after it. Focus moves in, Escape closes it and focus returns to the button, and following a link closes it too. The collapse button hides, since there is nothing beside the content to fold.
 
 Below 48rem the top bar folds part by part. `tray-crumbs--fold` keeps only the current page of the breadcrumb, and `tray-topbar__search--fold` keeps only the search icon, which is why that button has an `aria-label`. The stat cards go two by two and the page header's buttons wrap under the title. The table keeps its 40rem and scrolls sideways inside its frame: 640 pixels of table in a frame 342 wide on a 390-pixel phone. The frame has `tabindex="0"`, so a keyboard can reach and scroll it, and `role="region"` with the table's heading as its name.
 

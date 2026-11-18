@@ -49,7 +49,7 @@
 .tray-select { position: relative; display: block; }
 .tray-select select { appearance: none; padding-inline-end: 48px; cursor: pointer; }
 .tray-select::after { content: ""; position: absolute; inset-inline-end: 20px; inset-block-start: calc(50% - 7px); inline-size: 9px; block-size: 9px; border-inline-end: 2px solid var(--ink); border-block-end: 2px solid var(--ink); transform: rotate(45deg); pointer-events: none; }
-[dir="rtl"] .tray-select::after { transform: rotate(-45deg) scaleX(-1); }
+.tray-select:dir(rtl)::after { transform: rotate(-45deg) scaleX(-1); }
 .tray-select--sm select { min-block-size: var(--size-sm); padding-inline: 14px 40px; border-radius: var(--radius-control); font-size: 1rem; }
 .tray-select--sm::after { inset-inline-end: 16px; }
 
@@ -80,7 +80,8 @@
 
 /* ---------- Input OTP ---------- */
 
-.tray-otp { display: inline-flex; align-items: center; gap: var(--space-2); }
+/* A code is read left to right in every language: the cells keep that order in a right-to-left page too. */
+.tray-otp { display: inline-flex; align-items: center; gap: var(--space-2); direction: ltr; }
 .tray-otp input { inline-size: 52px; block-size: var(--size-lg); padding: 0; border: 0; border-radius: var(--radius-control); background: var(--tray-fill); color: var(--ink); caret-color: var(--ink); font: 700 1.375rem/1 var(--font-sans); font-variant-numeric: tabular-nums; text-align: center; }
 .tray-otp input:focus-visible { outline: 2px solid var(--ink); outline-offset: 0; }
 .tray-otp[aria-invalid="true"] input { outline: 2px solid var(--danger); outline-offset: -2px; }
@@ -135,7 +136,7 @@
 .tray-switch__track::before { content: ""; display: block; inline-size: 26px; block-size: 26px; border-radius: 50%; background: var(--tray-on-ink); transition: transform var(--duration-move) var(--ease); }
 .tray-switch input:checked + .tray-switch__track { background: var(--ink); }
 .tray-switch input:checked + .tray-switch__track::before { transform: translateX(24px); }
-[dir="rtl"] .tray-switch input:checked + .tray-switch__track::before { transform: translateX(-24px); }
+.tray-switch input:checked + .tray-switch__track:dir(rtl)::before { transform: translateX(-24px); }
 .tray-switch input:focus-visible + .tray-switch__track { outline: 3px solid var(--ink); outline-offset: 3px; }
 .tray-switch:has(input:disabled) { opacity: var(--opacity-disabled); cursor: not-allowed; }
 .tray-switch--row { display: flex; justify-content: space-between; gap: var(--space-4); padding: var(--space-4) 18px; border-radius: var(--radius-input); background: var(--tray-fill); }
@@ -155,7 +156,7 @@
 .tray-slider:focus-visible::-webkit-slider-thumb { outline: 3px solid var(--ink); outline-offset: 5px; }
 .tray-slider:focus-visible::-moz-range-thumb { outline: 3px solid var(--ink); outline-offset: 5px; }
 .tray-slider:disabled { opacity: var(--opacity-disabled); cursor: not-allowed; }
-[dir="rtl"] .tray-slider::-webkit-slider-runnable-track { background-position: 100% 0; }
+.tray-slider:dir(rtl)::-webkit-slider-runnable-track { background-position: 100% 0; }
 .tray-slider-field { display: grid; gap: var(--space-2); }
 .tray-slider-field__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); }
 .tray-slider-field__head output { font: 600 1.0625rem/1 var(--font-sans); font-variant-numeric: tabular-nums; }
@@ -191,8 +192,8 @@
 .tray-cal__day[data-in-range]:nth-child(7n) { border-start-end-radius: var(--radius-control); border-end-end-radius: var(--radius-control); }
 .tray-cal__day[data-start] { background: linear-gradient(to right, transparent 50%, var(--tray-fill) 50%); }
 .tray-cal__day[data-end] { background: linear-gradient(to left, transparent 50%, var(--tray-fill) 50%); }
-[dir="rtl"] .tray-cal__day[data-start] { background: linear-gradient(to left, transparent 50%, var(--tray-fill) 50%); }
-[dir="rtl"] .tray-cal__day[data-end] { background: linear-gradient(to right, transparent 50%, var(--tray-fill) 50%); }
+.tray-cal__day[data-start]:dir(rtl) { background: linear-gradient(to left, transparent 50%, var(--tray-fill) 50%); }
+.tray-cal__day[data-end]:dir(rtl) { background: linear-gradient(to right, transparent 50%, var(--tray-fill) 50%); }
 .tray-cal__day[aria-pressed="true"] .tray-cal__num, .tray-cal__day[aria-pressed="true"]:hover .tray-cal__num { background: var(--ink); color: var(--tray-on-ink); }
 .tray-cal__day:focus-visible { outline: none; }
 .tray-cal__day:focus-visible .tray-cal__num { outline: 3px solid var(--ink); outline-offset: -3px; }

@@ -35,7 +35,7 @@ A sidebar is the navigation of an application: a tray down the side with groups 
 The Sidebar blocks show each of these in a page.
 
 ## Accessibility
-- The sidebar is a `<nav>` named by its `aria-label`. The link to the current page carries `aria-current="page"` (`"true"` in a second level).
+- The sidebar is a `<nav>` named by its `aria-label`. The link to the current page carries `aria-current="page"`, in the first level or in a second. An item that opens its second level as a menu beside it, where the current page is out of sight, carries `aria-current="true"` while its menu holds that page, as in the flyout sidebar block.
 - The current item is solid ink, a current second-level item semibold, and with forced colours the current item takes the system's colours for a chosen item. Focus draws the ring inside the row.
 - The collapse button keeps `aria-expanded` in step: `true` while the sidebar is open, `false` while it is a rail, and its name changes with it, from "Collapse the sidebar" to "Expand the sidebar".
 - In the rail an item's label and count are only hidden from sight, so the link keeps its name ("Orders 12"); give it a Tooltip to show the name. Group names and second levels are `display: none` there, and are not read either.

@@ -44,7 +44,7 @@ Tray UI's greys are steps on a line from the tray to the ink, each placed at a c
 
 Three more move on the ink card: `on-dark-soft` takes `on-inverse`, `on-dark-muted` takes `on-dark-soft`, and the rule colour `dark-rule` takes `on-dark-muted`.
 
-Most steps move by one. Two move further, on purpose. The hairline jumps past `track` and `rule-strong` to the value of `control-off`, so a dividing line and the edge of a field reach 3:1: across the ten themes, 3.17:1 or more on the page and on the tray. `rule-strong` then moves two steps, to `ink-hint`, and stays stronger than the hairline.
+Most steps move by one. Two move further, on purpose. The hairline jumps past `track` and `rule-strong` to the value of `control-off`, so a dividing line and the edge of a field reach 3:1: across the ten themes, 3.17:1 or more on the page and on the tray. On a floating panel of a dark theme `control-off` reaches only 2.86:1, so in Dark, Midnight, Forest and Espresso the hairline goes one step further, to `ink-hint`, 4.53:1 or more there; the build checks each theme and takes the next step where a rule falls short. `rule-strong` then moves two steps, to `ink-hint`, and stays stronger than the hairline. The yellow card has greys of its own, and its hairline and track take `paper-soft`, which reads 4.6:1 or more on the accent of every theme.
 
 Measured across all ten themes, on the grounds their rules name, `ink-soft` becomes the ink and reads 10:1 or more everywhere. `ink-muted` reads at least 7.98:1 on the page, the tray and floating panels, and 6.61:1 on the green `leaf`. `ink-hint` reads at least 6.02:1. Secondary text and captions reach the AAA figure on the main grounds; hints come close to it.
 
@@ -113,7 +113,7 @@ Most of Tray UI is fills with no edge: a tray on the page, a field filled with t
 }
 ```
 
-- **The edge is the hairline**, which this mode moves to the value of `control-off`. That one token change brings the edges to 3:1 on the page and the tray, in every theme.
+- **The edge is the hairline**, which this mode moves to the value of `control-off`, or of `ink-hint` in the four dark themes. That one token change brings the edges to 3:1 on the page, the tray and floating panels, in every theme.
 - **An inset shadow changes no size.** It is painted inside the box, over the fill, so a field stays 56px high and nothing on the page moves when the setting changes.
 - **The accent is bright but light**, so on a pale page its edge is drawn in its own ink, `on-accent`, and a yellow button or card ends in a dark line.
 

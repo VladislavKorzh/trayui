@@ -29,7 +29,7 @@
           <div class="tray-field">
             <label class="tray-label" for="password">Password</label>
             <div class="tray-input-group">
-              <input class="tray-input" id="password" name="password" type="password" autocomplete="new-password" minlength="12" aria-describedby="password-hint" required>
+              <input class="tray-input" id="password" name="password" type="password" spellcheck="false" autocapitalize="none" autocomplete="new-password" minlength="12" aria-describedby="password-hint" required>
               <button class="tray-input-group__btn" type="button" data-tray="reveal" aria-label="Show password"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></button>
             </div>
             <p class="tray-field__hint" id="password-hint">At least 12 characters.</p>
@@ -54,7 +54,7 @@
   <aside class="tray-screen__half tray-screen__half--wide" aria-label="What a new account gets">
     <div class="tray-card tray-card--leaf tray-screen__cover">
       <h2 class="headline">An order desk for small farms</h2>
-      <ul class="tray-items">
+      <ul class="tray-items" role="list">
         <li class="tray-item">
           <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg></span>
           <span class="tray-item__body">

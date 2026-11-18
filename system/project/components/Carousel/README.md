@@ -14,7 +14,7 @@ A carousel is one row of cards that scrolls sideways and snaps to each card.
   </div>
 </div>
 ```
-The track is the browser's own scroll with snapping, so swipe, trackpad and keyboard work without script; the behaviour adds the two buttons and the "2 / 5" count. Set the slide width with `--tray-slide` on the track (default: 78% of the track, at most 22rem), so the next card always peeks in.
+The track is the browser's own scroll with snapping, so swipe, trackpad and keyboard work without script; the behaviour adds the two buttons and the "2 / 5" count: the first slide in view, and the last one once the track can go no further, so a carousel that shows three cards at a time ends on "5 / 5". Set the slide width with `--tray-slide` on the track (default: 78% of the track, at most 22rem), so the next card always peeks in.
 
 ## Accessibility
 The track is a list named by its `aria-label`. Keep `role="list"` on it: without its bullets Safari would no longer announce it as a list. The behaviour makes it one stop for `Tab`, where `ArrowLeft` and `ArrowRight` move one slide, mirrored under `dir="rtl"`; `Tab` also reaches every link in the slides, and the browser scrolls each into view. The previous and next buttons are icon buttons: give them `aria-label`s that say what they move through, such as "Next note". At either end, the button that cannot go further becomes `disabled`, and if it had focus, focus moves to the other button first. The count is plain text and is not announced as it changes. Under `prefers-reduced-motion: reduce` the buttons and keys jump to the slide instead of scrolling smoothly.

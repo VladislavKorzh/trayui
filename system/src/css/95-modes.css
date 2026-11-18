@@ -2,7 +2,7 @@
    The system draws most things as fills with no edge: a tray on the page, an ink fill for what is chosen. Each mode
    below keeps that readable when the fills are weak, are taken away, or do not print.
    More contrast also moves each grey one step towards the ink: tokens.css does that, theme by theme. Print takes the
-   light values of every token: tokens.css does that too. */
+   values of the Light theme for every token, whatever theme the page wears: tokens.css does that too. */
 
 /* ---------- More contrast (prefers-contrast: more): every fill gets an edge ---------- */
 
@@ -38,16 +38,17 @@
   .tray-code, .tray-badge, .tray-kbd, .tray-avatar, .tray-tile, .tray-step__mark, .tray-context, .tray-sidebar, .tray-empty__icon, .tray-feed__mark, .tray-trace__icon,
   .tray-pop, .tray-dialog, .tray-sheet, .tray-drawer, .tray-toast, .tray-command, .tray-tooltip, .tray-tip { border: 1px solid CanvasText; }
   .tray-bubble--plain { border: 0; }
-  .tray-dialog::backdrop, .tray-sheet::backdrop, .tray-drawer::backdrop { background: rgb(0 0 0 / .6); }
+  /* The veil of a modal needs nothing here: the browser paints it in Canvas and keeps its alpha, so the page behind
+     fades towards Canvas. */
 
   /* what is chosen: the tab, the segment, the pressed toggle, the page you are on, the day picked */
-  .tray-toggle[aria-pressed="true"], .tray-seg__item input:checked + span, .tray-tab[aria-selected="true"], .tray-tab[aria-current], .tray-page[aria-current="page"],
+  .tray-toggle[aria-pressed="true"], .tray-seg__item input:checked + span, .tray-tab[aria-selected="true"], .tray-tab[aria-current]:not([aria-current="false"]), .tray-page[aria-current="page"],
   .tray-sidebar__item[aria-current], .tray-cal__day[aria-pressed="true"] .tray-cal__num, .tray-scale input:checked + span, .tray-reaction[aria-pressed="true"],
   .tray-stepper > li[aria-current] .tray-step__mark, .tray-task[data-done] .tray-task__mark, .tray-bubble--own {
     forced-color-adjust: none; border-color: SelectedItem; background: SelectedItem; color: SelectedItemText;
   }
-  .tray-tab[aria-selected="true"] .tray-badge, .tray-tab[aria-current] .tray-badge, .tray-sidebar__item[aria-current] .tray-badge { border-color: SelectedItemText; background: SelectedItemText; color: SelectedItem; }
-  .tray-tab[aria-selected="true"]:focus-visible, .tray-tab[aria-current]:focus-visible, .tray-sidebar__item[aria-current]:focus-visible,
+  .tray-tab[aria-selected="true"] .tray-badge, .tray-tab[aria-current]:not([aria-current="false"]) .tray-badge, .tray-sidebar__item[aria-current] .tray-badge { border-color: SelectedItemText; background: SelectedItemText; color: SelectedItem; }
+  .tray-tab[aria-selected="true"]:focus-visible, .tray-tab[aria-current]:not([aria-current="false"]):focus-visible, .tray-sidebar__item[aria-current]:focus-visible,
   .tray-cal__day[aria-pressed="true"]:focus-visible .tray-cal__num { outline-color: SelectedItemText; }
   .tray-seg__item input:focus-visible + span { outline-color: CanvasText; }
   /* the option under the keyboard or the pointer in a list, and the link to the page you are on in a menu */
@@ -74,7 +75,9 @@
   .tray-slider::-moz-range-progress { background: SelectedItem; }
   .tray-slider::-webkit-slider-thumb { background: SelectedItem; box-shadow: 0 0 0 2px Canvas, 0 0 0 3px CanvasText; }
   .tray-slider::-moz-range-thumb { background: SelectedItem; box-shadow: 0 0 0 2px Canvas, 0 0 0 3px CanvasText; }
-  .tray-slider:focus-visible::-webkit-slider-thumb, .tray-slider:focus-visible::-moz-range-thumb { outline-color: CanvasText; }
+  /* one rule each: a browser drops a whole list that holds a pseudo-element it does not know */
+  .tray-slider:focus-visible::-webkit-slider-thumb { outline-color: CanvasText; }
+  .tray-slider:focus-visible::-moz-range-thumb { outline-color: CanvasText; }
 
   /* meters and steps: the track is an edge, what is done is solid */
   .tray-progress__bar, .tray-steps span, .tray-stepper > li::before { forced-color-adjust: none; background: Canvas; box-shadow: inset 0 0 0 1px CanvasText; }
@@ -107,7 +110,7 @@
 }
 
 /* ---------- Print: ink on paper ----------
-   The page prints in the light values of its theme (tokens.css), whatever theme it wears on screen. Browsers leave fills
+   The page prints in the values of the Light theme (tokens.css), whatever theme it wears on screen. Browsers leave fills
    out of print, so a tray gets an edge instead; a fill that carries meaning (what is chosen, a bar of a chart, a meter,
    the ink card) prints as it is. The navigation and what floats over the page stay off paper. tray-noprint keeps anything
    else off paper; tray-print-only shows a thing on paper alone. */
@@ -131,10 +134,12 @@
   .tray-input-group .tray-input, .tray-bubble--plain { border: 0; }
   .tray-btn:not(.tray-btn--ghost, .tray-btn--link) { border: 1px solid var(--ink); }
 
-  /* fills that carry meaning print as they are */
-  .tray-btn--dark, .tray-card--inverse, .tray-inverse, .tray-bubble--own, .tray-toggle[aria-pressed="true"], .tray-seg__item input:checked + span, .tray-tab[aria-selected="true"], .tray-tab[aria-current],
+  /* fills that carry meaning print as they are; the sliding pill (tray-glide) is the fill behind a chosen tab or
+     segment, whose text is light on it */
+  .tray-btn--dark, .tray-card--inverse, .tray-inverse, .tray-bubble--own, .tray-toggle[aria-pressed="true"], .tray-seg__item input:checked + span, .tray-tab[aria-selected="true"], .tray-tab[aria-current]:not([aria-current="false"]),
   .tray-page[aria-current="page"], .tray-sidebar__item[aria-current], .tray-cal__day, .tray-scale span, .tray-check__box, .tray-radio__ring, .tray-switch__track, .tray-slider,
-  .tray-progress__bar, .tray-steps, .tray-stepper, .tray-step__mark, .tray-task__mark, .tray-badge, .tray-avatar, .tray-swatch, .tray-chart, .tray-uptime, .tray-notice__mark {
+  .tray-progress__bar, .tray-steps, .tray-stepper, .tray-step__mark, .tray-task__mark, .tray-badge, .tray-avatar, .tray-swatch, .tray-chart, .tray-uptime, .tray-notice__mark,
+  .tray-glide {
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
 

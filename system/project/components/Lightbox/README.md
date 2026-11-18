@@ -4,7 +4,7 @@ A lightbox shows the pictures of a gallery one at a time, as large as the window
 
 ## Markup
 ```html
-<ul class="tray-gallery tray-gallery--lead" data-tray="lightbox" data-target="#farm-pictures" aria-label="The farm in pictures">
+<ul class="tray-gallery tray-gallery--lead" data-tray="lightbox" data-target="#farm-pictures" aria-label="The farm in pictures" role="list">
   <li>
     <a class="tray-gallery__item" href="beds.webp" data-caption="Open-air snail beds on a hillside, each fenced with fine net.">
       <img src="beds-thumb.webp" alt="Rows of leafy green snail beds on a hillside, each fenced with black net" width="640" height="415" loading="lazy">

@@ -43,7 +43,7 @@ The period is a choice of two values, so it is two radio buttons. A radio group 
     <label class="tray-seg__item"><input type="radio" name="period" value="monthly" checked><span>Monthly</span></label>
     <label class="tray-seg__item"><input type="radio" name="period" value="yearly"><span>Yearly</span></label>
   </div>
-  <span class="tray-badge">Two months free on yearly</span>
+  <span class="tray-badge">About two months free on yearly</span>
   …the plans…
 </div>
 ```
@@ -91,7 +91,7 @@ document.getElementById('period').addEventListener('change', (event) => {
 });
 ```
 
-In Chromium, ArrowDown on Monthly chooses Yearly, keeps focus on it, and leaves "Yearly prices: Shop, $24 a month, billed yearly" in the status. MDN's guide to live regions says "The most reliable way to ensure that live regions are registered is to include them in the initial markup", which is why the paragraph is written into the page empty. Tray UI makes its status inside the wrapper on the first change, empties it, and writes the words a frame later; when the same words come twice in a row, it adds a no-break space so the region's text still changes.
+In Chromium, ArrowDown on Monthly chooses Yearly, keeps focus on it, and leaves "Yearly prices: Shop, $24 a month, billed yearly" in the status. MDN's guide to live regions says "The most reliable way to ensure that live regions are registered is to include them in the initial markup", which is why the paragraph is written into the page empty. Since the next release Tray UI puts its status inside the wrapper, empty, as the behaviour starts (in 0.2.0 it made it on the first change, which could lose the first prices); at each change it empties it and writes the words a frame later; when the same words come twice in a row, it adds a no-break space so the region's text still changes.
 
 The sliding pill is motion, so under `prefers-reduced-motion: reduce` it moves to the chosen period at once.
 
@@ -152,7 +152,7 @@ The switch rewrites the prices in the column heads and the cost of each extra pe
 
 MDN on the `name` attribute: "Only one of the grouped `<details>` elements can be open at a time". Opening one closes the one that was open. No script is involved, Enter or Space opens a question, and the plus icon is hidden from assistive technologies. Write questions people ask about money: what counts, what happens in a busy month, when they pay, how the trial ends.
 
-The same block shows pricing by usage. A [Slider](#c-slider) from 0 to 5,000 orders in steps of 50 sets the month; `data-unit=" orders"` gives it an `aria-valuetext` such as "1000 orders", so the number is read with its unit. The price is a polite live region already in the markup, and the block's short script works the sum out from three numbers: 100 free orders, 3 cents each after them, and a cap of $89. From 3,100 orders a line appears that takes off the rest.
+The same block shows pricing by usage. A [Slider](#c-slider) from 0 to 5,000 orders in steps of 50 sets the month; `data-unit=" orders"` gives it an `aria-valuetext` with its unit, and the block's script, which writes "1,000 orders" beside the label, sets the same words there, so what is heard is what is shown. The `<output>` beside the label is `aria-hidden`, so the value is not read twice. The price is a polite live region already in the markup, and the block's short script works the sum out from three numbers: 100 free orders, 3 cents each after them, and a cap of $89. From 3,100 orders a line appears that takes off the rest.
 
 ## On a phone
 

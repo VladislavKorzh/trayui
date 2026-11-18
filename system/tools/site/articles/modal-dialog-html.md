@@ -85,8 +85,8 @@ dialog.addEventListener('close', () => {
 
 Escape is a close request. The dialog fires `cancel`, then closes unless a listener calls `preventDefault()`. That listener is the place to ask "Discard the note?" when the field is not empty.
 
-- **Escape inside the dialog.** A control that uses Escape itself, such as a menu or a combobox, calls `preventDefault()` on that `keydown`. That cancels the close request: the menu closes and the dialog stays. Tray UI's menus do this, as [How to build an accessible dropdown menu](#a-accessible-dropdown-menu) describes.
-- **No trap.** The standard makes `cancel` cancelable only while the page has a fresh user activation, "for abuse prevention purposes", so that a person who presses Escape again and again gets out. In Chrome 157, a dialog opened with one click and kept open by its `cancel` listener closed on the third press of Escape. Treat Escape as a way out that always works in the end.
+- **Escape inside the dialog.** A control that uses Escape itself, such as a menu or a combobox, calls `preventDefault()` on that `keydown`. That cancels the close request: the menu closes and the dialog stays. Tray UI's menus do this, as [How to build an accessible dropdown menu](#a-accessible-dropdown-menu) describes, and so does a tooltip that Escape hides.
+- **No trap.** The standard makes `cancel` cancelable only while the page has a fresh user activation, "for abuse prevention purposes", so that a person who presses Escape again and again gets out. In Chrome 157, a dialog opened with one click and kept open by its `cancel` listener closed on the third press of Escape, whatever was clicked or pressed between the presses: the third `cancel` could not be cancelled. Treat Escape as a way out that always works in the end.
 
 ## Closing on the backdrop
 
@@ -174,7 +174,7 @@ Tray UI's [Dialog](#c-dialog), [Alert Dialog](#c-alert-dialog), [Sheet](#c-sheet
 - A press and a release both on the veil close it, unless the dialog has `data-static` or is an alert dialog.
 - The stylesheet holds the two scroll rules above for the dialog, the sheet and the drawer.
 - Focus starts on the first control, the close button in the head, so put `autofocus` on the field the person came to fill. An alert dialog opened by `data-tray="open"` without `autofocus` in its markup starts on its first `data-close` button that is not a danger button.
-- `data-static` on an alert dialog makes Escape do nothing as well, within the browser's limit described above.
+- `data-static` on an alert dialog makes Escape slower, not impossible: in Chrome 157 the first two presses do nothing and the third closes it, with an empty `returnValue`, so treat that as the safe choice.
 
 A dialog rises in and sinks out, and a sheet or a drawer slides from its edge. Where a browser cannot keep the dialog in the top layer while it leaves, the behaviour waits for the exit transition and closes the dialog afterwards. Under `prefers-reduced-motion: reduce` they only fade, in a tenth of a second.
 

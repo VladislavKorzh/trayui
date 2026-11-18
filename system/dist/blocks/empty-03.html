@@ -51,7 +51,7 @@
         <nav aria-label="Breadcrumb"><ol class="tray-crumbs tray-crumbs--fold"><li><a href="#">Perly Farm</a></li><li><span aria-current="page">Reports</span></li></ol></nav>
       </div>
       <div class="tray-topbar__end">
-        <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders" aria-keyshortcuts="/"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
+        <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
         <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 1 unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip">1</span></span>
         <button class="tray-avatar" type="button" aria-label="Account: Marta Hrytsenko">MH</button>
       </div>
@@ -112,7 +112,7 @@
             <button class="tray-btn tray-btn--sm" type="button" id="ask"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-send"/></svg>Ask Oksana for access</button>
             <a class="tray-btn tray-btn--link" href="#">Who can see what</a>
           </div>
-          <p class="caption tray-muted" id="ask-note" role="status">She gets an email and a notification in Counter.</p>
+          <p class="caption tray-muted" id="ask-note">She gets an email and a notification in Counter.</p>
         </section>
       </div>
       <section class="tray-card" aria-labelledby="open-title">
@@ -122,7 +122,7 @@
             <p class="tray-soft">The courier comes at 14:00. Here is what needs you before then.</p>
           </div>
         </div>
-        <ul class="tray-items">
+        <ul class="tray-items" role="list">
           <li><a class="tray-item" href="#"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-inbox"/></svg></span><span class="tray-item__body"><span class="tray-item__title">Orders to pack</span><span class="tray-item__text">12 orders, the first one paid at 07:35</span></span><span class="tray-item__end"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></span></a></li>
           <li><a class="tray-item" href="#"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-list"/></svg></span><span class="tray-item__body"><span class="tray-item__title">Packing list</span><span class="tray-item__text">31 jars: 14 of 50 g, 11 of 100 g, 6 of 30 g</span></span><span class="tray-item__end"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></span></a></li>
           <li><a class="tray-item" href="#"><span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-package"/></svg></span><span class="tray-item__body"><span class="tray-item__title">Batches</span><span class="tray-item__text">132 jars left in the autumn batch</span></span><span class="tray-item__end"><svg class="tray-icon tray-icon--flip" aria-hidden="true"><use href="#tray-i-chevron-right"/></svg></span></a></li>
@@ -133,11 +133,15 @@
 </div>
 <script src="../components/bundle.js"></script>
 <script>
-/* Asking sends the request once; the button then says so, and the note says what happens next. */
+/* Asking sends the request once; the button then says so, and the note says what happens next. The button turns off
+   under the reader's finger: focus moves to the note first, so the note is read and focus is not dropped to the top of
+   the page; the toast says that the request went. */
 document.getElementById('ask').addEventListener('click', function () {
+  var note = document.getElementById('ask-note');
+  note.textContent = 'Sent at ' + new Date().toTimeString().slice(0, 5) + '. You get a notification when Oksana answers.';
+  TrayUI.rescue(this, note);
   this.disabled = true;
   this.innerHTML = TrayUI.icon('check') + 'Request sent';
-  document.getElementById('ask-note').textContent = 'Sent at ' + new Date().toTimeString().slice(0, 5) + '. You get a notification when Oksana answers.';
   TrayUI.toast({ tone: 'success', title: 'Request sent', text: 'Oksana Franko gets it by email and in Counter.' });
 });
 </script>

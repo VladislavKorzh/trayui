@@ -27,7 +27,7 @@
             <div class="tray-field">
               <div class="tray-auth__row"><label class="tray-label" for="password">Password</label><a href="/reset">Forgot it?</a></div>
               <div class="tray-input-group">
-                <input class="tray-input" id="password" name="password" type="password" autocomplete="current-password" required>
+                <input class="tray-input" id="password" name="password" type="password" spellcheck="false" autocapitalize="none" autocomplete="current-password" required>
                 <button class="tray-input-group__btn" type="button" data-tray="reveal" aria-label="Show password"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></button>
               </div>
             </div>
@@ -49,7 +49,7 @@
       </div>
       <aside class="tray-auth-wide__media tray-inverse" aria-label="Counter at work">
         <h2 class="title">Orders in, labels&nbsp;out, the&nbsp;courier&nbsp;told</h2>
-        <ol class="tray-feed">
+        <ol class="tray-feed" role="list">
           <li>
             <span class="tray-feed__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-inbox"/></svg></span>
             <div class="tray-feed__body">

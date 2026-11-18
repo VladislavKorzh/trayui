@@ -21,7 +21,7 @@
     </ul>
   </nav>
   <div class="tray-nav__actions">
-    <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search the shop" aria-keyshortcuts="/"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search the shop</span><kbd class="tray-kbd">/</kbd></button>
+    <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search the shop"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search the shop</span><kbd class="tray-kbd">/</kbd></button>
     <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/cart" aria-label="Cart, 2 items"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-shopping-bag"/></svg>Cart<span class="tray-badge tray-badge--count tray-badge--ink">2</span></a>
   </div>
 </header>
@@ -62,7 +62,7 @@
         </div>
       </div>
 
-      <ul class="tray-items tray-items--ruled" id="results" style="--card-pad: var(--space-6)">
+      <ul class="tray-items tray-items--ruled" id="results" style="--card-pad: var(--space-6)" role="list">
         <li class="tray-item" data-type="caviar" data-size="50" data-price="59" data-stock="yes" data-rank="1">
           <div class="tray-slot tray-ratio tray-ratio--photo"></div>
           <div class="tray-item__body" data-body>
@@ -307,7 +307,7 @@
   </div>
   <div class="tray-footer__bottom">
     <p>&copy; 2026 Perly Farm, Farm road 4, Kyiv region. Prices include VAT. The farm, its products and every figure on this page are demo data.</p>
-    <ul class="tray-footer__legal">
+    <ul class="tray-footer__legal" role="list">
       <li><a href="/privacy">Privacy</a></li>
       <li><a href="/terms">Terms of sale</a></li>
     </ul>

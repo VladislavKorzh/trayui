@@ -12,13 +12,24 @@ Name the theme on `<html>`:
 <html lang="en" data-theme="midnight">
 ```
 
-No theme is another one inverted: each has its own steps, chosen against its own page, and its own accent. Follow the system setting until the person chooses, then remember the choice:
+No theme is another one inverted: each has its own steps, chosen against its own page, and its own accent. Follow the system setting until the person chooses, also when it changes, then remember the choice:
 
 ```js
-var saved = localStorage.getItem('theme');
-var theme = saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-document.documentElement.setAttribute('data-theme', theme);
+var system = matchMedia('(prefers-color-scheme: dark)');
+function apply() {
+  var theme = localStorage.getItem('theme') || (system.matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+}
+apply();
+system.addEventListener('change', apply);  // the setting changed: follow it, unless a theme was chosen
+
+function choose(theme) {  // from your own theme menu
+  localStorage.setItem('theme', theme);
+  apply();
+}
 ```
+
+Put it in a `<script>` in the `<head>`, so the page is drawn in its theme from the first frame.
 
 Accent surfaces, and everything on them, keep the light palette in every theme (the Island Rule): a yellow card is a lit island on a dark page. `tray-card--accent` and `tray-island` do that for you. That is also why an accent must stay bright: ink text goes on it.
 

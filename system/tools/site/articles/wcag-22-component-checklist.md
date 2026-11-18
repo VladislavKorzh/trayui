@@ -33,9 +33,9 @@ A button disabled, hidden or removed while it has focus sends focus to the `body
 | --- | --- | --- |
 | A focused control shows a ring | 2.4.7 Focus Visible (AA) | A 3px `ink` ring, 3px outside the edge. Fields draw 2px on their edge; tabs and menu items draw it inside |
 | The ring stands out from what is next to it | 1.4.11 Non-text Contrast (AA) | `ink` holds 10:1 on `page`, `surface`, `raised` and `leaf` in every theme, far above 3:1 |
-| A focused control is not entirely covered by sticky content | 2.4.11 Focus Not Obscured (Minimum) (AA) | Left to you, see below |
+| A focused control is not entirely covered by sticky content | 2.4.11 Focus Not Obscured (Minimum) (AA) | Scroll padding under its sticky bars; a pinned panel is left to you, see below |
 
-Tray UI has a sticky top bar (`tray-topbar--sticky`), a sticky header in the [App Shell](#c-app-shell) and a [Cookie Consent](#c-cookie-consent) that can be pinned over the page, and sets no `scroll-padding`. In a test page in Chrome with a 64-pixel sticky header, Shift+Tab up a column of 58 links left 5 of them entirely under it. The Understanding document's one sufficient technique, C43, is scroll padding, and with it none was hidden:
+Tray UI has a sticky top bar (`tray-topbar--sticky`), a sticky header in the [App Shell](#c-app-shell) and a [Cookie Consent](#c-cookie-consent) that can be pinned over the page. In a test page in Chrome with a 64-pixel sticky header and no `scroll-padding`, Shift+Tab up a column of 58 links left 5 of them entirely under it. The Understanding document's one sufficient technique, C43, is scroll padding, and with it none was hidden. Tray UI now sets it itself while a page has a sticky top bar (80px) or an app header (96px); a pinned consent at the foot of the window is still yours to keep clear. Its rule has no weight, so your own replaces it, for a header of another height:
 
 ```css
 /* at least the height of the sticky header */
@@ -48,7 +48,7 @@ html { scroll-padding-block-start: 5rem; }
 | --- | --- | --- |
 | A pointer target is at least 24 by 24 CSS pixels, or has room around it | 2.5.8 Target Size (Minimum) (AA) | The system's own floor is 44px (`--size-hit`), the size of 2.5.5 at AAA |
 
-An extra small button is 40px to the eye, and a pseudo-element reaches 2px past each edge. A checkbox, a radio or a switch takes presses on its whole label row. The show and copy buttons of a secret are 40px, under the floor and above 24.
+An extra small button is 40px to the eye, and a pseudo-element reaches 2px past each edge. A checkbox, a radio or a switch takes presses on its whole label row. The show and copy buttons of a secret are 40px to the eye as well, and reach 2px past each edge in the same way.
 
 ## Contrast and colour
 
@@ -62,7 +62,7 @@ An extra small button is 40px to the eye, and a pseudo-element reaches 2px past 
 
 | Check | Criterion | In Tray UI |
 | --- | --- | --- |
-| A result, a wait or an error is announced without taking focus | 4.1.3 Status Messages (AA) | A [Toast](#c-toast) goes into a polite live region, a danger toast is an alert. Copy buttons, [Tag Input](#c-tag-input), the price switch of a [Pricing Table](#c-pricing-table) and the empty list of a [Combobox](#c-combobox) speak through hidden live regions |
+| A result, a wait or an error is announced without taking focus | 4.1.3 Status Messages (AA) | A [Toast](#c-toast) goes into a polite live region, a danger toast is an alert. Copy buttons, [Tag Input](#c-tag-input), the price switch of a [Pricing Table](#c-pricing-table), the empty list of a [Combobox](#c-combobox), the count of a [Command](#c-command) and the month of a [Calendar](#c-calendar) turned by its buttons speak through hidden live regions |
 
 An error that appears under a field is not announced by itself. After a failed submit, move focus to the first invalid field, which reads its error with it; that is your form code.
 
@@ -81,7 +81,7 @@ That field carries the label (3.3.2), the state (4.1.2), an error in words (3.3.
 
 | Check | Criterion | In Tray UI |
 | --- | --- | --- |
-| What appears on hover or focus can be dismissed, hovered and stays | 1.4.13 Content on Hover or Focus (AA) | A [Tooltip](#c-tooltip) hides on Escape while focus stays, lets the pointer move onto it, and stays while its control has focus |
+| What appears on hover or focus can be dismissed, hovered and stays | 1.4.13 Content on Hover or Focus (AA) | A [Tooltip](#c-tooltip) hides on Escape wherever focus is, also one the pointer alone showed, lets the pointer move onto it, and stays while its control has focus |
 
 ## Motion and time
 
@@ -125,7 +125,7 @@ These belong to the page:
 - a text alternative for every picture (1.1.1), and captions for every film (1.2.2), as a `<track>` in the Video Player;
 - a way past repeated blocks (2.4.1): the App Shell gives landmarks, and a skip link is yours to add;
 - help in the same place on every page (3.2.6);
-- scroll padding under a sticky header (2.4.11), and a route without dragging for the resize handle (2.5.7);
+- room for a panel pinned over the page (2.4.11), and a route without dragging for the resize handle (2.5.7);
 - the words of errors and of chart summaries;
 - a test with a real screen reader, which Tray UI has not had.
 

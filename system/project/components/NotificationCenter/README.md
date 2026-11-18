@@ -12,7 +12,7 @@ The notification centre is the panel behind the bell: what happened while you we
       <h2>Notifications</h2>
       <button class="tray-btn tray-btn--ghost tray-btn--xs" type="button" data-notices="read-all">Mark all as read</button>
     </div>
-    <ul class="tray-notices__list">
+    <ul class="tray-notices__list" role="list">
       <li><a class="tray-notice" href="/orders/PL-20431" data-unread>
         <span class="tray-avatar tray-avatar--sm" aria-hidden="true">DK</span>
         <span class="tray-notice__body">

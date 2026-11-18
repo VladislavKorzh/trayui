@@ -25,6 +25,9 @@
 /_/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Every page as Markdown (components/button.md): UTF-8, as RFC 7763 asks a text/markdown answer to say.
+/*.md
+  Content-Type: text/markdown; charset=utf-8
 /llms.txt
   Content-Type: text/plain; charset=utf-8
 /llms-full.txt

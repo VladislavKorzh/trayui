@@ -7,16 +7,16 @@ Tabs switch between views of the same thing: a tray strip of 44px tabs, the curr
 ```html
 <div data-tray="tabs">
   <div class="tray-tabs" role="tablist" aria-label="Order">
-    <button class="tray-tab" role="tab" aria-selected="true" aria-controls="p-items" id="t-items">Items</button>
-    <button class="tray-tab" role="tab" aria-controls="p-delivery" id="t-delivery">Delivery</button>
+    <button class="tray-tab" type="button" role="tab" aria-selected="true" aria-controls="p-items" id="t-items">Items</button>
+    <button class="tray-tab" type="button" role="tab" aria-controls="p-delivery" id="t-delivery">Delivery</button>
   </div>
   <div class="tray-tabpanel" role="tabpanel" id="p-items" aria-labelledby="t-items">…</div>
   <div class="tray-tabpanel" role="tabpanel" id="p-delivery" aria-labelledby="t-delivery" hidden>…</div>
 </div>
 ```
-The wrapper fires `tray:change`.
+The wrapper fires `tray:change` with `detail.tab` (the chosen tab's `id`) when a tab is chosen; the tab shown at load fires nothing. Keep `type="button"` on the tabs, so one inside a form does not send it.
 
-**Navigation.** The tabs are links to pages or to sections of a long page: `<nav class="tray-tabs">` holding `<a class="tray-tab">`, the current one marked `aria-current="page"` (or `"true"` for a section that follows the scroll). No script needed.
+**Navigation.** The tabs are links to pages or to sections of a long page: `<nav class="tray-tabs">` holding `<a class="tray-tab">`, the current one marked `aria-current="page"` (or `"true"` for a section that follows the scroll; `"false"`, or no attribute, on the others). No script needed.
 
 ## Details
 - Hover turns a tab the colour of the ground behind the strip.

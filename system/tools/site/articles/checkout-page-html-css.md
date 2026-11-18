@@ -94,7 +94,7 @@ Because they are real radios, the browser does the rest: Tab reaches the group a
 
 ### Hidden fields are still sent
 
-The form follows its own choices: the farm shop hides the address and the time slots and makes delivery free, and paying at the door hides the card fields. The `hidden` attribute only hides. In Chromium, after the farm shop is picked in the block, the form's `FormData` still holds the street, the flat, the city and the slot. A `required` field in a hidden group is worse: the form refuses to submit and shows nothing, and Chrome writes "An invalid form control with name='street' is not focusable." in the console.
+The form follows its own choices: the farm shop hides the address and the time slots and makes delivery free, and paying at the door hides the card fields. The `hidden` attribute only hides. In Chromium, with `hidden` alone, as the block had it in 0.2.0, the form's `FormData` still holds the street, the flat, the city and the slot after the farm shop is picked. A `required` field in a hidden group is worse: the form refuses to submit and shows nothing, and Chrome writes "An invalid form control with name='street' is not focusable." in the console.
 
 Disable the group as you hide it: a disabled `<fieldset>` disables every control in it, and disabled controls are neither validated nor submitted. This example is plain HTML, not Tray UI:
 
@@ -131,7 +131,7 @@ Disable the group as you hide it: a disabled `<fieldset>` disables every control
 </script>
 ```
 
-With the farm shop picked, `method` is the only entry in the form data, and the form is valid with the address empty. The block's script sets `hidden` alone; its fields are not `required`, so it submits, and the server reads `method` to know what to ignore.
+With the farm shop picked, `method` is the only entry in the form data, and the form is valid with the address empty. Since the next release the block's script does the same, field by field: each group it hides is disabled too, so the form data holds only what is shown. In 0.2.0 it set `hidden` alone.
 
 ## Payment fields
 
@@ -172,7 +172,7 @@ The summary is a [Checkout Summary](#c-checkout-summary) in the aside: the lines
 <aside class="tray-with-aside__aside" aria-label="Your order">
   <div class="tray-card tray-summary">
     <h2 class="subtitle">Your order</h2>
-    <ul class="tray-summary__lines">
+    <ul class="tray-summary__lines" role="list">
       <li class="tray-summary__line"><span>Snail caviar, 50 g<small>2 &times; $59.00</small></span><span>$118.00</span></li>
       <li class="tray-summary__line"><span>Courier, chilled box<small>Today, 16:00 to 18:00</small></span><span>$9.00</span></li>
     </ul>
@@ -188,13 +188,13 @@ The `<aside>` with a name is a landmark, "Your order". The Pay button sits outsi
 
 The total is the one live region of the page. `aria-live="polite"` asks a screen reader to read a change when the person is idle, so a new delivery method, quantity or code is followed by the new total, and focus stays where it was. One region is enough: a region on every line would read them all. It has to be in the page before its text changes, so the script changes only the text of `#total`; [Toast notifications that screen readers announce](#a-toast-notifications-screen-readers) explains why.
 
-`aria-atomic` decides how much is read. When no ancestor sets it, MDN says "only the node or nodes of live region content that have been updated are read": "$268.00" alone. With `aria-atomic="true"`, "the entire changed region as a whole will be presented": "Total $268.00". The blocks leave it out; add it, as the example does.
+`aria-atomic` decides how much is read. When no ancestor sets it, MDN says "only the node or nodes of live region content that have been updated are read": "$268.00" alone. With `aria-atomic="true"`, "the entire changed region as a whole will be presented": "Total $268.00". The blocks set it as the example does, since the next release; in 0.2.0 they left it out.
 
 On the Cart, each quantity is the `<output>` of a [Button Group](#c-button-group) stepper. Its implicit role is `status`, and MDN notes that "many browsers implement this element as an aria-live region", so plus is followed by the new quantity, then the total. At zero the line stays and says how to put the jar back. The minus button is disabled there, and if it had focus, focus moves to the group.
 
 ### A refused promo code
 
-The promo code is the one field in the Cart's summary. A wrong code gets `aria-invalid="true"` and an error under the field, tied on with `aria-describedby`: "We do not know this code. Check the spelling on the card." It is read when the field takes focus, but focus is on Apply, and the message is not in a live region; as [Field](#c-field) puts it, an error that appears is not announced by itself. Move focus back to the field after a refused code, or say the result in a status as well.
+The promo code is the one field in the Cart's summary. A wrong code gets `aria-invalid="true"` and an error under the field, tied on with `aria-describedby`: "We do not know this code. Check the spelling on the card." It is read when the field takes focus, but focus is on Apply, and the message is not in a live region; as [Field](#c-field) puts it, an error that appears is not announced by itself. Move focus back to the field after a refused code, or say the result in a status as well. Since the next release the Cart does both: a refused code sends focus back to the field, which is then read as invalid with its error, and a code that is taken is said through a hidden status line.
 
 ## Before and after Pay
 

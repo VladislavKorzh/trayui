@@ -55,11 +55,11 @@ mark { padding-inline: .12em; border-radius: var(--radius-mark); background: var
 .tray-clip { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tray-vh { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-/* Icons: a 20px box, drawn with a 2.2px round stroke in the text colour. */
+/* Icons: a 20px box, drawn with a round stroke in the text colour: 2.4 in the 24-unit drawing, 2px on the screen. */
 .tray-icon { flex: none; display: block; inline-size: var(--size-icon); block-size: var(--size-icon); fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .tray-icon--sm { inline-size: 16px; block-size: 16px; }
 .tray-icon--lg { inline-size: 28px; block-size: 28px; }
-[dir="rtl"] .tray-icon--flip { transform: scaleX(-1); }
+.tray-icon--flip:dir(rtl) { transform: scaleX(-1); }
 
 /* ---------- Grounds: a surface tells its children what they sit on ---------- */
 

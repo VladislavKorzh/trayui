@@ -179,7 +179,7 @@ The buttons around the heading usually show a chevron and no word, so each needs
      data-prev-label="Mois précédent" data-next-label="Mois suivant"></div>
 ```
 
-A press on a month button leaves focus on the button, so nothing on the button says which month is now shown. That is why the APG makes the heading a polite live region. Tray UI's month title is not one: after Next month, the new month reaches assistive technologies when focus moves into the days, since every day's name holds its month and year.
+A press on a month button leaves focus on the button, so nothing on the button says which month is now shown. That is why the APG makes the heading a polite live region. Since the next release Tray UI says it through a hidden polite line beside the grid, written when a month button turns the page ("December 2026"); a key that turns it moves focus to a day, whose name holds its month and year. In 0.2.0 nothing said it.
 
 ## The date in the button's name
 
@@ -226,6 +226,6 @@ The script makes the panel a `role="dialog"` named as the field, gives the trigg
 
 For a range, set `data-mode="range" data-months="2"` on the calendar: two months sit side by side, and the trigger reads "18 – 24 Nov 2026". Buttons with `data-preset="7"` pick the last seven days, and a `data-apply` button keeps the panel open until it is pressed. The [Table with filters and bulk actions](#b-table-01) block has a range with presets.
 
-The calendar inside takes a different road from the APG's grid. Each day is a `<button>` named with its full date, such as "Tuesday, 1 December 2026", and the picked day, or each end of a range, has `aria-pressed="true"`. The weekday letters are hidden from assistive technologies, since every day's name holds its weekday. The days are one Tab stop with a roving tabindex. The arrow keys move by a day or a week, turn the month at its edge, stop at `min` and `max`, and swap in a right-to-left page; Enter or Space picks. Home, End, Page Up and Page Down are not handled, so a far month is reached with the month buttons.
+The calendar inside takes a different road from the APG's grid. Each day is a `<button>` named with its full date, such as "Tuesday, 1 December 2026", and the picked day, or each end of a range, has `aria-pressed="true"`. The weekday letters are hidden from assistive technologies, since every day's name holds its weekday. The days are one Tab stop with a roving tabindex. The arrow keys move by a day or a week, turn the month at its edge, stop at `min` and `max`, and swap in a right-to-left page; Enter or Space picks. Since the next release Home and End go to the ends of the week, Page Up and Page Down by a month and, with Shift, by a year, as in the table above; past `min` or `max` they stop at the limit. In 0.2.0 they did nothing.
 
 The calendar fires `tray:change` with `detail.value` and `detail.complete`, false while a range has only its first day. It also works alone on the page, as in the [Sidebar with a calendar](#b-sidebar-10), and from a script with `TrayUI.calendar(el, options)`. The [Date Picker](#c-date-picker) and [Calendar](#c-calendar) pages have live examples and every option, and [Installation](#d-installation) has the lines that link the stylesheet and the script.

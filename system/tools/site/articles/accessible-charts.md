@@ -155,7 +155,7 @@ svg.addEventListener('blur', () => show(null));
                    clip-path: inset(50%); white-space: nowrap; }
 ```
 
-Against 1.4.13: Escape dismisses the tooltip without moving focus or the pointer, and it stays until the pointer leaves the plot or focus moves on. It has `pointer-events: none`, so a pointer moved onto it is still over the plot: the tooltip stays, showing the column underneath. Tray UI listens to `pointerdown` as well, so on a touch screen the tooltip shows while a finger rests on the plot, and goes when it lifts.
+Against 1.4.13: Escape dismisses the tooltip without moving focus or the pointer, and it stays until the pointer leaves the plot or focus moves on. It has `pointer-events: none`, so a pointer moved onto it is still over the plot: the tooltip stays, showing the column underneath. Tray UI listens to `pointerdown` as well, so a tap on a touch screen shows the tooltip, and it stays after the finger lifts, until the next tap elsewhere.
 
 ## Charts in Tray UI
 
@@ -175,7 +175,7 @@ Write the figure and its caption, then call the script:
 </script>
 ```
 
-The script draws the plot as a `role="img"` named by the `summary`, makes it a stop for Tab, adds the live region, the key for several series and the "Show the figures" table, and labels the peak. The same object can sit as JSON in `data-chart`, with `data-tray="chart"`. The script does not name the figure: add the `aria-labelledby` yourself, as above.
+The script draws the plot as a `role="img"` named by the `summary`, makes it a stop for Tab, adds the live region, the key for several series and the "Show the figures" table, and labels the peak. The same object can sit as JSON in `data-chart`, with `data-tray="chart"`. The script names the figure by its caption too: unless the figure has a name already, it gives the caption an `id` and points the figure's `aria-labelledby` at it, which the markup above does by hand.
 
 In React, `Chart` and `ChartContainer` from `trayui-react/charts` draw with Recharts in the same frame. `summary` names a group around the plot. Recharts' `accessibilityLayer`, on by default, makes its drawing a stop for Tab: focus shows the first point, ArrowLeft and ArrowRight move the tooltip, and Escape hides it. No live region follows the tooltip there, so the key and the table matter more: `Chart` adds both by itself, and with `ChartContainer` you pass `legend` and `footer={<ChartFigures data={data} labelKey="month" />}`.
 

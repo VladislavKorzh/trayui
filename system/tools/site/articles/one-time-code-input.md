@@ -83,7 +83,7 @@ Tray UI draws the code as cells: one `<input>` per character, in a `role="group"
 - **Autofill lands in one cell.** Only the first cell carries `autocomplete="one-time-code"`, so a phone that offers the code fills all of it into that cell. Tray UI removes `maxlength` from the cells for this reason, and spreads the code from that cell on.
 - **Paste, from any cell.** The pasted code is spread from the cell that had focus, and focus goes to the cell after it.
 - **Typing moves on.** A digit moves focus to the next cell. A cell selects its character when it takes focus, so a new digit replaces the old one.
-- **Backspace goes back.** In an empty cell it clears the cell before and moves there. ArrowLeft and ArrowRight step between the cells.
+- **Backspace goes back.** In an empty cell it clears the cell before and moves there. ArrowLeft and ArrowRight step to the cell on their side. The cells run left to right in a right-to-left page too, so the code keeps its order.
 - **The error, on every cell.** `aria-invalid` is not one of the states of a `group`: MDN lists the roles it is used in, and `group` is not among them. Tray UI copies the group's `aria-invalid` and `aria-describedby` to each cell, and keeps them in step.
 
 The spreading is the heart of it. This version for six cells handles autofill, paste and a digit typed over a full cell, and drops spaces and hyphens:
@@ -138,7 +138,7 @@ What cells add is a picture: how many characters are expected, and how many are 
 
 ## Checking the code
 
-Leave a button to submit the code. WCAG names "automatically submitting a form and presenting new content without prior warning when the last field in the form is given a value" as a failure of success criterion 3.2.2, On Input (technique F36). The failure lies in the missing warning. To check the code the moment the sixth digit lands, say so first, for example in the hint: "We check the code as soon as you have typed it." Tray UI's own advice, "Do verify as soon as the last digit lands", needs that sentence beside it.
+Leave a button to submit the code. WCAG names "automatically submitting a form and presenting new content without prior warning when the last field in the form is given a value" as a failure of success criterion 3.2.2, On Input (technique F36). The failure lies in the missing warning. To check the code the moment the sixth digit lands, say so first, for example in the hint: "We check the code as soon as you have typed it." Tray UI's Input OTP gives the same advice: verify on a button press, or say beside the cells that the code is checked once the last digit is in.
 
 When the code is wrong, set `aria-invalid="true"` on the field, write the error in words under it, and add its `id` to `aria-describedby`. Keep the code in the field, so the person can see which digit they mistyped, and offer a way to send a new one.
 
@@ -158,7 +158,7 @@ Write the cells in a group with `data-tray="otp"`, a name, and `autocomplete="on
 </div>
 ```
 
-The script names each cell "Character 1 of 6", sets `inputmode="numeric"` unless you set another, removes `maxlength`, and handles the keys and the spreading described above. Since 0.2.0 a whole code that is typed, pasted or filled in is spread over the cells; spaces in it are dropped. When every cell holds a character, the group fires `tray:complete` with the code in `detail.value`:
+The script names each cell "Character 1 of 6", sets `inputmode="numeric"` unless you set another, removes `maxlength`, and handles the keys and the spreading described above. Since 0.2.0 a whole code that is typed, pasted or filled in is spread over the cells; spaces in it are dropped. Since the next release so is anything else a cell does not take: a numeric cell keeps digits only, so "409-316" fills all six cells, and a key it does not take, such as a hyphen, changes nothing. When every cell holds a character, the group fires `tray:complete` with the code in `detail.value`:
 
 ```js
 document.querySelector('[data-tray="otp"]').addEventListener('tray:complete', (e) => {

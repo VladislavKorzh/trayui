@@ -25,7 +25,8 @@
 .tray-message:not(.tray-message--end) .tray-message__content > .tray-bubble:not(.tray-bubble--plain), .tray-message:not(.tray-message--end) .tray-bubble-group > .tray-bubble:last-child { border-end-start-radius: var(--radius-mark); }
 .tray-message--end .tray-message__content > .tray-bubble, .tray-message--end .tray-bubble-group > .tray-bubble:last-child { border-end-end-radius: var(--radius-mark); }
 .tray-bubble[data-clamp] > .tray-bubble__text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
-.tray-reactions { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+/* Rows of reactions that wrap stand 12px apart: the 44px targets reach 6px past each one, and meet without overlapping. */
+.tray-reactions { display: flex; flex-wrap: wrap; gap: calc(var(--size-hit) - 32px) var(--space-1); }
 .tray-reaction { display: inline-flex; align-items: center; gap: 6px; min-block-size: 32px; padding: 0 10px; border: 0; border-radius: var(--radius-chip); background: var(--tray-fill); color: var(--ink); font: 600 .875rem/1 var(--font-sans); font-variant-numeric: tabular-nums; cursor: pointer; transition: background-color var(--duration-fill) var(--ease), color var(--duration-fill) var(--ease); }
 .tray-reaction[aria-pressed="true"] { background: var(--ink); color: var(--tray-on-ink); }
 /* A reaction is 32px to the eye and 44px to a finger: the target reaches past its top and bottom. */
@@ -48,8 +49,9 @@
 .tray-scroller { position: relative; display: grid; block-size: var(--tray-scroller, 24rem); border-radius: var(--radius-panel); background: var(--tray-fill); }
 .tray-scroller__viewport { position: relative; padding: var(--space-5); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--control-off) transparent; }
 .tray-scroller__viewport:focus-visible { outline-offset: -3px; border-radius: var(--radius-panel); }
-.tray-scroller__jump { position: absolute; inset-block-end: var(--space-3); inset-inline-start: 50%; transform: translateX(-50%); box-shadow: var(--shadow-float); }
-.tray-scroller__jump:active { transform: translateX(-50%) scale(.97); }
+/* Centred by its margins, not by a transform, so the press of a button (a scale, or none with reduced motion) leaves it
+   where it is, and it stays in the middle right to left. */
+.tray-scroller__jump { position: absolute; inset-block-end: var(--space-3); inset-inline: 0; inline-size: fit-content; margin-inline: auto; box-shadow: var(--shadow-float); }
 .tray-scroller > .tray-scroller__viewport { --tray-ground: var(--tray-fill-up); --tray-fill: var(--tray-ground-up); }
 .tray-composer { display: flex; align-items: flex-end; gap: var(--space-2); padding: var(--space-2); border-radius: var(--radius-button); background: var(--tray-fill); }
 .tray-composer:focus-within { outline: 2px solid var(--ink); outline-offset: 0; }

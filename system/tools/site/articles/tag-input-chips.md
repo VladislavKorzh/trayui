@@ -88,11 +88,11 @@ function say(status, words) {
 }
 ```
 
-One case falls through. A pasted "jam; honey salt" makes three chips in one handler, and all three lines are written in the same frame, so the region ends with "salt added" alone. In your own script, say a paste once, with its count: "3 tags added".
+A paste needs care. A pasted "jam; honey salt" makes three chips in one handler, and three lines written in the same frame leave the region with "salt added" alone. Tray UI gathers them and says the paste in one message: "jam added. honey added. salt added". In your own script, say a paste once too, whole or with its count: "3 tags added".
 
 ## A limit
 
-`data-max="4"` stops at four values. A fifth that is typed stays in the field, and the region says "Kharkiv not added: the limit is 4". The person can remove a chip and press Enter again without typing the city twice. Pasted values that do not fit stay in the field too, so nothing pasted is lost.
+`data-max="4"` stops at four values. A fifth that is typed stays in the field, and the region says "Kharkiv not added: the limit is 4". The person can remove a chip and press Enter again without typing the city twice. Pasted values that do not fit stay in the field too, so nothing pasted is lost, and the limit is said once for all of them: "salt, pepper not added: the limit is 4".
 
 The field is never disabled at the limit. A disabled field cannot take focus, so Backspace could no longer remove the last chip, and focus would drop to the page if it was there. Say the limit before it is reached as well, in the hint under the field ("Up to four on the Stall plan"), since the live message at the limit is not shown on the screen.
 

@@ -31,7 +31,7 @@
             <input class="tray-slider" id="orders" type="range" min="0" max="5000" step="50" value="1000" data-unit=" orders" data-tray="slider">
             <div class="tray-slider-field__scale" aria-hidden="true"><span>0</span><span>2,500</span><span>5,000</span></div>
           </div>
-          <ul class="tray-summary__lines">
+          <ul class="tray-summary__lines" role="list">
             <li class="tray-summary__line"><span>First 100 orders<small>Free in every month</small></span><span>Free</span></li>
             <li class="tray-summary__line"><span id="paid-name">900 orders at 3 cents</span><span id="paid-sum">$27.00</span></li>
             <li class="tray-summary__line" id="cap-line" hidden><span>Above the cap<small>No month costs more than $89</small></span><span id="cap-sum">&minus;$0.00</span></li>
@@ -46,7 +46,7 @@
           <p id="price-note">For 1,000 orders, with everything below in it.</p>
         </div>
         <a class="tray-btn tray-btn--dark tray-btn--md" href="/signup">Start the free trial</a>
-        <ul class="tray-ticks">
+        <ul class="tray-ticks" role="list">
           <li><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg>As many people and shops as you have</li>
           <li><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg>Labels with no monthly limit</li>
           <li><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-check"/></svg>Courier tracking and booked pickups</li>
@@ -138,6 +138,7 @@
   function work() {
     var orders = +slider.value, paid = Math.max(0, orders - FREE), cost = paid * CENTS, total = Math.min(cost, CAP);
     field.querySelector('output').textContent = count(orders) + ' orders';
+    slider.setAttribute('aria-valuetext', count(orders) + ' orders');  /* heard as it is shown, "1,000 orders" */
     document.getElementById('paid-name').textContent = paid ? count(paid) + ' orders at 3 cents' : 'No orders past the first 100';
     document.getElementById('paid-sum').textContent = money(cost);
     document.getElementById('cap-line').hidden = cost <= CAP;

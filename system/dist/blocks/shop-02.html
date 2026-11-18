@@ -21,7 +21,7 @@
     </ul>
   </nav>
   <div class="tray-nav__actions">
-    <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search the shop" aria-keyshortcuts="/"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search the shop</span><kbd class="tray-kbd">/</kbd></button>
+    <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search the shop"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search the shop</span><kbd class="tray-kbd">/</kbd></button>
     <a class="tray-btn tray-btn--quiet tray-btn--sm" href="/cart" aria-current="page" id="cart-link" aria-label="Cart, 4 items"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-shopping-bag"/></svg>Cart<span class="tray-badge tray-badge--count tray-badge--ink" id="cart-count">4</span></a>
   </div>
 </header>
@@ -35,7 +35,7 @@
 
   <div class="tray-with-aside" style="padding-block: var(--space-4) var(--space-12)">
     <div class="tray-stack tray-stack--lg" id="cart">
-      <ul class="tray-items tray-items--ruled" id="lines" aria-label="In the cart">
+      <ul class="tray-items tray-items--ruled" id="lines" aria-label="In the cart" role="list">
         <li class="tray-item" data-price="5900">
           <div class="tray-slot tray-ratio tray-ratio--square"></div>
           <div class="tray-item__body">
@@ -155,7 +155,7 @@
 
       <section class="tray-stack" id="addons" aria-labelledby="addons-title">
         <h2 class="subtitle" id="addons-title">Often added to this order</h2>
-        <ul class="tray-items">
+        <ul class="tray-items" role="list">
           <li class="tray-item" data-add="line-spoon">
             <div class="tray-slot tray-slot--line tray-ratio tray-ratio--square"></div>
             <span class="tray-item__body"><span class="tray-item__title">A second spoon</span><span class="tray-item__text">One each at the table, and the courier is free</span></span>
@@ -178,7 +178,7 @@
     <aside class="tray-with-aside__aside" aria-label="Summary">
       <form class="tray-card tray-summary" action="/checkout" method="get" style="padding: var(--space-7)">
         <h2 class="subtitle">Summary</h2>
-        <ul class="tray-summary__lines">
+        <ul class="tray-summary__lines" role="list">
           <li class="tray-summary__line"><span>Subtotal<small id="items-name">Four things</small></span><span id="subtotal">$144.00</span></li>
           <li class="tray-summary__line" id="promo-line" hidden><span>Promo code FIRSTJAR<small>10% off the order</small></span><span id="promo-sum">&minus;$14.40</span></li>
           <li class="tray-summary__line"><span>Courier in Kyiv<small>Or collect at Farm road 4 for free</small></span><span id="courier-sum">$9.00</span></li>
@@ -190,7 +190,7 @@
           </div>
           <p class="tray-field__hint" id="promo-message">A first order takes the code FIRSTJAR.</p>
         </div>
-        <p class="tray-summary__total" aria-live="polite"><span>Total</span><span id="total">$153.00</span></p>
+        <p class="tray-summary__total" aria-live="polite" aria-atomic="true"><span>Total</span><span id="total">$153.00</span></p>
         <button class="tray-btn tray-btn--block" type="submit" id="checkout">Check out</button>
         <p class="tray-summary__note"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-clock"/></svg>Order by 12:00 for delivery today.</p>
       </form>
@@ -227,7 +227,7 @@
   </div>
   <div class="tray-footer__bottom">
     <p>&copy; 2026 Perly Farm, Farm road 4, Kyiv region. Prices include VAT. The farm, its products and every figure on this page are demo data.</p>
-    <ul class="tray-footer__legal">
+    <ul class="tray-footer__legal" role="list">
       <li><a href="/privacy">Privacy</a></li>
       <li><a href="/terms">Terms of sale</a></li>
     </ul>

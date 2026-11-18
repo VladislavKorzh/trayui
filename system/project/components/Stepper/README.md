@@ -4,7 +4,7 @@ A stepper shows where a person is in a short, fixed sequence: the steps as numbe
 
 ## Markup
 ```html
-<ol class="tray-stepper" aria-label="Checkout">
+<ol class="tray-stepper" aria-label="Checkout" role="list">
   <li data-done><a class="tray-step" href="/cart">
     <span class="tray-step__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span>
     <span class="tray-step__text">Cart<span class="tray-vh">, done</span></span>
@@ -23,7 +23,7 @@ An empty `tray-step__mark` shows the step's number by itself. A finished step ca
 Below 34rem a horizontal stepper keeps the marks and shows the label of the current step only.
 
 ## Accessibility
-The steps are an `<ol>` named by its `aria-label`, so each one is read with its place in the list. The current step carries `aria-current="step"` and is solid ink and semibold. A finished one shows a check and says ", done" in a `tray-vh` span, so neither state rests on colour. A finished step that is a link takes focus and the usual ring, and a step ahead is plain text that takes no focus. Below 34rem a row of steps shows the words of the current step only: the others are hidden from the eye, not from a screen reader, so a link to a done step keeps its name. With forced colours the current mark takes the system's colours for a chosen item.
+The steps are an `<ol>` named by its `aria-label`, with `role="list"`, so each one is read with its place in the list (Safari stops calling a list without markers a list). The current step carries `aria-current="step"` and is solid ink and semibold. A finished one shows a check and says ", done" in a `tray-vh` span, so neither state rests on colour. A finished step that is a link takes focus and the usual ring, and a step ahead is plain text that takes no focus. Below 34rem a row of steps shows the words of the current step only: the others are hidden from the eye, not from a screen reader, so a link to a done step keeps its name. With forced colours the current mark takes the system's colours for a chosen item.
 
 ## Do and don't
 - Do use it for three to five steps that always come in the same order.

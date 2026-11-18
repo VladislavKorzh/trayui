@@ -57,9 +57,9 @@ Write the words in the page's language. Tray UI's player takes the word between 
 
 Show the value next to the label as well. Tray UI's rule for the slider is that "a slider with no number beside it is a guess", and its examples print the two ends of the scale under the track.
 
-The element for a value worked out from inputs is `<output for>`. MDN gives `<output>` the implicit role `status`, and adds: "Many browsers implement this element as an `aria-live` region." Chrome does: in its accessibility tree each `<output>` of Tray UI's slider preview is a status with a polite live setting. Every change to its text is then a status message of its own, on top of the slider's value text, and the same words can reach a screen reader twice.
+The element for a value worked out from inputs is `<output for>`. MDN gives `<output>` the implicit role `status`, and adds: "Many browsers implement this element as an `aria-live` region." Chrome does: in its accessibility tree an `<output>` is a status with a polite live setting. Every change to its text is then a status message of its own, on top of the slider's value text, and the same words can reach a screen reader twice.
 
-Tray UI's [Slider](#c-slider) writes the value into an `<output for>`. The catalogue block, `catalog-02`, shows its price in a plain `span` marked `aria-hidden="true"` and leaves the speaking to the slider's `aria-valuetext`. When a slider says its own value, a plain element beside it, which is not a live region, is the quieter choice, and the examples below use a `span`. Keep `<output>` for a result that no single control says, such as a total worked out from several fields.
+Tray UI's [Slider](#c-slider) writes the value into an `<output for>`, and since the next release marks it `aria-hidden="true"`, so the words are read once, from the slider. The catalogue block, `catalog-02`, shows its price in a plain `span` marked `aria-hidden="true"` and leaves the speaking to the slider's `aria-valuetext` in the same way. When a slider says its own value, a plain element beside it, which is not a live region, is the quieter choice, and the examples below use a `span`. Keep `<output>` for a result that no single control says, such as a total worked out from several fields.
 
 ## Keep the text in step
 
@@ -137,7 +137,7 @@ Tray UI draws the slider with `appearance: none` and its own track and thumb: an
 .tray-slider::-webkit-slider-thumb { appearance: none; inline-size: 28px; block-size: 28px; margin-block-start: -10px; border: 0; border-radius: 50%; background: var(--ink); }
 .tray-slider:focus-visible { outline: none; }
 .tray-slider:focus-visible::-webkit-slider-thumb { outline: 3px solid var(--ink); outline-offset: 5px; }
-[dir="rtl"] .tray-slider::-webkit-slider-runnable-track { background-position: 100% 0; }
+.tray-slider:dir(rtl)::-webkit-slider-runnable-track { background-position: 100% 0; }
 ```
 
 ```js
@@ -163,6 +163,6 @@ Write the field, the label, the output and the range, with `data-tray="slider"` 
 </div>
 ```
 
-The script paints the fill, writes the value and its unit into the field's `<output>`, and, with `data-unit`, sets `aria-valuetext` to the same words: "30 km". The unit is added as you write it, so put the space in it, `" km"`, or leave it out, `"%"`. For a unit that goes in front, or for words in place of numbers, leave out `data-unit` and set `aria-valuetext` from your own `input` listener, as the [catalogue with a filter column](#b-catalog-02) does.
+The script paints the fill, writes the value and its unit into the field's `<output>`, which it hides from screen readers, and, with `data-unit`, sets `aria-valuetext` to the same words: "30 km". The unit is added as you write it, so put the space in it, `" km"`, or leave it out, `"%"`. For a unit that goes in front, or for words in place of numbers, leave out `data-unit` and set `aria-valuetext` from your own `input` listener, as the [catalogue with a filter column](#b-catalog-02) does.
 
 Use a slider for coarse values, such as a budget or a radius. When the exact number matters, such as a quantity of 3, the [Stepper](#c-stepper) is the better control. The [Slider](#c-slider) page has the live examples, and the [Video Player](#c-video-player) has the seek bar with its time. A slider's unit was added in version 0.2.0, checked in Chrome and its accessibility tree, not in a screen reader.

@@ -25,7 +25,7 @@ Both pages are one `<form>` in a card: the wordmark, which links home, a heading
       <a href="/reset">Forgot it?</a>
     </div>
     <div class="tray-input-group">
-      <input class="tray-input" id="password" name="password" type="password" autocomplete="current-password" required>
+      <input class="tray-input" id="password" name="password" type="password" spellcheck="false" autocapitalize="none" autocomplete="current-password" required>
       <button class="tray-input-group__btn" type="button" data-tray="reveal" aria-label="Show password">…eye icon…</button>
     </div>
   </div>
@@ -77,7 +77,7 @@ for (const button of document.querySelectorAll('[data-tray="reveal"]')) {
 }
 ```
 
-Tray UI's version also swaps the icon between `eye` and `eye-off`. [Show password: aria-pressed or a new label](#a-show-password-button) compares this with the other pattern, a name that changes and no `aria-pressed`.
+Tray UI's version also swaps the icon between `eye` and `eye-off` and, since the next release, turns the field back to `type="password"` when the form is sent and when Back brings the page from the browser's cache. On the text type a field is spellchecked and capitalised, so the blocks give it `spellcheck="false"` and `autocapitalize="none"`. [Show password: aria-pressed or a new label](#a-show-password-button) compares this with the other pattern, a name that changes and no `aria-pressed`.
 
 ## Errors
 
@@ -158,8 +158,8 @@ The form sits in a screen, `tray-screen`, the frame Tray UI uses for pages outsi
 | --- | --- | --- |
 | A card on the white page | `tray-screen__body--center` | The card fills the width. |
 | A panel on a grey ground | `tray-screen--tray`, the card a `tray-panel` | The panel fills the width, with the terms at the foot of the page. |
-| The form beside a cover | `tray-screen--split` | At 56rem and below the cover is hidden. |
-| Form and picture in one card | `tray-auth-wide` | At 56rem and below the two parts stack, the form first. |
+| The form beside a cover | `tray-screen--split` | Below 56rem the cover is hidden. |
+| Form and picture in one card | `tray-auth-wide` | Below 56rem the two parts stack, the form first. |
 
 The pages under a bar use `tray-screen__body--center-wide`, which centres the form in the height only from 40rem up. On a phone the form stays at the top, under the bar: in the measured block it starts 88 pixels from the top at 390 wide and 177 at 1440. Near the top, a field that takes focus is less likely to sit under the on-screen keyboard.
 

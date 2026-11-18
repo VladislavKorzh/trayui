@@ -19,7 +19,8 @@
     handle.addEventListener('pointerdown', function (e) {
       handle.setPointerCapture(e.pointerId);
       var box = root.getBoundingClientRect();
-      var rtl = !!root.closest('[dir="rtl"]');
+      /* the direction the split is laid out in, as the keys read it: a dir="ltr" part of a right-to-left page is ltr */
+      var rtl = !vertical && getComputedStyle(root).direction === 'rtl';
       function move(ev) {
         if (vertical) set((ev.clientY - box.top) / box.height * 100);
         else set((rtl ? box.right - ev.clientX : ev.clientX - box.left) / box.width * 100);
@@ -52,7 +53,9 @@
     }
     function paint() {
       var i = index(), n = slides().length, end = Math.abs(track.scrollLeft) + track.clientWidth >= track.scrollWidth - 2;
-      if (count) count.textContent = (i + 1) + ' / ' + n;
+      /* The count is the first slide in view, until the track can go no further: with several slides in view the last
+         ones are then in view too, and the count says the last, "5 / 5", as Next turns off. */
+      if (count) count.textContent = (end && i > 0 ? n : i + 1) + ' / ' + n;
       /* a button that turns off at an end while it has focus hands it to the other one, or to the track */
       if (prev && i === 0) rescue(prev, next && !end ? next : track);
       if (next && end) rescue(next, prev && i > 0 ? prev : track);

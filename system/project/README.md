@@ -53,7 +53,7 @@ The five heading styles are fluid: their sizes come from `display-size`, `headli
 - One centred container, `container` wide at most, with `page-pad` at the edges and `section-gap` between sections.
 - Cards sit in a 12-column bento on the 16px `grid-gap` and take unequal widths, usually two to one. Below 56rem every card is full width.
 - Card padding is `card-pad`. Space inside components comes from the `space-` steps; the gap between a tray and what it holds is `space-1`.
-- Sizes: `size-lg` 64 for the main action, `size-md` 56 for fields, `size-sm` 48 in headers and toolbars, `size-xs` 40 in dense rows. Nothing a finger must hit is smaller than `size-hit` 44.
+- Sizes: `size-lg` 64 for the main action, `size-md` 56 for fields, `size-sm` 48 in headers and toolbars, `size-xs` 40 in dense rows. A finger's target is at least `size-hit` 44, all but a few: the nested links of a sidebar, the rows of a file tree and the labels of a sidebar's folding sections are 36px rows as wide as the sidebar, the Slider is 28px tall, and the handle of Resizable is a 16px strip (the accessibility guide names them).
 
 ## Motion
 

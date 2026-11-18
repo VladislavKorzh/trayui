@@ -21,7 +21,7 @@
     </ul>
   </nav>
   <div class="tray-nav__actions">
-    <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search the shop" aria-keyshortcuts="/"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search the shop</span><kbd class="tray-kbd">/</kbd></button>
+    <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search the shop"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search the shop</span><kbd class="tray-kbd">/</kbd></button>
     <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" id="cart-button" data-tray="open" data-target="#cart" data-open-first aria-haspopup="dialog" aria-label="Cart, 3 items"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-shopping-bag"/></svg>Cart<span class="tray-badge tray-badge--count tray-badge--ink" id="cart-count">3</span></button>
   </div>
 </header>
@@ -122,7 +122,7 @@
   </div>
   <div class="tray-footer__bottom">
     <p>&copy; 2026 Perly Farm, Farm road 4, Kyiv region. Prices include VAT. The farm, its products and every figure on this page are demo data.</p>
-    <ul class="tray-footer__legal">
+    <ul class="tray-footer__legal" role="list">
       <li><a href="/privacy">Privacy</a></li>
       <li><a href="/terms">Terms of sale</a></li>
     </ul>
@@ -138,7 +138,7 @@
     <button class="tray-btn tray-btn--ghost tray-btn--xs tray-btn--icon" type="button" data-close aria-label="Close the cart"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-x"/></svg></button>
   </div>
   <div class="tray-dialog__body">
-    <ul class="tray-items tray-items--ruled" id="lines" aria-label="In the cart">
+    <ul class="tray-items tray-items--ruled" id="lines" aria-label="In the cart" role="list">
       <li class="tray-item" data-price="9600" id="line-gift">
         <div class="tray-slot tray-slot--line tray-ratio tray-ratio--photo"></div>
         <div class="tray-item__body">
@@ -233,7 +233,7 @@
       <span class="tray-progress__bar" id="free-bar" role="meter" aria-label="Towards free delivery" aria-valuemin="0" aria-valuemax="150" aria-valuenow="124" style="--tray-v: 83"></span>
       <span class="tray-progress__note" id="free-note"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-truck"/></svg>Add $26.00 more and the courier is free.</span>
     </div>
-    <ul class="tray-summary__lines">
+    <ul class="tray-summary__lines" role="list">
       <li class="tray-summary__line"><span class="control">Subtotal<small>Courier $9 or farm shop pickup, chosen at checkout</small></span><span class="control" id="subtotal" aria-live="polite">$124.00</span></li>
     </ul>
   </div>

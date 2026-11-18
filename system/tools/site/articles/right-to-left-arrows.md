@@ -50,7 +50,7 @@ The sources, in their words:
 
 Two cases need a choice. Apple flips "controls that show progress from one value to another", such as sliders and progress bars; Material keeps the media progress bar left to right, since it follows the tape and not the reading. And Apple keeps any control "that refers to an actual direction": an arrow that means "to the right" in a map or a layout tool keeps pointing right.
 
-Numbers keep their order too. Apple's guide says the digits of a number, such as a phone number or a card number, "always appear in the same order", and Material lists numbers among what is not mirrored. A one-time code split into one box per digit is such a number: give its row `dir="ltr"`.
+Numbers keep their order too. Apple's guide says the digits of a number, such as a phone number or a card number, "always appear in the same order", and Material lists numbers among what is not mirrored. A one-time code split into one box per digit is such a number: give its row `dir="ltr"`, as Tray UI's [Input OTP](#c-input-otp) does with `direction: ltr` on its cells.
 
 ## Flip an icon with CSS
 
@@ -110,12 +110,12 @@ Put `dir="rtl"` on `<html>`, or on a region, with the right `lang`, and Tray UI 
 You mark the icons that flip with `tray-icon--flip`:
 
 ```css
-[dir="rtl"] .tray-icon--flip { transform: scaleX(-1); }
+.tray-icon--flip:dir(rtl) { transform: scaleX(-1); }
 ```
 
-The examples mark the back links of the [Page Header](#c-page-header) and the [Top Bar](#c-top-bar), the chevrons of [Pagination](#c-pagination), the previous and next buttons of the [Carousel](#c-carousel) and the [Lightbox](#c-lightbox), and a "Next" [Button](#c-button) with its arrow; the [Calendar](#c-calendar) script adds the class to its month buttons itself. The rule uses the attribute form, so an icon with the class inside a `dir="ltr"` block of a right-to-left page flips too: keep such blocks free of flipped icons, or add `.tray-icon--flip:dir(ltr) { transform: none; }` after the system's stylesheet. Clocks, the play button and checks carry no class and stay as drawn. The [Icons](#f-icons) page has the full set, under Lucide's names.
+The examples mark the back links of the [Page Header](#c-page-header) and the [Top Bar](#c-top-bar), the chevrons of [Pagination](#c-pagination), the previous and next buttons of the [Carousel](#c-carousel) and the [Lightbox](#c-lightbox), and a "Next" [Button](#c-button) with its arrow; the [Calendar](#c-calendar) script adds the class to its month buttons itself. Up to 0.2.0 the rule used the attribute form, so an icon with the class inside a `dir="ltr"` block of a right-to-left page flipped too; since the next release it uses `:dir(rtl)`, and such an icon stays as drawn. Clocks, the play button and checks carry no class and stay as drawn. The [Icons](#f-icons) page has the full set, under Lucide's names.
 
-What Tray UI turns over by itself has a right-to-left rule in the stylesheet: the chevron of a native select, the separators of the [Breadcrumb](#c-breadcrumb), the carets of the [Sidebar](#c-sidebar), the knob of a [Switch](#c-switch), the fill of a [Slider](#c-slider) and the band of a range in the Calendar.
+What Tray UI turns over by itself has a right-to-left rule in the stylesheet, also written with `:dir(rtl)`: the chevron of a native select, the separators of the [Breadcrumb](#c-breadcrumb), the carets of the [Sidebar](#c-sidebar), the knob of a [Switch](#c-switch), the fill of a [Slider](#c-slider) and the band of a range in the Calendar.
 
 These components move with ArrowLeft and ArrowRight, and each reads the computed direction:
 
@@ -125,7 +125,8 @@ These components move with ArrowLeft and ArrowRight, and each reads the computed
 | [Dropdown Menu](#c-dropdown-menu) | ArrowLeft opens a submenu, which opens to the left; ArrowRight closes it |
 | [Carousel](#c-carousel), [Lightbox](#c-lightbox) | ArrowLeft shows the next slide or picture |
 | [Calendar](#c-calendar) | the week runs from right to left, and ArrowLeft moves to the next day |
-| [Resizable](#c-resizable) | the first pane is on the right, and ArrowLeft widens it |
+| [Resizable](#c-resizable) | the first pane is on the right, and ArrowLeft widens it; a drag reads the same direction |
+| [Input OTP](#c-input-otp) | the cells stay left to right, and ArrowLeft goes to the cell on the left, the one before |
 | [Chart](#c-chart) | in a bar, line or area plot, ArrowLeft moves to the next point |
 | [Video Player](#c-video-player) | on the seek bar, ArrowLeft moves five seconds on |
 

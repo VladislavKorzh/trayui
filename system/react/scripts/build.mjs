@@ -1,6 +1,7 @@
 // Builds the package: writes src/index.ts from the component files, compiles to dist/ with types, copies the stylesheet, the font
-// and the licences the package travels under.
+// and the licences the package travels under, then checks the package as npm would publish it (scripts/packed.mjs).
 //   node scripts/build.mjs
+//   node scripts/build.mjs --all   also keeps dist/all.js, the one entry a local tool needs; not for publishing
 // Run `python3 ../tools/build.py` first when the system's CSS, behaviours or icons changed: it regenerates src/runtime.ts, src/icons.ts and styles/.
 import { execFileSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -44,6 +45,10 @@ function specify(dir) {
   }
 }
 specify(join(root, 'dist'));
+/* src/all.ts, where it exists, is kept on one machine for a tool that takes a single entry: it is no part of the package, so
+   what it compiles to leaves dist/ unless that tool asks for it. Publishing builds again without it (prepublishOnly). */
+const all = process.argv.includes('--all');
+if (!all) for (const f of ['all.js', 'all.d.ts']) rmSync(join(root, 'dist', f), { force: true });
 if (!existsSync(join(root, 'styles/styles.css'))) {
   console.error('build: styles/styles.css is missing; run `python3 ../tools/build.py` first');
   process.exit(1);
@@ -56,3 +61,11 @@ for (const [from, to] of [['../../LICENSE', 'LICENSE'], ['../src/LUCIDE-LICENSE.
   if (existsSync(join(root, from))) cpSync(join(root, from), join(root, 'dist', to));
 }
 console.log(`build: ${names.length} component files -> dist/`);
+if (all) console.log('build: dist/all.js kept for a local tool; build again without --all before publishing');
+else {
+  try {
+    execFileSync(process.execPath, [join(root, 'scripts/packed.mjs')], { stdio: 'inherit', cwd: root });
+  } catch {
+    process.exit(1);
+  }
+}

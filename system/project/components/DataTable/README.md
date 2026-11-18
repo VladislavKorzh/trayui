@@ -6,10 +6,10 @@ A data table is a Table that can be searched, sorted, selected and paged.
 ```html
 <div class="tray-datatable" data-tray="datatable" data-page-size="5">
   <div class="tray-datatable__bar">…a filter field with data-filter, then actions…</div>
-  <div class="tray-table-wrap"><table class="tray-table tray-table--hover tray-table--pad">…</table></div>
+  <div class="tray-table-wrap" tabindex="0" role="region" aria-label="Orders"><table class="tray-table tray-table--hover tray-table--pad" aria-label="Orders">…</table></div>
   <div class="tray-datatable__foot">
-    <span data-selected-count></span>
-    …<span data-page-status></span> and two buttons with data-page-prev and data-page-next…
+    <span data-selected-count role="status"></span>
+    …<span data-page-status role="status"></span> and two buttons with data-page-prev and data-page-next…
   </div>
 </div>
 ```
@@ -17,7 +17,7 @@ Every part is optional and found by its attribute:
 
 | Part | Markup |
 | --- | --- |
-| Sorting | A `<button class="tray-sort">` with the label and the `sort` icon inside a column head. The head gets `aria-sort`; the icon turns into an arrow. |
+| Sorting | A `<button class="tray-sort">` with the label, and optionally the `arrow-up-down` icon, inside a column head. The head gets `aria-sort`; the icon, where there is one, turns into an arrow. |
 | Sort value | `data-value` on a cell when its text does not sort as written (a date, a status). |
 | Filter | `<input data-filter>`: rows that do not contain the text are hidden. |
 | Selection | A checkbox with `data-select` in each row and one with `data-select-all` in the head. Selected rows take the resting fill. The checkbox carries the state: a row of a plain table has no selected state of its own. |

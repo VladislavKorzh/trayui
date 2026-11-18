@@ -21,7 +21,7 @@ It is centred, with text at most 36 characters wide, and usually sits inside the
 - **All done**: the list is empty because the work is finished. No action needed.
 
 ## Accessibility
-An empty state is read in order: its heading, its sentence, then its buttons. The icon tile is `aria-hidden` and says nothing. Choose the heading level that fits where the empty state sits in the page. When it takes the place of results after a search or a filter, nothing announces it: say so in a `role="status"` region of your own, such as the line with the count of results.
+An empty state is read in order: its heading, its sentence, then its buttons. The icon in the tile is `aria-hidden` (the `<svg>`, not the tile around it), so the tile is empty to a screen reader and says nothing. Choose the heading level that fits where the empty state sits in the page. When it takes the place of results after a search or a filter, nothing announces it: say so in a `role="status"` region of your own, such as the line with the count of results.
 
 ## Do and don't
 - Do keep the same container as the full state, so the page does not jump.

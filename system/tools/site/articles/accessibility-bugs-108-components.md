@@ -150,12 +150,12 @@ Lists drawn without bullets, such as the activity feed and the changelog, carry 
 - **The resize handle** has no 44px band, which would cover the first pane's scrollbar, and dragging is its only pointer route, which 2.5.7 Dragging Movements does not allow. Its page says so and advises buttons or a menu that set fixed sizes.
 - **Reveal and the secret's show button** use two valid patterns. Reveal keeps the name "Show password" and says its state with `aria-pressed`. The secret's button changes its name between "Show the key" and "Hide the key" and carries no `aria-pressed`. The bug was doing both at once: a pressed button named "Hide password" says its state twice.
 
-Four things are still open:
+Four things were left open after 0.2.0, and three are fixed for the next release:
 
-1. The two buttons of the secret are 40px, with no 44px band.
-2. The disabled step of the compact Pagination is an `<a>` without `href`. Chrome's tree shows it as `generic`, a role on which ARIA prohibits `aria-label`.
-3. The Navigation Menu example has no `<nav>`, though its page says it has one.
-4. The rem part of the heading sizes is small. Measured in Chrome in a 1280-pixel window, the largest heading grows by 6% at 200% zoom, where body text doubles, and reaches double its size at 400%, as it did before.
+1. The two buttons of the secret were 40px with no 44px band; they have one now.
+2. The disabled step of the compact Pagination was an `<a>` without `href`, which Chrome's tree shows as `generic`, a role on which ARIA prohibits `aria-label`. It takes `role="link"` now, with `aria-disabled="true"`.
+3. The Navigation Menu example had no `<nav>`, though its page says it has one; it has one now.
+4. Still open: the rem part of the heading sizes is small. Measured in Chrome in a 1280-pixel window, the largest heading grows by 6% at 200% zoom, where body text doubles, and reaches double its size at 400%, as it did before.
 
 ## The fixes in Tray UI
 

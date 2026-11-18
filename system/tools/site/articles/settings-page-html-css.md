@@ -70,7 +70,7 @@ The layout is a two-column grid that falls to one column. These are Tray UI's ru
   padding-block-start: var(--space-10);
   border-block-start: 1px solid var(--hairline);
 }
-@media (max-width: 56rem) {
+@media (max-width: 55.99rem) {
   .tray-settings { grid-template-columns: minmax(0, 1fr); }
 }
 ```

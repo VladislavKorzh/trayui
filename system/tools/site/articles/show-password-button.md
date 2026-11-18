@@ -117,7 +117,7 @@ Tray UI's show password button is `data-tray="reveal"` on the button inside an [
 <label class="tray-label" for="password">Password</label>
 <div class="tray-input-group">
   <input class="tray-input" id="password" name="password" type="password"
-         autocomplete="current-password" required>
+         spellcheck="false" autocapitalize="none" autocomplete="current-password" required>
   <button class="tray-input-group__btn" type="button" data-tray="reveal" aria-label="Show password">
     <svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg>
   </button>
@@ -130,6 +130,6 @@ The `secret` behaviour of [API Keys](#c-api-keys) takes the other pattern. Its e
 
 So one system holds both patterns, each on its own control and each complete. The review that found the mixed state asked each button to keep one signal or the other: Reveal kept the state, the key's button kept the changing name, and each is one of the APG's two patterns.
 
-Two things in the script above are not in Reveal. It does not hide the password again when the form is sent or the page is restored, and the system's markup sets neither `spellcheck` nor `autocapitalize` on its password fields. Add the two attributes to your field, and the two listeners, if you want them.
+The two moments the person did not choose are in Reveal as well: it turns the field back to `type="password"` when its form is sent and when the page comes back from the back-forward cache. The system's password fields that have the button carry `spellcheck="false"` and `autocapitalize="none"`, as the example does; give your own field the two attributes.
 
 The [Input Group](#c-input-group) page has a live example, and [Installation](#d-installation) has the lines that link the stylesheet and the script.

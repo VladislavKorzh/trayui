@@ -214,7 +214,7 @@ Write the field and the list, with `data-tray="combobox"` on the anchor around t
 
 The script writes the ARIA: `role="combobox"`, `aria-autocomplete="list"`, `aria-controls`, `aria-expanded` and `autocomplete="off"` on the field, `role="listbox"` and a name from the field's label on the panel, and an `id` on every option. The keys are the ones in the table, and a press on an option keeps focus in the field. Its filter keeps the options whose text contains what was typed, in any case, and highlights the first.
 
-Two things differ from the script above. `aria-selected="true"` marks the option that was taken, which also shows a tick, and the highlight is a fill without it. And the hidden status line holds only the no-match sentence; the README says plainly that the number of matches is not announced. Add a count of your own beside it if your lists run long.
+Two things differ from the script above. `aria-selected="true"` marks the option that was taken, which also shows a tick, and the highlight is a fill without it. And the hidden status line holds only the no-match sentence, written once and not again at each key while nothing matches (since the next release); the README says plainly that the number of matches is not announced. Add a count of your own beside it if your lists run long.
 
 Taking an option puts its `data-label`, or its text, into the field and fires `tray:change` on the anchor, with `detail.value` set to the option's `data-value`:
 
@@ -224,6 +224,6 @@ document.getElementById('city-box').addEventListener('tray:change', (e) => {
 });
 ```
 
-When names repeat, give options a second line with `tray-option--two`, and a `data-label` that holds the name alone. For markup added after the page has loaded, call `TrayUI.init(root)`. The [Command](#c-command) palette uses the same pattern with a list that is always open, so its field keeps `aria-expanded="true"`.
+When names repeat, give options a second line with `tray-option--two`, and a `data-label` that holds the name alone. The filter reads both lines, kept apart, so "kp" does not match "Anna Melnyk" over "Packing"; 0.2.0 ran them together. For markup added after the page has loaded, call `TrayUI.init(root)`. The [Command](#c-command) palette uses the same pattern with a list that is always open, so its field keeps `aria-expanded="true"`.
 
 The [Combobox](#c-combobox) page has a live example with a single line and with two, and [Installation](#d-installation) has the lines that link the stylesheet and the script.

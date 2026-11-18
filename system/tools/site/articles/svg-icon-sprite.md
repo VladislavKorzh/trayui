@@ -115,7 +115,7 @@ When the script starts, it builds the sprite from `UI.icons` and puts it first i
 <svg class="tray-icon" aria-hidden="true"><use href="#tray-i-truck"/></svg>
 ```
 
-`.tray-icon` is 20 pixels square, with `stroke: currentColor` and a round stroke of 2.4 units, so 2 pixels on screen; `tray-icon--sm` is 16 pixels and `tray-icon--lg` 28. Under `dir="rtl"`, `tray-icon--flip` mirrors an icon with `transform: scaleX(-1)`. Its selector is `[dir="rtl"] .tray-icon--flip`, so it follows the attribute, as described above.
+`.tray-icon` is 20 pixels square, with `stroke: currentColor` and a round stroke of 2.4 units, so 2 pixels on screen; `tray-icon--sm` is 16 pixels and `tray-icon--lg` 28. Under `dir="rtl"`, `tray-icon--flip` mirrors an icon with `transform: scaleX(-1)`. Its selector is `.tray-icon--flip:dir(rtl)`, so it follows the direction the browser has worked out, and an icon in a `dir="ltr"` island stays as drawn.
 
 For markup written from script, `TrayUI.icon(name, className)` returns the same markup as a string:
 

@@ -122,7 +122,7 @@ Tailwind's `dark:` follows the system setting, `prefers-color-scheme`, until you
 
 - **A dark theme of your own.** The variant lists theme names, so a theme made on the [Themes](#d-themes) page is not in it. Write the variant again after the import, with every dark theme you use; in the build, the later definition replaced the file's.
 - **Nesting.** The selector matches anything inside a dark theme, so an element in a light theme nested in a dark one still gets its `dark:` styles. Chrome showed it. Prefer token utilities, which follow the nearest theme, and keep `dark:` for what differs in kind, such as a logo or a picture.
-- **The system setting.** Like the components, `dark:` follows `data-theme`, and nothing sets that attribute from the system setting by itself. [Theming](#d-theming) has the three lines that do.
+- **The system setting.** Like the components, `dark:` follows `data-theme`, and nothing sets that attribute from the system setting by itself. [Theming](#d-theming) has the short script that does, following the system setting until a theme is chosen.
 
 ```css
 @import "tailwindcss";

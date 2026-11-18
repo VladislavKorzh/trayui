@@ -75,7 +75,30 @@ def route(ident):
     prefix, _, rest = ident.partition('-')
     if prefix == 'at':  # a topic of the articles: the articles on it, newest first
         return f'articles/topics/{rest}'
+    if prefix == 'ap':  # a later page of the list of the articles: ap-2
+        return f'articles/page/{rest}'
+    if prefix == 'atp':  # a later page of a topic: atp-<topic>-<page>
+        topic, _, n = rest.rpartition('-')
+        return f'articles/topics/{topic}/page/{n}'
     return f'{SECTION_OF[prefix]}/{rest}'
+
+
+# The list of the articles, and the list of each topic, go by pages: the first has the newest article large and the next
+# twelve in a grid, each page after it twelve in the grid, four rows of three.
+PER_PAGE = 12
+
+
+def paged(items):
+    """A list of articles, page by page."""
+    first, rest = items[:1 + PER_PAGE], items[1 + PER_PAGE:]
+    return [first] + [rest[i:i + PER_PAGE] for i in range(0, len(rest), PER_PAGE)]
+
+
+def page_of_list(owner, n):
+    """The id of a page of a list: owner is 'articles' or a topic (at-components); its first page is the owner itself."""
+    if n == 1:
+        return owner
+    return f'ap-{n}' if owner == 'articles' else f'atp-{owner[3:]}-{n}'
 
 
 def addressed(text, known):
@@ -532,7 +555,7 @@ def themes_page(data):
         '<div data-maker-shared></div>'
         f'<div class="site-maker">{maker}<div class="site-maker__stage"><div class="site-maker__preview" data-maker-preview data-theme="site-draft" role="group" aria-label="The theme on real components">{sample}</div></div></div>'
         '<h2 class="subtitle" id="themes-check">Does it hold?</h2>'
-        '<div data-maker-verdict></div><details class="tray-collapsible"><summary><span>Show every rule</span><span class="tray-tile" aria-hidden="true">' + icon('plus') + '</span></summary>'
+        '<div data-maker-verdict></div><details class="tray-collapsible"><summary><span>Show every pair</span><span class="tray-tile" aria-hidden="true">' + icon('plus') + '</span></summary>'
         '<div class="tray-collapsible__body"><div class="tray-table-wrap"><table class="tray-table tray-table--compact"><thead><tr><th scope="col">What</th><th scope="col">Tokens</th>'
         '<th scope="col" data-num>Contrast</th><th scope="col" data-num>Needs</th><th scope="col">Holds</th></tr></thead><tbody data-maker-report></tbody></table></div></div></details>'
         '<h2 class="subtitle" id="themes-css">Take it with you</h2>'
@@ -703,7 +726,7 @@ def scale_page(tok):
                  lambda t: f'<span class="site-bar" style="inline-size: var(--{t["name"]})"></span>')
     out += table('radius', 'Corners', 'Corners are very round and step down with nesting. Nothing has a hard corner.',
                  lambda t: f'<span class="site-corner" style="border-start-start-radius: min(var(--{t["name"]}), 40px)"></span>')
-    out += table('size', 'Sizes', 'The heights of controls. Nothing a finger must hit is smaller than the hit size.',
+    out += table('size', 'Sizes', 'The heights of controls. A control a finger must hit is at least the hit size tall; the <a href="#g-accessibility">accessibility guide</a> names the few that are smaller.',
                  lambda t: f'<span class="site-bar site-bar--tall" style="block-size: calc(var(--{t["name"]}) / 2)"></span>')
     out += table('layout', 'Layout', 'One centred container, a 12-column bento on a 16px gap, and the measure of a column of text.', plain)
     out += table('shadow', 'Shadow', 'The only shadow, for things that float above the page: a menu, a dialog, a toast.',
@@ -769,7 +792,7 @@ def build():
     site_url = LINKS.get('site', '').rstrip('/')
     facts = {'components': len(comps), 'blocks': len(blocks), 'icons': len(icons), 'charts': len(charts), 'version': VERSION,
              'tokens': sum(len(v['tokens']) for v in tok.values() if isinstance(v, dict) and 'tokens' in v), 'kb': round(sum(sizes.values()) / 1024),
-             'css_kb': round(sizes['components/bundle.css'] / 1024), 'js_kb': round(sizes['components/bundle.js'] / 1024), 'zip': f'trayui-{VERSION}.zip',
+             'tokens_kb': max(1, round(sizes['tokens.css'] / 1024)), 'css_kb': round(sizes['components/bundle.css'] / 1024), 'js_kb': round(sizes['components/bundle.js'] / 1024), 'zip': f'trayui-{VERSION}.zip',
              'repo': LINKS.get('repo', '') if PUBLIC else '', 'license': LINKS.get('license', ''), 'npm': NPM,
              # where the three files can be linked from: jsDelivr, by release, once the package is on npm or the repository is
              # open; until then this site
@@ -840,8 +863,11 @@ def build():
                  {'group': 'By form', 'items': [{'id': g['page'], 'title': g['nav']} for g in forms]},
                  {'group': 'Ready-made', 'items': [{'id': g['page'], 'title': g['nav']} for g in ready]}]
     # the pages of the Articles, for the search and the map of the site (the section shows no sidebar): the list, a page for
-    # each topic, then the articles topic by topic
-    article_nav = ([{'group': '', 'items': [{'id': 'articles', 'title': 'All articles'}] + [{'id': t['id'], 'title': t['title']} for t in topics]}]
+    # each topic, each with its later pages, then the articles topic by topic. A later page of a list is in the map of the
+    # site, but not in the search (unlisted), where it would only repeat its list.
+    def list_nav(owner, name, title, items):
+        return [{'id': owner, 'title': name}] + [{'id': page_of_list(owner, n), 'title': f'{title}, page {n}', 'unlisted': 1} for n in range(2, len(paged(items)) + 1)]
+    article_nav = ([{'group': '', 'items': list_nav('articles', 'All articles', 'Articles', articles) + [x for t in topics for x in list_nav(t['id'], t['title'], t['title'], t['articles'])]}]
                    + [{'group': t['name'], 'items': [{'id': a['id'], 'title': a['title']} for a in t['articles']]} for t in topics])  # whole titles: the search shows them
     sections = [{'id': 'docs', 'title': 'Docs', 'home': 'd-introduction', 'nav': doc_nav},
                 {'id': 'components', 'title': 'Components', 'home': 'components', 'nav': comp_nav},
@@ -1008,41 +1034,88 @@ def build():
                     f'<div class="tray-feature__end tray-row tray-row--between">{person(small=True, link=False)}'
                     f'<span class="tray-row tray-row--sm caption tray-muted">{icon("clock", "tray-icon--sm")}{a["minutes"]} minutes to read</span></div></div></div></a>')
 
-        def teasers(items, key, level):
-            span = 'tray-span-6' if len(items) < 3 else 'tray-span-4'  # two to a row while there are two, then three
+        def teasers(items, key, level, threes=False):
+            span = 'tray-span-6' if len(items) < 3 and not threes else 'tray-span-4'  # two to a row while there are two, then three; a later page keeps the threes of the pages before it
             return '<div class="tray-bento">' + ''.join(
                 f'<a class="tray-card {span}" href="#{a["id"]}" aria-labelledby="{key}-{a["id"]}"><div class="tray-stack">{thumb(a)}'
                 f'<div class="tray-row tray-row--sm"><span class="tray-badge">{esc(a["group"])}</span><span class="caption tray-muted">{when(a)}, {a["minutes"]} minutes</span></div>'
                 f'<{level} class="subtitle" id="{key}-{a["id"]}">{esc(a["title"])}</{level}><p class="tray-soft">{about(a)}</p></div></a>' for a in items) + '</div>'
 
         # the list: a tab for every topic with its count, the newest article large, the others in a grid, then the feed.
-        # All of them on /articles, and the articles of one topic on its own page, /articles/topics/<topic>.
+        # All of them from /articles, and the articles of one topic from its own page, /articles/topics/<topic>; a list
+        # longer than a page goes on at /articles/page/2 and /articles/topics/<topic>/page/2.
         follow = (f'<section class="tray-card tray-cta" aria-labelledby="art-follow"><div class="tray-cta__text"><h2 class="subtitle" id="art-follow">New articles in a feed</h2>'
                   f'<p class="tray-soft">Add the Atom feed to a feed reader, and each new article comes to you whole, with its code.</p></div>'
                   f'<div class="tray-cta__actions"><button class="tray-btn" type="button" data-tray="copy" data-target="#art-feed">{icon("copy")}<span data-label>Copy the feed address</span></button>'
                   f'<a class="tray-btn tray-btn--quiet" href="/articles/feed.xml">Open the feed</a><span id="art-feed" hidden>{facts["site"]}/articles/feed.xml</span></div></section>'
                   ) if facts['site'] else ''  # the feed is written only for a site with an address
 
-        def listing(here, items):
-            current = lambda ident: ' aria-current="page"' if ident == here else ''
+        def pagination(owner, pages, n):
+            """The pages of a list as the journal block shows them, with the Pagination component: the first, the last, the
+            current one and one on each side of it, a gap for the rest, and Previous and Next. A step that leads nowhere is a
+            disabled button, not a link with no address."""
+            count = len(pages)
+            shown = sorted({1, count, n - 1, n, n + 1} & set(range(1, count + 1)))
+            shown = sorted(set(shown) | {k + 1 for a, k in zip(shown[1:], shown) if a - k == 2})  # a gap of one page shows the page
+
+            def step(to, way, label):
+                arrow = icon('chevron-left' if way == 'prev' else 'chevron-right', 'tray-icon--flip')
+                if not to:
+                    return f'<li><button class="tray-page tray-page--step" type="button" disabled aria-label="{label}">{arrow}</button></li>'
+                return f'<li><a class="tray-page tray-page--step" href="#{page_of_list(owner, to)}" rel="{way}" aria-label="{label}">{arrow}</a></li>'
+            out, last = [step(n - 1, 'prev', 'Previous page')], 0
+            for k in shown:
+                if k - last > 1:
+                    out.append('<li><span class="tray-page tray-page--gap" aria-hidden="true">&hellip;</span></li>')
+                out.append(f'<li><a class="tray-page" href="#{page_of_list(owner, k)}"' + (' aria-current="page"' if k == n else '') + f'>{k}</a></li>')
+                last = k
+            out.append(step(n + 1 if n < count else 0, 'next', 'Next page'))
+            return f'<nav aria-label="Pages"><ul class="tray-pages">{"".join(out)}</ul></nav>'
+
+        def listing(owner, pages, n):
+            """Page n of a list: a tab for every topic with its count, the current one marked; on the first page the newest
+            article large and the next ones in a grid, on a later page the grid alone; then where this page stands among
+            the others, and the feed."""
+            mark = lambda ident: (' aria-current="page"' if n == 1 else ' aria-current="true"') if ident == owner else ''  # a later page belongs to its tab, which links the first
             tabs = ('<nav class="tray-tabs" aria-label="Topics" data-tray="strip">'
-                    f'<a class="tray-tab" href="#articles"{current("articles")}>All<span class="tray-badge tray-badge--count">{len(articles)}</span></a>'
-                    + ''.join(f'<a class="tray-tab" href="#{t["id"]}"{current(t["id"])}>{esc(t["name"])}<span class="tray-badge tray-badge--count">{len(t["articles"])}</span></a>' for t in topics)
+                    f'<a class="tray-tab" href="#articles"{mark("articles")}>All<span class="tray-badge tray-badge--count">{len(articles)}</span></a>'
+                    + ''.join(f'<a class="tray-tab" href="#{t["id"]}"{mark(t["id"])}>{esc(t["name"])}<span class="tray-badge tray-badge--count">{len(t["articles"])}</span></a>' for t in topics)
                     + '</nav>')
-            rest = items[1:]
-            more = (f'<section class="tray-stack tray-stack--lg" aria-labelledby="art-more"><div class="tray-stack tray-stack--sm"><h2 class="subtitle" id="art-more">More articles</h2>'
-                    f'<p class="tray-soft">{numbers[len(rest)] if len(rest) < 10 else len(rest)} more, newest first.</p></div>{teasers(rest, "art", "h3")}</section>') if rest else ''
-            return f'<div class="site-articles">{tabs}{featured(items[0])}{more}</div>{follow}'
+            items, total = pages[n - 1], sum(len(x) for x in pages)
+            first = 1 + sum(len(x) for x in pages[:n - 1])
+            if n == 1:
+                rest = items[1:]
+                said = numbers[len(rest)] if len(rest) < 10 else str(len(rest))
+                more = (f'<section class="tray-stack tray-stack--lg" aria-labelledby="art-more"><div class="tray-stack tray-stack--sm"><h2 class="subtitle" id="art-more">More articles</h2>'
+                        f'<p class="tray-soft">{said} more{" on this page" if len(pages) > 1 else ""}, newest first.</p></div>{teasers(rest, "art", "h3")}</section>') if rest else ''
+                shown = featured(items[0]) + more
+            else:
+                shown = teasers(items, 'art', 'h2', threes=True)
+            span = f'Articles {first} to {first + len(items) - 1}' if len(items) > 1 else f'Article {first}'  # the last page may hold one
+            where = (f'<div class="tray-row tray-row--between site-articles__pages"><p class="caption tray-muted">{span} of {total}</p>'
+                     f'{pagination(owner, pages, n)}</div>') if len(pages) > 1 else ''
+            return f'<div class="site-articles">{tabs}{shown}{where}</div>{follow}'
 
         list_md = lambda items: ''.join(f'- [{a["title"]}](#{a["id"]}), {day(a["published"])}: {unmark(a["summary"])}\n' for a in items)
-        page('articles', 'Articles', '', 'articles', head('Articles', article_summary) + listing('articles', articles) + pager(None, art_seq[1]),
-             article_summary, md=md_page('Articles', article_summary, list_md(articles)),
-             card={'kind': 'Articles'}, src=['system/tools/site/articles/topics.json'] + [s for a in articles for s in a['src']])
+
+        def list_pages(owner, title, summary, items, before):
+            """Every page of a list. The first keeps the title and the summary of the list; a later one is "<title>, page n",
+            and says in its description which articles it holds. Each is canonical to itself, and is in the sitemap."""
+            pages = paged(items)
+            for n, its in enumerate(pages, 1):
+                ident, name = page_of_list(owner, n), title if n == 1 else f'{title}, page {n}'
+                first = 1 + sum(len(x) for x in pages[:n - 1])
+                span = f'articles {first} to {first + len(its) - 1}' if len(its) > 1 else f'article {first}'
+                others = ', '.join(f'[{k}](#{page_of_list(owner, k)})' for k in range(1, len(pages) + 1) if k != n)
+                md = list_md(its) + (f'\nPage {n} of {len(pages)}, {span} of {len(items)}. The other pages: {others}.\n' if len(pages) > 1 else '')
+                desc = summary if n == 1 else f'{span[:1].upper() + span[1:]} of {len(items)}, newest first, on page {n} of {len(pages)}. {summary}'
+                page(ident, name, '', 'articles', head(name, summary) + listing(owner, pages, n) + (pager(*before) if n == 1 else ''), desc,
+                     md=md_page(name, summary, md), card={'kind': 'Articles'}, src=['system/tools/site/articles/topics.json'] + [s for a in its for s in a['src']])
+
+        list_pages('articles', 'Articles', article_summary, articles, (None, art_seq[1]))
         topic_of = {t['name']: t for t in topics}
         for t in topics:
-            page(t['id'], t['title'], '', 'articles', head(t['title'], t['summary']) + listing(t['id'], t['articles']) + pager({'id': 'articles', 'title': 'All articles'}, t['articles'][0]),
-                 t['summary'], md=md_page(t['title'], t['summary'], list_md(t['articles'])),
-                 card={'kind': 'Articles'}, src=['system/tools/site/articles/topics.json'] + [s for a in t['articles'] for s in a['src']])
+            list_pages(t['id'], t['title'], t['summary'], t['articles'], ({'id': 'articles', 'title': 'All articles'}, t['articles'][0]))
 
         # an article: the way back, its head with who wrote it, when and for how long, its contents beside it, then the pages it uses and a way to share it
         for i, a in enumerate(articles, 1):
@@ -1066,7 +1139,7 @@ def build():
             meta = (f'<div class="tray-row site-post__meta">{person()}<span class="tray-badge">{esc(a["group"])}</span>'
                     f'<span class="tray-row tray-row--sm caption tray-muted">{icon("calendar", "tray-icon--sm")}{when(a)}</span>'
                     f'<span class="tray-row tray-row--sm caption tray-muted">{icon("clock", "tray-icon--sm")}{a["minutes"]} minutes to read</span></div>')
-            used = [u for u in dict.fromkeys(re.findall(r'\]\(#([a-z0-9-]+)\)', a['guide'])) if u in index and not u.startswith(('a-', 'at-')) and u != 'articles']  # the pages of the system it links to, in its order
+            used = [u for u in dict.fromkeys(re.findall(r'\]\(#([a-z0-9-]+)\)', a['guide'])) if u in index and not u.startswith(('a-', 'at-', 'ap-', 'atp-')) and u != 'articles']  # the pages of the system it links to, in its order
             link = f'{facts["site"]}/{route(a["id"])}'
             foot = (('<div><dt>In Tray UI</dt><dd>' + ''.join(f'<a class="tray-btn tray-btn--quiet tray-btn--sm" href="#{u}">{esc(index[u]["title"])}</a>' for u in used) + '</dd></div>' if used else '')
                     + (f'<div><dt>Share</dt><dd><button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" data-tray="copy" data-target="#art-link">{icon("link")}<span data-label>Copy the link</span></button>'
@@ -1080,7 +1153,7 @@ def build():
                  + (f'<footer class="site-post__foot"><dl class="tray-dl tray-dl--stack">{foot}</dl></footer>' if foot else '') + '</div></div></article>'
                  + pager(art_seq[i - 1], art_seq[i + 1] if i + 1 < len(art_seq) else None),
                  a['summary'], md=md_page(a['title'], a['summary'], (f'By {facts["author"]}, ' if facts['author'] else '') + f'{day(a["published"])}.\n\n{a["guide"]}'),
-                 card={'kind': 'Article'}, src=a['src'])
+                 card={'kind': 'Article', 'art': a['art']}, src=a['src'])  # its card shows its picture
             index[a['id']]['published'] = a['published']
 
     # the foundations and the themes have no Markdown source: their tables, written out
@@ -1247,7 +1320,7 @@ def build():
         card.setdefault('title', meta['title'])
         if card.get('kind') != 'home':
             line = unmark(meta['summary'])
-            card['line'] = line if len(line) <= 110 else line[:line.rfind(' ', 0, 108)] + '…'
+            card['line'] = line if len(line) <= 160 else line[:line.rfind(' ', 0, 158)] + '…'  # og.py shows four lines of it at most
         todo.append(card)
     pictures, said = og.make(todo, OUT, blocks_src)
     for meta in index.values():
@@ -1331,9 +1404,10 @@ def build():
         out = OUT / ('index.html' if home else meta['path'] + '.html')
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(addressed(fill(template, one), index), encoding='utf-8')
+    unlisted = {it['id'] for s in sections for g in s['nav'] for it in g['items'] if it.get('unlisted')}  # the later pages of a list: not in a search
     (OUT / '404.html').write_text(addressed(fill((SRC / '404.html').read_text(encoding='utf-8'), dict(asset, search_list=''.join(
         f'<a class="tray-option" href="/{m["path"]}" role="option" data-value="/{m["path"]}"><span class="tray-option__text">{html.escape(m["title"])}</span>'
-        f'<span class="tray-option__meta">{html.escape(by_id[m["section"]]["title"])}</span></a>' for i, m in index.items() if m['section']))), index), encoding='utf-8')
+        f'<span class="tray-option__meta">{html.escape(by_id[m["section"]]["title"])}</span></a>' for i, m in index.items() if m['section'] and i not in unlisted))), index), encoding='utf-8')
 
     # every page as Markdown, beside its file: the same address with .md added. Links go to the other pages' Markdown.
     base = facts['site']
@@ -1403,9 +1477,9 @@ def build():
     lines.append('\n## Charts\n\n' + f'- [Using the charts]({link("ch-use")}): {index["ch-use"]["desc"]}\n'
                  + ''.join(f'- [{g["title"]}]({link(g["page"])}): {unmark(g["summary"])}\n' for g in chart_groups))
     if articles:
-        # the list and the pages of the topics, not every article: this file stays a short index, and those pages list them all
+        # the list and the pages of the topics, not every article: this file stays a short index, and those pages list them all, page by page
         lines.append(f'\n## Articles\n\nHow to build parts of an interface in plain HTML, CSS and JavaScript, worked through with the code of Tray UI.\n\n'
-                     f'- [All {len(articles)} articles]({link("articles")}): newest first, each with its summary\n'
+                     f'- [All {len(articles)} articles]({link("articles")}): newest first, each with its summary, {1 + PER_PAGE} on the first page and {PER_PAGE} on each after it; each page links the others\n'
                      + ''.join(f'- [{t["title"]}]({link(t["id"])}): {unmark(t["summary"])}\n' for t in topics))
     lines.append(f'\n## Optional\n\n- [llms-full.txt]({base}/llms-full.txt): the rules, the guides and the guidelines of every component in one file\n'
                  f'- [{facts["zip"]}]({base}/{facts["zip"]}): the three files, the font and the {len(blocks)} blocks\n')

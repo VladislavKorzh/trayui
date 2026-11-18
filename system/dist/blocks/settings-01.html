@@ -55,7 +55,7 @@
         <nav aria-label="Breadcrumb"><ol class="tray-crumbs tray-crumbs--fold"><li><a href="#">Perly Farm</a></li><li><a href="#">Settings</a></li><li><span aria-current="page">Profile</span></li></ol></nav>
       </div>
       <div class="tray-topbar__end">
-        <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders" aria-keyshortcuts="/"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
+        <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
         <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 2 unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip">2</span></span>
         <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko">OF</button>
       </div>
@@ -93,8 +93,8 @@
                 <span class="tray-label" id="photo-label">New photo</span>
                 <div class="tray-drop" data-tray="dropzone" data-list="#photo-list" data-max-mb="5" data-too-large="Too large. Choose a photo under {max} MB.">
                   <span class="tray-drop__icon"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-upload"/></svg></span>
-                  <p class="tray-drop__text"><b>Drop a photo here or <u>choose a file</u></b><small>PNG or JPG, square, up to 5 MB</small></p>
-                  <input type="file" accept="image/png, image/jpeg" aria-labelledby="photo-label">
+                  <p class="tray-drop__text"><b>Drop a photo here or <u>choose a file</u></b><small id="photo-note">PNG or JPG, square, up to 5 MB</small></p>
+                  <input type="file" accept="image/png, image/jpeg" aria-labelledby="photo-label" aria-describedby="photo-note">
                 </div>
                 <div class="tray-attachments" id="photo-list" style="margin-block-start: var(--space-3)">
                   <div class="tray-attachment">
@@ -236,9 +236,12 @@
     if (list.children.length) out.unshift('the photo');
     return out;
   }
+  /* The note is a status line: it is written only when its words change, so a key that changes nothing in it (one more
+     letter of the same name) is not read again. */
   function paint() {
     var c = changed();
-    note.textContent = c.length ? c.length + (c.length === 1 ? ' unsaved change: ' : ' unsaved changes: ') + c.slice(0, 3).join(', ') + (c.length > 3 ? ' and more' : '') : 'Everything is saved';
+    var words = c.length ? c.length + (c.length === 1 ? ' unsaved change: ' : ' unsaved changes: ') + c.slice(0, 3).join(', ') + (c.length > 3 ? ' and more' : '') : 'Everything is saved';
+    if (note.textContent !== words) note.textContent = words;
   }
   form.addEventListener('input', paint);
   form.addEventListener('change', paint);

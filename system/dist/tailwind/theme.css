@@ -3,14 +3,19 @@
 /* Tray UI for Tailwind CSS 4.
 
      @import "tailwindcss";
-     @import "./tokens.css";
      @import "./tailwind/theme.css";
 
+   Link tokens.css on the page as a file of its own, beside what Tailwind writes: imported here, its url() would still
+   point at fonts/ beside it, and Tailwind does not rewrite it, so the font would be looked for beside Tailwind's file.
    Then bg-page, text-ink, bg-accent text-on-accent, rounded-card, shadow-float, text-title, h-hit, p-card, max-w-measure.
    Each utility reads the system's own custom property, so a theme (data-theme on <html> or on any element) changes it.
    "reference" keeps Tailwind from declaring these properties again: tokens.css declares them. The spacing scale of
    Tailwind (p-1 is 4px, p-4 is 16px) is the system's own, so it is left as it is. To use only the system's colours,
-   put  @theme { --color-*: initial; }  before this file. */
+   put  @theme { --color-*: initial; }  before this file.
+   The system's stylesheets are in no cascade layer and Tailwind's utilities are, so where both set a property the
+   system wins: with components/bundle.css on the page, text-title does nothing on a heading (its reset sets
+   font: inherit) and text-on-accent nothing on a button (color: inherit). Use the system's class there (title,
+   tray-btn), or mark the utility important (text-title!). */
 
 @theme inline reference {
   --color-page: var(--page);
@@ -158,5 +163,6 @@
   --breakpoint-header: 76rem;
 }
 
-/* dark: for whatever sits in one of the dark themes, not for the visitor's system setting. */
+/* dark: for whatever sits in one of the dark themes, not for the visitor's system setting. It also matches inside a
+   light theme set within a dark one, as CSS cannot tell which data-theme is the nearest. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, [data-theme="midnight"], [data-theme="midnight"] *, [data-theme="forest"], [data-theme="forest"] *, [data-theme="espresso"], [data-theme="espresso"] *));

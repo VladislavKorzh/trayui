@@ -52,7 +52,7 @@
             <p class="tray-soft">We text you at each step.</p>
           </div>
         </div>
-        <ol class="tray-stepper tray-stepper--v" aria-label="Progress of the order">
+        <ol class="tray-stepper tray-stepper--v" aria-label="Progress of the order" role="list">
           <li data-done><span class="tray-step"><span class="tray-step__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span><span class="tray-step__text">Paid<span class="tray-vh">, done</span><small>Today at 09:12</small></span></span></li>
           <li aria-current="step"><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">Packed<small>By 14:00, in a chilled box</small></span></span></li>
           <li><span class="tray-step"><span class="tray-step__mark"></span><span class="tray-step__text">With the courier<small>From 14:00, with a link to follow the box</small></span></span></li>
@@ -61,7 +61,7 @@
       </section>
       <section class="tray-card tray-span-7 tray-summary" aria-labelledby="order-title">
         <h2 class="subtitle" id="order-title">Your order</h2>
-        <ul class="tray-summary__lines">
+        <ul class="tray-summary__lines" role="list">
           <li class="tray-summary__line"><span>Snail caviar, 30 g<small>1 &times; $38.00</small></span><span>$38.00</span></li>
           <li class="tray-summary__line"><span>Snail caviar, 50 g<small>2 &times; $59.00</small></span><span>$118.00</span></li>
           <li class="tray-summary__line"><span>Snail caviar, 100 g<small>1 &times; $112.00</small></span><span>$112.00</span></li>
@@ -93,7 +93,7 @@
         <div class="tray-field">
           <label class="tray-label" for="password">Choose a password</label>
           <div class="tray-input-group">
-            <input class="tray-input" id="password" name="password" type="password" autocomplete="new-password" minlength="12" aria-describedby="password-hint">
+            <input class="tray-input" id="password" name="password" type="password" spellcheck="false" autocapitalize="none" autocomplete="new-password" minlength="12" aria-describedby="password-hint">
             <button class="tray-input-group__btn" type="button" data-tray="reveal" aria-label="Show password"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-eye"/></svg></button>
           </div>
           <p class="tray-field__hint" id="password-hint">At least 12 characters. The email is dana@kovalenko.example.</p>

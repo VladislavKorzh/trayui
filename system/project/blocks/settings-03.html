@@ -18,7 +18,7 @@
       <nav class="tray-topbar__wide" aria-label="Breadcrumb"><ol class="tray-crumbs"><li><a href="#">Settings</a></li><li><span aria-current="page">Security</span></li></ol></nav>
     </div>
     <div class="tray-topbar__end">
-      <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders" aria-keyshortcuts="/"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
+      <button class="tray-topbar__search tray-topbar__search--fold" type="button" aria-label="Search orders"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-search"/></svg><span>Search orders</span><kbd class="tray-kbd">/</kbd></button>
       <span class="tray-anchor"><button class="tray-btn tray-btn--quiet tray-btn--sm tray-btn--icon" type="button" aria-label="Notifications, 1 unread"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-bell"/></svg></button><span class="tray-pip">1</span></span>
       <button class="tray-avatar" type="button" aria-label="Account: Oksana Franko">OF</button>
     </div>
@@ -73,16 +73,16 @@
             </div>
           </div>
           <div class="tray-setting">
-            <div class="tray-setting__text"><b>Authenticator app</b><small>Added on 3 March 2026, on iPhone 15.</small></div>
-            <div class="tray-setting__control"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button">Change<span class="tray-vh"> the authenticator app</span></button></div>
+            <div class="tray-setting__text"><b>Authenticator app</b><small id="sec-app-note">Added on 3 March 2026, on iPhone 15.</small></div>
+            <div class="tray-setting__control"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" aria-describedby="sec-app-note">Change<span class="tray-vh"> the authenticator app</span></button></div>
           </div>
           <div class="tray-setting">
-            <div class="tray-setting__text"><b>Backup codes</b><small>8 of 10 left. Each one works once.</small></div>
-            <div class="tray-setting__control"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button">Show the codes</button></div>
+            <div class="tray-setting__text"><b>Backup codes</b><small id="sec-codes-note">8 of 10 left. Each one works once.</small></div>
+            <div class="tray-setting__control"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" aria-describedby="sec-codes-note">Show the codes</button></div>
           </div>
           <div class="tray-setting">
-            <div class="tray-setting__text"><b id="sec-sms">A text when the app is lost</b><small>A code to the number ending in 27.</small></div>
-            <div class="tray-setting__control"><label class="tray-switch"><input type="checkbox" role="switch" aria-labelledby="sec-sms" checked><span class="tray-switch__track"></span></label></div>
+            <div class="tray-setting__text"><b id="sec-sms">A text when the app is lost</b><small id="sec-sms-note">A code to the number ending in 27.</small></div>
+            <div class="tray-setting__control"><label class="tray-switch"><input type="checkbox" role="switch" aria-labelledby="sec-sms" aria-describedby="sec-sms-note" checked><span class="tray-switch__track"></span></label></div>
           </div>
           <p class="caption tray-muted" style="margin-block-start: var(--space-5)">Perly Farm asks every owner and manager to keep two-step sign-in on.</p>
         </section>
@@ -106,7 +106,7 @@
             </div>
             <button class="tray-btn tray-btn--quiet tray-btn--sm" type="button" id="sign-out-all"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-log-out"/></svg>Sign out of all others</button>
           </div>
-          <ul class="tray-items tray-items--ruled" id="devices">
+          <ul class="tray-items tray-items--ruled" id="devices" role="list">
             <li class="tray-item tray-item--sm">
               <span class="tray-item__media"><svg class="tray-icon" aria-hidden="true"><use href="#tray-i-monitor"/></svg></span>
               <span class="tray-item__body"><span class="tray-item__title">MacBook Air</span><span class="tray-item__text">Chrome in Kyiv, now</span></span>
@@ -137,12 +137,12 @@
             </div>
           </div>
           <div class="tray-setting">
-            <div class="tray-setting__text"><b>Transfer the ownership</b><small>Dana Kovalenko becomes the owner, and you stay on as a manager.</small></div>
-            <div class="tray-setting__control"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button">Transfer to Dana</button></div>
+            <div class="tray-setting__text"><b>Transfer the ownership</b><small id="sec-owner-note">Dana Kovalenko becomes the owner, and you stay on as a manager.</small></div>
+            <div class="tray-setting__control"><button class="tray-btn tray-btn--quiet tray-btn--xs" type="button" aria-describedby="sec-owner-note">Transfer to Dana</button></div>
           </div>
           <div class="tray-setting">
-            <div class="tray-setting__text"><b>Delete the workspace</b><small>1,284 orders, 312 customers and 46 invoices go for good, and the shop closes.</small></div>
-            <div class="tray-setting__control"><button class="tray-btn tray-btn--danger tray-btn--xs" type="button" data-tray="open" data-target="#delete-ws" data-open-first>Delete Perly Farm</button></div>
+            <div class="tray-setting__text"><b>Delete the workspace</b><small id="sec-delete-note">1,284 orders, 312 customers and 46 invoices go for good, and the shop closes.</small></div>
+            <div class="tray-setting__control"><button class="tray-btn tray-btn--danger tray-btn--xs" type="button" aria-describedby="sec-delete-note" data-tray="open" data-target="#delete-ws" data-open-first>Delete Perly Farm</button></div>
           </div>
         </section>
       </div>

@@ -1,6 +1,6 @@
 """The tokens for other tools: Tailwind CSS (version 4 and 3) and Figma variables. tools/build.py calls write(tok, dist).
 
-    dist/tailwind/theme.css          Tailwind 4: @import it after tailwindcss and tokens.css
+    dist/tailwind/theme.css          Tailwind 4: @import it after tailwindcss, and link tokens.css as a file of its own
     dist/tailwind/preset.cjs         Tailwind 3: presets: [require('./tailwind/preset.cjs')]
     dist/figma/colours/<Theme>.tokens.json   one file per theme: drop them all into a new collection, one mode each
     dist/figma/scale/Scale.tokens.json       space, corners, sizes, type, timing and layers, in one mode
@@ -58,14 +58,19 @@ def tailwind4(tok, dark):
     out = [HEAD, '''/* Tray UI for Tailwind CSS 4.
 
      @import "tailwindcss";
-     @import "./tokens.css";
      @import "./tailwind/theme.css";
 
+   Link tokens.css on the page as a file of its own, beside what Tailwind writes: imported here, its url() would still
+   point at fonts/ beside it, and Tailwind does not rewrite it, so the font would be looked for beside Tailwind's file.
    Then bg-page, text-ink, bg-accent text-on-accent, rounded-card, shadow-float, text-title, h-hit, p-card, max-w-measure.
    Each utility reads the system's own custom property, so a theme (data-theme on <html> or on any element) changes it.
    "reference" keeps Tailwind from declaring these properties again: tokens.css declares them. The spacing scale of
    Tailwind (p-1 is 4px, p-4 is 16px) is the system's own, so it is left as it is. To use only the system's colours,
-   put  @theme { --color-*: initial; }  before this file. */''']
+   put  @theme { --color-*: initial; }  before this file.
+   The system's stylesheets are in no cascade layer and Tailwind's utilities are, so where both set a property the
+   system wins: with components/bundle.css on the page, text-title does nothing on a heading (its reset sets
+   font: inherit) and text-on-accent nothing on a button (color: inherit). Use the system's class there (title,
+   tray-btn), or mark the utility important (text-title!). */''']
     rows = [f'  --color-{n}: var(--{n});' for n in colours]
     rows += [f'  --radius-{t["name"][len("radius-"):]}: var(--{t["name"]});' for t in tok['radius']['tokens']]
     rows += [f'  --shadow-{t["name"][len("shadow-"):]}: var(--{t["name"]});' for t in tok['shadow']['tokens']]
@@ -84,7 +89,8 @@ def tailwind4(tok, dark):
         out.append('/* phone:, tablet:, bento: and header: at the widths where the system\'s own layouts change. */\n@theme {\n'
                    + '\n'.join(f'  --breakpoint-{t["name"][len("bp-"):]}: {t["value"]};' for t in bps) + '\n}')
     sel = ', '.join(f'[data-theme="{d}"], [data-theme="{d}"] *' for d in dark)
-    out.append(f'/* dark: for whatever sits in one of the dark themes, not for the visitor\'s system setting. */\n@custom-variant dark (&:where({sel}));')
+    out.append(f'/* dark: for whatever sits in one of the dark themes, not for the visitor\'s system setting. It also matches inside a\n'
+               f'   light theme set within a dark one, as CSS cannot tell which data-theme is the nearest. */\n@custom-variant dark (&:where({sel}));')
     return '\n\n'.join(out) + '\n'
 
 
@@ -105,11 +111,16 @@ def tailwind3(tok, dark):
         'transitionTimingFunction': {'tray': 'var(--ease)'} if 'ease' in names else {},
     }
     sel = ', '.join(f'[data-theme="{d}"], [data-theme="{d}"] *' for d in dark)
+    bps = tok.get('breakpoint', {}).get('tokens', [])
+    widths = ', '.join(f'min-[{px(b["value"])}px]: ({b["value"]})' for b in bps)  # a width in px, with the token's own value beside it
     # line comments: a glob such as src/**/*.html would close a block comment
     return (HEAD + '\n// Tray UI for Tailwind CSS 3: a preset.\n//\n'
             "//   // tailwind.config.js\n//   module.exports = { presets: [require('./tailwind/preset.cjs')], content: ['./src/**/*.html'] };\n//\n"
             '// Link tokens.css on the page as well: every value here reads one of its custom properties, so a theme changes them.\n'
-            "// The spacing scale of Tailwind (p-1 is 4px) is the system's own. dark: is for whatever sits in a dark theme.\n"
+            "// The spacing scale of Tailwind (p-1 is 4px) is the system's own. dark: is for whatever sits in a dark theme, a light\n"
+            "// theme set within a dark one included. There are no screens for the system's widths: Tailwind 3 takes an arbitrary\n"
+            "// width in px only, beside its own screens in px, and one min-[34rem]: turns every min- and max- variant off. Write\n"
+            f"//   {widths}\n"
             'module.exports = ' + json.dumps({'darkMode': ['variant', f'&:where({sel})'], 'theme': {'extend': ext}}, indent=2) + ';\n')
 
 

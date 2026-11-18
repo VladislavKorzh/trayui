@@ -17,7 +17,7 @@ The auth form is the card a person meets before the product: sign in, create an 
   <div class="tray-field">
     <div class="tray-auth__row"><label class="tray-label" for="password">Password</label><a href="/reset">Forgot it?</a></div>
     <div class="tray-input-group">
-      <input class="tray-input" id="password" type="password" autocomplete="current-password" required>
+      <input class="tray-input" id="password" type="password" spellcheck="false" autocapitalize="none" autocomplete="current-password" required>
       <button class="tray-input-group__btn" type="button" data-tray="reveal" aria-label="Show password">…</button>
     </div>
   </div>
@@ -46,7 +46,7 @@ A provider's own mark goes before its name as `<img class="tray-icon" alt="">`, 
 Set `autocomplete` on every field: `username`, `current-password`, `new-password`, `one-time-code`.
 
 ## Accessibility
-Every field has a visible `<label>` tied by `for`. Mark a field in error with `aria-invalid="true"`, which draws its `danger` edge, and tie the sentence that explains it with `aria-describedby`, as the password hint is tied. An error for the whole form is an Alert with `role="alert"`, read as soon as it appears. The `reveal` button keeps its name, "Show password", and `aria-pressed="true"` says the password shows, so it is read as "Show password, pressed". Each provider's `aria-label` holds the name it shows, so a person who says "Google" to voice control still reaches it.
+Every field has a visible `<label>` tied by `for`. Mark a field in error with `aria-invalid="true"`, which draws its `danger` edge, and tie the sentence that explains it with `aria-describedby`, as the password hint is tied; a field that an error for the whole form is about points at that error's title, as the email does in the preview. An error for the whole form is an Alert with `role="alert"`. It is read when it is put in the page, as a form checked by script answers; an alert that is already there as the page loads is not announced. So when the error comes back with a new page from the server, give the Alert `tabindex="-1"`, as the preview does, and move focus to it as the page loads. The `reveal` button keeps its name, "Show password", and `aria-pressed="true"` says the password shows, so it is read as "Show password, pressed". Each provider's `aria-label` holds the name it shows, so a person who says "Google" to voice control still reaches it.
 
 ## Do and don't
 - Do say which account failed and why: "That password does not match this email."

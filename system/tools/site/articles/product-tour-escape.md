@@ -162,9 +162,9 @@ Tray UI's [Tour](#c-tour) needs the stylesheet and the script from [Installation
 ```
 
 - The step that is not `hidden` is shown when the page loads. Each step names its part with `data-for`, a selector inside the area.
-- Buttons carry `data-tour="next"`, `"back"` or `"skip"`. Next on the last step ends the tour as finished; label it "Done".
+- Buttons carry `data-tour="next"`, `"back"` or `"skip"`. Next on the last step ends the tour as finished; label it "Done". Back on the first step does nothing (in 0.2.0 it ended the tour as finished).
 - The script writes the count ("2 of 3"), sets `data-tour-on` on the current part and places the step. On Next and Back it moves focus to the new step's Next button.
-- Escape in a step ends the tour as Skip does. At the end, focus inside the step moves to the part the step pointed at, or the first control inside it.
+- Escape ends the tour as Skip does. Since the next release the script listens on the whole area, as advised above, so a person on a control that a step covers can clear it; in 0.2.0 only Escape in a step did. At the end, focus inside the step moves to the part the step pointed at, or the first control inside it.
 - `tray:change` fires with `{ step }` on each move, and `tray:complete` with `{ finished }` at the end.
 
 To start a tour later, from a button, add its markup when the person asks, call `TrayUI.init(area)` and move focus to the first Next yourself. Don't start a tour over a screen that is still empty: Tray UI's rule is to show the [Empty](#c-empty) state or the [Onboarding Checklist](#c-onboarding-checklist) first.

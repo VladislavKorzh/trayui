@@ -12,7 +12,7 @@ The onboarding checklist gets a new workspace to its first real result: a short 
       <span class="tray-progress__bar" role="progressbar" aria-label="Setup" aria-valuemin="0"></span>
     </div>
   </div>
-  <ol class="tray-tasks">
+  <ol class="tray-tasks" role="list">
     <li class="tray-task" data-done>
       <span class="tray-task__mark"><svg class="tray-icon tray-icon--sm" aria-hidden="true"><use href="#tray-i-check"/></svg></span>
       <div class="tray-task__body"><b>Add your products</b></div>

@@ -188,7 +188,7 @@ The accent stays bright in a dark theme too. Accent surfaces keep the light pale
 
 ## More contrast and forced colours
 
-A theme's CSS carries a second rule inside `@media (prefers-contrast: more)`. Each grey takes the value its theme gives the next step towards the ink: `ink-soft` becomes `ink`, `ink-muted` becomes `ink-soft`, and so on down to `hairline` and `track`: ten tokens, three of them on the ink card. The values already belong to the theme, so the greys keep its tint and need no new search. `tokens.css` does the same for the built-in themes, and in that mode the stylesheet adds a 1px edge to trays, fields and quiet controls.
+A theme's CSS carries a second rule inside `@media (prefers-contrast: more)`. Each grey takes the value its theme gives the next step towards the ink: `ink-soft` becomes `ink`, `ink-muted` becomes `ink-soft`, and so on down to `hairline` and `track`: ten tokens, three of them on the ink card. The values already belong to the theme, so the greys keep its tint and need no new search. `tokens.css` does the same for the built-in themes, and since the next release goes two steps further: the yellow card's own greys step too, and a rule that would stay under 3:1 on a ground it is drawn on (the hairline on a raised panel in the dark themes) takes the step after. In that mode the stylesheet adds a 1px edge to trays, fields and quiet controls.
 
 Forced colours, such as Windows high contrast, need nothing from a theme: the browser replaces the theme's colours with the person's own, and the stylesheet draws an edge where a fill was. [Accessibility](#g-accessibility) has the details.
 

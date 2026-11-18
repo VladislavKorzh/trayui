@@ -101,6 +101,8 @@ def main():
     check('every page but the home page is also Markdown, at its address with .md added', all(f.exists() for f in mds), [str(f) for f in mds if not f.exists()][:4])
     robots = (SITE / 'robots.txt').read_text(encoding='utf-8') if (SITE / 'robots.txt').exists() else ''
     check('robots.txt lets every reader in and names the sitemap', 'User-agent: *\nAllow: /' in robots and f'Sitemap: {site["site"]}/sitemap.xml' in robots, robots)
+    headers = (SITE / '_headers').read_text(encoding='utf-8') if (SITE / '_headers').exists() else ''
+    check('the host is told to send the Markdown pages as UTF-8', '/*.md\n  Content-Type: text/markdown; charset=utf-8' in headers)
     check('the download and the site hold the tokens for Tailwind 4 and 3 and the Figma variables, a file for each theme',
           all(f'trayui/{n}' in names for n in ('tailwind/theme.css', 'tailwind/preset.cjs', 'figma/colours/Light.tokens.json', 'figma/colours/Espresso.tokens.json', 'figma/scale/Scale.tokens.json'))
           and (SITE / 'tailwind' / 'theme.css').exists() and len(list((SITE / 'figma' / 'colours').glob('*.tokens.json'))) == 10, [n for n in names if 'tailwind' in n or 'figma' in n][:4])
@@ -131,20 +133,59 @@ def main():
         lds = {i: json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', page_of(i), re.S).group(1)) for i in article_ids}
         kinds = {i: next(n for n in ld['@graph'] if n['@type'] != 'BreadcrumbList') for i, ld in lds.items()}
         on_topic = {g['group']: [it['id'] for it in g['items']] for s in site['sections'] if s['id'] == 'articles' for g in s['nav'] if g['group']}  # topic: its articles
-        tabs_of = lambda text: re.findall(r'<a class="tray-tab" href="/([^"]+)"( aria-current="page")?>', text.split('aria-label="Topics"', 1)[-1].split('</nav>', 1)[0])
+        tabs_of = lambda text: re.findall(r'<a class="tray-tab" href="/([^"]+)"(?: aria-current="(page|true)")?>', text.split('aria-label="Topics"', 1)[-1].split('</nav>', 1)[0])
         cards_of = lambda text: re.findall(r'<a class="tray-card[^"]*" href="/([^"]+)"', text.split('class="site-articles"', 1)[-1])
+        pages_of = lambda text: text.split('<ul class="tray-pages">', 1)[-1].split('</ul>', 1)[0] if '<ul class="tray-pages">' in text else ''
         newest = lambda ids: max(ids, key=lambda i: kinds[i]['datePublished'])  # the first of the newest day
         laid = [('articles', article_ids)] + [('at-' + re.sub(r'[^a-z0-9]+', '-', g.lower()).strip('-'), ids) for g, ids in on_topic.items()]  # a topic's page is at-<its name>
-        wrong = []
+        by_path = {m['path']: i for i, m in index.items()}
+        wrong, paged = [], {}
         for ident, ids in laid:
-            text = page_of(ident)
-            tabs, cards = tabs_of(text), cards_of(text)
-            if not (len(tabs) == 1 + len(topic_ids) and [p for p, cur in tabs if cur] == [index[ident]['path']] and sorted(cards) == sorted(index[i]['path'] for i in ids)
-                    and text.count('<div class="site-thumb') == len(ids) and text.count('<svg aria-hidden="true" focusable="false"') == len(ids)
-                    and kinds[newest(ids)]['datePublished'] == kinds[next(i for i in ids if index[i]['path'] == cards[0])]['datePublished']):
-                wrong.append((ident, len(tabs), len(cards), len(ids)))
+            # every page of the list, from its first, by the Next of its pagination: so each is reachable by a link
+            path, chain = index[ident]['path'], []
+            while path and path not in chain and len(chain) < 50:
+                chain.append(path)
+                nxt = re.search(r'<a class="tray-page tray-page--step" href="/([^"]+)" rel="next"', pages_of(page_of(by_path[path])))
+                path = nxt.group(1) if nxt else None
+            paged[ident] = chain
+            seen = []
+            for n, path in enumerate(chain, 1):
+                i = by_path.get(path)
+                text = page_of(i) if i else ''
+                tabs, cards, nav = tabs_of(text), cards_of(text), pages_of(text)
+                caption = re.search(r'<p class="caption tray-muted">Articles? (\d+)(?: to (\d+))? of (\d+)</p>', text)
+                problems = []
+                if not (len(tabs) == 1 + len(topic_ids) and [(p, cur) for p, cur in tabs if cur] == [(index[ident]['path'], 'page' if n == 1 else 'true')]):
+                    problems.append('tabs')
+                if not cards or text.count('<div class="site-thumb') != len(cards) or text.count('<svg aria-hidden="true" focusable="false"') != len(cards):
+                    problems.append('cards and pictures')
+                if n == 1 and kinds[newest(ids)]['datePublished'] != kinds[by_path[cards[0]]]['datePublished']:
+                    problems.append('the newest is not first')
+                if len(chain) > 1 and not (caption and int(caption.group(1)) == len(seen) + 1 and int(caption.group(2) or caption.group(1)) == len(seen) + len(cards)
+                                           and int(caption.group(3)) == len(ids)):
+                    problems.append('caption')
+                if len(chain) > 1 and not (re.findall(r'<a class="tray-page" href="/([^"]+)" aria-current="page">(\d+)</a>', nav) == [(path, str(n))]
+                                           and re.search(r'<a [^>]*class="tray-page[^"]*"(?![^>]*href=)', nav) is None
+                                           and ('<button class="tray-page tray-page--step" type="button" disabled' in nav) == (n in (1, len(chain)))):
+                    problems.append('pagination')
+                if not (i and index[i]['path'] == path and f'data-route="{path}"' in text and (n == 1 or i.startswith(('ap-', 'atp-')))):
+                    problems.append('address')
+                seen += cards
+                if problems:
+                    wrong.append((path, problems))
+            if sorted(seen) != sorted(index[i]['path'] for i in ids):
+                wrong.append((ident, 'not every article is on a page, or one is on two', len(seen), len(ids)))
         check('the Articles page and a page for each topic are laid out as the journal block: a tab for each topic, the current one marked, the newest article large, then the others, each with its picture',
-              topic_ids and sorted(i for i, _ in laid[1:]) == sorted(topic_ids) and not wrong, wrong[:4])
+              topic_ids and sorted(i for i, _ in laid[1:]) == sorted(topic_ids) and not [w for w in wrong if not isinstance(w[1], list) or set(w[1]) - {'pagination', 'caption'}], wrong[:4])
+        longest = max(paged.values(), key=len)
+        check(f'a list longer than a page goes on by pages ({len(paged["articles"])} for all {len(article_ids)} articles): each at its own address, reached by Next from the first, '
+              'every article on one of them, the caption true, the current page marked aria-current="page", and a step that leads nowhere a disabled button',
+              len(paged['articles']) > 1 and len(longest) > 1 and not wrong, wrong[:4])
+        unlisted = {it['id'] for s in site['sections'] for g in s['nav'] for it in g['items'] if it.get('unlisted')}
+        check('the later pages of a list are in the map of the site and the sitemap, with titles of their own, but not in the search',
+              unlisted == {by_path[p] for chain in paged.values() for p in chain[1:]} and all(f'<loc>{site["site"]}/{index[i]["path"]}</loc>' in (SITE / 'sitemap.xml').read_text(encoding='utf-8') for i in unlisted)
+              and all(title_of(page_of(i)).startswith(index[i]['title']) and ', page ' in index[i]['title'] for i in unlisted)
+              and not any(f'href="/{index[i]["path"]}" role="option"' in (SITE / '404.html').read_text(encoding='utf-8') for i in unlisted), sorted(unlisted)[:4])
         unread = []
         for i in article_ids:
             text = page_of(i)
@@ -201,6 +242,11 @@ def main():
         check('opening the site, or a link straight to a component, a doc or a block, moves nothing on the page, at 1440 and at 390 wide', all(v < 0.01 for v in shifts.values()), shifts)
         check('the font loads from the site\'s own file', pg.evaluate('document.fonts.check("16px Onest")'))
         check('the site opens on the home page', pg.locator('#site-view h1').inner_text().endswith('components in plain HTML and CSS') and pg.title().startswith('Tray UI'), pg.title())
+        pg.emulate_media(color_scheme='dark'); pg.wait_for_timeout(200)
+        followed = pg.evaluate('document.documentElement.dataset.theme')
+        pg.emulate_media(color_scheme='light'); pg.wait_for_timeout(200)
+        check('until the visitor chooses a theme, the site follows the system\'s light or dark setting, also when it changes, and keeps nothing',
+              followed == 'dark' and pg.evaluate('document.documentElement.dataset.theme') == 'light' and pg.evaluate("localStorage.getItem('tray-site-theme')") is None, followed)
         check('the home page has no sidebar and the header links every section, none of them current',
               pg.locator('.tray-app__side').is_hidden() and pg.locator('#site-sections .tray-tab').all_inner_texts() == titles
               and titles[:4] == ['Docs', 'Components', 'Blocks', 'Charts']
@@ -250,7 +296,8 @@ def main():
 
         # ---------- the search ----------
         pg.keyboard.press('/'); pg.wait_for_timeout(150)
-        check('"/" opens the search with every page in it', pg.evaluate("document.getElementById('site-search').open") and pg.locator('#site-command [role="option"]').count() == len(every) - 1
+        listed = [it['id'] for s in site['sections'] for g in s['nav'] for it in g['items'] if not it.get('unlisted')]  # the later pages of a list are left out
+        check('"/" opens the search with every page in it', pg.evaluate("document.getElementById('site-search').open") and pg.locator('#site-command [role="option"]').count() == len(listed)
               and pg.evaluate("document.activeElement === document.querySelector('#site-command input')"), pg.locator('#site-command [role="option"]').count())
         pg.keyboard.type('date')
         shown = pg.locator('#site-command [role="option"]:visible').all_inner_texts()
@@ -265,6 +312,10 @@ def main():
         check('Ctrl with K opens the search too, and it says when nothing matches', pg.locator('#site-command .tray-list__empty').is_visible())
         pg.keyboard.press('Escape'); pg.wait_for_timeout(150)
         check('Escape closes the search', not pg.evaluate("document.getElementById('site-search').open"))
+        pg.keyboard.press('Control+Shift+K'); pg.wait_for_timeout(150)
+        shifted = pg.evaluate("document.getElementById('site-search').open")
+        pg.keyboard.press('Escape'); pg.wait_for_timeout(150)
+        check('with Shift held, or Caps Lock on, Ctrl with K still opens it', shifted)
         pg.click('#site-find'); pg.wait_for_timeout(150); pg.keyboard.type('sidebar with a file')
         pg.locator('#site-command [role="option"]:visible').first.click(); pg.wait_for_timeout(600)
         check('the search button opens it, and a click on a result opens that page', here(pg) == 'b-sidebar-09')
@@ -345,6 +396,11 @@ def main():
         pics = fr.evaluate("[...document.querySelectorAll('.tray-gallery img')].map(i => [i.getAttribute('src').startsWith('assets/'), i.complete && i.naturalWidth > 0])")
         check('framed inside another page, pages go by #: links say #id, a link opens its page, and files and pictures are found',
               links == [False, '#home', '#d-introduction'] and opened == ['#d-installation', 'Installation', f'trayui-{site["version"]}.zip'] and len(pics) == 6 and all(p[0] for p in pics) and pics[0][1], (links, opened, pics))
+        if 'ap-2' in index:
+            fr.evaluate('location.hash = "ap-2"'); fr.wait_for_timeout(1000)
+            steps = fr.evaluate("[document.querySelector('#site-view h1').textContent, [...document.querySelectorAll('.tray-pages a')].map(a => a.getAttribute('href'))]")
+            check('framed, a later page of the Articles opens by its id, and its pagination links the other pages by #', steps[0] == 'Articles, page 2' and '#articles' in steps[1]
+                  and all(h.startswith('#a') for h in steps[1]), steps)
         fp.close()
 
         # ---------- every page ----------
@@ -581,11 +637,27 @@ def main():
         # ---------- articles ----------
         if article_ids:
             go(pg, 'articles'); pg.wait_for_timeout(200)
+            on_first = pg.locator('.site-articles a.tray-card').count()
             pg.locator('.site-articles nav[aria-label="Topics"] a').nth(1).click(); pg.wait_for_timeout(500)
-            topic = here(pg), pg.locator('.site-articles a.tray-card').count(), pg.locator('.site-articles [aria-current="page"] .tray-badge').inner_text()
+            topic = (here(pg), pg.locator('.site-articles a.tray-card').count(), pg.locator('.site-articles nav[aria-label="Topics"] [aria-current] .tray-badge').inner_text(),
+                     pg.locator('.site-articles__pages .caption').all_inner_texts())
+            span = re.match(r'Articles? (\d+)(?: to (\d+))? of (\d+)', topic[3][0]) if topic[3] else None  # a topic longer than a page says which of its articles it shows
             pg.locator('.site-articles nav[aria-label="Topics"] a').first.click(); pg.wait_for_timeout(500)
             check('a topic tab opens the page of that topic with its articles, and All the list again',
-                  topic[0] in topic_ids and str(topic[1]) == topic[2] and here(pg) == 'articles', topic)
+                  topic[0] in topic_ids and here(pg) == 'articles' and (str(topic[1]) == topic[2] if not span else
+                                                                        span.group(3) == topic[2] and topic[1] == int(span.group(2) or span.group(1)) - int(span.group(1)) + 1), topic)
+            if 'ap-2' in index:
+                pg.locator('.tray-pages a[rel="next"]').click(); pg.wait_for_timeout(500)
+                second = [here(pg), pg.inner_text('#site-view h1'), pg.locator('.tray-pages [aria-current="page"]').inner_text(), pg.locator('.site-articles__pages .caption').inner_text().split(' to ')[0],
+                          pg.title(), pg.evaluate('document.activeElement.tagName'), pg.locator('.site-articles nav[aria-label="Topics"] [aria-current="true"]').inner_text().split('\n')[0],
+                          pg.get_attribute('link[rel="canonical"]', 'href'), pg.locator('.site-articles a.site-lead').count()]
+                pg.go_back(); pg.wait_for_timeout(400)
+                back = here(pg)
+                go(pg, 'ap-2'); pg.wait_for_timeout(300)
+                pg.locator('.tray-pages a.tray-page:not(.tray-page--step)').first.click(); pg.wait_for_timeout(400)
+                check('Next under the list opens its second page, at its own address, with its own title, its tab and its number marked, and a grid alone; Back and the page 1 return',
+                      second == ['ap-2', 'Articles, page 2', '2', f'Articles {on_first + 1}', index['ap-2']['head'], 'H1', 'All', f'{site["site"]}/articles/page/2', 0]
+                      and back == 'articles' and here(pg) == 'articles', (second, back, here(pg)))
             lead = pg.locator('a.site-lead').get_attribute('href')
             pg.locator('a.site-lead').click(); pg.wait_for_timeout(500)
             opened = here(pg)
@@ -635,7 +707,8 @@ def main():
         check('the dark theme reaches the frames', f and f['theme'] == 'dark', f)
         go(pg, 'home'); pg.wait_for_timeout(500); pg.screenshot(path=str(SHOTS / 'home-dark.png'))
         pg.reload(); pg.wait_for_timeout(400)
-        check('the theme is remembered across a reload', pg.evaluate('document.documentElement.dataset.theme') == 'dark')
+        pg.emulate_media(color_scheme='dark'); pg.wait_for_timeout(100); pg.emulate_media(color_scheme='light'); pg.wait_for_timeout(200)
+        check('the theme is remembered across a reload, and once chosen a change of the system setting leaves it', pg.evaluate('document.documentElement.dataset.theme') == 'dark')
 
         # ---------- every other theme, and one of the visitor's own ----------
         others = [t['id'] for t in site['themes']['list'] if t['id'] not in ('light', 'dark')]
@@ -657,10 +730,10 @@ def main():
               and pg.evaluate("decodeURIComponent(document.querySelector('link[rel=icon]').href).includes('fill=\"#68efaf\"')"))
         pg.fill('[data-seed-hex="accent"]', '#ff7ad9'); pg.wait_for_timeout(200); settled(pg)  # the button's fill moves to the new colour: read it where it stops
         check('a colour typed into the maker redraws its preview, and the rules still hold', pg.evaluate("getComputedStyle(document.querySelector('[data-maker-preview] .tray-btn')).backgroundColor") == 'rgb(255, 122, 217)'
-              and 'All 66 rules hold' in pg.inner_text('[data-maker-verdict]'), pg.inner_text('[data-maker-verdict]')[:60])
+              and 'All 66 pairs hold' in pg.inner_text('[data-maker-verdict]'), pg.inner_text('[data-maker-verdict]')[:60])
         pg.fill('[data-seed-hex="ink"]', '#7a8a80'); pg.wait_for_timeout(200)
         verdict = pg.inner_text('[data-maker-verdict]')
-        check('an ink too close to the page is reported, with the rule it misses', 'missed' in verdict and 'ink on page' in verdict, verdict[:120])
+        check('an ink too close to the page is reported, with the rule it misses', re.search(r'\d+ of 66 pairs? miss', verdict) and 'ink on page' in verdict, verdict[:120])
         pg.fill('[data-seed-hex="ink"]', 'zz'); pg.wait_for_timeout(100)
         check('what is not a colour is marked and changes nothing', pg.get_attribute('[data-seed-hex="ink"]', 'aria-invalid') == 'true' and '--ink: #7a8a80' in pg.evaluate("document.getElementById('site-draft-theme').textContent"))
         pg.fill('[data-seed-hex="page"]', '#0b1020'); pg.fill('[data-seed-hex="ink"]', '#f2f7fd'); pg.fill('[data-maker-name-input]', 'Candy night'); pg.wait_for_timeout(250)
@@ -668,7 +741,7 @@ def main():
         css = pg.inner_text('#site-theme-css')
         check('a dark page makes a dark theme: the tray follows it, and the CSS names the theme, its scheme, its shadow and its corners',
               css.startswith('[data-theme="candy-night"] {') and 'color-scheme: dark;' in css and '--accent: #ff7ad9;' in css and '--shadow-float:' in css and '--radius-card: 20px;' in css
-              and 'All 66 rules hold' in pg.inner_text('[data-maker-verdict]') and pg.input_value('[data-seed-hex="surface"]') != '#e7f3ec', (css[:80], pg.input_value('[data-seed-hex="surface"]')))
+              and 'All 66 pairs hold' in pg.inner_text('[data-maker-verdict]') and pg.input_value('[data-seed-hex="surface"]') != '#e7f3ec', (css[:80], pg.input_value('[data-seed-hex="surface"]')))
         pg.locator('[data-maker-use]').click(); pg.wait_for_timeout(400)
         accent_now = lambda: pg.evaluate("getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()")
         check('"Use on this site" puts the site in the new theme and adds it to the menu', theme_now() == 'candy-night' and accent_now() == '#ff7ad9'
@@ -701,7 +774,7 @@ def main():
         check('no script errors while opening theme links', not oerr, oerr[:3])
         other.close()
         pg.locator('[data-maker-random]').click(); pg.wait_for_timeout(250)
-        check('"Surprise me" makes a theme that holds every rule', 'All 66 rules hold' in pg.inner_text('[data-maker-verdict]'), pg.inner_text('[data-maker-verdict]')[:100])
+        check('"Surprise me" makes a theme that holds every rule', 'All 66 pairs hold' in pg.inner_text('[data-maker-verdict]'), pg.inner_text('[data-maker-verdict]')[:100])
         pg.locator('[data-maker-reset]').click(); pg.wait_for_timeout(200)
         check('"Start again" goes back to the theme of the site', pg.input_value('[data-seed-hex="accent"]') == '#ffd426' and pg.input_value('[data-maker-base]') == 'light')
         check('no script errors while changing themes', not errors, errors[:4])
