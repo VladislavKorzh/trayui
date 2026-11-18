@@ -116,7 +116,7 @@ class Browser:
     def screen(self, label, url, width, wants, shot=None):
         """The checks every screen gets, and those asked for: tooltip, tabs, reveal."""
         page, errors = self.open(url, width)
-        got = page.evaluate(PROBE, wants)
+        got = page.evaluate(PROBE, sorted(wants))   # a list: Playwright 1.65 refuses to pass a set
         check(f'{label} at {width}: the font Onest is loaded', got['font'])
         check(f'{label} at {width}: the tokens apply (ink text)', got['ink'] == 'rgb(20, 20, 20)', got['ink'])
         if 'button' in wants:
