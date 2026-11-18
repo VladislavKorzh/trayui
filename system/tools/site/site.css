@@ -113,7 +113,9 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 .site-thumb > svg { display: block; inline-size: 100%; block-size: 100%; }
 .site-articles { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); margin-block: var(--space-6) calc(var(--section-gap) / 2); }
 .site-articles > .tray-tabs { justify-self: start; max-inline-size: 100%; }
-.site-articles__panel { gap: calc(var(--section-gap) / 2); }
+.site-articles > section { margin-block-start: calc(var(--section-gap) / 2 - var(--space-6)); }
+/* A long list draws only the cards near the window; each keeps the height it last had, so the page does not jump. */
+.site-articles a.tray-card { content-visibility: auto; contain-intrinsic-size: auto 30rem; }
 
 /* An article: the head over the whole width; then the words, with the contents beside them where there is room for both,
    and folded above them where there is not. */

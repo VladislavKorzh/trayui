@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- The track at its end: the slide before peeks in at the start, the last slide is in full view -->
+  <path d="M32 32h44a16 16 0 0 1 16 16v100a16 16 0 0 1-16 16H32z" style="fill:var(--surface);stroke:var(--hairline);stroke-width:1.5"/>
+  <rect x="108" y="32" width="340" height="132" rx="16" style="fill:var(--accent)"/>
+  <text x="132" y="74" style="fill:var(--on-accent);font:600 19px var(--font-sans)">A night on the farm</text>
+  <rect x="132" y="94" width="210" height="12" rx="6" style="fill:var(--on-accent);opacity:.18"/>
+  <text x="132" y="142" style="fill:var(--on-accent);font:500 14px var(--font-sans)">5 of 5</text>
+  <!-- The bar: the count, Previous with focus, Next turned off -->
+  <text x="32" y="219" style="fill:var(--ink-muted);font:500 16px var(--font-sans)">5 / 5</text>
+  <rect x="344" y="192" width="44" height="44" rx="22" style="fill:var(--surface);stroke:var(--hairline);stroke-width:1.5"/>
+  <rect x="340.5" y="188.5" width="51" height="51" rx="25.5" style="fill:none;stroke:var(--ink);stroke-width:3"/>
+  <path transform="translate(354 202)" d="m12 19-7-7 7-7M19 12H5" style="fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round"/>
+  <g style="opacity:.45">
+    <rect x="404" y="192" width="44" height="44" rx="22" style="fill:none;stroke:var(--control-off);stroke-width:1.5"/>
+    <path transform="translate(414 202)" d="M5 12h14m-7-7 7 7-7 7" style="fill:none;stroke:var(--ink-hint);stroke-width:2;stroke-linecap:round;stroke-linejoin:round"/>
+  </g>
+</svg>

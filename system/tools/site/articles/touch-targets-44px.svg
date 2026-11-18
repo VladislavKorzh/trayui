@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- A tag field with two chips -->
+  <rect x="32" y="40" width="416" height="124" rx="24" style="fill:var(--surface)"/>
+  <rect x="50" y="70" width="150" height="64" rx="18" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <text x="72" y="109" style="fill:var(--ink);font:600 22px var(--font-sans)">gift</text>
+  <path d="M162 92l16 16m0-16-16 16" style="fill:none;stroke:var(--ink-muted);stroke-width:2.5;stroke-linecap:round"/>
+  <rect x="214" y="70" width="200" height="64" rx="18" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <text x="236" y="109" style="fill:var(--ink);font:600 22px var(--font-sans)">chilled</text>
+  <!-- The remove button's hit area, larger than the cross the eye sees (dashed) -->
+  <rect x="345" y="67" width="70" height="70" rx="14" style="fill:var(--accent)"/>
+  <rect x="358" y="80" width="44" height="44" rx="8" style="fill:none;stroke:var(--on-accent);stroke-width:1.5;stroke-dasharray:4 4"/>
+  <path d="M372 94l16 16m0-16-16 16" style="fill:none;stroke:var(--on-accent);stroke-width:2.5;stroke-linecap:round"/>
+  <!-- The size the eye sees, and the size a finger gets -->
+  <path d="M148 186v16M192 186v16M148 194h44" style="fill:none;stroke:var(--rule-strong);stroke-width:2;stroke-linecap:round"/>
+  <text x="170" y="230" text-anchor="middle" style="fill:var(--ink-muted);font:600 18px var(--font-mono)">28px</text>
+  <path d="M345 186v16M415 186v16M345 194h70" style="fill:none;stroke:var(--ink-muted);stroke-width:2;stroke-linecap:round"/>
+  <text x="380" y="230" text-anchor="middle" style="fill:var(--ink);font:600 18px var(--font-mono)">44px</text>
+</svg>

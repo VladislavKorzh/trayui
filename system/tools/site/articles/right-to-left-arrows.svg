@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <g transform="translate(0 6)">
+  <!-- The mirror between the two directions -->
+  <path d="M240 32v196" style="fill:none;stroke:var(--rule-strong);stroke-width:2;stroke-dasharray:6 6"/>
+  <g text-anchor="middle" style="fill:var(--ink-muted);font:500 15px var(--font-mono)">
+    <text x="132" y="56">dir="ltr"</text>
+    <text x="348" y="56">dir="rtl"</text>
+  </g>
+  <!-- A pager: back at the start, next at the end. Its arrows flip; its numbers do not. -->
+  <rect x="40" y="76" width="48" height="48" rx="14" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <rect x="176" y="76" width="48" height="48" rx="14" style="fill:var(--accent)"/>
+  <rect x="256" y="76" width="48" height="48" rx="14" style="fill:var(--accent)"/>
+  <rect x="392" y="76" width="48" height="48" rx="14" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <g text-anchor="middle" style="fill:var(--ink);font:600 17px var(--font-sans)">
+    <text x="132" y="106">2 / 5</text>
+    <text x="348" y="106">2 / 5</text>
+  </g>
+  <g style="fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round">
+    <path transform="translate(52 88)" d="m12 19-7-7 7-7M19 12H5" style="stroke:var(--ink)"/>
+    <path transform="translate(188 88)" d="M5 12h14m-7-7 7 7-7 7" style="stroke:var(--on-accent)"/>
+    <path transform="translate(292 88) scale(-1 1)" d="M5 12h14m-7-7 7 7-7 7" style="stroke:var(--on-accent)"/>
+    <path transform="translate(428 88) scale(-1 1)" d="m12 19-7-7 7-7M19 12H5" style="stroke:var(--ink)"/>
+  </g>
+  <!-- A clock, a play button and a check: the same on both sides -->
+  <g style="fill:var(--surface)">
+    <rect x="40" y="164" width="48" height="48" rx="14"/>
+    <rect x="108" y="164" width="48" height="48" rx="14"/>
+    <rect x="176" y="164" width="48" height="48" rx="14"/>
+    <rect x="256" y="164" width="48" height="48" rx="14"/>
+    <rect x="324" y="164" width="48" height="48" rx="14"/>
+    <rect x="392" y="164" width="48" height="48" rx="14"/>
+  </g>
+  <g style="fill:none;stroke:var(--ink-soft);stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+    <g transform="translate(52 176)"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></g>
+    <path transform="translate(120 176)" d="M6 3l14 9-14 9z"/>
+    <path transform="translate(188 176)" d="M20 6 9 17l-5-5"/>
+    <g transform="translate(268 176)"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></g>
+    <path transform="translate(336 176)" d="M6 3l14 9-14 9z"/>
+    <path transform="translate(404 176)" d="M20 6 9 17l-5-5"/>
+  </g>
+  </g>
+</svg>

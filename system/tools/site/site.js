@@ -166,7 +166,7 @@
     if (sec && !side) document.documentElement.setAttribute('data-noside', ''); else document.documentElement.removeAttribute('data-noside');
     switches.forEach(function (n) {
       if (n.getAttribute('data-section') === key) return;
-      n.innerHTML = S.sections.map(function (s) { return '<a class="tray-tab" href="' + href(s.home) + '"' + (s === sec ? ' aria-current="page"' : '') + '>' + esc(s.title) + '</a>'; }).join('');
+      n.innerHTML = S.sections.filter(function (s) { return s.tab !== false; }).map(function (s) { return '<a class="tray-tab" href="' + href(s.home) + '"' + (s === sec ? ' aria-current="page"' : '') + '>' + esc(s.title) + '</a>'; }).join('');
       n.setAttribute('data-section', key);
     });
     if (sec) document.documentElement.removeAttribute('data-home'); else document.documentElement.setAttribute('data-home', '');
@@ -180,7 +180,7 @@
       sec.nav.forEach(function (g) {
         g.items.forEach(function (it) {
           h += '<button type="button" class="tray-option" role="option" data-value="' + it.id + '"><span class="tray-option__text">' + esc(it.title) + '</span>' +
-            (g.group ? '<span class="tray-option__meta">' + esc(g.group) + '</span>' : '') + '</button>';
+            (g.group || sec.tab === false ? '<span class="tray-option__meta">' + esc(sec.tab === false ? sec.title : g.group) + '</span>' : '') + '</button>';
         });
       });
       h += '</div>';

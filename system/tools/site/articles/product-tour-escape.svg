@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- The screen: a title and two buttons; the tour points at Export with a dashed ring -->
+  <text x="32" y="62" style="fill:var(--ink);font:700 22px var(--font-sans)">Orders</text>
+  <rect x="32" y="84" width="120" height="12" rx="6" style="fill:var(--track)"/>
+  <rect x="32" y="108" width="88" height="12" rx="6" style="fill:var(--track)"/>
+  <rect x="220" y="36" width="100" height="40" rx="20" style="fill:var(--surface);stroke:var(--hairline);stroke-width:1.5"/>
+  <g transform="translate(236 46) scale(.84)" style="fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+    <path d="m7 10 5 5 5-5M12 15V3"/>
+  </g>
+  <text x="262" y="61" style="fill:var(--ink);font:600 15px var(--font-sans)">Export</text>
+  <rect x="213" y="29" width="114" height="54" rx="27" style="fill:none;stroke:var(--ink);stroke-width:2;stroke-dasharray:6 5"/>
+  <rect x="340" y="36" width="108" height="40" rx="20" style="fill:var(--surface);stroke:var(--hairline);stroke-width:1.5"/>
+  <text x="394" y="61" text-anchor="middle" style="fill:var(--ink);font:600 15px var(--font-sans)">New order</text>
+  <!-- The step: a raised panel under its part, with the count, a title and its buttons; Next has focus -->
+  <rect x="200" y="100" width="248" height="138" rx="20" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <text x="222" y="130" style="fill:var(--ink-muted);font:500 14px var(--font-sans)">2 of 3</text>
+  <text x="222" y="156" style="fill:var(--ink);font:600 17px var(--font-sans)">Take the list along</text>
+  <rect x="222" y="168" width="112" height="10" rx="5" style="fill:var(--track)"/>
+  <text x="222" y="207" style="fill:var(--ink-soft);font:600 15px var(--font-sans)">Skip the tour</text>
+  <rect x="352" y="182" width="76" height="38" rx="19" style="fill:var(--accent)"/>
+  <rect x="348.5" y="178.5" width="83" height="45" rx="22.5" style="fill:none;stroke:var(--ink);stroke-width:3"/>
+  <text x="390" y="206" text-anchor="middle" style="fill:var(--on-accent);font:600 15px var(--font-sans)">Next</text>
+  <!-- The key that ends the tour -->
+  <rect x="32" y="190" width="64" height="48" rx="12" style="fill:var(--raised);stroke:var(--rule-strong);stroke-width:2"/>
+  <text x="64" y="220" text-anchor="middle" style="fill:var(--ink-soft);font:500 16px var(--font-mono)">Esc</text>
+</svg>

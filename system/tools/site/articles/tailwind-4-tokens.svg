@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site:
+       the same three utilities on two cards, one in the page's theme and one in another, each drawn in its own. -->
+  <g style="fill:var(--surface)">
+    <rect x="32" y="32" width="122" height="40" rx="20"/>
+    <rect x="164" y="32" width="114" height="40" rx="20"/>
+    <rect x="288" y="32" width="160" height="40" rx="20"/>
+  </g>
+  <g text-anchor="middle" style="fill:var(--ink);font:500 16px var(--font-mono)">
+    <text x="93" y="57">bg-page</text>
+    <text x="221" y="57">text-ink</text>
+    <text x="368" y="57">rounded-card</text>
+  </g>
+  <!-- A card in the page's own theme -->
+  <rect x="32" y="90" width="200" height="148" rx="26" style="fill:var(--page);stroke:var(--hairline);stroke-width:1.5"/>
+  <text x="54" y="122" style="fill:var(--ink-muted);font:500 15px var(--font-mono)">html</text>
+  <rect x="54" y="140" width="124" height="12" rx="6" style="fill:var(--ink)"/>
+  <rect x="54" y="162" width="92" height="8" rx="4" style="fill:var(--ink-muted)"/>
+  <rect x="54" y="186" width="92" height="34" rx="17" style="fill:var(--accent)"/>
+  <text x="100" y="208" text-anchor="middle" style="fill:var(--on-accent);font:600 15px var(--font-sans)">Pack</text>
+  <!-- The same utilities inside data-theme="midnight" -->
+  <rect x="248" y="90" width="200" height="148" rx="26" style="fill:var(--inverse)"/>
+  <text x="270" y="122" style="fill:var(--on-dark-soft);font:500 15px var(--font-mono)">midnight</text>
+  <rect x="270" y="140" width="124" height="12" rx="6" style="fill:var(--on-inverse)"/>
+  <rect x="270" y="162" width="92" height="8" rx="4" style="fill:var(--on-dark-soft)"/>
+  <rect x="270" y="186" width="92" height="34" rx="17" style="fill:var(--accent)"/>
+  <text x="316" y="208" text-anchor="middle" style="fill:var(--on-accent);font:600 15px var(--font-sans)">Pack</text>
+</svg>

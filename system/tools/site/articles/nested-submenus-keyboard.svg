@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <g transform="translate(12 0)">
+  <!-- The menu: its parent item open, filled, its chevron pointing at the submenu -->
+  <rect x="32" y="32" width="196" height="196" rx="18" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <text x="56" y="68" style="fill:var(--ink);font:500 17px var(--font-sans)">Duplicate</text>
+  <rect x="42" y="84" width="176" height="40" rx="10" style="fill:var(--surface)"/>
+  <text x="56" y="110" style="fill:var(--ink);font:600 17px var(--font-sans)">Move to</text>
+  <path d="m194 98 6 6-6 6" style="fill:none;stroke:var(--ink);stroke-width:2.25;stroke-linecap:round;stroke-linejoin:round"/>
+  <text x="56" y="154" style="fill:var(--ink);font:500 17px var(--font-sans)">Archive</text>
+  <path d="M42 172h176" style="stroke:var(--hairline);stroke-width:1.5"/>
+  <text x="56" y="204" style="fill:var(--danger);font:500 17px var(--font-sans)">Delete order</text>
+  <!-- The submenu beside it, its first item with focus: filled and ringed -->
+  <rect x="244" y="78" width="180" height="100" rx="18" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <rect x="254" y="84" width="160" height="40" rx="10" style="fill:var(--surface)"/>
+  <rect x="255.5" y="85.5" width="157" height="37" rx="9" style="fill:none;stroke:var(--ink);stroke-width:3"/>
+  <text x="268" y="110" style="fill:var(--ink);font:500 17px var(--font-sans)">Packed</text>
+  <text x="268" y="154" style="fill:var(--ink);font:500 17px var(--font-sans)">On hold</text>
+  <!-- The two keys: the arrow back closes it, the arrow towards it opens it -->
+  <rect x="306" y="194" width="52" height="44" rx="12" style="fill:var(--raised);stroke:var(--rule-strong);stroke-width:2"/>
+  <rect x="372" y="194" width="52" height="44" rx="12" style="fill:var(--accent)"/>
+  <path transform="translate(320 204)" d="m12 19-7-7 7-7M19 12H5" style="fill:none;stroke:var(--ink);stroke-width:2.25;stroke-linecap:round;stroke-linejoin:round"/>
+  <path transform="translate(386 204)" d="M5 12h14m-7-7 7 7-7 7" style="fill:none;stroke:var(--on-accent);stroke-width:2.25;stroke-linecap:round;stroke-linejoin:round"/>
+  </g>
+</svg>

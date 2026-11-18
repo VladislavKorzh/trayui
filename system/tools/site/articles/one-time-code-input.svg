@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- The label, and the code in its cells, the last one with focus -->
+  <text x="50" y="62" style="fill:var(--ink);font:600 17px var(--font-sans)">Code from the message</text>
+  <g style="fill:var(--surface)">
+    <rect x="50" y="80" width="50" height="62" rx="14"/>
+    <rect x="110" y="80" width="50" height="62" rx="14"/>
+    <rect x="170" y="80" width="50" height="62" rx="14"/>
+    <rect x="260" y="80" width="50" height="62" rx="14"/>
+    <rect x="320" y="80" width="50" height="62" rx="14"/>
+    <rect x="380" y="80" width="50" height="62" rx="14"/>
+  </g>
+  <rect x="380" y="80" width="50" height="62" rx="14" style="fill:none;stroke:var(--ink);stroke-width:3"/>
+  <rect x="232" y="110" width="16" height="2.5" rx="1.25" style="fill:var(--rule-strong)"/>
+  <g text-anchor="middle" style="fill:var(--ink);font:700 26px var(--font-sans)">
+    <text x="75" y="121">4</text>
+    <text x="135" y="121">0</text>
+    <text x="195" y="121">9</text>
+    <text x="285" y="121">3</text>
+    <text x="345" y="121">1</text>
+    <text x="405" y="121">6</text>
+  </g>
+  <!-- The code the phone offers from the message -->
+  <rect x="50" y="176" width="184" height="50" rx="25" style="fill:var(--accent)"/>
+  <g transform="translate(70 189)" style="fill:none;stroke:var(--on-accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </g>
+  <text x="106" y="208" style="fill:var(--on-accent);font:600 19px var(--font-mono)">409316</text>
+  <!-- And the other way in: a paste -->
+  <rect x="250" y="176" width="120" height="50" rx="25" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <text x="310" y="207" text-anchor="middle" style="fill:var(--ink);font:600 17px var(--font-sans)">Paste</text>
+</svg>

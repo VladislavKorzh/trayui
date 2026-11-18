@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- A window zoomed to 200%, a fluid heading in it, and the range clamp() holds the heading in, from its smallest size to its largest. -->
+  <rect x="32.75" y="28.75" width="414.5" height="212.5" rx="19.25" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <!-- The zoom control -->
+  <rect x="316" y="44" width="116" height="38" rx="12" style="fill:var(--surface)"/>
+  <g style="fill:none;stroke:var(--ink);stroke-width:2.25;stroke-linecap:round;stroke-linejoin:round">
+    <path transform="translate(324 51)" d="M5 12h14"/>
+    <path transform="translate(400 51)" d="M5 12h14M12 5v14"/>
+  </g>
+  <text x="374" y="68.5" text-anchor="middle" style="fill:var(--ink);font:600 15px var(--font-sans)">200%</text>
+  <!-- The heading and the text under it -->
+  <text x="54" y="146" style="fill:var(--ink);font:700 66px var(--font-sans);letter-spacing:-2.5px">Orders</text>
+  <text x="57" y="176" style="fill:var(--ink-soft);font:400 16px var(--font-sans)">Two jars of 50 g</text>
+  <!-- The range of the clamp(): from its floor to its ceiling, and where the heading is now -->
+  <path d="M58 202h364" style="fill:none;stroke:var(--track);stroke-width:6;stroke-linecap:round"/>
+  <path d="M58 202h214" style="fill:none;stroke:var(--ink);stroke-width:6;stroke-linecap:round"/>
+  <circle cx="272" cy="202" r="10" style="fill:var(--accent);stroke:var(--ink);stroke-width:2"/>
+  <text x="56" y="228" style="fill:var(--ink-muted);font:500 13px var(--font-mono)">2.75rem</text>
+  <text x="424" y="228" text-anchor="end" style="fill:var(--ink-muted);font:500 13px var(--font-mono)">6rem</text>
+</svg>

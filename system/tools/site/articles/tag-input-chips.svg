@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- The label and the tray of chips, focused: an ink ring round the whole field -->
+  <text x="36" y="56" style="fill:var(--ink);font:600 17px var(--font-sans)">Send to</text>
+  <rect x="32" y="70" width="416" height="72" rx="20" style="fill:var(--surface)"/>
+  <rect x="33.5" y="71.5" width="413" height="69" rx="18.5" style="fill:none;stroke:var(--ink);stroke-width:3"/>
+  <!-- A chip with its remove button -->
+  <rect x="46" y="84" width="180" height="44" rx="22" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <text x="64" y="112" style="fill:var(--ink);font:500 16px var(--font-sans)">dana@perly.co</text>
+  <path transform="translate(192 96) scale(.8333)" d="M18 6 6 18m0-12 12 12" style="fill:none;stroke:var(--ink-muted);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round"/>
+  <!-- A wrong value keeps its chip, with a danger edge -->
+  <rect x="236" y="84" width="162" height="44" rx="22" style="fill:var(--raised);stroke:var(--danger);stroke-width:2"/>
+  <text x="254" y="112" style="fill:var(--danger);font:500 16px var(--font-sans)">books@perly</text>
+  <path transform="translate(364 96) scale(.8333)" d="M18 6 6 18m0-12 12 12" style="fill:none;stroke:var(--danger);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round"/>
+  <!-- The caret after the last chip -->
+  <path d="M416 92v28" style="fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round"/>
+  <!-- The error in words under the field -->
+  <g transform="translate(34 156) scale(.8333)" style="fill:none;stroke:var(--danger);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M12 8v4m0 4h.01"/>
+  </g>
+  <text x="62" y="172" style="fill:var(--danger);font:500 15px var(--font-sans)">Not a full address</text>
+  <!-- What the live region says -->
+  <circle cx="58" cy="222" r="26" style="fill:var(--accent)"/>
+  <g transform="translate(44 208) scale(1.1667)" style="fill:none;stroke:var(--on-accent);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round">
+    <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/>
+    <path d="M16 9a5 5 0 0 1 0 6"/>
+    <path d="M19.364 18.364a9 9 0 0 0 0-12.728"/>
+  </g>
+  <rect x="96" y="200" width="214" height="44" rx="14" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <text x="114" y="227" style="fill:var(--ink-soft);font:500 15px var(--font-sans)">books@perly added</text>
+  <!-- The key that takes the last chip away -->
+  <rect x="330" y="200" width="118" height="44" rx="12" style="fill:var(--raised);stroke:var(--rule-strong);stroke-width:2"/>
+  <text x="389" y="227" text-anchor="middle" style="fill:var(--ink-soft);font:500 15px var(--font-mono)">Backspace</text>
+</svg>

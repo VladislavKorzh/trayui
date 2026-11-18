@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- On the left, the card as it is drawn: fills with no edge. On the right, the same card with colours forced: every fill is an edge, and the chosen tab and the switch take the colours of a selected item. -->
+  <rect x="32" y="36" width="184" height="198" rx="22" style="fill:var(--surface)"/>
+  <text x="52" y="72" style="fill:var(--ink);font:600 18px var(--font-sans)">Order</text>
+  <rect x="48" y="88" width="68" height="36" rx="12" style="fill:var(--ink)"/>
+  <text x="62" y="111" style="fill:var(--page);font:600 15px var(--font-sans)">Items</text>
+  <text x="128" y="111" style="fill:var(--ink);font:500 15px var(--font-sans)">Delivery</text>
+  <rect x="52" y="146" width="144" height="8" rx="4" style="fill:var(--track)"/>
+  <rect x="52" y="146" width="62" height="8" rx="4" style="fill:var(--ink)"/>
+  <rect x="52" y="176" width="48" height="28" rx="14" style="fill:var(--ink)"/>
+  <circle cx="86" cy="190" r="10" style="fill:var(--page)"/>
+  <text x="112" y="196" style="fill:var(--ink);font:500 15px var(--font-sans)">Notify</text>
+
+  <path d="M226 135h28m-8-8 8 8-8 8" style="fill:none;stroke:var(--ink-muted);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"/>
+
+  <rect x="264.75" y="36.75" width="182.5" height="196.5" rx="21.25" style="fill:none;stroke:var(--ink);stroke-width:1.5"/>
+  <text x="284" y="72" style="fill:var(--ink);font:600 18px var(--font-sans)">Order</text>
+  <rect x="280.75" y="88.75" width="66.5" height="34.5" rx="11.25" style="fill:var(--accent);stroke:var(--ink);stroke-width:1.5"/>
+  <text x="294" y="111" style="fill:var(--on-accent);font:600 15px var(--font-sans)">Items</text>
+  <text x="360" y="111" style="fill:var(--ink);font:500 15px var(--font-sans)">Delivery</text>
+  <rect x="284.75" y="145.75" width="142.5" height="8.5" rx="4.25" style="fill:none;stroke:var(--ink);stroke-width:1.5"/>
+  <rect x="284" y="145" width="62" height="10" rx="5" style="fill:var(--ink)"/>
+  <rect x="284" y="176" width="48" height="28" rx="14" style="fill:var(--accent)"/>
+  <circle cx="318" cy="190" r="10" style="fill:var(--on-accent)"/>
+  <text x="344" y="196" style="fill:var(--ink);font:500 15px var(--font-sans)">Notify</text>
+</svg>

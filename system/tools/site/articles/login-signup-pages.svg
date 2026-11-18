@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- The sign-in card on its tray -->
+  <rect x="80" y="14" width="320" height="244" rx="26" style="fill:var(--surface)"/>
+  <text x="104" y="49" style="fill:var(--ink);font:700 22px var(--font-sans)">Sign in</text>
+  <!-- The email, filled by a password manager -->
+  <rect x="104" y="64" width="272" height="42" rx="12" style="fill:var(--page)"/>
+  <text x="120" y="91" style="fill:var(--ink);font:400 16px var(--font-sans)">oksana@farm.example</text>
+  <!-- The password, in focus, with the eye button that shows it -->
+  <rect x="104" y="116" width="272" height="42" rx="12" style="fill:var(--page)"/>
+  <rect x="102.5" y="114.5" width="275" height="45" rx="13.5" style="fill:none;stroke:var(--ink);stroke-width:3"/>
+  <g style="fill:var(--ink)">
+    <circle cx="124" cy="137" r="4.5"/><circle cx="139" cy="137" r="4.5"/><circle cx="154" cy="137" r="4.5"/>
+    <circle cx="169" cy="137" r="4.5"/><circle cx="184" cy="137" r="4.5"/><circle cx="199" cy="137" r="4.5"/>
+    <circle cx="214" cy="137" r="4.5"/><circle cx="229" cy="137" r="4.5"/>
+  </g>
+  <rect x="328" y="123" width="40" height="28" rx="9" style="fill:var(--surface)"/>
+  <g transform="translate(336 125)" style="fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+    <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/>
+    <circle cx="12" cy="12" r="3"/>
+  </g>
+  <!-- The one yellow button -->
+  <rect x="104" y="170" width="272" height="42" rx="21" style="fill:var(--accent)"/>
+  <text x="240" y="197" text-anchor="middle" style="fill:var(--on-accent);font:600 17px var(--font-sans)">Sign in</text>
+  <!-- Other accounts, by name -->
+  <rect x="104" y="222" width="132" height="28" rx="10" style="fill:var(--page)"/>
+  <rect x="244" y="222" width="132" height="28" rx="10" style="fill:var(--page)"/>
+  <g text-anchor="middle" style="fill:var(--ink);font:500 15px var(--font-sans)">
+    <text x="170" y="241">Google</text>
+    <text x="310" y="241">Apple</text>
+  </g>
+</svg>

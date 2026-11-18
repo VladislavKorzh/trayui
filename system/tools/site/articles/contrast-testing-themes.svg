@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- A report of the check: each pair drawn as it is read, its name, and whether it holds -->
+  <rect x="32" y="32" width="416" height="206" rx="22" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <rect x="52" y="50" width="68" height="46" rx="12" style="fill:var(--surface)"/>
+  <rect x="52" y="112" width="68" height="46" rx="12" style="fill:var(--accent)"/>
+  <rect x="52" y="174" width="68" height="46" rx="12" style="fill:var(--leaf)"/>
+  <g text-anchor="middle" style="font:600 18px var(--font-sans)">
+    <text x="86" y="79" style="fill:var(--ink)">Aa</text>
+    <text x="86" y="141" style="fill:var(--on-accent)">Aa</text>
+    <text x="86" y="203" style="fill:var(--ink-hint)">Aa</text>
+  </g>
+  <g style="fill:var(--ink);font:500 15px var(--font-mono)">
+    <text x="140" y="78">ink on surface</text>
+    <text x="140" y="140">on-accent</text>
+    <text x="140" y="202">ink-hint on leaf</text>
+  </g>
+  <path d="M140 105h288M140 167h288" style="fill:none;stroke:var(--hairline);stroke-width:1.5"/>
+  <!-- Two pairs hold, one does not -->
+  <g style="fill:none;stroke:var(--success);stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+    <g transform="translate(398 61)"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></g>
+    <g transform="translate(398 123)"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></g>
+  </g>
+  <g transform="translate(398 185)" style="fill:none;stroke:var(--danger);stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+    <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>
+  </g>
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- One font file -->
+  <path d="M54 44h70l30 30v138a12 12 0 0 1-12 12H54a12 12 0 0 1-12-12V56a12 12 0 0 1 12-12z" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <path d="M124 44v20a10 10 0 0 0 10 10h20" style="fill:none;stroke:var(--hairline);stroke-width:1.5"/>
+  <text x="98" y="136" text-anchor="middle" style="fill:var(--ink);font:700 46px var(--font-sans)">Aa</text>
+  <rect x="56" y="170" width="84" height="32" rx="9" style="fill:var(--accent)"/>
+  <text x="98" y="192" text-anchor="middle" style="fill:var(--on-accent);font:600 16px var(--font-mono)">woff2</text>
+  <!-- Every weight from it -->
+  <g text-anchor="middle" style="fill:var(--ink);font-family:var(--font-sans);font-size:40px">
+    <text x="216" y="118" style="font-weight:200">Aa</text>
+    <text x="280" y="118" style="font-weight:400">Aa</text>
+    <text x="344" y="118" style="font-weight:600">Aa</text>
+    <text x="408" y="118" style="font-weight:800">Aa</text>
+  </g>
+  <!-- The weight axis -->
+  <rect x="196" y="160" width="244" height="8" rx="4" style="fill:var(--track)"/>
+  <rect x="196" y="160" width="152" height="8" rx="4" style="fill:var(--ink)"/>
+  <circle cx="348" cy="164" r="13" style="fill:var(--ink);stroke:var(--page);stroke-width:4"/>
+  <text x="196" y="208" style="fill:var(--ink-muted);font:500 16px var(--font-mono)">100</text>
+  <text x="440" y="208" text-anchor="end" style="fill:var(--ink-muted);font:500 16px var(--font-mono)">900</text>
+</svg>

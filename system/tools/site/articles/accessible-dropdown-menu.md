@@ -108,6 +108,8 @@ button.addEventListener('keydown', (e) => {
 });
 
 menu.addEventListener('keydown', (e) => {
+  // Shift+Tab would land on the button, inside the wrapper, and leave the menu open: close it here.
+  if (e.key === 'Tab' && e.shiftKey) { e.preventDefault(); close(true); return; }
   const list = items(), i = list.indexOf(document.activeElement);
   const to = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: list.length - 1 }[e.key];
   if (to === undefined) return;

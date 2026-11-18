@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- The invalid field with focus: the focus ring outside, the danger edge inside it -->
+  <text x="40" y="52" style="fill:var(--ink-soft);font:500 15px var(--font-sans)">Email</text>
+  <rect x="40" y="64" width="400" height="52" rx="14" style="fill:var(--surface)"/>
+  <rect x="42" y="66" width="396" height="48" rx="12" style="fill:none;stroke:var(--danger);stroke-width:2"/>
+  <rect x="36.5" y="60.5" width="407" height="59" rx="17.5" style="fill:none;stroke:var(--ink);stroke-width:3"/>
+  <text x="60" y="96" style="fill:var(--ink);font:500 17px var(--font-sans)">dana@</text>
+  <path d="M118 80v20" style="stroke:var(--ink);stroke-width:2"/>
+  <g transform="translate(40 128)" style="fill:none;stroke:var(--danger);stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+    <circle cx="9" cy="9" r="7.5"/>
+    <path d="M9 5.5v4M9 12.5h.01"/>
+  </g>
+  <text x="64" y="142" style="fill:var(--danger);font:500 15px var(--font-sans)">Add a domain</text>
+  <!-- Another invalid field, without focus: the danger edge alone -->
+  <text x="40" y="184" style="fill:var(--ink-soft);font:500 15px var(--font-sans)">Phone</text>
+  <rect x="40" y="196" width="290" height="52" rx="14" style="fill:var(--surface)"/>
+  <rect x="42" y="198" width="286" height="48" rx="12" style="fill:none;stroke:var(--danger);stroke-width:2"/>
+  <text x="60" y="228" style="fill:var(--ink);font:500 17px var(--font-sans)">020 7946</text>
+  <!-- The button that sent the form -->
+  <rect x="352" y="196" width="88" height="52" rx="26" style="fill:var(--accent)"/>
+  <text x="396" y="228" text-anchor="middle" style="fill:var(--on-accent);font:600 17px var(--font-sans)">Send</text>
+</svg>

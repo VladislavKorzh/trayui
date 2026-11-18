@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- A stepper at its limit: the plus has turned off, and focus has moved to the group instead of the page -->
+  <text x="44" y="94" style="fill:var(--ink-muted);font:500 15px var(--font-sans)">Quantity</text>
+  <rect x="44" y="108" width="172" height="60" rx="30" style="fill:var(--surface);stroke:var(--hairline);stroke-width:1.5"/>
+  <path transform="translate(60 126)" d="M5 12h14" style="fill:none;stroke:var(--ink);stroke-width:2.25;stroke-linecap:round"/>
+  <text x="130" y="146" text-anchor="middle" style="fill:var(--ink);font:600 22px var(--font-sans)">9</text>
+  <g transform="translate(176 126)" style="fill:none;stroke:var(--ink-hint);stroke-width:2.25;stroke-linecap:round;opacity:.6">
+    <path d="M5 12h14"/>
+    <path d="M12 5v14"/>
+  </g>
+  <rect x="38.5" y="102.5" width="183" height="71" rx="35.5" style="fill:none;stroke:var(--ink);stroke-width:3"/>
+  <!-- The list of what was fixed: a raised panel, its count in the accent -->
+  <rect x="256" y="34" width="192" height="202" rx="18" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <text x="276" y="73" style="fill:var(--ink);font:600 18px var(--font-sans)">Fixed</text>
+  <rect x="380" y="52" width="48" height="28" rx="14" style="fill:var(--accent)"/>
+  <text x="404" y="72" text-anchor="middle" style="fill:var(--on-accent);font:600 16px var(--font-sans)">54</text>
+  <path d="M272 94h160" style="fill:none;stroke:var(--hairline);stroke-width:1.5"/>
+  <g style="fill:none;stroke:var(--success);stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+    <g transform="translate(274 110)"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></g>
+    <g transform="translate(274 150)"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></g>
+    <g transform="translate(274 190)"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></g>
+  </g>
+  <g style="fill:var(--ink);font:500 17px var(--font-sans)">
+    <text x="310" y="128">Focus</text>
+    <text x="310" y="168">Names</text>
+    <text x="310" y="208">Targets</text>
+  </g>
+</svg>

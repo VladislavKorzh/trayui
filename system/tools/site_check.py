@@ -75,8 +75,9 @@ def main():
     docs, comps = by_section['docs'], by_section['components']
     block_ids = [i for i in by_section['blocks'] if i not in ('blocks', 'b-login', 'b-sidebar')]  # the blocks, without the pages that gather them
     chart_pages = by_section['charts']
-    article_ids = [i for i in by_section.get('articles', []) if i != 'articles']  # the articles, without the page that lists them
-    titles = [s['title'] for s in site['sections']]  # Docs, Components, Blocks, Charts, and Articles once there is one
+    article_ids = [i for i in by_section.get('articles', []) if i.startswith('a-')]  # the articles, without the list and the pages of their topics
+    topic_ids = [i for i in by_section.get('articles', []) if i.startswith('at-')]
+    titles = [s['title'] for s in site['sections'] if s.get('tab', True)]  # the tabs of the header: Docs, Components, Blocks, Charts
     every = ['home'] + docs + comps + by_section['blocks'] + chart_pages + by_section.get('articles', [])
     sideless = {'home'} | {i for sec in site['sections'] if sec.get('side') is False for i in by_section[sec['id']]}  # pages shown with no sidebar
     framed = set(block_ids)
@@ -129,21 +130,30 @@ def main():
         listing = page_of('articles')
         lds = {i: json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', page_of(i), re.S).group(1)) for i in article_ids}
         kinds = {i: next(n for n in ld['@graph'] if n['@type'] != 'BreadcrumbList') for i, ld in lds.items()}
-        every_one = listing.split('id="art-all"', 1)[-1].split('role="tabpanel"', 1)[0]  # the panel of the tab All
-        topics = [g['group'] for s in site['sections'] if s['id'] == 'articles' for g in s['nav'] if g['group']]  # the sidebar groups the articles by topic
-        check('the Articles page is laid out as the journal block: a tab for each topic with its count, the newest article large, then the others, each with its picture and day',
-              listing.count('role="tab"') == 1 + len(topics) and f'class="tray-card site-lead" href="/{index[article_ids[0]]["path"]}"' in listing
-              and all(f'href="/{index[i]["path"]}"' in every_one for i in article_ids) and every_one.count('<time datetime=') == len(article_ids)
-              and every_one.count('<div class="site-thumb') == len(article_ids) and every_one.count('<svg aria-hidden="true" focusable="false"') == len(article_ids),
-              (listing.count('role="tab"'), every_one.count('<div class="site-thumb')))
+        on_topic = {g['group']: [it['id'] for it in g['items']] for s in site['sections'] if s['id'] == 'articles' for g in s['nav'] if g['group']}  # topic: its articles
+        tabs_of = lambda text: re.findall(r'<a class="tray-tab" href="/([^"]+)"( aria-current="page")?>', text.split('aria-label="Topics"', 1)[-1].split('</nav>', 1)[0])
+        cards_of = lambda text: re.findall(r'<a class="tray-card[^"]*" href="/([^"]+)"', text.split('class="site-articles"', 1)[-1])
+        newest = lambda ids: max(ids, key=lambda i: kinds[i]['datePublished'])  # the first of the newest day
+        laid = [('articles', article_ids)] + [('at-' + re.sub(r'[^a-z0-9]+', '-', g.lower()).strip('-'), ids) for g, ids in on_topic.items()]  # a topic's page is at-<its name>
+        wrong = []
+        for ident, ids in laid:
+            text = page_of(ident)
+            tabs, cards = tabs_of(text), cards_of(text)
+            if not (len(tabs) == 1 + len(topic_ids) and [p for p, cur in tabs if cur] == [index[ident]['path']] and sorted(cards) == sorted(index[i]['path'] for i in ids)
+                    and text.count('<div class="site-thumb') == len(ids) and text.count('<svg aria-hidden="true" focusable="false"') == len(ids)
+                    and kinds[newest(ids)]['datePublished'] == kinds[next(i for i in ids if index[i]['path'] == cards[0])]['datePublished']):
+                wrong.append((ident, len(tabs), len(cards), len(ids)))
+        check('the Articles page and a page for each topic are laid out as the journal block: a tab for each topic, the current one marked, the newest article large, then the others, each with its picture',
+              topic_ids and sorted(i for i, _ in laid[1:]) == sorted(topic_ids) and not wrong, wrong[:4])
         unread = []
         for i in article_ids:
             text = page_of(i)
             marks = re.findall(r'<a class="tray-sidebar__item" href="#([a-z0-9-]+)"', text.split('class="tray-sidebar tray-sidebar--plain site-toc"', 1)[-1].split('</nav>', 1)[0])
-            if not (marks and all(f' id="{m}"' in text for m in marks) and 'class="tray-crumbs"' in text and 'class="tray-person"' in text
+            crumbs = re.findall(r'<li><a href="/([^"]+)">', text.split('class="tray-crumbs"', 1)[-1].split('</ol>', 1)[0])
+            if not (marks and all(f' id="{m}"' in text for m in marks) and len(crumbs) == 2 and crumbs[0] == 'articles' and crumbs[1].startswith('articles/topics/') and 'class="tray-person"' in text
                     and 'minutes to read' in text and '<time datetime=' in text and 'data-target="#art-link"' in text):
                 unread.append(i)
-        check('each article is laid out as the long read: the way back, who wrote it, its day and how long it takes, contents that lead to its headings, and a way to share it', not unread, unread)
+        check('each article is laid out as the long read: the way back through its topic, who wrote it, its day and how long it takes, contents that lead to its headings, and a way to share it', not unread, unread)
         check('each article is an Article for search engines, with its author and the days it came out and changed',
               all(k['@type'] == 'Article' and re.fullmatch(r'\d{4}-\d\d-\d\d', k.get('datePublished', '')) and k.get('dateModified') and k['author'].get('name') and k.get('image') for k in kinds.values()),
               {i: k['@type'] for i, k in kinds.items()})
@@ -154,7 +164,7 @@ def main():
         check('the Atom feed holds every article whole, its links on this site, and every page names it',
               len(entries) == len(article_ids) and all(f'href="{site["site"]}/' in e.find(A + 'content').text and 'tray-code__head' not in e.find(A + 'content').text for e in entries)
               and all('type="application/atom+xml"' in text for text in (listing, (SITE / 'index.html').read_text(encoding='utf-8'), page_of('c-button'))), len(entries))
-        check('llms.txt lists the articles', '## Articles' in index_txt and all(f'/{index[i]["path"]}.md' in index_txt for i in article_ids))
+        check('llms.txt links the list of the articles and the page of each topic', '## Articles' in index_txt and all(f'/{index[i]["path"]}.md' in index_txt for i in ['articles'] + topic_ids))
     notice = (SITE / 'charts.licenses.txt').read_text(encoding='utf-8') if (SITE / 'charts.licenses.txt').exists() else ''
     check('the script that draws the charts comes with the licences of what it holds', any((SITE / '_').glob('charts.*.js')) and all(f'\n{n} ' in notice for n in ('recharts', 'react', 'react-dom')) and 'MIT License' in notice, len(notice))
 
@@ -244,7 +254,7 @@ def main():
               and pg.evaluate("document.activeElement === document.querySelector('#site-command input')"), pg.locator('#site-command [role="option"]').count())
         pg.keyboard.type('date')
         shown = pg.locator('#site-command [role="option"]:visible').all_inner_texts()
-        check('typing narrows the list', [s.split('\n')[0] for s in shown] == ['Date Picker'], shown)
+        check('typing narrows the list, an article marked as one', [s.split('\n')[0] for s in shown if not s.endswith('\nArticles')] == ['Date Picker'], shown)
         pg.screenshot(path=str(SHOTS / 'search.png'))
         pg.keyboard.press('Enter'); pg.wait_for_timeout(500)
         check('Enter opens the match and closes the search', here(pg) == 'c-date-picker' and not pg.evaluate("document.getElementById('site-search').open") and pg.inner_text('#site-view h1') == 'Date Picker')
@@ -571,25 +581,28 @@ def main():
         # ---------- articles ----------
         if article_ids:
             go(pg, 'articles'); pg.wait_for_timeout(200)
-            shown = lambda: [p.get_attribute('id') for p in pg.locator('.site-articles [role="tabpanel"]').all() if p.is_visible()]
-            pg.locator('.site-articles [role="tab"]').nth(1).click(); pg.wait_for_timeout(150)
-            one_topic = shown(), pg.locator('.site-articles [role="tabpanel"]:visible a.tray-card').count()
-            pg.locator('.site-articles [role="tab"]').first.click(); pg.wait_for_timeout(150)
-            check('the tabs of the Articles page show one topic, and All again', len(one_topic[0]) == 1 and one_topic[1] >= 1 and shown() == ['art-all'], (one_topic, shown()))
+            pg.locator('.site-articles nav[aria-label="Topics"] a').nth(1).click(); pg.wait_for_timeout(500)
+            topic = here(pg), pg.locator('.site-articles a.tray-card').count(), pg.locator('.site-articles [aria-current="page"] .tray-badge').inner_text()
+            pg.locator('.site-articles nav[aria-label="Topics"] a').first.click(); pg.wait_for_timeout(500)
+            check('a topic tab opens the page of that topic with its articles, and All the list again',
+                  topic[0] in topic_ids and str(topic[1]) == topic[2] and here(pg) == 'articles', topic)
+            lead = pg.locator('a.site-lead').get_attribute('href')
             pg.locator('a.site-lead').click(); pg.wait_for_timeout(500)
+            opened = here(pg)
             mark = pg.locator('.site-toc a').nth(2).get_attribute('href')
             pg.locator('.site-toc a').nth(2).click(); pg.wait_for_timeout(400)
             top = pg.evaluate(f"Math.round(document.getElementById('{mark[1:]}').getBoundingClientRect().top)")
             sticky = pg.evaluate("Math.round(document.querySelector('.site-toc').getBoundingClientRect().top)")
             check('a card opens its article, and its contents take the reader to a heading, below the header, with the contents still in sight',
-                  here(pg) == article_ids[0] and pg.url.endswith(mark) and 40 < top < 160 and 0 < sticky < 160, (here(pg), pg.url, top, sticky))
+                  '/' + index[opened]['path'] == lead and pg.url.endswith(mark) and 40 < top < 160 and 0 < sticky < 160, (opened, lead, pg.url, top, sticky))
             pg.go_back(); pg.wait_for_timeout(300)
-            check('going back from a heading stays on the article', here(pg) == article_ids[0] and '#' not in pg.url, pg.url)
-            no_side = pg.locator('.tray-app__side').is_hidden() and pg.locator('#site-sections [aria-current="page"]').inner_text() == 'Articles'
+            check('going back from a heading stays on the article', here(pg) == opened and '#' not in pg.url, pg.url)
+            no_side = pg.locator('.tray-app__side').is_hidden() and pg.locator('#site-sections [aria-current="page"]').count() == 0 and 'Articles' not in pg.locator('#site-sections').inner_text()
             go(pg, 'c-button'); pg.wait_for_timeout(300)
-            check('the Articles have no sidebar, their topics being tabs, and the next section has its sidebar again',
+            check('the Articles have no sidebar and no tab in the header, their topics being tabs, and the next section has its sidebar again',
                   no_side and pg.locator('.tray-app__side').is_visible() and pg.locator('#site-nav [aria-current="page"]').count() == 1, no_side)
-        check('the foot of a page says what Tray UI is and its licence, and names no one', 'Maintained by' not in page_of('c-button') and 'MIT licence.' in page_of('c-button'))
+        check('the foot of a page says what Tray UI is and its licence, names no one, and links the Articles, which have no tab in the header',
+              'Maintained by' not in page_of('c-button') and 'MIT licence.' in page_of('c-button') and (not article_ids or '<li><a href="/articles">Articles</a></li>' in page_of('c-button')))
 
         # ---------- themes ----------
         for theme in ('light', 'dark'):

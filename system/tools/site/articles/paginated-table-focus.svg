@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- The table's name, and the bulk action that wakes once a row is selected -->
+  <text x="36" y="58" style="fill:var(--ink);font:600 18px var(--font-sans)">Orders</text>
+  <rect x="316" y="32" width="132" height="40" rx="20" style="fill:var(--accent)"/>
+  <text x="382" y="57" text-anchor="middle" style="fill:var(--on-accent);font:600 15px var(--font-sans)">Print labels</text>
+  <!-- The heads: Total is sorted, so it is ink and carries a down arrow -->
+  <text x="72" y="106" style="fill:var(--ink-muted);font:600 14px var(--font-sans)">Order</text>
+  <text x="212" y="106" style="fill:var(--ink-muted);font:600 14px var(--font-sans)">Placed</text>
+  <text x="418" y="106" text-anchor="end" style="fill:var(--ink);font:600 14px var(--font-sans)">Total</text>
+  <path transform="translate(424 94) scale(.6667)" d="M12 5v14m7-7-7 7-7-7" style="fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round"/>
+  <path d="M32 120h416" style="stroke:var(--rule-strong);stroke-width:1.5"/>
+  <!-- A selected row, filled, and one more -->
+  <rect x="32" y="122" width="416" height="38" rx="8" style="fill:var(--surface)"/>
+  <rect x="38" y="131" width="20" height="20" rx="6" style="fill:var(--ink)"/>
+  <path d="m42.5 141.5 4 4 7-8" style="fill:none;stroke:var(--page);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"/>
+  <text x="72" y="147" style="fill:var(--ink);font:600 15px var(--font-sans)">PL-20417</text>
+  <text x="212" y="147" style="fill:var(--ink-soft);font:500 15px var(--font-sans)">13 Nov</text>
+  <text x="440" y="147" text-anchor="end" style="fill:var(--ink);font:500 15px var(--font-mono)">$68</text>
+  <rect x="38.75" y="170.75" width="18.5" height="18.5" rx="5.25" style="fill:none;stroke:var(--control-off);stroke-width:1.5"/>
+  <text x="72" y="186" style="fill:var(--ink);font:600 15px var(--font-sans)">PL-20415</text>
+  <text x="212" y="186" style="fill:var(--ink-soft);font:500 15px var(--font-sans)">11 Nov</text>
+  <text x="440" y="186" text-anchor="end" style="fill:var(--ink);font:500 15px var(--font-mono)">$59</text>
+  <path d="M32 200h416" style="stroke:var(--hairline);stroke-width:1.5"/>
+  <!-- The foot: where the person is, and the pager; Next is off, so focus moved to Previous -->
+  <text x="36" y="240" style="fill:var(--ink-soft);font:500 16px var(--font-sans)">6–8 of 8</text>
+  <rect x="344" y="214" width="44" height="40" rx="14" style="fill:var(--surface)"/>
+  <rect x="342.5" y="212.5" width="47" height="43" rx="15.5" style="fill:none;stroke:var(--ink);stroke-width:3"/>
+  <path transform="translate(354 222)" d="m15 18-6-6 6-6" style="fill:none;stroke:var(--ink);stroke-width:2.25;stroke-linecap:round;stroke-linejoin:round"/>
+  <g style="opacity:.4">
+    <rect x="400" y="214" width="44" height="40" rx="14" style="fill:var(--surface)"/>
+    <path transform="translate(410 222)" d="m9 18 6-6-6-6" style="fill:none;stroke:var(--ink);stroke-width:2.25;stroke-linecap:round;stroke-linejoin:round"/>
+  </g>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- The compiled file: a raised panel with its name in the head -->
+  <rect x="32" y="32" width="416" height="206" rx="20" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <text x="56" y="66" style="fill:var(--ink-muted);font:500 15px var(--font-mono)">dist/index.js</text>
+  <path d="M33 84h414" style="stroke:var(--hairline);stroke-width:1.5"/>
+  <!-- The import as it shipped, and what Node said about it. Both rows end their path at x=212, whatever the mono font. -->
+  <text x="56" y="126" style="fill:var(--ink-muted);font:500 19px var(--font-mono)">from</text>
+  <text x="212" y="126" text-anchor="end" style="fill:var(--ink);font:500 19px var(--font-mono)">'./button</text>
+  <text x="214" y="126" style="fill:var(--ink);font:500 19px var(--font-mono)">'</text>
+  <text x="56" y="152" style="fill:var(--danger);font:500 13px var(--font-mono)">ERR_MODULE_NOT_FOUND</text>
+  <g transform="translate(386 103) scale(1.25)" style="fill:none;stroke:var(--danger);stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="m15 9-6 6"/>
+    <path d="m9 9 6 6"/>
+  </g>
+  <path d="M56 174h368" style="stroke:var(--hairline);stroke-width:1.5"/>
+  <!-- The import as 0.2.1 writes it: the extension it was missing, on the accent -->
+  <text x="56" y="210" style="fill:var(--ink-muted);font:500 19px var(--font-mono)">from</text>
+  <text x="212" y="210" text-anchor="end" style="fill:var(--ink);font:500 19px var(--font-mono)">'./button</text>
+  <rect x="214" y="188" width="46" height="30" rx="8" style="fill:var(--accent)"/>
+  <text x="237" y="210" text-anchor="middle" style="fill:var(--on-accent);font:700 19px var(--font-mono)">.js</text>
+  <text x="263" y="210" style="fill:var(--ink);font:500 19px var(--font-mono)">'</text>
+  <g transform="translate(386 188) scale(1.25)" style="fill:none;stroke:var(--success);stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="m9 12 2 2 4-4"/>
+  </g>
+</svg>

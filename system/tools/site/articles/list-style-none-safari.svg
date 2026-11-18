@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- A list with its markers taken away: a raised panel of rows, no bullets -->
+  <rect x="40" y="62" width="258" height="176" rx="18" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <g style="font:500 17px var(--font-sans)">
+    <text x="64" y="112" style="fill:var(--ink)">Paid</text>
+    <text x="64" y="162" style="fill:var(--ink)">Shipped</text>
+    <text x="64" y="212" style="fill:var(--ink)">Refunded</text>
+  </g>
+  <g text-anchor="end" style="fill:var(--ink-muted);font:500 15px var(--font-sans)">
+    <text x="274" y="112">09:12</text>
+    <text x="274" y="162">11:40</text>
+    <text x="274" y="212">14:05</text>
+  </g>
+  <path d="M56 137h226M56 187h226" style="fill:none;stroke:var(--hairline);stroke-width:1.5"/>
+  <!-- The attribute that keeps it a list in Safari -->
+  <rect x="56" y="40" width="136" height="36" rx="18" style="fill:var(--accent)"/>
+  <text x="124" y="64" text-anchor="middle" style="fill:var(--on-accent);font:600 15px var(--font-mono)">role="list"</text>
+  <!-- What a screen reader can then say -->
+  <rect x="322" y="112" width="126" height="76" rx="16" style="fill:var(--inverse)"/>
+  <g transform="translate(338 126) scale(.9)" style="fill:none;stroke:var(--on-inverse);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round">
+    <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/>
+    <path d="M16 9a5 5 0 0 1 0 6"/>
+    <path d="M19.364 18.364a9 9 0 0 0 0-12.728"/>
+  </g>
+  <text x="338" y="174" style="fill:var(--on-inverse);font:600 16px var(--font-sans)">list, 3 items</text>
+</svg>

@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- Three sidebars on their trays: sections that fold, a rail of icons, a file tree -->
+  <g style="fill:var(--surface)">
+    <rect x="28" y="28" width="176" height="214" rx="20"/>
+    <rect x="214" y="28" width="66" height="214" rx="20"/>
+    <rect x="290" y="28" width="162" height="214" rx="20"/>
+  </g>
+  <!-- Sections that fold: the current page in solid ink, one section open, one folded -->
+  <rect x="38" y="78" width="156" height="36" rx="11" style="fill:var(--ink)"/>
+  <g style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+    <g transform="translate(48 44) scale(.84)" style="stroke:var(--ink)">
+      <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/>
+      <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+    </g>
+    <g transform="translate(48 86) scale(.84)" style="stroke:var(--page)">
+      <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
+      <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+    </g>
+    <g transform="translate(48 164) scale(.84)" style="stroke:var(--ink)">
+      <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/>
+      <path d="M12 22V12"/><path d="m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7"/>
+    </g>
+    <g style="stroke:var(--ink-muted)">
+      <path transform="translate(172 128) scale(.67)" d="m6 9 6 6 6-6"/>
+      <path transform="translate(172 202) scale(.67)" d="m9 18 6-6-6-6"/>
+    </g>
+  </g>
+  <text x="76" y="59" style="fill:var(--ink);font:500 15px var(--font-sans)">Home</text>
+  <text x="76" y="101" style="fill:var(--page);font:600 15px var(--font-sans)">Orders</text>
+  <g style="fill:var(--ink-muted);font:500 14px var(--font-sans)">
+    <text x="48" y="141">Shop</text>
+    <text x="48" y="215">Workspace</text>
+  </g>
+  <text x="76" y="179" style="fill:var(--ink);font:500 15px var(--font-sans)">Products</text>
+  <!-- A rail of icons: the same current page, as a filled square -->
+  <rect x="225" y="78" width="44" height="36" rx="11" style="fill:var(--ink)"/>
+  <g style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+    <g transform="translate(237 44) scale(.84)" style="stroke:var(--ink)">
+      <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/>
+      <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+    </g>
+    <g transform="translate(237 86) scale(.84)" style="stroke:var(--page)">
+      <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
+      <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+    </g>
+    <g style="stroke:var(--ink)">
+      <g transform="translate(237 126) scale(.84)">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </g>
+      <g transform="translate(237 164) scale(.84)">
+        <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/>
+        <path d="M12 22V12"/><path d="m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7"/>
+      </g>
+      <g transform="translate(237 202) scale(.84)">
+        <path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>
+      </g>
+    </g>
+  </g>
+  <!-- A file tree: folders that fold, the open file filled white -->
+  <rect x="318" y="78" width="124" height="36" rx="10" style="fill:var(--page)"/>
+  <g style="fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+    <g style="stroke:var(--ink-muted)">
+      <path transform="translate(298 44) scale(.67)" d="m6 9 6 6 6-6"/>
+      <path transform="translate(298 166) scale(.67)" d="m9 18 6-6-6-6"/>
+    </g>
+    <g style="stroke:var(--ink-soft)">
+      <path transform="translate(316 43) scale(.75)" d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
+      <path transform="translate(316 165) scale(.75)" d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
+      <g transform="translate(326 87) scale(.75)"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></g>
+      <g transform="translate(326 125) scale(.75)"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></g>
+    </g>
+  </g>
+  <g style="fill:var(--ink);font:500 15px var(--font-sans)">
+    <text x="340" y="60">pages</text>
+    <text x="350" y="102" style="font-weight:600">index.html</text>
+    <text x="350" y="140" style="font-weight:400">shop.css</text>
+    <text x="340" y="182">journal</text>
+  </g>
+</svg>

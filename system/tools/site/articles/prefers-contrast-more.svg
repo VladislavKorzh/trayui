@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- Usually: a field and a quiet button drawn as fills, the label and placeholder in the lighter greys -->
+  <text x="32" y="66" style="fill:var(--ink-soft);font:500 15px var(--font-sans)">Address</text>
+  <rect x="32" y="78" width="170" height="48" rx="14" style="fill:var(--surface)"/>
+  <text x="50" y="108" style="fill:var(--ink-hint);font:400 15px var(--font-sans)">Street</text>
+  <path d="M32 152h170" style="fill:none;stroke:var(--hairline);stroke-width:1.5"/>
+  <rect x="32" y="174" width="108" height="44" rx="14" style="fill:var(--surface)"/>
+  <text x="86" y="201" text-anchor="middle" style="fill:var(--ink);font:600 15px var(--font-sans)">Details</text>
+  <!-- More contrast, asked for: the accent disc with a half-filled circle -->
+  <circle cx="240" cy="135" r="18" style="fill:var(--accent)"/>
+  <circle cx="240" cy="135" r="9" style="fill:none;stroke:var(--on-accent);stroke-width:2.25"/>
+  <path d="M240 126a9 9 0 0 1 0 18z" style="fill:var(--on-accent)"/>
+  <!-- With more contrast: each grey one step towards the ink, and every fill an edge -->
+  <text x="278" y="66" style="fill:var(--ink);font:500 15px var(--font-sans)">Address</text>
+  <rect x="278.75" y="78.75" width="168.5" height="46.5" rx="13.25" style="fill:var(--surface);stroke:var(--control-off);stroke-width:1.5"/>
+  <text x="296" y="108" style="fill:var(--ink-muted);font:400 15px var(--font-sans)">Street</text>
+  <path d="M278 152h170" style="fill:none;stroke:var(--control-off);stroke-width:1.5"/>
+  <rect x="278.75" y="174.75" width="106.5" height="42.5" rx="13.25" style="fill:var(--surface);stroke:var(--control-off);stroke-width:1.5"/>
+  <text x="332" y="201" text-anchor="middle" style="fill:var(--ink);font:600 15px var(--font-sans)">Details</text>
+</svg>

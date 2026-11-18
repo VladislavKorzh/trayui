@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- Three settings sections, each a title at the start beside a tray card: a form with its Save button,
+       a switch that saves at once (with the focus ring), and the danger zone at the foot. -->
+  <g style="fill:var(--ink);font:600 17px var(--font-sans)">
+    <text x="32" y="58">Profile</text>
+    <text x="32" y="134">Alerts</text>
+    <text x="32" y="210">Danger</text>
+  </g>
+  <g style="fill:var(--track)">
+    <rect x="32" y="68" width="92" height="8" rx="4"/>
+    <rect x="32" y="144" width="74" height="8" rx="4"/>
+    <rect x="32" y="220" width="98" height="8" rx="4"/>
+  </g>
+  <!-- The hairline between sections -->
+  <path d="M32 97.25h416M32 173.25h416" style="fill:none;stroke:var(--hairline);stroke-width:1.5"/>
+  <!-- Profile: a field and the Save button -->
+  <rect x="156" y="32" width="292" height="54" rx="18" style="fill:var(--surface)"/>
+  <rect x="168" y="42" width="160" height="34" rx="10" style="fill:var(--page);stroke:var(--hairline);stroke-width:1.5"/>
+  <text x="182" y="65" style="fill:var(--ink);font:500 17px var(--font-sans)">Oksana</text>
+  <rect x="340" y="42" width="96" height="34" rx="17" style="fill:var(--accent)"/>
+  <text x="388" y="65" text-anchor="middle" style="fill:var(--on-accent);font:600 17px var(--font-sans)">Save</text>
+  <!-- Alerts: a switch, on, with the 3px focus ring -->
+  <rect x="156" y="108" width="292" height="54" rx="18" style="fill:var(--surface)"/>
+  <text x="172" y="141" style="fill:var(--ink);font:500 17px var(--font-sans)">New order</text>
+  <rect x="371.5" y="114.5" width="65" height="41" rx="20.5" style="fill:none;stroke:var(--ink);stroke-width:3"/>
+  <rect x="376" y="119" width="56" height="32" rx="16" style="fill:var(--ink)"/>
+  <circle cx="416" cy="135" r="13" style="fill:var(--page)"/>
+  <!-- The danger zone: what goes, and the danger button -->
+  <rect x="156" y="184" width="292" height="54" rx="18" style="fill:var(--surface)"/>
+  <text x="172" y="217" style="fill:var(--ink);font:500 17px var(--font-sans)">Perly Farm</text>
+  <rect x="340" y="194" width="96" height="34" rx="17" style="fill:var(--danger)"/>
+  <text x="388" y="217" text-anchor="middle" style="fill:var(--on-danger);font:600 17px var(--font-sans)">Delete</text>
+</svg>

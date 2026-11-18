@@ -1,0 +1,8 @@
+[
+  {"name": "Components", "title": "Building components in plain HTML", "summary": "How to build menus, dialogs, tabs, a combobox, a date picker and other components in plain HTML, CSS and JavaScript, accessible from the start."},
+  {"name": "CSS and themes", "title": "CSS, design tokens and themes", "summary": "Design tokens, themes, contrast, forced colours, print, fluid type, a sliding pill, touch targets, an icon sprite and a self-hosted font, in plain CSS."},
+  {"name": "Accessibility", "title": "Accessibility in practice", "summary": "Where focus goes, invalid fields, reduced motion, lists in Safari, right to left, charts, a WCAG 2.2 checklist and the 54 bugs found in Tray UI."},
+  {"name": "Screens", "title": "Building whole screens in HTML and CSS", "summary": "How a dashboard, sign-in pages, sidebars, pricing, a checkout, settings and empty states are put together in plain HTML and CSS, from blocks."},
+  {"name": "Comparisons", "title": "Tray UI and other tools", "summary": "How Tray UI compares with Bootstrap, shadcn/ui and Tailwind, what each does well and when to pick it, and Tray UI's tokens in a Tailwind 4 project."},
+  {"name": "How Tray UI is made", "title": "How Tray UI is made", "summary": "How the system and its site are built: llms.txt and Markdown pages for agents, imports in an npm ES module, and Open Graph images drawn with Playwright."}
+]

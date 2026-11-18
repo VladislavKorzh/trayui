@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- The field, with focus: a search icon, what was typed and the caret -->
+  <rect x="32" y="32" width="268" height="52" rx="16" style="fill:var(--surface)"/>
+  <rect x="31.5" y="31.5" width="269" height="53" rx="16.5" style="fill:none;stroke:var(--ink);stroke-width:3"/>
+  <g transform="translate(48 46)" style="fill:none;stroke:var(--ink-muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+    <circle cx="11" cy="11" r="8"/>
+    <path d="m21 21-4.3-4.3"/>
+  </g>
+  <text x="84" y="65" style="fill:var(--ink);font:600 19px var(--font-sans)">iv</text>
+  <path d="M104 47v24" style="stroke:var(--ink);stroke-width:2"/>
+  <!-- The list under it: the first match highlighted -->
+  <rect x="32" y="96" width="268" height="148" rx="18" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <rect x="42" y="106" width="248" height="40" rx="10" style="fill:var(--surface)"/>
+  <text x="58" y="132" style="fill:var(--ink);font:600 17px var(--font-sans)">Kharkiv</text>
+  <text x="58" y="176" style="fill:var(--ink);font:500 17px var(--font-sans)">Kyiv</text>
+  <text x="58" y="220" style="fill:var(--ink);font:500 17px var(--font-sans)">Lviv</text>
+  <!-- The count, spoken by the status line -->
+  <circle cx="392" cy="106" r="40" style="fill:var(--accent)"/>
+  <g transform="translate(369.2 83.2) scale(1.9)" style="fill:none;stroke:var(--on-accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+    <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/>
+    <path d="M16 9a5 5 0 0 1 0 6"/>
+    <path d="M19.364 18.364a9 9 0 0 0 0-12.728"/>
+  </g>
+  <rect x="332" y="166" width="120" height="48" rx="24" style="fill:var(--inverse)"/>
+  <text x="392" y="196" text-anchor="middle" style="fill:var(--on-inverse);font:600 17px var(--font-sans)">3 cities</text>
+</svg>

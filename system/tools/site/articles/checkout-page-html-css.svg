@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270">
+  <!-- The picture of the article in the Articles list. Every colour is a token, so it wears the theme of the site. -->
+  <!-- Delivery as two choice cards: the chosen one ringed in ink, its radio filled -->
+  <rect x="33" y="33" width="206" height="58" rx="14" style="fill:var(--surface);stroke:var(--ink);stroke-width:2"/>
+  <circle cx="60" cy="62" r="8" style="fill:var(--page);stroke:var(--ink);stroke-width:6"/>
+  <text x="82" y="68" style="fill:var(--ink);font:600 17px var(--font-sans)">Courier</text>
+  <text x="222" y="68" text-anchor="end" style="fill:var(--ink);font:600 17px var(--font-sans)">$9</text>
+  <rect x="32" y="100" width="208" height="58" rx="14" style="fill:var(--surface);stroke:var(--hairline);stroke-width:1.5"/>
+  <circle cx="60" cy="129" r="10" style="fill:var(--page);stroke:var(--control-off);stroke-width:1.5"/>
+  <text x="82" y="135" style="fill:var(--ink);font:600 17px var(--font-sans)">Farm shop</text>
+  <text x="222" y="135" text-anchor="end" style="fill:var(--ink-soft);font:500 17px var(--font-sans)">Free</text>
+  <!-- A card field, grouped in fours as it is typed -->
+  <text x="32" y="188" style="fill:var(--ink);font:500 15px var(--font-sans)">Card number</text>
+  <rect x="32" y="198" width="208" height="42" rx="12" style="fill:var(--surface);stroke:var(--hairline);stroke-width:1.5"/>
+  <text x="48" y="224" style="fill:var(--ink-soft);font:500 15px var(--font-mono)">4242 4242 4242</text>
+  <!-- The summary: the lines, the total that is read aloud, and the one yellow button -->
+  <rect x="264" y="32" width="184" height="208" rx="20" style="fill:var(--raised);stroke:var(--hairline);stroke-width:1.5"/>
+  <text x="284" y="64" style="fill:var(--ink);font:600 17px var(--font-sans)">Your order</text>
+  <g style="font:500 16px var(--font-sans)">
+    <text x="284" y="93" style="fill:var(--ink-soft)">Four jars</text>
+    <text x="428" y="93" text-anchor="end" style="fill:var(--ink)">$268</text>
+    <text x="284" y="117" style="fill:var(--ink-soft)">Courier</text>
+    <text x="428" y="117" text-anchor="end" style="fill:var(--ink)">$9</text>
+  </g>
+  <path d="M284 132h144" style="stroke:var(--hairline);stroke-width:1.5"/>
+  <text x="284" y="160" style="fill:var(--ink);font:700 18px var(--font-sans)">Total</text>
+  <text x="428" y="160" text-anchor="end" style="fill:var(--ink);font:700 18px var(--font-sans)">$277</text>
+  <rect x="284" y="176" width="144" height="44" rx="22" style="fill:var(--accent)"/>
+  <text x="356" y="204" text-anchor="middle" style="fill:var(--on-accent);font:600 17px var(--font-sans)">Pay $277</text>
+</svg>
