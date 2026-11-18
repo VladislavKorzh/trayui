@@ -22,8 +22,9 @@ ENGINE = ROOT / 'tools' / 'site' / 'playground.js'
 WIDTH = 560  # about the stage's width beside the controls at 1280
 LONG = 'A much longer text than anyone would write here, to see where it wraps'
 
+# The empty icon keeps Chrome from asking for /favicon.ico, whose 404 would land, now and then, in the first render's errors.
 HARNESS = '''<!doctype html><html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="/tokens.css"><link rel="stylesheet" href="/components/bundle.css"><link rel="stylesheet" href="/__site.css"></head>
+<link rel="icon" href="data:,"><link rel="stylesheet" href="/tokens.css"><link rel="stylesheet" href="/components/bundle.css"><link rel="stylesheet" href="/__site.css"></head>
 <body style="margin: 0"><div id="stage" class="site-play__stage" style="inline-size: ''' + str(WIDTH) + '''px; box-sizing: border-box"></div>
 <script src="/components/bundle.js"></script><script src="/__playground.js"></script></body></html>'''
 
