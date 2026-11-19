@@ -378,6 +378,26 @@ def main():
           window.addEventListener('click', e => { left = !e.defaultPrevented; e.preventDefault(); }, { once: true }); a.click();
           return [a.textContent, a.getAttribute('href'), left]; }''')
         check('inside a section the header still ends with the Kits link, and a click on it is left to the browser (the shop serves /kits)', kits == ['Kits', '/kits', True], kits)
+        # The shell of the kits (shell/kits.html), filled as the shop fills it: site.js draws nothing over its page, holds back
+        # none of its links and forms, and a page of the site chosen in its search is loaded at its address.
+        shell = (SITE / 'shell' / 'kits.html').read_text(encoding='utf-8')
+        filled = re.sub(r'(<main[^>]*id="site-view"[^>]*>)(</main>)', r'\1<h1>Kits</h1><p><a id="kit-link" href="/kits/crm">CRM</a></p>'
+                        r'<form id="kit-form" method="post" action="/kits/buy/crm"><button>Buy</button></form>\2', shell)
+        filled = re.sub(r'(<nav class="tray-sidebar site-nav" id="site-nav"[^>]*>)(</nav>)', r'\1<div class="tray-sidebar__group"><a class="tray-sidebar__item" href="/kits" aria-current="page">All kits</a></div>\2', filled)
+        op = pg.context.new_page()
+        op.route('**/kits/shell-check', lambda r: r.fulfill(status=200, content_type='text/html; charset=utf-8', body=filled))
+        op.goto(url + 'kits/shell-check', wait_until='load'); op.wait_for_timeout(700)
+        kept = op.evaluate('''() => { const out = [document.querySelector('#site-view h1')?.textContent, document.querySelector('#site-nav [aria-current]')?.textContent,
+            document.querySelector('#site-sections [aria-current]')?.textContent];
+          for (const [sel, ev] of [['#kit-link', 'click'], ['#kit-form', 'submit']]) { let left = null;
+            window.addEventListener(ev, e => { left = !e.defaultPrevented; e.preventDefault(); }, { once: true });
+            const el = document.querySelector(sel); if (ev === 'click') el.click(); else el.requestSubmit(); out.push(left); }
+          return out; }''')
+        op.keyboard.press('/'); op.wait_for_timeout(250); op.keyboard.type('Lightbox'); op.wait_for_timeout(250); op.keyboard.press('Enter')
+        op.wait_for_url('**/components/lightbox', timeout=5000); op.wait_for_timeout(500)
+        check('a page of the kits, drawn in the shell, keeps its page, sidebar, links and forms, and its search opens a page of the site at its address',
+              kept == ['Kits', 'All kits', 'Kits', True, True] and op.inner_text('#site-view h1') == 'Lightbox', [kept, op.url])
+        op.close()
         check('the installation page offers the download and shows the markup to link', pg.locator('.site-prose a[download]').count() == 1 and pg.locator('.site-prose .tray-code').count() >= 3)
         pg.screenshot(path=str(SHOTS / 'installation.png'))
         tints = pg.evaluate('''() => { const k = document.querySelector('.site-prose .tray-code .hljs-tag .hljs-name');
@@ -656,6 +676,9 @@ def main():
               pg.inner_text('#site-view h1') == 'Templates' and pg.locator('[data-thumb]').count() == len(template_ids)
               and pg.locator('#site-nav .tray-sidebar__item').count() == len(template_ids) + 1
               and pg.locator('#site-sections [aria-current="page"]').inner_text() == 'Templates', pg.locator('[data-thumb]').count())
+        named = pg.evaluate('''() => [...document.querySelectorAll('#site-view a.site-thumb')].filter(a => { const t = a.querySelector('.site-thumb__text b');
+          if (!t) return true; const r = t.getBoundingClientRect(), c = a.getBoundingClientRect(); return r.height < 1 || r.bottom > c.bottom + 1; }).map(a => a.getAttribute('href'))''')
+        check('every card of the gallery shows its name and its summary under its picture', not named, named[:4])
         pg.locator('.site-thumb').first.click(); pg.wait_for_timeout(700)
         f = pg.evaluate(FRAME_JS)
         check('a picture opens its template, live in a frame at desktop width, with the widths, Full size, the Code tab and the copy button',

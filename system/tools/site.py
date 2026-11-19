@@ -1748,6 +1748,19 @@ def build():
         out = OUT / ('index.html' if home else meta['path'] + '.html')
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(addressed(fill(template, one), index), encoding='utf-8')
+    # The shell of the pages this site does not make: the kits, which the shop's Worker serves at /kits on this host. It is a
+    # page of the site with nothing in it: the header with Kits current, an empty sidebar and an empty page, and data-outside,
+    # which tells site.js to draw nothing over them and to hold back none of their links and forms. The shop fetches it for
+    # every page it serves and fills the title, the description, the address, the sidebar and the page, so its pages wear
+    # the site as it is now: its stylesheets, scripts, search and themes. Not a page of the site: it is in no list, map,
+    # search or llms.txt, and _headers keeps it out of search engines.
+    shell = dict(asset, home=False, root='/', route='kits', page_id='kits', section='kits', page_title='Tray UI kits', og_title='Tray UI kits',
+                 page_description='', page_url=f'{facts["site"]}/kits' if facts['site'] else '', og_image='', og_alt='', md_url='', jsonld='',
+                 nav_html='', noside=False, view_html='', wide=False, outside=True, preload='', own_pages='{}', feed=False,
+                 sections_tabs=''.join(f'<a class="tray-tab" href="/{route(s["home"])}">{html.escape(s["title"])}</a>' for s in sections if s.get('tab', True))
+                 + ''.join(f'<a class="tray-tab" href="{l["href"]}"' + (' aria-current="page"' if l['href'] == '/kits' else '') + f'>{html.escape(l["title"])}</a>' for l in outside))
+    (OUT / 'shell').mkdir(exist_ok=True)
+    (OUT / 'shell' / 'kits.html').write_text(addressed(fill(template, shell), index), encoding='utf-8')
     unlisted = {it['id'] for s in sections for g in s['nav'] for it in g['items'] if it.get('unlisted')}  # the later pages of a list: not in a search
     (OUT / '404.html').write_text(addressed(fill((SRC / '404.html').read_text(encoding='utf-8'), dict(asset, search_list=''.join(
         f'<a class="tray-option" href="/{m["path"]}" role="option" data-value="/{m["path"]}"><span class="tray-option__text">{html.escape(m["title"])}</span>'

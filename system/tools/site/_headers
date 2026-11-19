@@ -51,3 +51,9 @@
 # The first address of the site still answers; trayui.com is the one to index.
 https://trayui.vladislav-korzh95.workers.dev/*
   X-Robots-Tag: noindex
+
+# The shell the shop fills for its pages at /kits (tools/site.py writes it): no page of its own, so no search engine keeps
+# it, and the shop asks for it again each minute, so a new build of the site reaches the kits at once.
+/shell/*
+  X-Robots-Tag: noindex
+  Cache-Control: no-cache

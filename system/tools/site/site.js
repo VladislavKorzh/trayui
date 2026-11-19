@@ -17,6 +17,10 @@
   var full = $('#site-full'), fullStage = $('#site-full-stage'), fullTitle = $('#site-full-title');
   var search = $('#site-search'), command = $('#site-command'), commandList = $('#site-command-list');
   var section, shown = null;
+  /* A page another Worker made on this host (the kits, sold at /kits): it came with the site's header and its own sidebar and
+     content, drawn in the shell this site builds (shell/kits.html). Nothing here draws over it or holds back its links and
+     forms; a page of the site chosen from it (in the search) is loaded as any address is. */
+  var OUTSIDE = document.documentElement.hasAttribute('data-outside');
 
   /* ---------- Addresses ----------
      On the web a page is at its address, /components/lightbox, and the host serves the file it is drawn in. Inside another
@@ -83,6 +87,7 @@
   /* go(id): open a page. Its address joins the history; the place on the page left is kept, for the way back. */
   function go(id, more) {
     if (!has(S.index, id)) return;
+    if (OUTSIDE) { location.assign(href(id) + (more ? '?' + more : '')); return; }
     if (!PATHS) { location.hash = id + (more ? '?' + more : ''); return; }
     var to = href(id) + (more ? '?' + more : '');
     if (to === location.pathname + location.search && !location.hash) return;
@@ -676,7 +681,7 @@
   /* Links and forms inside an example lead nowhere: only links between pages, files of the site and real outside links are followed. */
   view.addEventListener('click', function (e) {
     var a = e.target.closest ? e.target.closest('a[href]') : null;
-    if (!a) return;
+    if (!a || OUTSIDE) return;
     var raw = a.getAttribute('href');
     if (a.hasAttribute('data-retry')) { e.preventDefault(); render(); return; }
     if (PATHS ? idOf(raw) !== null : raw.charAt(0) === '#' && has(S.index, raw.slice(1))) return;  /* another page: the address changes */
@@ -695,11 +700,11 @@
     }
     e.preventDefault();
   });
-  view.addEventListener('submit', function (e) { e.preventDefault(); });
+  view.addEventListener('submit', function (e) { if (!OUTSIDE) e.preventDefault(); });
 
   /* A link to another page of the site opens it here, its address joining the history. A click that asks for a new tab or
      window, or a download, is left to the browser, which opens the page's own file. */
-  if (PATHS) document.addEventListener('click', function (e) {
+  if (PATHS && !OUTSIDE) document.addEventListener('click', function (e) {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     var a = e.target.closest ? e.target.closest('a[href]') : null;
     if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
@@ -715,7 +720,7 @@
   var saving = !!(navigator.connection && navigator.connection.saveData), soon = 0;
   function aimed(el) {
     var a = el && el.closest ? el.closest('a[href], [role="option"][data-value]') : null, id = null;
-    if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download')) return null;
+    if (!a || OUTSIDE || (a.target && a.target !== '_self') || a.hasAttribute('download')) return null;
     if (a.tagName !== 'A') id = a.getAttribute('data-value');
     else if (PATHS) { var u = new URL(a.href, location.href); id = u.origin === location.origin ? idOf(u.pathname) : null; }
     else id = a.getAttribute('href').charAt(0) === '#' ? a.getAttribute('href').slice(1).split('?')[0] : null;
@@ -835,7 +840,9 @@
   /* For tests, and for the pages that make links (the Themes page). */
   S.go = go; S.here = current; S.urlOf = urlOf; S.query = query; S.paths = PATHS;
 
-  if (PATHS) {
+  if (OUTSIDE) {
+    /* its header, sidebar and page came drawn, by the Worker that made it: nothing to render */
+  } else if (PATHS) {
     /* Back and forward: the page of that step, at the place it was left. A step within one page (a #part of it) stays put. */
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     window.addEventListener('popstate', function (e) {

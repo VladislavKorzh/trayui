@@ -217,7 +217,9 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 
 /* The first page of a section: every block or template as a small live picture. */
 .site-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr)); gap: var(--space-7) var(--grid-gap); }
-.site-thumb { display: grid; align-content: start; gap: var(--space-3); border-radius: var(--radius-panel); color: var(--ink); text-decoration: none; }
+/* A card of a gallery (blocks, templates) shares its name with the picture of an article above, whose box keeps 16:9 and
+   hides what overflows it: here the card is as tall as its picture and its words. */
+.site-thumb { display: grid; align-content: start; gap: var(--space-3); aspect-ratio: auto; overflow: visible; border-radius: var(--radius-panel); color: var(--ink); text-decoration: none; }
 /* The tray has the shape of the frame it will hold (1280 by 800) before the frame arrives, so nothing moves when it does. */
 .site-thumb__view { box-sizing: content-box; display: block; aspect-ratio: 1280 / 800; padding: var(--space-2); border-radius: var(--radius-panel); background: var(--surface); transition: filter var(--duration-fill) var(--ease); }
 .site-thumb:hover .site-thumb__view { filter: brightness(.96); }
