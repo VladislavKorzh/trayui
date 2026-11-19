@@ -127,3 +127,7 @@ def test_parity_modal(t):
     r.mouse.click(4, 300)
     t.settle(r)
     t.check('react: a press on the veil closes it', not d.evaluate('d => d.open'))
+
+
+# Static parity (trayui-react/static): as for Dialog.
+STATIC = True

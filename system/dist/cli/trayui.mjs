@@ -28,7 +28,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 
 // ---------- the command line ----------
 
-const VALUE_FLAGS = ['registry', 'cwd', 'dir', 'pages', 'rules'];
+const VALUE_FLAGS = ['registry', 'cwd', 'dir', 'pages', 'rules', 'prefix'];
 const BOOL_FLAGS = ['react', 'html', 'overwrite', 'dry-run', 'no-install', 'json', 'help', 'version', 'agents', 'stat', 'yes'];
 const SHORT = { h: 'help', v: 'version', n: 'dry-run', f: 'overwrite', y: 'yes' };
 
@@ -78,6 +78,7 @@ Options
   --json                   list, check: the result as JSON
   --stat                   diff: the names of the files that differ, without the diff
   --rules <file>           check: rules of your own in place of the system's (rules.json)
+  --prefix <start>         check: the start of your own classes (kit-), not reported as foreign (kit-,app- for more)
   --yes, -y                accepted and ignored, for scripts written for other CLIs: nothing here asks a question
   --version, --help
 
@@ -110,11 +111,13 @@ the registry's (--stat for the list alone).`,
   list: `Usage: npx trayui list [--react | --html] [--json]
 
 The items of the registry: the core, the components (React) and the blocks.`,
-  check: `Usage: npx trayui check <page.html | folder | -> [...] [--json] [--rules rules.json]
+  check: `Usage: npx trayui check <page.html | folder | -> [...] [--json] [--rules rules.json] [--prefix kit-]
 
 Checks Tray UI markup: classes, behaviours and icons that exist, one yellow per view, names and labels, references,
 tabs, headings, tokens, and on a whole page its language, theme and the three files. Exit code 1 on an error.
-It cannot see the page: look at it at 1280, 768 and 390px wide, in a light and a dark theme, too.`,
+--prefix names the start of your project's own classes (kit-), which are then not reported as foreign; give it again,
+or a list (kit-,app-), for more. It cannot see the page: look at it at 1280, 768 and 390px wide, in a light and a dark
+theme, too.`,
   skill: `Usage: npx trayui skill [--agents | --dir <folder>] [--overwrite] [--dry-run]
 
 Copies the agent skill that comes with this package (SKILL.md, a page for every component and block, and the
@@ -606,7 +609,7 @@ async function main(argv) {
   if (!(command in HELP)) throw new UsageError(`unknown command ${command}. npx trayui --help lists them.`);
   if (command === 'check') {   // options before the command: trayui --cwd site check pages/
     const base = resolve(flags.cwd || '.');
-    return check(names.map((n) => (n === '-' ? n : resolve(base, n))).concat(flags.json ? ['--json'] : [], flags.rules ? ['--rules', flags.rules] : []));
+    return check(names.map((n) => (n === '-' ? n : resolve(base, n))).concat(flags.json ? ['--json'] : [], flags.rules ? ['--rules', flags.rules] : [], flags.prefix ? ['--prefix', flags.prefix] : []));
   }
   const project = new Project(flags);
   if (command === 'init') {

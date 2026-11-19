@@ -1,5 +1,6 @@
 'use client';
 import * as React from 'react';
+import { useStaticMode } from '../lib/static';
 import { cx, useBehaviour, useControlled, useForwardedRef, useUid } from '../lib/util';
 import { Badge } from './Badge';
 
@@ -36,7 +37,7 @@ export interface TabsProps extends Omit<React.HTMLAttributes<HTMLElement>, 'onCh
   current?: 'page' | 'section';
   /** Spreads the tabs across the full width, in equal parts. */
   fill?: boolean;
-  /** For a strip that may not fit: it scrolls sideways and fades over its last 56px while tabs run past the end. */
+  /** For a strip that may not fit: it scrolls sideways and fades over its last 56px while tabs run past the end. The chosen tab, or the current link, and a tab that takes keyboard focus are scrolled into view clear of the fade; only the strip moves. */
   scroll?: boolean;
   /** Names the strip for screen readers: "Order PL-20418", "Sections". */
   label?: string;
@@ -55,6 +56,8 @@ export const Tabs = React.forwardRef<HTMLElement, TabsProps>(function Tabs(
   const first = items.find((it) => !it.disabled)?.value ?? '';
   const [chosen, setChosen] = useControlled(value, defaultValue ?? first, onChange);
   const tabRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
+  // static mode: bundle.js's tabs behaviour switches the panels and moves with the arrows, in place of the handlers below
+  const wired = useStaticMode();
   useBehaviour(ref, [scroll, mode]);
   const stripClass = cx('tray-tabs', fill && 'tray-tabs--fill');
   const strip = scroll ? 'strip' : undefined;
@@ -101,7 +104,7 @@ export const Tabs = React.forwardRef<HTMLElement, TabsProps>(function Tabs(
   };
 
   return (
-    <div ref={ref as React.RefObject<HTMLDivElement>} className={className} {...rest}>
+    <div ref={ref as React.RefObject<HTMLDivElement>} className={className} data-tray={wired ? 'tabs' : undefined} {...rest}>
       <div className={stripClass} role="tablist" aria-label={label} data-tray={strip} onKeyDown={onKeyDown}>
         {items.map((it, i) => {
           const on = it.value === chosen;

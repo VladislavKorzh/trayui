@@ -16,6 +16,8 @@ Keyboard focus is a solid 3px `ink` ring, 3px out, on every ground. Fields draw 
 
 Focus order follows reading order. Opening a dialog, sheet, drawer or popover moves focus into it; closing returns focus to the control that opened it.
 
+A page with a header of links starts with a skip link, so a keyboard user can pass over them (WCAG 2.4.1): `<a class="tray-skip" href="#main">Skip to the content</a>`, the first thing in the `<body>`, and `<main id="main">`. It stays out of sight until it takes focus, then shows as a small ink button at the top start of the window.
+
 ## Targets
 
 Buttons, fields, tabs, menu items, days and pages are at least 44px tall (`size-hit`). The extra-small button and toggle, a reaction and the remove button of a chip look smaller and reach 44px past their edge; checkboxes, radios and switches extend their target over the whole label row.

@@ -80,3 +80,7 @@ def test_parity_reveal(t):
         field = root.locator('input[aria-label="Password"]').first
         btn.click()
         t.eq(f'{label}: the reveal button shows the password and says pressed', (field.get_attribute('type'), t.ax(btn).get('pressed'), t.ax(btn)['name']), ('text', 'true', 'Show password'))
+
+
+# Static parity (trayui-react/static): the reveal button carries data-tray="reveal" there, and bundle.js shows the password.
+STATIC = True

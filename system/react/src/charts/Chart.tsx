@@ -21,6 +21,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import { useStaticMode } from '../lib/static';
 import { ChartCenter, ChartContainer, ChartFigures, ChartTooltip, ChartTooltipContent, type ChartConfig, type ChartWalk } from './kit';
 
 export type ChartType = 'bar' | 'line' | 'area' | 'donut' | 'radial' | 'radar';
@@ -88,6 +89,7 @@ function evenTicks(max: number): number[] {
 }
 
 const PARTS = 'var(--tray-ground)'; // the ring of ground colour that parts of a whole are set apart with
+const FORMS: ChartType[] = ['bar', 'line', 'area', 'donut', 'radial', 'radar'];
 
 /**
  * A chart from a list of labels and one or more series, drawn with Recharts: thin marks on a quiet frame, a tooltip, a key,
@@ -105,6 +107,54 @@ export const Chart = React.forwardRef<HTMLElement, ChartProps>(function Chart(
   const first = series[0]?.values ?? [];
   /* A donut, and a radial with several rings, are parts named by the labels; everything else is series named by their own names. */
   const byLabel = type === 'donut' || (type === 'radial' && first.length > 1);
+
+  /* Static mode: the figure the plain-HTML system draws its chart into (TrayUI.chart, from data-chart), from the same props.
+     It refuses, with an error that says why, what TrayUI.chart would draw otherwise than Recharts does here, rather than
+     write a chart that says something else. */
+  if (useStaticMode()) {
+    const refuse = (why: string): never => {
+      throw new Error(`trayui-react/static: the chart${typeof title === 'string' ? ` "${title}"` : ''} cannot be rendered to static HTML: ${why}`);
+    };
+    if (!FORMS.includes(type)) refuse(`TrayUI.chart draws ${FORMS.join(', ')}, not "${String(type)}".`);
+    if (!series.length) refuse('it has no series.');
+    if (type === 'radial' && first.length > 3) refuse(`it is a radial chart of ${first.length} rings, and TrayUI.chart draws three at most.`);
+    if (type === 'line' && stacked) refuse('it is a stacked line chart: TrayUI.chart would stack the lines, which are drawn unstacked here. Stack bars or areas, or leave stacked out.');
+    for (const s of series)
+      for (const v of s.values) {
+        if (!Number.isFinite(v)) refuse(`the series "${s.name}" holds ${String(v)}, which is not a number.`);
+        if (v < 0) refuse(`the series "${s.name}" holds ${v}: TrayUI.chart draws from zero up, and cannot draw a value below it.`);
+      }
+    const shown = table && !byLabel && !(type === 'bar' && horizontal); // where the figures table is drawn here
+    const data = {
+      type,
+      labels,
+      series: series.map((s) => ({ name: s.name, values: labels.map((_l, i) => s.values[i] ?? 0) })),
+      unit: unit || undefined,
+      max,
+      stacked: stacked || undefined,
+      horizontal: horizontal || undefined,
+      step: step || undefined,
+      height,
+      label: label === 'none' ? 'none' : undefined,
+      table: shown ? undefined : false,
+      summary: said,
+      labelHead,
+      totalLabel: totalLabel === 'Total' ? undefined : totalLabel,
+      locale: locale === 'en-GB' ? undefined : locale,
+    };
+    return (
+      <figure
+        ref={ref}
+        className={['tray-chart', side && 'tray-chart--side', className].filter(Boolean).join(' ')}
+        data-tray="chart"
+        data-chart={JSON.stringify(data)}
+        {...rest}
+      >
+        {title != null ? <figcaption className="tray-chart__title">{title}</figcaption> : null}
+        {caption != null ? <p className="tray-chart__caption">{caption}</p> : null}
+      </figure>
+    );
+  }
 
   const config: ChartConfig = {};
   if (byLabel) labels.forEach((l, i) => (config[`p${i}`] = { label: l }));

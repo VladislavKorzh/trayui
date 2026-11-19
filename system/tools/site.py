@@ -1092,7 +1092,7 @@ def build():
         return text
 
     # ---------- the docs section: the site's own pages, the foundations, the guides of the system ----------
-    doc_names = [n for n in ('introduction', 'installation', 'cli', 'theming', 'react', 'tailwind-figma', 'from-tailwind', 'agents', 'skill') if (SRC / 'pages' / f'{n}.md').exists()]
+    doc_names = [n for n in ('introduction', 'installation', 'cli', 'theming', 'react', 'static-html', 'tailwind-figma', 'from-tailwind', 'agents', 'skill') if (SRC / 'pages' / f'{n}.md').exists()]
     docs = [read_page(SRC / 'pages' / f'{n}.md', 'd-' + n, '') for n in doc_names]
     for d in docs:
         d['src'] = [f'system/tools/site/pages/{d["id"][2:]}.md']

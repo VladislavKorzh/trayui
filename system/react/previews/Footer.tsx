@@ -58,6 +58,7 @@ export function TwoColumns() {
       brand="Perly Farm"
       brandHref="#"
       tagline="Snail caviar from our own farm, in jars of 30, 50 and 100 g."
+      headingLevel={2}
       columns={[
         {
           title: 'Shop',

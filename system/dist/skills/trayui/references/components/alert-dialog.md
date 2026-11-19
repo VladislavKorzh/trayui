@@ -17,7 +17,7 @@ The Dialog markup with `role="alertdialog"`, `aria-labelledby` and `aria-describ
   </div>
 </dialog>
 ```
-It differs from a Dialog in three ways: there is no close button in the corner, a click on the veil does not close it, and focus starts on the safe button: give it `autofocus`, as above. (Opened with `data-tray="open"`, a dialog whose markup has none starts there anyway.) Add `data-static` to make Escape slower as well, when even leaving needs a choice: the first presses of Escape do nothing. A browser lets a page refuse a close request only a few times, so Escape is not stopped for ever: in Chrome 157 the third press closes the dialog, whatever was clicked or pressed between. It then closes with an empty `returnValue`, so treat a `close` whose `returnValue` is not one of your buttons' values as the safe choice.
+It differs from a Dialog in three ways: there is no close button in the corner, a click on the veil does not close it, and focus starts on the safe button: give it `autofocus`, as above. (Opened with `data-tray="open"`, or as the page loads with `data-open` on the `<dialog>`, a dialog whose markup has none starts there anyway.) Add `data-static` to make Escape slower as well, when even leaving needs a choice: the first presses of Escape do nothing. A browser lets a page refuse a close request only a few times, so Escape is not stopped for ever: in Chrome 157 the third press closes the dialog, whatever was clicked or pressed between. It then closes with an empty `returnValue`, so treat a `close` whose `returnValue` is not one of your buttons' values as the safe choice.
 
 ## Writing it
 - The title is the question, with the name of the thing: "Delete order PL-20418?".

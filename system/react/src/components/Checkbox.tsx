@@ -1,6 +1,7 @@
 'use client';
 import * as React from 'react';
 import { useFieldControl } from '../lib/field';
+import { useStaticMode } from '../lib/static';
 import { cx, useForwardedRef, useIsoLayoutEffect, useUid } from '../lib/util';
 
 export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
@@ -39,7 +40,9 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(functi
     'aria-describedby': cx(rest['aria-describedby'], error != null && errorId),
     'aria-invalid': rest['aria-invalid'],
   });
-  // indeterminate is a property, not an attribute; a click clears it, so it is set again on every render.
+  // indeterminate is a property, not an attribute; a click clears it, so it is set again on every render. In static mode
+  // there is no render after the first: data-indeterminate asks bundle.js to set it once the page loads.
+  const wired = useStaticMode();
   useIsoLayoutEffect(() => {
     if (own.current) own.current.indeterminate = !!indeterminate;
   });
@@ -56,6 +59,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(functi
       <input
         ref={own as React.RefObject<HTMLInputElement>}
         type="checkbox"
+        data-indeterminate={wired && indeterminate ? '' : undefined}
         onChange={(e) => {
           onChange?.(e);
           onCheckedChange?.(e.target.checked);

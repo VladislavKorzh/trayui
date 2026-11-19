@@ -4,7 +4,7 @@ The tokens of the system for two more tools: a theme for Tailwind CSS, and varia
 
 ## Tailwind CSS 4
 
-Import [tailwind/theme.css](https://trayui.com/tailwind/theme.css) after Tailwind, and link `tokens.css` on the page as a file of its own. Both are in [the download](https://trayui.com/trayui-0.3.0.zip).
+Import [tailwind/theme.css](https://trayui.com/tailwind/theme.css) after Tailwind, and link `tokens.css` on the page as a file of its own. Both are in [the download](https://trayui.com/trayui-0.4.0.zip).
 
 ```css
 @import "tailwindcss";

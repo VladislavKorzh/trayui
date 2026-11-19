@@ -22,7 +22,7 @@ The footer ends every public page: the name and a line about the product, the si
 ```
 
 ## Layout
-From 56rem up, up to four link columns stand beside the brand block; below that, the brand block sits above two columns of links. Each column is a `<nav>` named by its heading. The bottom row holds the copyright line at the start edge and the legal links at the end edge, over a hairline; a theme toggle or a language select may join them through `extra`.
+From 56rem up, up to four link columns stand beside the brand block; below that, the brand block sits above two columns of links. Each column is a `<nav>` named by its heading. The headings are `<h3>`; `headingLevel={2}` makes them `<h2>` on a page with only an `<h1>`, so the outline skips no level. They look the same at every level. The bottom row holds the copyright line at the start edge and the legal links at the end edge, over a hairline; a theme toggle or a language select may join them through `extra`.
 
 ## Do and don't
 - Do keep the links to pages a visitor looks for at the end: pricing, help, contact, the legal ones.

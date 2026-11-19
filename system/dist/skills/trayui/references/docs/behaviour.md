@@ -16,7 +16,7 @@ Switch themes by setting `data-theme="dark"` on `<html>`. Follow the system sett
 
 ## Behaviours
 
-A behaviour is attached with `data-tray="name"` on the element named below. Call `TrayUI.init(root)` after adding markup to the page. Most components need none: buttons, cards, fields, checkboxes, radios, switches, accordion, table and tabs-as-links are plain HTML and CSS.
+A behaviour is attached with `data-tray="name"` on the element named below. Call `TrayUI.init(root)` after adding markup to the page. Most components need none: buttons, cards, fields, checkboxes, radios, switches, accordion, table and tabs-as-links are plain HTML and CSS. The bundle only makes a busy button (`aria-busy="true"`) ignore presses, with no `data-tray` of its own. A checkbox that starts mixed takes `data-indeterminate` on its input: the mixed state is a property with no attribute of its own, and the behaviours set it as the page loads.
 
 | `data-tray` | On | Does |
 | --- | --- | --- |
@@ -31,14 +31,14 @@ A behaviour is attached with `data-tray="name"` on the element named below. Call
 | `calendar` | an empty element | draws a month grid; single date or range |
 | `datepicker` | the anchor of a date field | ties a calendar to a trigger |
 | `tabs` | the wrapper of a tablist and its panels | switches panels, arrow keys |
-| `strip` | a tab strip that may overflow | fades its end while it scrolls |
+| `strip` | a tab strip that may overflow | fades its end while it scrolls; scrolls the current item, and an item that takes keyboard focus, into view clear of the fade |
 | `menu` | the anchor of a dropdown menu | opens, arrow keys, check and radio items |
 | `menubar` | a strip of menus | moves between menus |
 | `contextmenu` | a region holding a menu | opens it where the region is right-clicked |
 | `popover` | the anchor of a popover | opens a panel, moves focus in and back |
 | `hovercard` | the anchor around a link | opens a preview on hover or focus |
 | `tooltip` | an anchor around one control, with `data-tip` | names the control on hover and focus |
-| `dialog` | a `<dialog>` (dialog, alert dialog, sheet, drawer) | `data-close` buttons, closing on the veil (a press and a release both on it, so a selection dragged out does not close it) |
+| `dialog` | a `<dialog>` (dialog, alert dialog, sheet, drawer) | `data-close` buttons, closing on the veil (a press and a release both on it, so a selection dragged out does not close it); with `data-open`, opens it over the page as the page loads |
 | `open` | a button with `data-target` | opens that dialog |
 | `sidebar-toggle` | a button with `aria-controls` | collapses the sidebar to a rail |
 | `sidebar-sheet` | the `tray-app__menu` button, with `aria-controls` | opens that sidebar in a sheet on a small screen |
@@ -85,7 +85,7 @@ Behaviours report with bubbling custom events on their own element: `tray:change
 | `TrayUI.icon(name, className)` | The markup of an icon. |
 | `TrayUI.register(name, fn)` | Add your own `data-tray` behaviour. |
 | `TrayUI.rescue(el, to)` | Before your script hides, removes or turns off `el`: if focus is inside it, move focus to `to` (an element, or a function that gives one), so a keyboard user is not dropped to the top of the page. |
-| `TrayUI.upgrade(selector, fn)` | Run `fn` once for every element that matches, with no `data-tray` of its own (the system gives every `.tray-seg` and `.tray-tabs` its sliding pill this way). |
+| `TrayUI.upgrade(selector, fn)` | Run `fn` once for every element that matches, with no `data-tray` of its own (the system gives every `.tray-seg` and `.tray-tabs` its sliding pill this way, and every `.tray-btn` the guard that makes it ignore presses while busy). |
 
 ## Motion
 

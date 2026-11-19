@@ -119,3 +119,36 @@ def test_parity_remove(t):
         t.eq(f'{label}: removing a file moves focus to the next one\'s remove button', t.focused(pg)['label'], 'Remove b.jpg')
         names = lst.locator('.tray-attachment__name').evaluate_all('ns => ns.map(n => n.textContent)')
         t.check(f'{label}: the chosen file is listed by its name', 'b.jpg' in names and 'a.jpg' not in names, names)
+
+
+def test_parity_static_pick(t):
+    # static parity for what the step cannot do, choose files: in the React preview rendered in static mode the dropzone
+    # carries data-list and data-max-mb, so bundle.js lists the files chosen and marks one too large as React does
+    from harness import normalise
+    got = {}
+    for v in ('react', 'static', 'bare'):
+        pg = t.open(react=v == 'react', static=v != 'react', bare=v == 'bare')
+        cell = pg.locator('[data-cell="Photos"]')
+        cell.locator('.tray-drop input[type="file"]').first.set_input_files(files(('beds.jpg', 'image/jpeg', 2048), ('huge.png', 'image/png', 11 * 1048576)))
+        pg.wait_for_timeout(250)
+        got[v] = {'rows': cell.locator('.tray-attachments').first.locator('.tray-attachment').evaluate_all(
+            'rs => rs.map(r => [r.querySelector(".tray-attachment__name").textContent, (r.querySelector(".tray-attachment__meta") || {}).textContent || "", r.getAttribute("data-state") || ""])'),
+            'tree': normalise(t.tree(cell.locator('.tray-attachments').first))}
+        pg.close()
+    r, s = got['react'], got['static']
+    t.check('static: chosen files are listed after the ones already there, as in React', len(r['rows']) == 4 and s['rows'] == r['rows'], got)
+    t.eq('static: the list reads as it does in React', s['tree'], r['tree'])
+    t.check('static: the file too large is marked as an error, as in React', s['rows'][-1][2] == 'error' and 'Too large' in s['rows'][-1][1], s['rows'])
+    t.check('static: without bundle.js nothing is listed (bundle.js does it)', len(got['bare']['rows']) == 2, got['bare']['rows'])
+
+
+# Static parity (trayui-react/static): the dropzone carries data-list and data-max-mb there, and the list is always written;
+# choosing files is checked by test_parity_static_pick. The rows the page starts with are drawn by React; in static their
+# buttons have no behaviour, in the HTML system's own preview as here (K3).
+STATIC = True
+STATIC_SKIP = {
+    'Photos: button "Remove jar-50g-front.jpg"': "a row the page starts with: the dropzone behaviour wires only the rows it adds (K3)",
+    'Photos: button "Cancel the upload of jar-50g-open.jpg"': "a row the page starts with (K3)",
+    'UploadWithProgress': "its rows are the preview's own React state (items, and an upload it plays), which a static page's own script keeps",
+}
+STATIC_PROVEN_BY = 'test_parity_static_pick'

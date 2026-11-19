@@ -1,5 +1,16 @@
   /* ---------- Actions and forms ---------- */
 
+  /* A busy button (aria-busy="true" while its work runs) ignores presses: a second click, Enter or Space, or Enter in a
+     field of its form, does not send it again, and a busy link does not go. It keeps focus and its place in the Tab order,
+     which `disabled` would take away. Every .tray-btn gets this; presses come through again once aria-busy goes. */
+  UI.upgrade('.tray-btn', function (btn) {
+    btn.addEventListener('click', function (e) {
+      if (btn.getAttribute('aria-busy') !== 'true') return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }, true);
+  });
+
   /* Toggle: data-tray="toggle" on a button with aria-pressed. */
   UI.register('toggle', function (btn) {
     if (!btn.hasAttribute('aria-pressed')) btn.setAttribute('aria-pressed', 'false');
@@ -8,6 +19,14 @@
       btn.setAttribute('aria-pressed', String(on));
       fire(btn, 'change', { pressed: on });
     });
+  });
+
+  /* A checkbox written as mixed: data-indeterminate on the <input>. The mixed state is a property of the element, with no
+     attribute of its own, so markup alone cannot set it; this sets it once, as the page loads. A click clears it, as the
+     browser does, and the attribute goes with it, so the markup no longer claims it. */
+  UI.upgrade('input[type="checkbox"][data-indeterminate]', function (input) {
+    input.indeterminate = true;
+    input.addEventListener('change', function () { input.removeAttribute('data-indeterminate'); }, { once: true });
   });
 
   /* Stepper: data-tray="stepper" on a button group holding [data-step] buttons and an <output>. */

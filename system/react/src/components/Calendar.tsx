@@ -1,5 +1,6 @@
 'use client';
 import * as React from 'react';
+import { useStaticMode } from '../lib/static';
 import { cx, runtime, useControlled } from '../lib/util';
 import { calendarHandle, useTrayOn, useIsoLayoutEffect, useMergedRef, type CalendarHandle } from '../lib/menus';
 
@@ -78,7 +79,26 @@ export const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(function
     optionsKey,
   );
 
+  // Static mode: the layout effect above never runs, so bundle.js's calendar behaviour draws the grid, from the same options
+  // written as the data-* attributes it reads (only those that differ from its defaults).
+  const wired = useStaticMode();
+  const options = wired
+    ? {
+        'data-tray': 'calendar',
+        'data-mode': mode === 'single' ? undefined : mode,
+        'data-months': months === 1 ? undefined : months,
+        'data-week-start': weekStart === 1 ? undefined : weekStart,
+        'data-locale': locale === 'en-GB' ? undefined : locale,
+        'data-prev-label': prevLabel,
+        'data-next-label': nextLabel,
+        'data-today': today,
+        'data-min': min,
+        'data-max': max,
+        'data-month': month,
+        'data-value': current || undefined,
+      }
+    : {};
   // tray-cal is the class UI.calendar adds; set here too, so React never takes it away again.
-  return <div key={optionsKey} ref={setRef} className={cx('tray-cal', className)} {...rest} />;
+  return <div key={optionsKey} ref={setRef} className={cx('tray-cal', className)} {...options} {...rest} />;
 });
 Calendar.displayName = 'Calendar';

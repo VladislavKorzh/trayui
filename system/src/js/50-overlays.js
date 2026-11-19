@@ -23,7 +23,20 @@
       /* Escape: where the browser cannot keep the dialog in the top layer while it leaves, it leaves first, then closes */
       if (!calm() && !topLayerExit()) { e.preventDefault(); shut(d, ''); }
     });
+    /* data-open: the dialog opens over the page as the page loads (the open attribute alone shows it in place, with no veil
+       and no focus held). It goes when the dialog closes, so the markup no longer says open. */
+    if (d.hasAttribute('data-open') && !d.open) {
+      d.addEventListener('close', function () { d.removeAttribute('data-open'); }, { once: true });
+      d.showModal();
+      safeChoice(d);
+    }
   });
+  /* An alert dialog starts on the safe choice: autofocus on it in the markup does that; this covers markup without it. */
+  function safeChoice(d) {
+    if (d.getAttribute('role') !== 'alertdialog' || d.querySelector('[autofocus]')) return;
+    var safe = d.querySelector('button[data-close]:not(.tray-btn--danger)');
+    if (safe) safe.focus();
+  }
   /* Open: data-tray="open" on a button with data-target="#id". data-modal="false" shows the dialog in place instead of over the page. */
   UI.register('open', function (btn) {
     /* the button says it opens a dialog, as the button of a sidebar sheet does */
@@ -34,11 +47,7 @@
       if (d.hasAttribute('data-closing')) { d.removeAttribute('data-closing'); d.close(); }
       if (d.open) return;
       if (btn.dataset.modal === 'false') d.show(); else d.showModal();
-      /* an alert dialog starts on the safe choice: autofocus on it in the markup does that; this covers markup without it */
-      if (d.getAttribute('role') === 'alertdialog' && !d.querySelector('[autofocus]')) {
-        var safe = d.querySelector('button[data-close]:not(.tray-btn--danger)');
-        if (safe) safe.focus();
-      }
+      safeChoice(d);
     });
   });
 

@@ -3,13 +3,13 @@ name: trayui
 description: Build and fix web pages and app screens with Tray UI, the design system in plain HTML and CSS (tray- classes, data-tray behaviours, tokens.css, components/bundle.css, components/bundle.js; the trayui and trayui-react packages; npx trayui). Use when the user names Tray UI or trayui, when a project links tokens.css and components/bundle.css or depends on trayui or trayui-react, or when asked to build a sign-in page, dashboard, settings page, table, pricing page, shop, article or other screen in that system.
 license: MIT
 metadata:
-  version: "0.3.0"
+  version: "0.4.0"
   site: "https://trayui.com"
 ---
 
 # Build with Tray UI
 
-Tray UI 0.3.0 is plain HTML with `tray-` classes, styled by two stylesheets and wired by one script: 108 components, 64 blocks (whole screens), 118 icons and 10 themes. There is no build step and no framework. A white page, grey trays with very round corners, ink type, and one yellow for the thing to do.
+Tray UI 0.4.0 is plain HTML with `tray-` classes, styled by two stylesheets and wired by one script: 108 components, 64 blocks (whole screens), 118 icons and 10 themes. There is no build step and no framework. A white page, grey trays with very round corners, ink type, and one yellow for the thing to do.
 
 ## Where the pages are
 
@@ -30,9 +30,9 @@ Link the three files, in this order:
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>…</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.3.0/tokens.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.3.0/components/bundle.css">
-  <script src="https://cdn.jsdelivr.net/npm/trayui@0.3.0/components/bundle.js" defer></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.4.0/tokens.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.4.0/components/bundle.css">
+  <script src="https://cdn.jsdelivr.net/npm/trayui@0.4.0/components/bundle.js" defer></script>
 </head>
 ```
 

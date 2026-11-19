@@ -2,6 +2,7 @@
 import * as React from 'react';
 import type { IconSource } from '../lib/icon';
 import { useFieldControl } from '../lib/field';
+import { useStaticMode } from '../lib/static';
 import { cx, useTrayEvent, useBehaviour, useControlled, useForwardedRef, useUid } from '../lib/util';
 import { fileSize } from '../lib/account';
 import { Attachment } from './Attachment';
@@ -109,6 +110,11 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(fu
   const hintId = useUid('drop-hint');
   const describedBy = [description != null ? hintId : null, field['aria-describedby']].filter(Boolean).join(' ') || undefined;
   const listRef = React.useRef<HTMLDivElement | null>(null);
+  // Static mode: bundle.js's dropzone behaviour lists the files chosen or dropped (data-list) and marks one over the limit
+  // (data-max-mb, data-too-large), in place of the rows drawn here from its events; the list is always there to take them.
+  // Its id comes from the hint's: a new useId here would shift the ids React makes inside, in the default render too.
+  const wired = useStaticMode();
+  const listId = `${hintId}-list`;
   const [rows, setRows] = useControlled(items, defaultItems, onItemsChange);
   const latest = React.useRef(rows);
   latest.current = rows;
@@ -162,6 +168,13 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(fu
         style={style}
         data-tray={over ? undefined : 'dropzone'}
         data-over={over ? '' : undefined}
+        {...(wired && !over
+          ? {
+              'data-list': list ? '#' + listId : undefined,
+              'data-max-mb': maxMb || undefined,
+              'data-too-large': tooLarge === 'Too large. The limit is {max} MB.' ? undefined : tooLarge,
+            }
+          : {})}
       >
         <span className="tray-drop__icon">
           <Icon name={icon} />
@@ -172,8 +185,8 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(fu
         </p>
         {over ? null : <input ref={input} type="file" {...rest} {...field} aria-describedby={describedBy} />}
       </div>
-      {list && rows.length ? (
-        <div ref={listRef} className="tray-attachments" style={{ marginBlockStart: 'var(--space-3)' }}>
+      {list && (rows.length || (wired && !over)) ? (
+        <div ref={listRef} id={wired ? listId : undefined} className="tray-attachments" style={{ marginBlockStart: 'var(--space-3)' }}>
           {rows.map((item, i) => {
             const uploading = item.progress !== undefined && item.error == null;
             const action = item.error != null && item.retry ? 'retry' : uploading ? 'cancel' : 'remove';

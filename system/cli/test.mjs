@@ -68,6 +68,12 @@ passes('classes that exist and type styles', page('<div class="tray-card tray-st
 catches('utility classes', page('<div class="flex p-4 tray-card">x</div>'), 'foreign-class', { severity: 'warning', says: 'Utility classes' });
 catches('a class of its own', page('<div class="order-box">x</div>'), 'foreign-class', { says: '`order-box`' });
 passes('the code colours a block of code uses', page('<pre class="tray-code"><code><span class="hljs-addition">+ a</span></code></pre>'), 'foreign-class');
+// a project's own prefix: its classes are not foreign, others still are, and tray- names are still checked
+const own = page('<div class="kit-hero tray-card"><p class="kit-hero__lead">x</p></div>');
+expect('passes foreign-class: the classes of a prefix of the project (prefixes: [kit-])', !check(own, rules, { prefixes: ['kit-'] }).some((x) => x.rule === 'foreign-class'), summary(check(own, rules, { prefixes: ['kit-'] })));
+expect('catches foreign-class: the same classes without the prefix given', run(own).some((x) => x.rule === 'foreign-class' && x.message.includes('`kit-hero`')), summary(run(own)));
+const mixed = check(page('<div class="kit-hero order-box tray-crad">x</div>'), rules, { prefixes: ['kit-'] });
+expect('a prefix leaves other classes foreign and tray- names checked', mixed.some((x) => x.rule === 'foreign-class' && x.message.includes('`order-box`') && !x.message.includes('kit-hero')) && mixed.some((x) => x.rule === 'unknown-class'), summary(mixed));
 catches('state in a class', page('<div class="tray-tabs" role="tablist"><button class="tray-tab active" role="tab" type="button" aria-controls="p1">A</button></div><div id="p1" role="tabpanel"></div>'), 'state-in-class', { severity: 'warning', says: '`active`' });
 
 // ---------- 2. behaviours and icons ----------
@@ -85,6 +91,15 @@ passes('one in the page and one in a dialog', page('<button class="tray-btn" typ
 passes('one in the page header and one in a form far down', page('<header class="tray-topbar"><a class="tray-btn tray-btn--sm" href="#">Order a jar</a></header><form action="#"><button class="tray-btn" type="submit">Post the comment</button></form>'), 'one-yellow');
 passes('quiet, ghost, link and danger buttons beside the one yellow', page('<button class="tray-btn" type="button">Save</button><button class="tray-btn tray-btn--quiet" type="button">Cancel</button><button class="tray-btn tray-btn--ghost" type="button">Preview</button><button class="tray-btn tray-btn--danger" type="button">Delete</button>'), 'one-yellow');
 catches('two large yellow surfaces', page('<div class="tray-card tray-card--accent">a</div><div class="tray-card tray-card--accent">b</div>'), 'one-yellow', { says: 'yellow surfaces' });
+// a long page: each section of <main> is a screen of its own, once there are three or more
+const band = (inner, h) => `<section aria-labelledby="${h}"><h2 id="${h}">${h}</h2>${inner}</section>`;
+const yes = '<a class="tray-btn" href="#">Start free</a>', card = '<div class="tray-card tray-card--accent">x</div>';
+passes('a long page: the hero\'s yellow button and the closing one, sections apart', page(band(yes, 'hero') + band('<p>a</p>', 'how') + band('<p>b</p>', 'proof') + band(yes, 'start')), 'one-yellow');
+passes('a long page: a yellow card in the hero and a closing section that is itself yellow', page(band(card, 'hero') + band('<p>a</p>', 'how') + '<div class="tray-section"><section class="tray-card tray-card--accent tray-cta" aria-labelledby="cta"><h2 id="cta">Start</h2></section></div>'), 'one-yellow');
+catches('a long page: two yellow buttons in one of its sections', page(band(yes + yes.replace('Start free', 'Book a call'), 'hero') + band('<p>a</p>', 'how') + band('<p>b</p>', 'start')), 'one-yellow', { says: 'the <section>' });
+catches('a long page: two large yellow surfaces in one of its sections', page(band(card + card, 'hero') + band('<p>a</p>', 'how') + band('<p>b</p>', 'start')), 'one-yellow', { says: 'yellow surfaces' });
+catches('a short page of two sections is one screen', page(band(yes, 'one') + band(yes.replace('Start free', 'Book a call'), 'two')), 'one-yellow', { says: 'the page' });
+passes('a step kept hidden until it is shown is a view of its own', page('<form action="#"><section data-step aria-label="Farm"><button class="tray-btn" type="submit">Continue</button></section><section data-step aria-label="Team" hidden><button class="tray-btn" type="submit">Finish</button></section></form>'), 'one-yellow');
 
 // ---------- 4. buttons ----------
 catches('tray-btn on a span', page('<span class="tray-btn">Order</span>'), 'button-element', { severity: 'error', says: '<span>' });
@@ -157,6 +172,10 @@ expect('the report says when there is nothing to say', report([]).startsWith('no
 const blocks = readdirSync(blocksDir).filter((f) => f.endsWith('.html')).sort();
 const dirty = blocks.map((f) => [f, run(readFileSync(join(blocksDir, f), 'utf8'))]).filter(([, x]) => x.length);
 expect(`all ${blocks.length} blocks are clean (no error, no warning)`, blocks.length >= 64 && !dirty.length, dirty.map(([f, x]) => `${f}: ${summary(x)}`).join(' || '));
+const templatesDir = join(here, '..', 'project', 'templates');
+const templates = readdirSync(templatesDir).filter((f) => f.endsWith('.html')).sort();
+const yellow = templates.map((f) => [f, run(readFileSync(join(templatesDir, f), 'utf8')).filter((x) => x.rule === 'one-yellow')]).filter(([, x]) => x.length);
+expect(`no one-yellow warning on the ${templates.length} templates (long pages, a wizard of hidden steps)`, templates.length >= 10 && !yellow.length, yellow.map(([f, x]) => `${f}: ${summary(x)}`).join(' || '));
 
 // ---------- the command ----------
 const tmp = mkdtempSync(join(tmpdir(), 'trayui-check-'));
@@ -186,6 +205,17 @@ try {
   expect('a file that is not there: exit 2', r.status === 2 && r.stdout.includes('no such file'), r.stdout + r.stderr);
   r = node(['--rules', join(tmp, 'nope.json'), join(tmp, 'good.html')]);
   expect('rules that cannot be read: exit 2, and it says why', r.status === 2 && r.stdout.includes('cannot read the rules'), r.stdout + r.stderr);
+  writeFileSync(join(tmp, 'kit.html'), page('<div class="kit-hero app-band">x</div>'));
+  r = node([join(tmp, 'kit.html')]);
+  expect('a page of a project\'s own classes warns foreign-class without --prefix', r.stdout.includes('[foreign-class]'), r.stdout);
+  r = node(['--prefix', 'kit-', join(tmp, 'kit.html'), '--prefix=app-']);
+  expect('--prefix kit- and --prefix=app-: no foreign-class, and the value is not taken for a file', r.status === 0 && !r.stdout.includes('[foreign-class]') && !r.stdout.includes('no such file'), r.stdout);
+  r = node([join(tmp, 'kit.html'), '--prefix', 'kit-,app-']);
+  expect('--prefix kit-,app-: a list', r.status === 0 && !r.stdout.includes('[foreign-class]'), r.stdout);
+  r = spawnSync(process.execPath, [join(here, 'trayui.mjs'), '--prefix', 'kit-,app-', 'check', join(tmp, 'kit.html')], { encoding: 'utf8' });
+  expect('npx trayui --prefix kit-,app- check: passed on to the checker', r.status === 0 && !r.stdout.includes('[foreign-class]'), r.stdout + r.stderr);
+  r = spawnSync(process.execPath, [join(here, 'trayui.mjs'), 'check', join(tmp, 'kit.html'), '--prefix', 'kit-,app-'], { encoding: 'utf8' });
+  expect('npx trayui check … --prefix kit-,app-', r.status === 0 && !r.stdout.includes('[foreign-class]'), r.stdout + r.stderr);
 } finally {
   rmSync(tmp, { recursive: true, force: true });
 }

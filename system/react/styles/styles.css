@@ -689,6 +689,10 @@ mark { padding-inline: .12em; border-radius: var(--radius-mark); background: var
 /* One line of text, cut with an ellipsis where its column ends: the excerpt of a message in a list. */
 .tray-clip { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tray-vh { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* A skip link, the first thing in the body: <a class="tray-skip" href="#main">Skip to the content</a>. Out of sight until
+   it takes focus; then a small ink button at the top start of the window, above everything else. */
+.tray-skip { position: fixed; inset-block-start: var(--space-2); inset-inline-start: var(--space-2); z-index: var(--z-toast); display: inline-flex; align-items: center; min-block-size: var(--size-hit); padding: 0 var(--space-4); border-radius: var(--radius-control); background: var(--ink); color: var(--tray-on-ink); font: 600 1rem/1 var(--font-sans); text-decoration: none; }
+.tray-skip:not(:focus) { inline-size: 1px; block-size: 1px; min-block-size: 0; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* Icons: a 20px box, drawn with a round stroke in the text colour: 2.4 in the 24-unit drawing, 2px on the screen. */
 .tray-icon { flex: none; display: block; inline-size: var(--size-icon); block-size: var(--size-icon); fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
@@ -1450,6 +1454,8 @@ a.tray-item:hover, button.tray-item:hover { filter: brightness(.96); }
 
 .tray-tabs { position: relative; display: inline-flex; gap: var(--space-1); max-inline-size: 100%; padding: var(--space-1); border-radius: var(--radius-button); background: var(--tray-fill); overflow-x: auto; scrollbar-width: none; }
 .tray-tabs::-webkit-scrollbar { display: none; }
+/* A strip of links may be a list: it drops the browser's bullets and margins (with no weight, so any rule of yours wins). */
+:where(ul.tray-tabs, ol.tray-tabs) { margin: 0; list-style: none; }
 .tray-tabs--fill { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); inline-size: 100%; }
 .tray-tab {
   flex: none;
@@ -2424,7 +2430,8 @@ a.tray-stat:hover { filter: brightness(.96); }
 .tray-footer__brand { grid-column: 1 / -1; display: grid; align-content: start; justify-items: start; gap: var(--space-3); max-inline-size: 22rem; color: var(--ink-soft); font: 400 1rem/1.45 var(--font-sans); }
 /* Each link is a 44px row, a finger's size; the rows touch, so the column keeps its rhythm. */
 .tray-footer__col { display: grid; align-content: start; justify-items: start; gap: 0; }
-.tray-footer__col h3 { margin-block-end: var(--space-1); color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
+/* The heading of a column at whatever level fits the page: h2 on a page with only an h1, h3 under sections of h2. */
+.tray-footer__col :is(h2, h3, h4, h5, h6) { margin-block-end: var(--space-1); color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }
 .tray-footer__col a { display: inline-flex; align-items: center; min-block-size: var(--size-hit); border-radius: var(--radius-mark); color: var(--ink); font: 500 1rem/1.3 var(--font-sans); text-decoration: none; }
 .tray-footer__col a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .2em; }
 .tray-footer__bottom { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3) var(--space-6); padding-block-start: var(--space-6); border-block-start: 1px solid var(--hairline); color: var(--ink-muted); font: 400 .875rem/1.4 var(--font-sans); }

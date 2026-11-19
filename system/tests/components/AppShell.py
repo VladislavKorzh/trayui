@@ -112,3 +112,36 @@ def test_react(t):
     t.check('react: the menu button opens the sidebar in a modal sheet', sheet.count() == 1 and sheet.evaluate('d => d.matches(":modal")'))
     ph.keyboard.press('Escape'); t.settle(ph)
     t.check('react: Escape shuts it and focus returns to the menu button', ph.locator('dialog[open]').count() == 0 and 'tray-app__menu' in t.focused(ph)['cls'], t.focused(ph))
+
+
+# Static parity (trayui-react/static): the top bar's collapse button carries data-tray="sidebar-toggle" there and its menu
+# button data-tray="sidebar-sheet" with aria-controls; bundle.js collapses the sidebar, and on a phone opens it in a sheet.
+STATIC = True
+STATIC_PAGES = {'AppShell-phone': 390}
+STATIC_SKIP = {
+    'CollapsedSidebar: button "Expand the sidebar"': "the words under the shell follow the preview's own React state (onCollapsedChange); WithAWordmark checks the button itself",
+    '[AppShell-phone] Product: button "Open the navigation"': 'React opens a Sheet titled "Menu" around a copy of the sidebar; the behaviour moves the sidebar itself into a sheet named after it, at the end of the page: test_parity_static_phone_sheet checks what must match',
+}
+
+
+def test_parity_static_phone_sheet(t):
+    # what static parity leaves out on the phone: the two sheets differ in name and place, but each opens over the page with
+    # the same navigation, takes focus, and gives it back to the menu button on Escape; without bundle.js nothing opens
+    got = {}
+    for v in ('react', 'static', 'bare'):
+        pg = t.open(react=v == 'react', static=v != 'react', bare=v == 'bare', page='AppShell-phone', width=390, height=800)
+        pg.locator('.tray-app__menu').click(); t.settle(pg)
+        sheet = pg.locator('dialog[open]')
+        modal = sheet.count() == 1 and sheet.evaluate('d => d.matches(":modal")')
+        links = sheet.locator('nav a').evaluate_all('xs => xs.map((a) => a.textContent.replace(/\\s+/g, " ").trim())') if modal else []
+        inside = modal and sheet.evaluate('d => d.contains(document.activeElement)')
+        pg.keyboard.press('Escape'); t.settle(pg)
+        back = pg.locator('dialog[open]').count() == 0 and pg.evaluate('() => document.activeElement.classList.contains("tray-app__menu")')
+        got[v] = {'modal': modal, 'links': links, 'inside': inside, 'back': back}
+        pg.close()
+    r, s = got['react'], got['static']
+    t.check('static: on a phone the menu button opens the sidebar in a modal sheet, as in React', r['modal'] and s['modal'], got)
+    t.check('static: the sheet holds the same navigation as in React', r['links'] and s['links'] == r['links'], f"react {r['links']}, static {s['links']}")
+    t.check('static: focus moves into the sheet, as in React', r['inside'] and s['inside'], got)
+    t.check('static: Escape shuts it and focus returns to the menu button, as in React', r['back'] and s['back'], got)
+    t.check('static: without bundle.js the menu button opens nothing (bundle.js does it)', not got['bare']['modal'], got['bare'])

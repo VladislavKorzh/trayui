@@ -1,6 +1,7 @@
 'use client';
 import * as React from 'react';
 import type { IconSource } from '../lib/icon';
+import { useStaticMode } from '../lib/static';
 import { cx } from '../lib/util';
 import { usePopAnchor } from '../lib/shell';
 import { Avatar } from './Avatar';
@@ -86,6 +87,55 @@ export const NotificationCenter = React.forwardRef<HTMLSpanElement, Notification
   const unread = items.filter(isUnread);
   const shown = view === 'unread' ? unread : items;
 
+  // Static mode: bundle.js's notices behaviour marks them read, counts them on the bell and filters the view, in place of the
+  // state above; the list holds every notification and the empty line is there, hidden, for the Unread view.
+  const wired = useStaticMode();
+  const list = (xs: NotificationItem[]) => (
+    <ul className="tray-notices__list" role="list">
+      {xs.map((n) => {
+        const on = isUnread(n);
+        const body = (
+          <>
+            <Avatar size="sm" initials={n.initials} icon={n.icon} src={n.src} />
+            <span className="tray-notice__body">
+              <span>
+                {n.actor != null ? (
+                  <>
+                    <b>{n.actor}</b>{' '}
+                  </>
+                ) : null}
+                {n.text}
+              </span>
+              {n.time != null ? <span className="tray-notice__meta">{n.time}</span> : null}
+            </span>
+            <span className="tray-notice__mark">{on ? <span className="tray-vh">Unread</span> : null}</span>
+          </>
+        );
+        const props = {
+          className: 'tray-notice',
+          'data-unread': on ? '' : undefined,
+          onClick: (e: React.MouseEvent<HTMLElement>) => {
+            n.onClick?.(e);
+            if (on) markRead([n.id]);
+          },
+        };
+        return (
+          <li key={n.id}>
+            {n.href !== undefined ? (
+              <a href={n.href} {...props}>
+                {body}
+              </a>
+            ) : (
+              <button type="button" {...props}>
+                {body}
+              </button>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
+
   const markRead = (ids: string[]) => {
     if (!ids.length) return;
     setRead((prev) => new Set([...prev, ...ids]));
@@ -95,16 +145,23 @@ export const NotificationCenter = React.forwardRef<HTMLSpanElement, Notification
   return (
     <span ref={setRef} className={cx('tray-anchor', className)} data-tray="popover" {...rest}>
       <Button variant="quiet" size="sm" icon="bell" aria-label={unread.length ? `${title}, ${unread.length} unread` : title} />
-      <span className="tray-pip" aria-hidden="true">{unread.length ? unread.length : null}</span>
+      <span className="tray-pip" aria-hidden="true" data-notices-count={wired ? '' : undefined}>{unread.length ? unread.length : null}</span>
       <div
         className={cx('tray-pop', align === 'end' && 'tray-pop--end', 'tray-notices')}
+        data-tray={wired ? 'notices' : undefined}
         data-open={initiallyOpen ? '' : undefined}
         hidden={initiallyOpen ? undefined : true}
       >
         <div className="tray-notices__head">
           <h2>{title}</h2>
           {/* aria-disabled, not disabled: with nothing to mark it keeps focus when pressed, and stays the panel's first stop */}
-          <Button variant="ghost" size="xs" aria-disabled={unread.length ? undefined : true} onClick={() => markRead(unread.map((n) => n.id))}>
+          <Button
+            variant="ghost"
+            size="xs"
+            aria-disabled={unread.length ? undefined : true}
+            data-notices={wired ? 'read-all' : undefined}
+            onClick={() => markRead(unread.map((n) => n.id))}
+          >
             {readAllLabel}
           </Button>
         </div>
@@ -113,6 +170,7 @@ export const NotificationCenter = React.forwardRef<HTMLSpanElement, Notification
             <ToggleGroup
               size="sm"
               aria-label="Show"
+              name={wired ? 'notices-view' : undefined}
               value={view}
               onChange={setView}
               items={[
@@ -122,50 +180,15 @@ export const NotificationCenter = React.forwardRef<HTMLSpanElement, Notification
             />
           </div>
         ) : null}
-        {shown.length ? (
-          <ul className="tray-notices__list" role="list">
-            {shown.map((n) => {
-              const on = isUnread(n);
-              const body = (
-                <>
-                  <Avatar size="sm" initials={n.initials} icon={n.icon} src={n.src} />
-                  <span className="tray-notice__body">
-                    <span>
-                      {n.actor != null ? (
-                        <>
-                          <b>{n.actor}</b>{' '}
-                        </>
-                      ) : null}
-                      {n.text}
-                    </span>
-                    {n.time != null ? <span className="tray-notice__meta">{n.time}</span> : null}
-                  </span>
-                  <span className="tray-notice__mark">{on ? <span className="tray-vh">Unread</span> : null}</span>
-                </>
-              );
-              const props = {
-                className: 'tray-notice',
-                'data-unread': on ? '' : undefined,
-                onClick: (e: React.MouseEvent<HTMLElement>) => {
-                  n.onClick?.(e);
-                  if (on) markRead([n.id]);
-                },
-              };
-              return (
-                <li key={n.id}>
-                  {n.href !== undefined ? (
-                    <a href={n.href} {...props}>
-                      {body}
-                    </a>
-                  ) : (
-                    <button type="button" {...props}>
-                      {body}
-                    </button>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
+        {wired ? (
+          <>
+            {list(items)}
+            <p className="tray-list__empty" data-notices="empty" hidden>
+              {emptyText}
+            </p>
+          </>
+        ) : shown.length ? (
+          list(shown)
         ) : (
           <p className="tray-list__empty">{emptyText}</p>
         )}

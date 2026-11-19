@@ -211,6 +211,17 @@ if (typeof document !== 'undefined') (function () {
 
   /* ---------- Actions and forms ---------- */
 
+  /* A busy button (aria-busy="true" while its work runs) ignores presses: a second click, Enter or Space, or Enter in a
+     field of its form, does not send it again, and a busy link does not go. It keeps focus and its place in the Tab order,
+     which `disabled` would take away. Every .tray-btn gets this; presses come through again once aria-busy goes. */
+  UI.upgrade('.tray-btn', function (btn) {
+    btn.addEventListener('click', function (e) {
+      if (btn.getAttribute('aria-busy') !== 'true') return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }, true);
+  });
+
   /* Toggle: data-tray="toggle" on a button with aria-pressed. */
   UI.register('toggle', function (btn) {
     if (!btn.hasAttribute('aria-pressed')) btn.setAttribute('aria-pressed', 'false');
@@ -219,6 +230,14 @@ if (typeof document !== 'undefined') (function () {
       btn.setAttribute('aria-pressed', String(on));
       fire(btn, 'change', { pressed: on });
     });
+  });
+
+  /* A checkbox written as mixed: data-indeterminate on the <input>. The mixed state is a property of the element, with no
+     attribute of its own, so markup alone cannot set it; this sets it once, as the page loads. A click clears it, as the
+     browser does, and the attribute goes with it, so the markup no longer claims it. */
+  UI.upgrade('input[type="checkbox"][data-indeterminate]', function (input) {
+    input.indeterminate = true;
+    input.addEventListener('change', function () { input.removeAttribute('data-indeterminate'); }, { once: true });
   });
 
   /* Stepper: data-tray="stepper" on a button group holding [data-step] buttons and an <output>. */
@@ -980,11 +999,45 @@ if (typeof document !== 'undefined') (function () {
     select(tabs.filter(function (t) { return t.getAttribute('aria-selected') === 'true'; })[0] || tabs[0], false, true);
   });
 
-  /* Strip: data-tray="strip" on a .tray-tabs that may overflow; marks it is-clipped while tabs run past the end edge. */
+  /* Strip: data-tray="strip" on a .tray-tabs that may overflow; marks it is-clipped while tabs run past the end edge.
+     The current item (aria-current, or the selected tab) is scrolled into view, clear of the fade at the end, once the
+     strip has a width, again when the font arrives unless the strip was scrolled meanwhile, and when the current item
+     changes. An item that takes keyboard focus is scrolled wholly into view the same way, so its ring is never under the
+     fade (the browser scrolls only an item that is out of sight). Only the strip scrolls, never the page. */
   UI.register('strip', function (strip) {
+    var FADE = 56, shown = false, placed = null;
     function clip() { strip.classList.toggle('is-clipped', Math.abs(strip.scrollLeft) + strip.clientWidth < strip.scrollWidth - 8); }
+    function current() { return $('[aria-selected="true"], [aria-current]:not([aria-current="false"])', strip); }
+    /* reveal(item): scroll the strip by the least that shows the whole item, keeping it out of the fade on the end side
+       (the right, or the left right to left). The browser stops the scroll at either end, where the strip does not fade. */
+    function reveal(item) {
+      if (item && strip.scrollWidth > strip.clientWidth) {
+        var b = strip.getBoundingClientRect(), r = item.getBoundingClientRect(), rtl = getComputedStyle(strip).direction === 'rtl';
+        var left = b.left + strip.clientLeft + (rtl ? FADE : 0), right = b.left + strip.clientLeft + strip.clientWidth - (rtl ? 0 : FADE);
+        var lo = r.left - left, hi = r.right - right, d = 0;  /* lo < 0: past the room on the left; hi > 0: past it on the right */
+        /* the end side first, then the start side, so an item wider than the room shows its start */
+        if (rtl) { if (lo < 0) d = lo; if (hi - d > 0) d = hi; } else { if (hi > 0) d = hi; if (lo - d < 0) d = lo; }
+        if (d) strip.scrollLeft += d;
+        clip();
+      }
+      placed = strip.scrollLeft;
+    }
+    function settle() {
+      clip();
+      if (!shown && strip.clientWidth) { shown = true; reveal(current()); }
+    }
     strip.addEventListener('scroll', clip, { passive: true });
-    watch(strip, clip);
+    /* keyboard focus only: a press focuses its item on the way down, and scrolling then would carry the item away from
+       under the pointer before the release, so the click would be lost */
+    strip.addEventListener('focusin', function (e) {
+      var keys = true;
+      try { keys = e.target.matches(':focus-visible'); } catch (err) { /* a browser without :focus-visible */ }
+      var tab = e.target.closest('.tray-tab');
+      if (keys) reveal(tab && strip.contains(tab) ? tab : e.target);
+    });
+    watch(strip, settle);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (shown && strip.scrollLeft === placed) reveal(current()); });
+    if (window.MutationObserver) new MutationObserver(function () { reveal(current()); }).observe(strip, { subtree: true, attributes: true, attributeFilter: ['aria-selected', 'aria-current'] });
   });
 
   /* The items of one menu panel, not those of a submenu inside it. */
@@ -1281,7 +1334,20 @@ if (typeof document !== 'undefined') (function () {
       /* Escape: where the browser cannot keep the dialog in the top layer while it leaves, it leaves first, then closes */
       if (!calm() && !topLayerExit()) { e.preventDefault(); shut(d, ''); }
     });
+    /* data-open: the dialog opens over the page as the page loads (the open attribute alone shows it in place, with no veil
+       and no focus held). It goes when the dialog closes, so the markup no longer says open. */
+    if (d.hasAttribute('data-open') && !d.open) {
+      d.addEventListener('close', function () { d.removeAttribute('data-open'); }, { once: true });
+      d.showModal();
+      safeChoice(d);
+    }
   });
+  /* An alert dialog starts on the safe choice: autofocus on it in the markup does that; this covers markup without it. */
+  function safeChoice(d) {
+    if (d.getAttribute('role') !== 'alertdialog' || d.querySelector('[autofocus]')) return;
+    var safe = d.querySelector('button[data-close]:not(.tray-btn--danger)');
+    if (safe) safe.focus();
+  }
   /* Open: data-tray="open" on a button with data-target="#id". data-modal="false" shows the dialog in place instead of over the page. */
   UI.register('open', function (btn) {
     /* the button says it opens a dialog, as the button of a sidebar sheet does */
@@ -1292,11 +1358,7 @@ if (typeof document !== 'undefined') (function () {
       if (d.hasAttribute('data-closing')) { d.removeAttribute('data-closing'); d.close(); }
       if (d.open) return;
       if (btn.dataset.modal === 'false') d.show(); else d.showModal();
-      /* an alert dialog starts on the safe choice: autofocus on it in the markup does that; this covers markup without it */
-      if (d.getAttribute('role') === 'alertdialog' && !d.querySelector('[autofocus]')) {
-        var safe = d.querySelector('button[data-close]:not(.tray-btn--danger)');
-        if (safe) safe.focus();
-      }
+      safeChoice(d);
     });
   });
 

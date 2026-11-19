@@ -1,6 +1,7 @@
 'use client';
 import * as React from 'react';
 import type { IconSource } from '../lib/icon';
+import { useStaticMode } from '../lib/static';
 import { cx, useControlled } from '../lib/util';
 import { Icon } from './Icon';
 
@@ -28,6 +29,8 @@ export const Toggle = React.forwardRef<HTMLButtonElement, ToggleProps>(function 
   ref,
 ) {
   const [on, setOn] = useControlled(pressed, defaultPressed, onPressedChange);
+  // static mode: bundle.js's toggle behaviour flips aria-pressed, in place of the state above
+  const wired = useStaticMode();
   const iconOnly = !!icon && children == null;
   const iconSize = size === 'xs' ? 'sm' : 'md';
   return (
@@ -36,6 +39,7 @@ export const Toggle = React.forwardRef<HTMLButtonElement, ToggleProps>(function 
       type="button"
       className={cx('tray-toggle', iconOnly && 'tray-toggle--icon', size === 'xs' && 'tray-toggle--xs', className)}
       aria-pressed={on}
+      data-tray={wired ? 'toggle' : undefined}
       onClick={(e) => {
         onClick?.(e);
         if (!e.defaultPrevented) setOn(!on);

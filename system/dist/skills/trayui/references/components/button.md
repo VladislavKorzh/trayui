@@ -21,7 +21,7 @@ A button starts an action; the yellow one is the single most important action in
 - Use `<a class="tray-btn">` when it goes somewhere, `<button type="button">` when it does something.
 
 ## States
-Hover darkens the fill slightly, press scales to 0.97, keyboard focus draws a 3px `ink` ring 3px out. A disabled button keeps its fill at `opacity-disabled`. While work is running set `aria-busy="true"` and put a `tray-spinner` before the label; keep the label.
+Hover darkens the fill slightly, press scales to 0.97, keyboard focus draws a 3px `ink` ring 3px out. A disabled button keeps its fill at `opacity-disabled`. While work is running set `aria-busy="true"` and put a `tray-spinner` before the label; keep the label. A busy button ignores presses: a second click, `Enter` or `Space`, or `Enter` in a field of its form, does not send it again, and a busy link does not go (the bundle does this for every `tray-btn`; React's `busy` does the same). Take `aria-busy` away when the work ends, and the button presses again. Don't set `disabled` while it is busy: a focused button that turns disabled drops focus to the top of the page.
 
 ## Accessibility
 It is the browser's own `<button>` or `<a>`: `Tab` reaches it, `Enter` presses either, and `Space` presses a `<button>`. Its text is its name, and every icon inside is `aria-hidden`. The focus ring takes the ink of the surface it sits on, so it shows on the yellow and the ink card too. `disabled` takes a button out of the tab order; to keep it reachable, use `aria-disabled="true"`, which looks the same, and ignore its presses yourself. The spinner of a busy button is `aria-hidden`, so the label carries the state, and under `prefers-reduced-motion: reduce` the spinner turns slowly instead of stopping.

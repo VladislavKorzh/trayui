@@ -77,3 +77,8 @@ def test_parity_reveal(t):
 
 
 PARITY = [('form >> nth=0', 'SignIn', 'form'), ('form >> nth=1 >> .tray-alert', 'CreateAccount', '.tray-alert')]
+
+
+# Static parity (trayui-react/static): the reveal button carries data-tray="reveal" there, and bundle.js shows the password.
+STATIC = True
+STATIC_SKIP = {'SignIn: button "Sign in"': "the form calls onSubmit in React; a static form is sent as a form is, which the page's own script must stop (K3)"}

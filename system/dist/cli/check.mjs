@@ -2,15 +2,18 @@
 /* The Tray UI markup checker: one file with no dependencies, used by `npx trayui check`, by the agent skill
    (scripts/check.mjs) and by anything else that imports it.
 
-     node check.mjs page.html [more.html | folder ...] [--json] [--rules rules.json]
+     node check.mjs page.html [more.html | folder ...] [--json] [--rules rules.json] [--prefix kit-]
      node check.mjs -                      reads the markup from stdin
+
+   --prefix names the start of a project's own classes (kit-, app-), which are then not reported as foreign; give it
+   more than once, or as a list (--prefix kit-,app-).
 
    It tests what a machine can test: the classes and the behaviours that exist (rules.json, written by the build from
    the bundle beside it), icons that exist, one yellow per view, names and labels, autocomplete, ids that references
    point at, tabs wired as the guide says, headings in order, tokens instead of literal values, and on a whole page
    its language, theme and the three files in order. It cannot see the page: look at it as well.
 
-   As a module: import { check, report } from './check.mjs'; check(html, rules) returns
+   As a module: import { check, report } from './check.mjs'; check(html, rules, { prefixes: ['kit-'] }) returns
    [{ rule, severity: 'error' | 'warning', line, message }]. The exit code is 1 when any file has an error. */
 
 const VOID = new Set('area base br col embed hr img input link meta param source track wbr'.split(' '));
@@ -109,9 +112,11 @@ const INSTEAD = {
   'tray-container--narrow': 'For a narrow column, use `tray-screen__body--narrow` or a token in a style (max-inline-size).',
 };
 
-/** Checks one document or fragment against the rules: { classes, typeStyles, behaviours, icons }. */
-export function check(html, rules) {
+/** Checks one document or fragment against the rules: { classes, typeStyles, behaviours, icons }. options.prefixes: the
+    starts of a project's own classes ('kit-'), which are not reported as foreign. */
+export function check(html, rules, { prefixes = [] } = {}) {
   const known = new Set([...(rules.classes || []), ...(rules.typeStyles || [])]);
+  const ownClass = (c) => prefixes.some((p) => p && c.startsWith(p));
   const trayClasses = (rules.classes || []).filter((c) => c.startsWith('tray-'));
   const behaviours = new Set(rules.behaviours || []);
   const icons = rules.icons ? new Set(rules.icons) : null;
@@ -139,7 +144,7 @@ export function check(html, rules) {
       }
     } else if (STATE_CLASSES.test(c)) {
       add('state-in-class', 'warning', n.line, `${quote(c)}: state lives in attributes (aria-selected, aria-current, aria-pressed, aria-expanded, open, hidden, disabled), never in classes.`);
-    } else if (!known.has(c)) {
+    } else if (!known.has(c) && !ownClass(c)) {
       const at = foreign.get(c) || { line: n.line, count: 0 };
       at.count++;
       foreign.set(c, at);
@@ -171,18 +176,25 @@ export function check(html, rules) {
   }
 
   // 3. one yellow per view: the page, and each part shown on its own (a dialog, a sheet, a tab panel, a popover, a
-  // folded section, a task of a checklist, a plan, a form, the page's header and footer). A heuristic: a long page that
-  // scrolls shows several views, and a form far down the page is one of them.
+  // folded section, a task of a checklist, a plan, a form, the page's header and footer, a part kept hidden until it is
+  // shown, such as a step of a wizard). A heuristic: a long page that scrolls shows several views. A form far down the
+  // page is one of them, and so is each band of a long page: a <section> straight inside <main> (through plain wrappers),
+  // when <main> holds three or more; a band that is itself yellow is a view of its own.
   const landmark = (p) => (p.tag === 'header' || p.tag === 'footer') && !ancestor(p, (q) => ['main', 'article', 'section', 'aside', 'dialog'].includes(q.tag));
+  const main = live.find((n) => n.tag === 'main');
+  const SECTIONS = ['section', 'article', 'aside', 'nav', 'dialog', 'form', 'details', 'header', 'footer'];
+  const isBand = (p) => !!main && p.tag === 'section' && ancestor(p, (q) => q === main || SECTIONS.includes(q.tag)) === main;
+  const long = live.filter(isBand).length >= 3;
+  const band = (p) => long && isBand(p);
   const own = (p) => p.tag === 'dialog' || p.tag === 'details' || p.tag === 'form' || p.attrs.role === 'tabpanel' || p.attrs.role === 'dialog'
-    || 'popover' in p.attrs || landmark(p) || classesOf(p).some((c) => c === 'tray-task' || c === 'tray-pop' || c === 'tray-plan');
+    || 'popover' in p.attrs || 'hidden' in p.attrs || landmark(p) || band(p) || classesOf(p).some((c) => c === 'tray-task' || c === 'tray-pop' || c === 'tray-plan');
   const views = new Map();
   for (const n of live) {
     const cls = classesOf(n);
     const yellowButton = cls.includes('tray-btn') && !QUIET.some((v) => cls.includes(v));
     const yellowSurface = cls.includes('tray-card--accent') || cls.includes('tray-island');
     if (!yellowButton && !yellowSurface) continue;
-    const view = ancestor(n, own) || tree;
+    const view = (yellowSurface && band(n) ? n : ancestor(n, own)) || tree;
     const v = views.get(view) || { buttons: [], surfaces: [] };
     (yellowButton ? v.buttons : v.surfaces).push(n);
     views.set(view, v);
@@ -317,14 +329,21 @@ export async function main(argv, { name = 'check.mjs' } = {}) {
   const { readFileSync, readdirSync, statSync } = await import('node:fs');
   const { join } = await import('node:path');
   const json = argv.includes('--json');
-  const at = argv.indexOf('--rules');
-  const targets = argv.filter((a, i) => !a.startsWith('--') && (at < 0 || i !== at + 1));
+  // the options that take a value: --rules file, --prefix kit- (again, or kit-,app-), each also as --name=value
+  const taken = new Set();
+  const values = (flag) => argv.flatMap((a, i) => {
+    if (a === flag) { taken.add(i + 1); return argv[i + 1] === undefined ? [] : [argv[i + 1]]; }
+    return a.startsWith(flag + '=') ? [a.slice(flag.length + 1)] : [];
+  });
+  const rulesFile = values('--rules')[0];
+  const prefixes = values('--prefix').flatMap((v) => v.split(',')).map((p) => p.trim()).filter(Boolean);
+  const targets = argv.filter((a, i) => !a.startsWith('--') && !taken.has(i));
   if (argv.includes('--help') || argv.includes('-h') || !targets.length) {
-    print(`usage: ${name} <page.html | folder | -> [...] [--json] [--rules rules.json]\n\nChecks Tray UI markup: classes, behaviours and icons that exist, one yellow per view, names and labels, references,\ntabs, headings, tokens, and on a whole page its language, theme and the three files. Exit code 1 when a file has an error.`);
+    print(`usage: ${name} <page.html | folder | -> [...] [--json] [--rules rules.json] [--prefix kit-]\n\nChecks Tray UI markup: classes, behaviours and icons that exist, one yellow per view, names and labels, references,\ntabs, headings, tokens, and on a whole page its language, theme and the three files. Exit code 1 when a file has an error.\n--prefix names the start of your own classes (kit-), which are then not reported as foreign; give it again for more.`);
     return targets.length || argv.includes('--help') || argv.includes('-h') ? 0 : 2;
   }
   let rules;
-  try { rules = await loadRules(at >= 0 ? argv[at + 1] : undefined); } catch (e) { print(`${name}: cannot read the rules: ${e.message}`); return 2; }
+  try { rules = await loadRules(rulesFile); } catch (e) { print(`${name}: cannot read the rules: ${e.message}`); return 2; }
   const files = [];
   const visit = (p) => {
     if (p === '-') return files.push(p);
@@ -343,7 +362,7 @@ export async function main(argv, { name = 'check.mjs' } = {}) {
   const results = [];
   for (const f of files) {
     const html = f === '-' ? readFileSync(0, 'utf8') : readFileSync(f, 'utf8');
-    const findings = check(html, rules);
+    const findings = check(html, rules, { prefixes });
     if (findings.some((x) => x.severity === 'error')) failed = true;
     results.push({ file: f === '-' ? 'stdin' : f, findings });
     if (!json) print(`${f === '-' ? 'stdin' : f}: ${report(findings)}`);

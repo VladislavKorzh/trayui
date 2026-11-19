@@ -31,8 +31,19 @@ What a module may set, each with the reason it is right (the report prints it):
   XFAIL = {'check name': 'why'}             a check that fails because of a file outside the system (a React file another
                                             person is fixing): reported apart, not counted as a failure; when it passes,
                                             the run says to take it out. Name the React checks apart ('react: ...').
+  STATIC = True                             static parity (static_parity): the React preview rendered in static mode
+                                            (tests/static.mjs, trayui-react/static) works with bundle.js as it does in
+                                            React, and bundle.js is shown to do part of it
+  STATIC_SKIP = {'Cell': 'why'}             cells of the React preview whose own React state (a total, a "select all")
+                                            a static page leaves to its own script: compared at load, not pressed;
+                                            'Cell: role "name"' leaves out one control's press ('[Page] ...' on one page)
+  STATIC_IGNORE = {'Cell': 'why'}           cells left out of static parity altogether, their load too
+  STATIC_PAGES = {'Page': width}            test pages of tests/static-pages/ checked as the preview is, at that width:
+                                            states no preview reaches (a modal open at load, a phone's sheet)
+  STATIC_FLATTEN = ('img',)                 nodes of these roles compared by their name, not what is inside (a chart)
+  STATIC_PROVEN_BY = 'test_name'            the module's own test that shows bundle.js at work, where no press can
 
-Functions named test_parity* or test_react_* are counted as React checks. In what `t.ax()` returns, Chrome's protocol gives
+Functions named test_parity* or test_react_* are counted as React checks, and so is static parity. In what `t.ax()` returns, Chrome's protocol gives
 checked, pressed and the like as the strings 'true', 'false' and 'mixed' for some roles, and the value of a progress bar or
 meter in `value`; `valuetext` is the element's own aria-valuetext. A string given to `pg.evaluate` that is a function is
 called.
@@ -40,7 +51,8 @@ called.
 The pages are served from system/ at http://localhost:4321 by the browser's own request routing (nothing listens on the
 port): /project/components/<Name>/preview.html?theme=dark gets <html data-theme> and the three files of the system, linked
 as guides/2-behaviour.md says (dist/tokens.css, dist/components/bundle.css, dist/components/bundle.js); /react/<Name>
-draws the React preview bundled by tests/react.mjs over react/styles/styles.css. Every `tray:*` event is recorded.
+draws the React preview bundled by tests/react.mjs over react/styles/styles.css; /static/<Name> serves what tests/static.mjs
+rendered of it in static mode, with the three files (?bare=1: without bundle.js). Every `tray:*` event is recorded.
 """
 import importlib.util, mimetypes, os, pathlib, re, time
 from urllib.parse import urlsplit, parse_qs
@@ -51,6 +63,8 @@ COMPONENTS = P / 'components'
 TESTS = SYSTEM / 'tests'
 # where tests/react.mjs put the React pages: the runner gives each run its own folder (TRAY_TEST_REACT)
 REACT_OUT = pathlib.Path(os.environ.get('TRAY_TEST_REACT') or SYSTEM / '.cache' / 'tests' / 'react')
+# where tests/static.mjs put the React previews rendered in static mode, one body per component (TRAY_TEST_STATIC)
+STATIC_OUT = pathlib.Path(os.environ.get('TRAY_TEST_STATIC') or SYSTEM / '.cache' / 'tests' / 'static')
 ORIGIN = 'http://localhost:4321'  # localhost is a secure context, so the clipboard and the like work as on a real site
 AXE = TESTS / 'node_modules' / 'axe-core' / 'axe.min.js'
 AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
@@ -266,6 +280,11 @@ REACT_PAGE = ('<!doctype html><html lang="en" data-theme="{theme}"{dir}><head><m
               '<script type="module" src="/{out}/{name}.js"></script></body></html>')
 
 
+STATIC_PAGE = ('<!doctype html><html lang="en" data-theme="{theme}"{dir}><head><meta charset="utf-8"><title>{name}, static</title>\n'
+               '<link rel="stylesheet" href="/dist/tokens.css">\n<link rel="stylesheet" href="/dist/components/bundle.css">\n{script}'
+               '</head><body>{body}</body></html>')
+
+
 class Server:
     """Answers the browser's requests from system/: the previews get the system's three files, /react/<Name> its React preview."""
 
@@ -289,6 +308,12 @@ class Server:
         if path.startswith('react/') and path.count('/') == 1 and not path.endswith(('.css', '.js')):
             name = path.split('/', 1)[1]
             return route.fulfill(status=200, content_type='text/html; charset=utf-8', body=REACT_PAGE.format(theme=theme, name=name, dir=rtl, out=REACT_OUT.relative_to(SYSTEM).as_posix()))
+        if path.startswith('static/') and path.count('/') == 1:  # the React preview rendered in static mode (?bare=1: without bundle.js)
+            name = path.split('/', 1)[1]
+            f = STATIC_OUT / f'{name}.html'
+            body = f.read_text(encoding='utf-8') if f.is_file() else f'<p data-cell-error>tests/static.mjs wrote no {name}.html</p>'
+            script = '' if (q.get('bare') or [''])[0] == '1' else '<script src="/dist/components/bundle.js" defer></script>\n'
+            return route.fulfill(status=200, content_type='text/html; charset=utf-8', body=STATIC_PAGE.format(theme=theme, dir=rtl, name=name, script=script, body=body))
         if path.startswith('media/'):  # the React previews name their pictures and film as the site serves them
             path = 'project/assets/Media/' + path[6:]
         block = re.fullmatch(r'dist/(blocks|templates)/([a-z0-9-]+)\.html', path)
@@ -390,16 +415,22 @@ class T:
 
     # ---- opening pages
 
-    def open(self, theme='light', width=None, height=None, motion='reduce', forced=False, contrast=False, media=None, rtl=False, react=False, wait=150):
-        """A fresh page with the preview (or, with react=True, the React preview) loaded and its fonts ready.
+    def open(self, theme='light', width=None, height=None, motion='reduce', forced=False, contrast=False, media=None, rtl=False, react=False, wait=150,
+             static=False, bare=False, page=None):
+        """A fresh page with the preview (or, with react=True, the React preview; with static=True, the React preview rendered
+        in static mode, with bundle.js, or without it as well with bare=True) loaded and its fonts ready. With react or static,
+        page names a test page of tests/static-pages/ to open in place of the preview.
         motion='reduce' (the default, so panels only fade) or 'no-preference'; forced=True for forced colours."""
-        ctx = self.b.context(width or (WIDE if react else self.width), height or 900, motion, forced, contrast, media)
+        ctx = self.b.context(width or (WIDE if react or static else self.width), height or 900, motion, forced, contrast, media)
         pg = ctx.new_page()
         errs = self.errors.setdefault(id(pg), [])
         pg.on('pageerror', lambda e: errs.append(str(e).split('\n')[0][:200]))
         pg.on('console', lambda m: errs.append(m.text.split('\n')[0][:200]) if m.type == 'error' and 'Download the React DevTools' not in m.text else None)
         q = f'?theme={theme}' + ('&dir=rtl' if rtl else '')
-        url = (f'{ORIGIN}/react/{self.name}{q}' if react else f'{ORIGIN}/dist/{page_file(self.name).parent.name}/{self.name}.html{q}' if self.block
+        if static:
+            q += '&bare=1' if bare else ''
+        url = (f'{ORIGIN}/react/{page or self.name}{q}' if react else f'{ORIGIN}/static/{page or self.name}{q}' if static
+               else f'{ORIGIN}/dist/{page_file(self.name).parent.name}/{self.name}.html{q}' if self.block
                else f'{ORIGIN}/project/components/{self.name}/preview.html{q}')
         pg.goto(url, wait_until='load')
         if react:
@@ -708,10 +739,233 @@ def parity(t):
     t.close_pages()
 
 
-def diff(a, b):
+def diff(a, b, label_a='html', label_b='react'):
     import difflib
-    d = [l for l in difflib.unified_diff(a.split('\n'), b.split('\n'), 'html', 'react', lineterm='', n=1)][2:]
+    d = [l for l in difflib.unified_diff(a.split('\n'), b.split('\n'), label_a, label_b, lineterm='', n=1)][2:]
     return '\n'.join(d[:40])
+
+
+# ------------------------------------------------------------------------------------------------- static parity
+
+# What static parity presses (in each cell, the first PER_CELL of these that are on show and not disabled, named by their
+# cell, role, name and place among their namesakes, so each page presses its own element of that name) and where it
+# presses an arrow key (the first of these in each cell).
+STATIC_ACT = ('button, [role=button], [role=tab], [role=switch], [role=combobox], [role=checkbox], [role=radio], [role=menuitem], '
+              '[role=menuitemcheckbox], [role=menuitemradio], [role=option], summary, input[type=checkbox], input[type=radio], a[href]')
+STATIC_KEYS = ('[role=tab], [role=radio], [role=option], [role=menuitem], [role=menuitemradio], [role=menuitemcheckbox], '
+               'input[type=radio], [role=slider], input[type=range]')
+STATIC_PER_CELL = 8
+PROBE = r"""() => { window.__probe = {
+  name(e) {
+    const by = (ids) => ids.split(/\s+/).map((i) => document.getElementById(i)).filter(Boolean).map((n) => n.textContent).join(' ');
+    const s = e.getAttribute('aria-label') || (e.getAttribute('aria-labelledby') && by(e.getAttribute('aria-labelledby')))
+      || (e.labels && e.labels[0] && e.labels[0].textContent) || e.textContent || e.getAttribute('title') || '';
+    return s.replace(/\s+/g, ' ').trim().slice(0, 40);
+  },
+  role(e) { return e.getAttribute('role') || (e.tagName === 'INPUT' ? 'input:' + (e.getAttribute('type') || 'text') : e.tagName.toLowerCase()); },
+  live(e) {
+    // a link that leaves the page would show another page on both sides, the same "not found": only links within it
+    if (e.matches('a[href]') && !e.getAttribute('href').startsWith('#')) return false;
+    if (!e.checkVisibility({ checkVisibilityCSS: true })) return false;
+    // a modal dialog holds the rest of the page still: only what is in it can be pressed
+    const modal = [...document.querySelectorAll('dialog')].filter((d) => d.matches(':modal')).pop();
+    if (modal && !modal.contains(e)) return false;
+    const r = e.getBoundingClientRect();
+    return r.width > 0 && r.height > 0 && !e.matches(':disabled') && e.getAttribute('aria-disabled') !== 'true' && !e.closest('[inert]');
+  },
+  cell(e) { const c = e.closest('[data-cell]'); return c ? c.dataset.cell : ''; },
+  list(sel) {
+    const seen = {};
+    return [...document.querySelectorAll(sel)].filter((e) => this.live(e)).map((e) => {
+      const d = { cell: this.cell(e), role: this.role(e), name: this.name(e) }, k = d.cell + '|' + d.role + '|' + d.name;
+      seen[k] = (seen[k] || 0) + 1; d.k = seen[k] - 1; return d;
+    });
+  },
+  index(sel, d) {
+    const all = [...document.querySelectorAll(sel)]; let k = 0;
+    for (let i = 0; i < all.length; i++) {
+      const e = all[i];
+      if (!this.live(e) || this.cell(e) !== d.cell || this.role(e) !== d.role || this.name(e) !== d.name) continue;
+      if (k === d.k) return i; k++;
+    }
+    return -1;
+  },
+  focus() { const a = document.activeElement; return !a || a === document.body ? 'the page' : this.cell(a) + ' ' + this.role(a) + ' "' + this.name(a) + '"'; },
+}; }"""
+
+
+def _cells(pg, flatten=()):
+    out = {}
+    cells = pg.locator('[data-cell]')
+    for i in range(cells.count()):
+        c = cells.nth(i)
+        out[c.get_attribute('data-cell')] = _flatten(normalise(c.aria_snapshot(timeout=3000)), flatten)
+    return out
+
+
+def _flatten(tree, roles):
+    """The tree with what is inside each node of these roles left out: the node stays, with its name."""
+    if not roles:
+        return tree
+    out, deep = [], None
+    for line in tree.split('\n'):
+        ind = len(line) - len(line.lstrip())
+        if deep is not None and ind > deep:
+            continue
+        deep = None
+        # '- img "name":', '- img "name": text' or, when the name holds a colon, "- 'img \"name\"':"
+        m = re.match(r'''(\s*)- '?(\w+)((?: "(?:[^"\\]|\\.)*")?)''', line)
+        if m and m.group(2) in roles:
+            deep = ind
+            line = m.group(1) + '- ' + m.group(2) + m.group(3)
+        out.append(line)
+    return '\n'.join(out)
+
+
+def _went(before, after):
+    """Where a press sent the page, if it left it: its query if it is the same page (a form sent as a form is), its path
+    if it is another, None if it stayed (a link to '#' changes only the fragment)."""
+    x, y = urlsplit(before), urlsplit(after)
+    if (x.path, x.query) == (y.path, y.query):
+        return None
+    return ('?' + y.query) if x.path == y.path else y.path
+
+
+def _lines(a, b):
+    """The lines that differ between two trees, counted, as ('-', line) for a and ('+', line) for b."""
+    import difflib
+    from collections import Counter
+    return Counter((l[0], l[1:].strip()) for l in difflib.unified_diff(a.split('\n'), b.split('\n'), n=0, lineterm='')
+                   if l[:1] in '-+' and not l.startswith(('---', '+++')))
+
+
+def static_parity(t):
+    """The React preview rendered in static mode (tests/static.mjs) with bundle.js works as the React preview does.
+    For a component whose module sets STATIC = True. Three pages each time, all fresh: React, static, and static without
+    bundle.js ("bare"). At load, every cell's accessibility tree is the same in React and in static. Then each control on
+    show in each cell (STATIC_ACT, the first STATIC_PER_CELL of them) is pressed, and an arrow key pressed on the first
+    STATIC_KEYS of each cell; after each, the trees of every cell and what has focus must be the same in both. A
+    difference that was already there at load and that the press left alone is the load's, reported once. Last, bundle.js
+    must be what makes them the same at least once (bare differs from React where static does not): otherwise the
+    component's behaviour was never tried, and the check proves nothing.
+    STATIC_SKIP = {'Cell': 'why'} names cells whose own React state (a total, a "select all") a static page leaves to its
+    own script: they are compared at load, as the first state is the component's, but not pressed or compared after.
+    A key 'Cell: role "name"' leaves out the press of one control of a cell instead (a submit button: a static form is
+    sent as a form is); the cell is still compared after the other presses. '[Page] Cell: role "name"' does it on one
+    test page only. STATIC_IGNORE = {'Cell': 'why'} leaves a cell out altogether, its load too: a cell whose first state
+    is already the preview's own (a label it writes from what the component reports as it loads).
+    STATIC_PAGES = {'Page': width} adds test pages from tests/static-pages/<Page>.tsx (built by tests/react.mjs and
+    tests/static.mjs as a preview is), each checked the same way at that width: states no preview reaches (a modal open
+    at load, a phone's sheet), which would get in the way of the preview's other cells.
+    STATIC_FLATTEN = ('img',) compares nodes of these roles by their name alone, not by what is inside them: a chart's
+    drawing, which Recharts and the system's own chart draw differently.
+    STATIC_PROVEN_BY = 'test_name' names the module's own test that shows bundle.js at work, where no press can (choosing
+    files): the step then asks for that test instead of a probe.
+    The tray:* events are not compared: React components report through their callbacks, a static page through events."""
+    t.kind, t.fn = 'parity', 'STATIC'
+    skip = getattr(t.module, 'STATIC_SKIP', {})
+    ignored = dict(getattr(t.module, 'STATIC_IGNORE', {}))
+    cells_out = {k for k in skip if ':' not in k} | set(ignored)
+    flatten = tuple(getattr(t.module, 'STATIC_FLATTEN', ()))
+    pages = [(None, WIDE)] + list(getattr(t.module, 'STATIC_PAGES', {}).items())
+    proven = []
+
+    for page, width in pages:
+        at = f'[{page}] ' if page else ''
+
+        def look(variant, probe=None):
+            pg = t.open(react=variant == 'react', static=variant != 'react', bare=variant == 'bare', page=page, width=width)
+            pg.add_init_script(f'({PROBE})()')  # again on a page the press loads (a form sent as a form is)
+            pg.evaluate(PROBE)
+            err, url = None, pg.url
+            if probe:
+                sel = STATIC_KEYS if probe['key'] else STATIC_ACT
+                i = pg.evaluate('([s, d]) => __probe.index(s, d)', [sel, probe['target']])
+                try:
+                    if i < 0:
+                        err = 'it is not on show there'
+                    elif probe['key']:
+                        pg.locator(sel).nth(i).focus(); pg.keyboard.press(probe['key'])
+                    else:
+                        pg.locator(sel).nth(i).click(timeout=2000)
+                    pg.wait_for_timeout(250)
+                except Exception as e:
+                    err = str(e).split('\n')[0][:160]
+            got = {'cells': _cells(pg, flatten), 'focus': pg.evaluate('() => __probe.focus()'), 'errors': t.page_errors(pg), 'err': err,
+                   'went': _went(url, pg.url),
+                   'broken': pg.evaluate('() => [...document.querySelectorAll("[data-cell-error]")].map((p) => p.textContent.slice(0, 160))')}
+            pg.close()
+            return got
+
+        base = {v: look(v) for v in ('react', 'static', 'bare')}
+        t.check(f'static: {at}renders every cell without a script error', not base['static']['errors'] and not base['static']['broken'],
+                '; '.join((base['static']['errors'] + base['static']['broken'])[:4]))
+        t.check(f'static: {at}has the cells React draws', list(base['static']['cells']) == list(base['react']['cells']),
+                f"react {list(base['react']['cells'])}, static {list(base['static']['cells'])}")
+        for c, tree in base['react']['cells'].items():
+            if c in ignored:
+                continue
+            s = base['static']['cells'].get(c, '(no such cell)')
+            t.check(f'static: {at}{c} at load is what React draws', tree == s, diff(tree, s, 'react', 'static'))
+            if tree == s and base['bare']['cells'].get(c) != tree:
+                proven.append(f'{at}{c} at load')
+        if base['react']['focus'] != base['static']['focus']:
+            t.check(f'static: {at}focus at load is where React puts it', False, f"react {base['react']['focus']}, static {base['static']['focus']}")
+        elif base['react']['focus'] != 'the page' and base['react']['focus'] != base['bare']['focus']:
+            proven.append(f'{at}focus at load')
+
+        pg = t.open_react(page=page, width=width)
+        pg.evaluate(PROBE)
+        acts, keys = pg.evaluate('(s) => __probe.list(s)', STATIC_ACT), pg.evaluate('(s) => __probe.list(s)', STATIC_KEYS)
+        pg.close()
+        probes, per = [], {}
+        for d in acts:
+            control = f'{d["cell"]}: {d["role"]} "{d["name"]}"'
+            if d['cell'] in cells_out or control in skip or at + control in skip or per.get(d['cell'], 0) >= STATIC_PER_CELL:
+                continue
+            per[d['cell']] = per.get(d['cell'], 0) + 1
+            probes.append({'label': f'{at}pressing {d["role"]} "{d["name"]}" in {d["cell"]}', 'target': d, 'key': None})
+        for c in dict.fromkeys(d['cell'] for d in keys):
+            if c not in cells_out:
+                d = next(x for x in keys if x['cell'] == c)
+                probes.append({'label': f'{at}ArrowRight on {d["role"]} "{d["name"]}" in {c}', 'target': d, 'key': 'ArrowRight'})
+
+        def new(a, b, a0, b0):  # {cell: lines} where a and b differ now and did not at load
+            out = {}
+            for c in a['cells']:
+                if c in cells_out:
+                    continue
+                extra = _lines(a['cells'][c], b['cells'].get(c, '')) - _lines(a0['cells'][c], b0['cells'].get(c, ''))
+                if extra:
+                    out[c] = extra
+            return out
+
+        for pr in probes:
+            r = {v: look(v, pr) for v in ('react', 'static', 'bare')}
+            if r['react']['err']:
+                t.check(f"static: {pr['label']} can be done in React", False, r['react']['err'])
+                continue
+            if r['static']['err']:
+                t.check(f"static: {pr['label']} can be done in static", False, r['static']['err'])
+                continue
+            if r['react']['went'] != r['static']['went']:
+                t.check(f"static: {pr['label']} leaves the page as React does", False,
+                        f"the press sends the page elsewhere: react {r['react']['went'] or 'stays'}, static {r['static']['went'] or 'stays'}")
+                continue
+            gaps = new(r['react'], r['static'], base['react'], base['static'])
+            same = not gaps and r['react']['focus'] == r['static']['focus']
+            detail = '; '.join(f"{c}: " + ', '.join(f'{m} {l}' for (m, l) in sorted(lines)) for c, lines in gaps.items())
+            if r['react']['focus'] != r['static']['focus']:
+                detail += f"{'; ' if detail else ''}focus: react {r['react']['focus']}, static {r['static']['focus']}"
+            t.check(f"static: {pr['label']} leaves the page as React does", same, detail)
+            if same and (new(r['react'], r['bare'], base['react'], base['bare']) or r['react']['focus'] != r['bare']['focus']):
+                proven.append(pr['label'])
+    by = getattr(t.module, 'STATIC_PROVEN_BY', None)
+    if by and not proven:  # what moves it is out of the step's reach (choosing files): one of the module's own tests shows it
+        t.check(f'static: bundle.js is shown to do the work by {by}', callable(getattr(t.module, by, None)), f'the module has no {by}')
+        return
+    t.check('static: bundle.js is what makes it work as React does, at least once (without it the page differs)', proven,
+            'on no probe did the page without bundle.js differ from React: the behaviour was never tried')
 
 
 def run_block(browser, name, only=None):
@@ -762,6 +1016,8 @@ def run_component(browser, name, group, only=None, skip_generic=False, react=Tru
             steps.append(('generic_react', generic_react))
     if react and has_react(name) and getattr(mod, 'REACT', True) and getattr(mod, 'PARITY', None):
         steps.append(('PARITY', parity))
+    if react and has_react(name) and getattr(mod, 'REACT', True) and getattr(mod, 'STATIC', False):
+        steps.append(('STATIC', static_parity))
     if mod is not None:
         for k, fn in vars(mod).items():
             if k.startswith('test_') and callable(fn):

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useStaticMode } from './static';
 import { resolveNode, useControlled, useForwardedRef } from './util';
 
 /* Shared by the overlays: the native <dialog> under Dialog, AlertDialog, Sheet and Drawer. Not exported from the package. */
@@ -6,6 +7,7 @@ import { resolveNode, useControlled, useForwardedRef } from './util';
 interface TriggerProps {
   onClick?: React.MouseEventHandler<HTMLElement>;
   'aria-haspopup'?: React.AriaAttributes['aria-haspopup'];
+  'data-tray'?: string;
 }
 
 interface DialogShellProps extends Omit<React.DialogHTMLAttributes<HTMLDialogElement>, 'open' | 'onCancel' | 'onClose' | 'title'> {
@@ -37,6 +39,12 @@ export const DialogShell = React.forwardRef<HTMLDialogElement, DialogShellProps>
   const latest = React.useRef({ open, setOpen, onDismiss, escape });
   latest.current = { open, setOpen, onDismiss, escape };
   const returnTo = React.useRef<HTMLElement | null>(null);
+  // Static mode: bundle.js's dialog and open behaviours open, close and hold it, in place of the effects and handlers below.
+  // The trigger names the dialog by id; a modal dialog open at first says so with data-open, which bundle.js opens over the page.
+  // The id is the one given, or one made from the title's id, which each overlay passes: not a useId here, which would shift
+  // the ids React makes for everything inside the dialog, in the default render too.
+  const wired = useStaticMode();
+  const dialogId = (rest.id as string | undefined) ?? `${(rest['aria-labelledby'] as string | undefined) ?? 'tray'}-dialog`;
 
   const giveFocusBack = React.useCallback(() => {
     const el = returnTo.current;
@@ -122,11 +130,22 @@ export const DialogShell = React.forwardRef<HTMLDialogElement, DialogShellProps>
           own.props.onClick?.(e);
           if (!e.defaultPrevented) setOpen(true);
         },
-      })
+        ...(wired
+          ? { 'data-tray': [own.props['data-tray'], 'open'].filter(Boolean).join(' '), 'data-target': '#' + dialogId, 'data-modal': modal ? undefined : 'false' }
+          : {}),
+      } as Partial<TriggerProps>)
     : null;
 
   const dialog = (
-    <dialog {...rest} ref={ref as React.RefObject<HTMLDialogElement>} open={modal ? undefined : open} onCancel={handleCancel} onClose={handleClose} onClick={handleClick}>
+    <dialog
+      {...rest}
+      ref={ref as React.RefObject<HTMLDialogElement>}
+      open={modal ? undefined : open}
+      onCancel={handleCancel}
+      onClose={handleClose}
+      onClick={handleClick}
+      {...(wired ? { id: dialogId, 'data-tray': 'dialog', 'data-open': modal && open ? '' : undefined } : {})}
+    >
       {children}
     </dialog>
   );

@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { Label, Legend, ResponsiveContainer, Tooltip } from 'recharts';
 import type { LegendProps, TooltipProps } from 'recharts';
+import { useStaticMode } from '../lib/static';
 
 function cx(...parts: (string | false | null | undefined)[]): string | undefined {
   return parts.filter(Boolean).join(' ') || undefined;
@@ -114,6 +115,12 @@ export const ChartContainer = React.forwardRef<HTMLElement, ChartContainerProps>
   { config, title, caption, summary, height, round, legend, footer, locale = 'en-GB', walk, className, style, children, ...rest },
   ref,
 ) {
+  // Static mode: a chart composed here is Recharts' own, which the plain-HTML system cannot draw. Chart's six forms can be.
+  if (useStaticMode())
+    throw new Error(
+      `trayui-react/static: a chart composed in ChartContainer${typeof title === 'string' ? ` ("${title}")` : ''} cannot be rendered to static HTML: ` +
+        "the plain-HTML system draws only Chart's six forms (bar, line, area, donut, radial, radar). Use Chart, or draw this one with the page's own script.",
+    );
   const [active, setActive] = React.useState<number | undefined>(undefined);
   // Recharts shows the tooltip at the point the keyboard is on only while the pointer has not moved over the chart; once
   // it has, the chart is drawn afresh as the keyboard takes over (a new key), so the tooltip follows the keys again.

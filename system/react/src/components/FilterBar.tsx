@@ -1,5 +1,6 @@
 'use client';
 import * as React from 'react';
+import { StaticChipLabels, useStaticMode } from '../lib/static';
 import { cx, useControlled, useForwardedRef } from '../lib/util';
 import { Button } from './Button';
 import { DropdownMenu, type MenuItem } from './DropdownMenu';
@@ -106,6 +107,10 @@ export const FilterBar = React.forwardRef<HTMLDivElement, FilterBarProps>(functi
   ref,
 ) {
   const own = useForwardedRef<HTMLDivElement>(ref);
+  // static mode: bundle.js's filterbar behaviour turns a checked item into a chip and back, in place of the state below. It
+  // reads each item's chip words (data-label) and the "Clear all" button (data-filter="clear"), which is always there:
+  // the row of chips hides itself while it holds none.
+  const wired = useStaticMode();
   const [on, setOn] = useControlled<string[]>(value, defaultValue ?? [], onChange);
   const [text, setText] = useControlled(query, defaultQuery ?? '', onQueryChange);
   const firstSort = sortOptions?.[0];
@@ -130,37 +135,39 @@ export const FilterBar = React.forwardRef<HTMLDivElement, FilterBarProps>(functi
   };
 
   return (
-    <div ref={own} className={cx('tray-filterbar', className)} {...rest}>
-      <div className="tray-filterbar__row">
-        {search !== false ? (
-          <InputGroup size="sm" icon="search" type="search" placeholder={search} aria-label={search} value={text} onChange={(e) => setText(e.target.value)} />
-        ) : null}
-        {filters.map((m) => (
-          <DropdownMenu
-            key={m.label}
-            label={m.label}
-            defaultOpen={m.defaultOpen}
-            items={m.options.map<MenuItem>((o) => ({
-              type: 'checkbox',
-              label: o.label,
-              value: o.value,
-              shortcut: o.count != null ? String(o.count) : undefined,
-              checked: on.includes(o.value),
-            }))}
-            onCheckedChange={flip}
-          />
-        ))}
-        {children}
-        {hasEnd ? (
-          <div className="tray-filterbar__end">
-            {end}
-            {sortOptions?.length ? (
-              <NativeSelect size="sm" aria-label={sortLabel} options={sortOptions} value={sortValue} onChange={(e) => setSort(e.target.value)} />
-            ) : null}
-            {views?.length ? <ToggleGroup size="sm" iconOnly aria-label={viewLabel} items={views} value={view} defaultValue={defaultView} onChange={onViewChange} /> : null}
-          </div>
-        ) : null}
-      </div>
+    <div ref={own} className={cx('tray-filterbar', className)} data-tray={wired ? 'filterbar' : undefined} {...rest}>
+      <StaticChipLabels.Provider value={wired ? chipOf : null}>
+        <div className="tray-filterbar__row">
+          {search !== false ? (
+            <InputGroup size="sm" icon="search" type="search" placeholder={search} aria-label={search} value={text} onChange={(e) => setText(e.target.value)} />
+          ) : null}
+          {filters.map((m) => (
+            <DropdownMenu
+              key={m.label}
+              label={m.label}
+              defaultOpen={m.defaultOpen}
+              items={m.options.map<MenuItem>((o) => ({
+                type: 'checkbox',
+                label: o.label,
+                value: o.value,
+                shortcut: o.count != null ? String(o.count) : undefined,
+                checked: on.includes(o.value),
+              }))}
+              onCheckedChange={flip}
+            />
+          ))}
+          {children}
+          {hasEnd ? (
+            <div className="tray-filterbar__end">
+              {end}
+              {sortOptions?.length ? (
+                <NativeSelect size="sm" aria-label={sortLabel} options={sortOptions} value={sortValue} onChange={(e) => setSort(e.target.value)} />
+              ) : null}
+              {views?.length ? <ToggleGroup size="sm" iconOnly aria-label={viewLabel} items={views} value={view} defaultValue={defaultView} onChange={onViewChange} /> : null}
+            </div>
+          ) : null}
+        </div>
+      </StaticChipLabels.Provider>
       <div className="tray-filterbar__chips">
         {chips.map((v) => (
           <span key={v} className="tray-chip" data-value={v}>
@@ -178,9 +185,10 @@ export const FilterBar = React.forwardRef<HTMLDivElement, FilterBarProps>(functi
             </button>
           </span>
         ))}
-        {chips.length ? (
+        {chips.length || wired ? (
           <Button
             variant="link"
+            data-filter={wired ? 'clear' : undefined}
             onClick={(e) => {
               moveFrom(e.currentTarget, chips[0]);
               setOn(on.filter((v) => !chipOf.has(v)));

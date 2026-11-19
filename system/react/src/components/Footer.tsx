@@ -34,6 +34,8 @@ export interface FooterProps extends React.HTMLAttributes<HTMLElement> {
   extra?: React.ReactNode;
   /** Centres the footer in the page's container (`tray-container`), when it sits straight on the page. Default false. */
   contained?: boolean;
+  /** The level of each column's heading, so the page's outline skips none: 2 on a page with only an `<h1>` (a sign-in page), 3 under sections headed by `<h2>`. Default 3. */
+  headingLevel?: 2 | 3 | 4;
 }
 
 /**
@@ -41,9 +43,10 @@ export interface FooterProps extends React.HTMLAttributes<HTMLElement> {
  * It sits on the page over a hairline, never on a coloured card. From 56rem up the columns stand beside the brand; below, two columns of links under it.
  */
 export const Footer = React.forwardRef<HTMLElement, FooterProps>(function Footer(
-  { brand, brandHref = '/', tagline, columns, copyright, legal, extra, contained, className, ...rest },
+  { brand, brandHref = '/', tagline, columns, copyright, legal, extra, contained, headingLevel = 3, className, ...rest },
   ref,
 ) {
+  const H = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
   return (
     <footer ref={ref} className={cx('tray-footer', contained && 'tray-container', className)} {...rest}>
       <div className="tray-footer__top">
@@ -55,7 +58,7 @@ export const Footer = React.forwardRef<HTMLElement, FooterProps>(function Footer
         </div>
         {columns.map((col, i) => (
           <nav key={i} className="tray-footer__col" aria-label={col.title}>
-            <h3>{col.title}</h3>
+            <H>{col.title}</H>
             {col.links.map((l, k) => (
               <a key={k} href={l.href}>
                 {l.label}

@@ -197,3 +197,9 @@ def test_parity_figure(t):
     plot.focus(); r.keyboard.press('Home')
     live = rb.locator('[aria-live]')
     t.check('react: the keys walk the points and a live region beside the drawing says them', live.count() >= 1 and 'Jan' in live.first.inner_text() and rb.locator('[role="img"] [aria-live]').count() == 0, live.first.inner_text() if live.count() else 'no live region')
+
+
+# Static parity (trayui-react/static): each chart is a figure with data-tray="chart" and its data in data-chart there,
+# which bundle.js draws with the system's own chart.
+STATIC = True
+STATIC_FLATTEN = ('img',)  # the drawing: Recharts in React, the system's own chart in static; compared by its name (the summary)

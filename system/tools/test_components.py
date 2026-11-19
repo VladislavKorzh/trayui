@@ -19,8 +19,9 @@ script error, every label names its control, axe in Light and Dark at 390 and 14
 excused is in tests/blocks.py). Each component has a module in
 tests/components/<Name>.py; tests/harness.py says what every component is checked for
 (the accessibility scan in Light and Dark, the layout at 390 and 1440px, the targets, the React preview) and what a module
-adds: the accessibility tree, the keys, the focus, the events, the motion and the forced colours its README speaks of, and
-parity with its React twin. It tests the built files (dist/ and react/src): run tools/build.py after changing src/.
+adds: the accessibility tree, the keys, the focus, the events, the motion and the forced colours its README speaks of,
+parity with its React twin, and (STATIC) parity of its React preview rendered in static mode (tests/static.mjs) with
+bundle.js against React. It tests the built files (dist/ and react/src): run tools/build.py after changing src/.
 
 It needs what the other browser checks need (Python with requirements.txt, Google Chrome through Playwright), Node and
 react/node_modules for the React previews, and axe-core, which it installs into tests/node_modules the first time
@@ -91,6 +92,11 @@ def setup(react):
         if done.returncode:
             print(done.stderr.strip())
             print('the React previews did not bundle: every React check will fail', flush=True)
+        # the same previews rendered in static mode, for the components whose module asks for static parity (STATIC)
+        done = subprocess.run(['node', str(ROOT / 'tests' / 'static.mjs'), '--out', os.environ['TRAY_TEST_STATIC']], cwd=ROOT, capture_output=True, text=True)
+        if done.returncode:
+            print(done.stderr.strip())
+            print('the React previews did not render in static mode: every static parity check will fail', flush=True)
 
 
 def main(argv):
@@ -131,15 +137,18 @@ def main(argv):
     # this run's own folder for the React pages, so runs at the same time do not wipe each other's; old ones are cleared
     cache = ROOT / '.cache' / 'tests'
     cache.mkdir(parents=True, exist_ok=True)
-    for old in cache.glob('react-*'):
+    for old in [*cache.glob('react-*'), *cache.glob('static-*')]:
         if time.time() - old.stat().st_mtime > 3 * 3600:
             shutil.rmtree(old, ignore_errors=True)
     os.environ['TRAY_TEST_REACT'] = str(cache / f'react-{os.getpid()}')
+    os.environ['TRAY_TEST_STATIC'] = str(cache / f'static-{os.getpid()}')
     harness.REACT_OUT = pathlib.Path(os.environ['TRAY_TEST_REACT'])
+    harness.STATIC_OUT = pathlib.Path(os.environ['TRAY_TEST_STATIC'])
     try:
         return run(names, every, only, skip_generic, react, out, verbose, jobs, start)
     finally:
         shutil.rmtree(os.environ['TRAY_TEST_REACT'], ignore_errors=True)
+        shutil.rmtree(os.environ['TRAY_TEST_STATIC'], ignore_errors=True)
 
 
 def run(names, every, only, skip_generic, react, out, verbose, jobs, start):

@@ -124,3 +124,10 @@ def test_parity_keys(t):
 
 PARITY = [('table', 'Orders', 'table'),
           ('.tray-datatable__foot', 'Orders', '.tray-datatable__foot')]
+
+
+# Static parity (trayui-react/static): the table already carries data-tray="datatable" and its parts in React; a test page
+# checks its pager, which the preview reaches only behind many other controls.
+STATIC = True
+STATIC_PAGES = {'DataTable-paging': 1440}
+STATIC_IGNORE = {'BulkActions': "the bulk button's words follow the preview's own React state, which it sets from the selection the table reports as it loads"}

@@ -119,3 +119,8 @@ PARITY += [
     ('.tray-card nav', 'NavigationFill', 'nav'),
     ('[data-tray="strip"]', 'ScrollingStrip', 'nav'),
 ]
+
+# The React preview rendered in static mode (trayui-react/static) works with bundle.js as it does in React: the panels
+# form carries data-tray="tabs" there, and bundle.js switches the panels and moves with the arrows.
+STATIC = True
+STATIC_SKIP = {'Controlled': "the figures under the tabs are the preview's own React state, which a static page's own script keeps"}

@@ -110,3 +110,5 @@ def test_parity_stepper(t):
     t.eq('react: the drawer counts one more', d.locator('output').inner_text(), '3')
 
 
+# Static parity (trayui-react/static): as for Dialog.
+STATIC = True

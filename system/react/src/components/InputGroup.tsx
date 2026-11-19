@@ -3,6 +3,7 @@ import * as React from 'react';
 import type { IconSource } from '../lib/icon';
 import { useFieldControl } from '../lib/field';
 import { useMergedRef } from '../lib/menus';
+import { useStaticMode } from '../lib/static';
 import { cx } from '../lib/util';
 import { Icon } from './Icon';
 
@@ -55,6 +56,8 @@ export const InputGroup = React.forwardRef<HTMLInputElement, InputGroupProps>(fu
 ) {
   const field = useFieldControl({ id, disabled, invalid, 'aria-describedby': rest['aria-describedby'], 'aria-invalid': rest['aria-invalid'] });
   const [shown, setShown] = React.useState(false);
+  // static mode: bundle.js's reveal behaviour shows and hides the password, in place of the state above
+  const wired = useStaticMode();
   const inputType = reveal ? (shown ? 'text' : 'password') : type;
   const own = React.useRef<HTMLInputElement | null>(null);
   const setRef = useMergedRef(own, ref);
@@ -104,6 +107,7 @@ export const InputGroup = React.forwardRef<HTMLInputElement, InputGroupProps>(fu
           // One name in both states: aria-pressed carries the state, or it would be read as "Hide password, pressed".
           aria-pressed={shown}
           aria-label="Show password"
+          data-tray={wired ? 'reveal' : undefined}
           disabled={field.disabled}
           onClick={() => setShown((s) => !s)}
         >

@@ -31,7 +31,7 @@ Tabs switch between views of the same thing: a tray strip of 44px tabs, the curr
 ## Details
 - `fill` spreads the tabs across the full width in equal parts.
 - `count` puts a small round badge after the label.
-- `scroll` is for a strip that may not fit: it scrolls sideways and fades over its last 56px while tabs run past the end.
+- `scroll` is for a strip that may not fit: it scrolls sideways and fades over its last 56px while tabs run past the end. The chosen tab, or the current link, is scrolled into view clear of the fade when the strip first shows and whenever the choice moves, and so is a tab that takes keyboard focus. Only the strip moves, never the page.
 - Hover turns a tab the colour of the ground behind the strip, so the strip reads on a page and on a card alike.
 - `value` with `onChange` controls the chosen tab; `defaultValue` sets the first one and lets the tabs keep their own state.
 

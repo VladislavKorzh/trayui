@@ -21,6 +21,8 @@ A button starts an action; the yellow one is the single most important action in
 <Button href="/plans" variant="quiet">See the plans</Button>   {/* goes somewhere: renders a link */}
 ```
 
+`busy` shows a spinner before the label and sets `aria-busy`. While it is set the button ignores presses: `onClick` is not called, its form is not sent again and a link does not go, and the button keeps focus, which `disabled` would drop. Set it while the work runs: `<Button type="submit" busy={sending}>Send the order</Button>`.
+
 ## Sizes
 `lg` 64px for page actions, `md` 56px in a row with inputs, `sm` 48px in headers and toolbars, `xs` 40px in tables and dense rows.
 

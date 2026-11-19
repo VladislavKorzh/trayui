@@ -69,3 +69,8 @@ def test_parity_keys(t):
 
 
 PARITY = [('.tray-demo', 'Toolbar', '.tray-row')]
+
+
+# Static parity (trayui-react/static): the button carries data-tray="toggle" there, and bundle.js flips aria-pressed.
+STATIC = True
+STATIC_SKIP = {'Controlled': "the sentence beside the toggle follows the preview's own React state (pinned), which a static page's own script keeps"}

@@ -51,6 +51,20 @@ export default function Page() {
 
 The page the server sends is the page React hydrates: on import the runtime only adds the icon sprite, and each component wires its own behaviour in an effect, once React has the markup. Server-rendered or not, StrictMode or not, nothing is wired twice.
 
+## Static HTML
+
+`renderToStaticHTML`, from `trayui-react/static`, renders a tree to HTML for a page with no React: link the three files of the plain-HTML system (`tokens.css`, `components/bundle.css`, `components/bundle.js`, from the package `trayui`) and its `bundle.js` gives the components their behaviour. It is for a build step in Node, such as a site generator; the page it makes is never hydrated, and a Server Component must not import it.
+
+```tsx
+// build.tsx, run in Node
+import { renderToStaticHTML } from 'trayui-react/static';
+import { Tabs } from 'trayui-react';
+
+const body = renderToStaticHTML(<Tabs label="Order PL-20418" items={[{ value: 'items', label: 'Items', content: <p>Two jars</p> }, { value: 'delivery', label: 'Delivery', content: <p>Tomorrow</p> }]} />);
+```
+
+In it each component writes the HTML system's markup, `data-tray` included, so bundle.js gives it its behaviour: tabs switch, dialogs open and close, sidebars collapse, filters become chips, calendars pick and charts draw. What the tree's state shows at first is what the page shows; after that bundle.js keeps it, and changes come as `tray:*` events, not through the props' callbacks. What React does in a component that the plain-HTML system has no behaviour for is your page's own script's to do: sending a form (`onSubmit`), the page of a Pagination, the button of a Workspace Switcher after a choice, the Remove button of a file a File Upload starts with. So is state your page computes itself, such as a total that follows a choice. A Chart is drawn by the system's own chart from the same data; one that chart cannot draw (composed in `ChartContainer`, more than three rings, a stacked line, a value below zero) stops the render with an error that says why.
+
 ## Markup written by hand
 
 For markup that carries `data-tray` itself, such as a block pasted into a component, `useBehaviour` wires the behaviours under an element once it is mounted, and `useTrayEvent` hears their events. `runtime` holds the system's functions: `init`, `chart`, `calendar`, `toast` and `formatDate`.

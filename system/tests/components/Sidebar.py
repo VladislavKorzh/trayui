@@ -132,3 +132,7 @@ def test_sheet(t):
     t.check('Escape closes it too', not sheet.evaluate('d => d.open') and t.focused(pg)['label'] == 'Menu', t.focused(pg))
 
 
+# Static parity (trayui-react/static): the collapse button carries data-tray="sidebar-toggle" there, and bundle.js collapses
+# the sidebar to its rail and renames the button.
+STATIC = True
+STATIC_SKIP = {'CollapsedRail': "the preview's own button and the sidebar follow the preview's React state (collapsed), which a static page's own script keeps"}

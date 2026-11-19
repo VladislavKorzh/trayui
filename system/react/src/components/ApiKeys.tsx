@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { cx, useTrayEvent, useBehaviour, useUid } from '../lib/util';
 import { SectionHead } from '../lib/account';
+import { useStaticMode } from '../lib/static';
 import { Badge } from './Badge';
 import { Button } from './Button';
 import { Dialog } from './Dialog';
@@ -87,6 +88,8 @@ function Secret({ masked, value, block, onCopied }: { masked: string; value?: st
 
 function NewKeyDialog({ newKey, modal, onCopy, onDone }: { newKey: ApiNewKey; modal: boolean; onCopy?: (key: ApiNewKey) => void; onDone?: () => void }) {
   const copied = React.useRef(false);
+  // Static mode: the button closes the dialog (bundle.js's data-close), as in the plain-HTML system; it does not copy the key first.
+  const wired = useStaticMode();
   const finish = () => {
     if (copied.current) {
       onDone?.();
@@ -113,7 +116,7 @@ function NewKeyDialog({ newKey, modal, onCopy, onDone }: { newKey: ApiNewKey; mo
       title="Copy the new key"
       description={`This is the only time “${newKey.name}” is shown in full.`}
       footer={
-        <Button size="md" onClick={finish}>
+        <Button size="md" onClick={finish} data-close={wired ? '' : undefined}>
           I have copied it
         </Button>
       }

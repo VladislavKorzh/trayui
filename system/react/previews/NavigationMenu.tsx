@@ -66,6 +66,25 @@ export function Closed() {
   );
 }
 
+export function Strip() {
+  return (
+    <NavigationMenu
+      brand="Perly"
+      brandHref="#"
+      strip
+      links={[
+        { label: 'Shop', href: '#' },
+        { label: 'The farm', href: '#' },
+        { label: 'Field notes', href: '#' },
+        { label: 'Recipes', href: '#' },
+        { label: 'Stockists', href: '#', current: true },
+        { label: 'Questions', href: '#' },
+      ]}
+      actions={<Button size="sm" href="#">Order a jar</Button>}
+    />
+  );
+}
+
 export function ListPanel() {
   return (
     <div className="tray-stage tray-stage--page tray-stage--start" style={{ minHeight: 300, padding: 0 }}>

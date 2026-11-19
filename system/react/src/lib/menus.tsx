@@ -2,6 +2,7 @@ import * as React from 'react';
 import type { IconSource } from './icon';
 import { Icon } from '../components/Icon';
 import type { MenuItem, MenuRadioItem } from '../components/DropdownMenu';
+import { StaticChipLabels } from './static';
 import { cx, type TrayEventName } from './util';
 
 /* Shared by the menus (Select, Combobox, Command, DropdownMenu, ContextMenu, Menubar, NavigationMenu, Calendar, DatePicker).
@@ -76,6 +77,8 @@ interface MenuContext {
   /** Every item of the menu, to find the radios of a group. */
   all: MenuItem[];
   onCheckedChange?: (value: string, checked: boolean) => void;
+  /** Static mode, in a Filter Bar: the words of the chip each check item becomes (data-label). */
+  chips?: ReadonlyMap<string, string> | null;
 }
 
 function radiosOf(items: MenuItem[], group: string, out: MenuRadioItem[] = []): MenuRadioItem[] {
@@ -138,6 +141,7 @@ function renderItem(item: MenuItem, i: number, ctx: MenuContext): React.ReactNod
           aria-disabled={item.disabled || undefined}
           tabIndex={-1}
           data-value={value}
+          data-label={ctx.chips?.get(value)}
           onClick={onClick}
         >
           {lead(item.icon)}
@@ -217,7 +221,8 @@ function renderItem(item: MenuItem, i: number, ctx: MenuContext): React.ReactNod
 
 /** The rows of a menu panel, in the system's markup: options, check and radio items, rules, labels and one level of submenus. */
 export function MenuItems({ items, onCheckedChange }: { items: MenuItem[]; onCheckedChange?: (value: string, checked: boolean) => void }) {
-  const ctx: MenuContext = { all: items, onCheckedChange };
+  const chips = React.useContext(StaticChipLabels);
+  const ctx: MenuContext = { all: items, onCheckedChange, chips };
   return <>{items.map((item, i) => renderItem(item, i, ctx))}</>;
 }
 

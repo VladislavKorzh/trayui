@@ -61,6 +61,20 @@ def test_marks(t):
     t.eq('a checked box shows the tick', t.style(pg.locator('.tray-check').nth(1).locator('.tray-check__tick'), 'opacity'), '1')
 
 
+def test_data_indeterminate(t):
+    # markup alone can write a mixed box: data-indeterminate on the input, which the behaviours turn into the property
+    pg = t.open()
+    pg.evaluate('''() => { const row = document.querySelector('.tray-check').cloneNode(true), box = row.querySelector('input');
+        box.id = 'k-mixed'; box.checked = false; box.setAttribute('data-indeterminate', ''); row.querySelector('span:last-child').textContent = 'Every jar';
+        document.querySelector('.tray-demo').append(row); TrayUI.init(row); }''')
+    box = pg.locator('#k-mixed')
+    t.check('data-indeterminate makes the box mixed', box.evaluate('b => b.indeterminate'))
+    t.eq('and it is announced mixed', t.ax(box)['checked'], 'mixed')
+    box.click()
+    t.eq('a press turns it on, as on any mixed box', box.evaluate('b => [b.checked, b.indeterminate]'), [True, False])
+    t.check('and the attribute goes, so the markup no longer says mixed', box.get_attribute('data-indeterminate') is None)
+
+
 def test_motion(t):
     pg = t.open(motion='reduce')
     tick = pg.locator('.tray-check').nth(1).locator('.tray-check__tick')
@@ -98,3 +112,9 @@ def test_parity_keys(t):
     a = drive(t, h, h.locator('.tray-demo'), 'HTML')
     b = drive(t, r, t.cell(r, 'States'), 'React')
     t.eq('the error is the description of the invalid checkbox in both', b, a)
+
+
+# The React preview rendered in static mode (trayui-react/static) works with bundle.js as it does in React: a mixed box
+# carries data-indeterminate there, and bundle.js sets the property it stands for.
+STATIC = True
+STATIC_SKIP = {'SelectAll': "\"All extras\" follows the boxes under it through the preview's own React state, which a static page's own script keeps"}

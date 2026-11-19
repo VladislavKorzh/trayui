@@ -39,6 +39,32 @@ def test_tree(t):
     t.check('each column\'s label repeats its heading', navs and all(a == b for a, b in navs), navs)
 
 
+HEADS = '''(sel) => [...document.querySelectorAll(sel)].map(h => { const s = getComputedStyle(h);
+    return [h.tagName.toLowerCase(), s.fontSize, s.fontWeight, s.color, s.marginBlockEnd]; })'''
+
+
+def test_heading_levels(t):
+    """The README: choose the heading level that fits the page. A column headed by an h2 (or an h4) looks as an h3 does."""
+    pg = t.open()
+    pg.evaluate('''() => { const top = document.querySelector('.tray-footer__top');
+        for (const level of [2, 4]) { const n = document.createElement('nav'); n.className = 'tray-footer__col'; n.setAttribute('aria-label', 'Level ' + level);
+          n.innerHTML = '<h' + level + '>Level ' + level + '</h' + level + '><a href="#">A link</a>'; top.append(n); } }''')
+    heads = pg.evaluate(HEADS, '.tray-footer__col :is(h2, h3, h4)')
+    h3 = next(h for h in heads if h[0] == 'h3')
+    for level in ('h2', 'h4'):
+        got = next(h for h in heads if h[0] == level)
+        t.eq(f'a column headed by an {level} looks as one headed by an h3 (size, weight, muted ink, space under it)', got[1:], h3[1:])
+
+
+def test_react_heading_level(t):
+    pg = t.open_react()
+    four = pg.evaluate(HEADS, '[data-cell="FourColumns"] .tray-footer__col :is(h2, h3, h4)')
+    two = pg.evaluate(HEADS, '[data-cell="TwoColumns"] .tray-footer__col :is(h2, h3, h4)')
+    t.eq('React: the column headings are h3 by default', {h[0] for h in four}, {'h3'})
+    t.eq('headingLevel={2} makes them h2', {h[0] for h in two}, {'h2'})
+    t.eq('and they look the same', {tuple(h[1:]) for h in two}, {tuple(h[1:]) for h in four})
+
+
 def test_keys(t):
     pg = t.open()
     seen = []

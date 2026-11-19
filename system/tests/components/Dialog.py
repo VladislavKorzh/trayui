@@ -201,3 +201,26 @@ def test_parity_modal(t):
     r.mouse.click(4, 4)
     t.settle(r)
     t.check('react: a click on the veil closes it', not dialog.evaluate('d => d.open'))
+
+
+def test_data_open(t):
+    # markup alone can open a dialog over the page as the page loads: data-open on the <dialog>, which the behaviour opens
+    # with showModal (the open attribute alone shows it in place); the attribute goes when the dialog closes
+    pg = t.open()
+    pg.evaluate('''() => { const d = document.getElementById('dlg-real').cloneNode(true);
+        d.id = 'dlg-load'; d.setAttribute('data-open', ''); d.querySelector('h2').id = 'dlg-load-t'; d.setAttribute('aria-labelledby', 'dlg-load-t');
+        document.body.append(d); TrayUI.init(d); }''')
+    d = pg.locator('#dlg-load')
+    t.check('data-open opens the dialog over the page', d.evaluate('d => d.open && d.matches(":modal")'))
+    t.check('and focus goes into it', d.evaluate('d => d.contains(document.activeElement)'), t.focused(pg))
+    d.locator('[data-close]').first.click()
+    t.settle(pg)
+    t.check('a data-close button closes it', not d.evaluate('d => d.open'))
+    t.check('and the attribute goes, so the markup no longer says open', d.get_attribute('data-open') is None)
+
+
+# Static parity (trayui-react/static): the dialog carries data-tray="dialog" and an id there, its trigger data-tray="open"
+# and data-target, and bundle.js opens, holds and closes it; a modal dialog open at first carries data-open.
+STATIC = True
+STATIC_PAGES = {'Dialog-open-at-load': 1440}
+STATIC_SKIP = {'Controlled': "the button that opens it and the day under it follow the preview's own React state, which a static page's own script keeps"}

@@ -3,6 +3,7 @@ import * as React from 'react';
 import type { IconSource } from '../lib/icon';
 import { cx } from '../lib/util';
 import { ShellContext, initialsOf } from '../lib/shell';
+import { useStaticMode } from '../lib/static';
 import { Breadcrumb, type BreadcrumbItem } from './Breadcrumb';
 import { Button } from './Button';
 import { Icon } from './Icon';
@@ -80,6 +81,9 @@ export const TopBar = React.forwardRef<HTMLElement, TopBarProps>(function TopBar
   ref,
 ) {
   const shell = React.useContext(ShellContext);
+  // static mode: bundle.js's sidebar-sheet and sidebar-toggle behaviours open the shell's sidebar in a sheet on a phone and
+  // collapse it to its rail, in place of the shell's state; the menu button names the sidebar it opens
+  const wired = useStaticMode();
   const H = `h${headingLevel}` as 'h2';
 
   // The search key opens the search from anywhere on the page but a field.
@@ -108,6 +112,7 @@ export const TopBar = React.forwardRef<HTMLElement, TopBarProps>(function TopBar
           aria-label="Open the navigation"
           aria-haspopup="dialog"
           aria-expanded={shell.menuOpen}
+          {...(wired ? { 'data-tray': 'sidebar-sheet', 'aria-controls': shell.sidebarId } : {})}
           onClick={shell.openMenu}
         />
         {/* tray-app__collapse: hidden below 56rem, where the sidebar leaves the page and nothing is left to collapse. */}
@@ -119,6 +124,7 @@ export const TopBar = React.forwardRef<HTMLElement, TopBarProps>(function TopBar
           aria-controls={shell.sidebarId}
           aria-expanded={!shell.collapsed}
           aria-label={shell.collapsed ? 'Expand the sidebar' : 'Collapse the sidebar'}
+          data-tray={wired ? 'sidebar-toggle' : undefined}
           onClick={() => shell.setCollapsed(!shell.collapsed)}
         />
       </>

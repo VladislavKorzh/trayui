@@ -24,7 +24,7 @@ export interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonE
   block?: boolean;
   /** Pushes the last part of the label to the far end, for a value on the button: "Order a jar ... $59". Pass the value as `end`. */
   end?: React.ReactNode;
-  /** Shows a spinner before the label and sets aria-busy while work runs. The label stays. */
+  /** Shows a spinner before the label and sets aria-busy while work runs. The label stays. While busy the button ignores presses (`onClick` is not called and a form is not sent again), and keeps focus, which `disabled` would not. */
   busy?: boolean;
   /** Renders a link that looks like a button: use it when the button goes somewhere instead of doing something. */
   href?: string;
@@ -36,13 +36,23 @@ export interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonE
   type?: 'button' | 'submit' | 'reset';
 }
 
+/** Cancels a press of a busy button. */
+function ignorePress(e: React.MouseEvent<HTMLElement>) {
+  e.preventDefault();
+}
+
 /**
  * A button starts an action. The yellow one is the single most important action in view; everything else is quiet, ghost or a link.
  */
 export const Button = React.forwardRef<HTMLElement, ButtonProps>(function Button(
-  { variant = 'primary', size = 'lg', icon, iconEnd, block, end, busy, href, target, rel, type = 'button', className, children, ...rest },
+  { variant = 'primary', size = 'lg', icon, iconEnd, block, end, busy, href, target, rel, type = 'button', className, children, onClick, ...rest },
   ref,
 ) {
+  // A busy button ignores presses, as the bundle's buttons do: no onClick, no second submit of its form, no link followed.
+  // Only in the browser: on a server, and so in a Server Component, a busy button gets no handler, so Button still renders
+  // there with no script (a Server Component's button cannot become busy later anyway).
+  const press = busy ? (typeof window === 'undefined' ? undefined : ignorePress) : onClick;
+  const handlers = press ? { onClick: press } : null;
   const iconOnly = !!icon && children == null && end == null;
   const classes = cx(
     'tray-btn',
@@ -74,13 +84,14 @@ export const Button = React.forwardRef<HTMLElement, ButtonProps>(function Button
         aria-disabled={disabled || undefined}
         aria-busy={busy || undefined}
         {...(anchorRest as React.HTMLAttributes<HTMLElement>)}
+        {...(handlers as React.HTMLAttributes<HTMLElement> | null)}
       >
         {body}
       </a>
     );
   }
   return (
-    <button ref={ref as React.Ref<HTMLButtonElement>} type={type} className={classes} aria-busy={busy || undefined} {...rest}>
+    <button ref={ref as React.Ref<HTMLButtonElement>} type={type} className={classes} aria-busy={busy || undefined} {...rest} {...handlers}>
       {body}
     </button>
   );

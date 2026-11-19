@@ -62,6 +62,12 @@ export interface NavigationMenuProps extends React.HTMLAttributes<HTMLElement> {
   defaultOpen?: string;
   /** Names the strip's `<nav>` landmark for screen readers. Default "Main"; give each `<nav>` of a page its own name. */
   label?: string;
+  /**
+   * Makes a strip of links alone a Tabs strip (`tray-tabs` with `data-tray="strip"`), as the headers of the blocks are: the ink pill
+   * slides to the current link, the end fades while links run past it, and the current link and a focused one scroll into view.
+   * Left out while any entry opens a `panel`: the strip's scroll box would cut the panel. Default false.
+   */
+  strip?: boolean;
 }
 
 /**
@@ -69,14 +75,15 @@ export interface NavigationMenuProps extends React.HTMLAttributes<HTMLElement> {
  * A link with children opens a roomy panel on click, Enter or Space (never on hover alone); the panel is a disclosure, so Tab moves through its links and Escape closes it.
  */
 export const NavigationMenu = React.forwardRef<HTMLElement, NavigationMenuProps>(function NavigationMenu(
-  { brand, brandHref = '/', links, actions, defaultOpen, label = 'Main', className, ...rest },
+  { brand, brandHref = '/', links, actions, defaultOpen, label = 'Main', strip, className, ...rest },
   forwarded,
 ) {
   const ref = React.useRef<HTMLElement | null>(null);
   const setRef = useMergedRef(ref, forwarded);
   // The popover behaviour owns each panel's `hidden` from here on: React only sets the first state.
   const [initiallyOpen] = React.useState(defaultOpen);
-  useBehaviour(ref);
+  const tabs = !!strip && !links.some((link) => link.panel);
+  useBehaviour(ref, [tabs]);
 
   return (
     <header ref={setRef} className={cx('tray-nav', className)} {...rest}>
@@ -84,7 +91,7 @@ export const NavigationMenu = React.forwardRef<HTMLElement, NavigationMenuProps>
         {brand}
       </a>
       <nav className="tray-nav__strip" aria-label={label}>
-        <ul className="tray-nav__links">
+        <ul className={cx('tray-nav__links', tabs && 'tray-tabs')} data-tray={tabs ? 'strip' : undefined}>
           {links.map((link, i) => {
             if (!link.panel) {
               return (

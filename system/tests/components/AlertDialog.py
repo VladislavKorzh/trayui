@@ -104,3 +104,22 @@ def test_parity_modal(t):
     t.settle(r)
     t.check('react: Escape closes it', not d.evaluate('d => d.open'))
     t.check('react: focus returns to the trigger', opener.evaluate('b => b === document.activeElement'), t.focused(r))
+
+
+def test_data_open(t):
+    # an alert dialog opened by data-open as the page loads starts on the safe choice, as one opened by its trigger does
+    pg = t.open()
+    pg.evaluate('''() => { const d = document.querySelector('dialog[role="alertdialog"]').cloneNode(true);
+        d.removeAttribute('open'); d.setAttribute('data-open', ''); d.id = 'ad-load';
+        d.querySelectorAll('[id]').forEach((n) => { n.id = 'load-' + n.id; });
+        d.setAttribute('aria-labelledby', 'load-ad-t'); d.setAttribute('aria-describedby', 'load-ad-d');
+        const foot = d.querySelector('.tray-dialog__foot'); foot.prepend(foot.querySelector('.tray-btn--danger'));  // the browser alone would focus it
+        document.body.append(d); TrayUI.init(d); }''')
+    d = pg.locator('#ad-load')
+    t.check('data-open opens the alert dialog over the page', d.evaluate('d => d.open && d.matches(":modal")'))
+    t.eq('focus starts on the safe choice', t.focused(pg)['text'], 'Keep the order')
+
+
+# Static parity (trayui-react/static): as for Dialog; open at load, focus starts on the safe choice.
+STATIC = True
+STATIC_PAGES = {'AlertDialog-open-at-load': 1440}

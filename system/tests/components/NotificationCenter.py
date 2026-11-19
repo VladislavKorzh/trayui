@@ -114,3 +114,9 @@ def test_react(t):
 
 
 PARITY = [('.tray-notices', 'Open', '.tray-notices')]
+
+
+# Static parity (trayui-react/static): the panel carries data-tray="notices" there, with the bell's count, "Mark all as
+# read" and the view radios as the behaviour names them; bundle.js marks notifications read, counts them and filters the view.
+STATIC = True
+STATIC_SKIP = {'KeepingTheCount': "the sentence under the bell follows the preview's own React state (onRead), which a static page's own script keeps; Open checks the same panel"}

@@ -1,5 +1,5 @@
-// Checks the package as npm would publish it: packs it, unpacks the copy into an app of its own, and imports both of its
-// entries there in Node, as an application does. A relative import that does not name its file (0.2.0 shipped
+// Checks the package as npm would publish it: packs it, unpacks the copy into an app of its own, and imports its three
+// entries there in Node, as an application does (and renders Tabs with the static entry and without it). A relative import that does not name its file (0.2.0 shipped
 // './components/Button', which Node and webpack cannot load), a file the exports name but the package leaves out, or a
 // file that must not ship (dist/all.*, built from a file kept on one machine) fails here instead of in someone's app.
 // It also checks what a server-rendered app needs of the copy: every file whose source starts with 'use client' still
@@ -39,9 +39,28 @@ try {
   writeFileSync(join(app, 'try.mjs'), [
     `const ui = await import('${pkg.name}');`,
     `const charts = await import('${pkg.name}/charts');`,
+    `const still = await import('${pkg.name}/static');`,
     `if (typeof ui.Button !== 'function' && typeof ui.Button !== 'object') throw new Error('${pkg.name} has no Button');`,
     `if (!charts.Chart) throw new Error('${pkg.name}/charts has no Chart');`,
-    `console.log(Object.keys(ui).length + ' exports in ${pkg.name}, ' + Object.keys(charts).length + ' in ${pkg.name}/charts');`,
+    // static mode: the tabs carry the token bundle.js wires, which the default render leaves out
+    `const React = (await import('react')).default, { renderToStaticMarkup } = await import('react-dom/server');`,
+    `const tabs = React.createElement(ui.Tabs, { items: [{ value: 'a', label: 'A', content: 'a' }, { value: 'b', label: 'B', content: 'b' }] });`,
+    `if (!still.renderToStaticHTML(tabs).includes('data-tray="tabs"')) throw new Error('${pkg.name}/static: Tabs carries no data-tray="tabs"');`,
+    `if (renderToStaticMarkup(tabs).includes('data-tray')) throw new Error('${pkg.name}: the default render of Tabs carries data-tray');`,
+    // a chart in static mode is the system's own figure, from the same data; what the system cannot draw is refused, loudly
+    `const chart = (props) => React.createElement(charts.Chart, { labels: ['a', 'b'], series: [{ name: 's', values: [1, 2] }], ...props });`,
+    `const fig = still.renderToStaticHTML(chart({ type: 'bar', title: 'Jars' }));`,
+    `const attr = (fig.match(/data-chart="([^"]*)"/) || [])[1] || '';`,
+    `const data = JSON.parse(attr.replace(/&quot;/g, '"').replace(/&#x27;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'));`,
+    `if (!fig.includes('data-tray="chart"') || data.type !== 'bar' || data.series[0].values.join() !== '1,2') throw new Error('${pkg.name}/static: a bar chart is not written as the system draws it: ' + fig.slice(0, 200));`,
+    `const refuses = (el, words) => { let said = ''; try { still.renderToStaticHTML(el); } catch (e) { said = String(e.message); } if (!said.includes(words)) throw new Error('${pkg.name}/static: expected an error that says "' + words + '", got ' + (said || 'none')); };`,
+    `refuses(chart({ type: 'radial', labels: ['a', 'b', 'c', 'd'], series: [{ name: 's', values: [1, 2, 3, 4] }] }), 'three at most');`,
+    `refuses(chart({ type: 'line', stacked: true }), 'stacked line chart');`,
+    `refuses(chart({ type: 'pie' }), 'not "pie"');`,
+    `refuses(chart({ type: 'bar', series: [{ name: 's', values: [1, NaN] }] }), 'not a number');`,
+    `refuses(chart({ type: 'line', series: [{ name: 's', values: [3, -2] }] }), 'from zero up');`,
+    `refuses(React.createElement(charts.ChartContainer, { config: {}, title: 'Free' }), 'composed in ChartContainer');`,
+    `console.log(Object.keys(ui).length + ' exports in ${pkg.name}, ' + Object.keys(charts).length + ' in ${pkg.name}/charts, ' + Object.keys(still).length + ' in ${pkg.name}/static');`,
   ].join('\n') + '\n');
   try {
     process.stdout.write('packed: ' + execFileSync(process.execPath, ['try.mjs'], { cwd: app, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }));

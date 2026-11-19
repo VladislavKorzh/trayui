@@ -54,6 +54,10 @@ mark { padding-inline: .12em; border-radius: var(--radius-mark); background: var
 /* One line of text, cut with an ellipsis where its column ends: the excerpt of a message in a list. */
 .tray-clip { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tray-vh { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* A skip link, the first thing in the body: <a class="tray-skip" href="#main">Skip to the content</a>. Out of sight until
+   it takes focus; then a small ink button at the top start of the window, above everything else. */
+.tray-skip { position: fixed; inset-block-start: var(--space-2); inset-inline-start: var(--space-2); z-index: var(--z-toast); display: inline-flex; align-items: center; min-block-size: var(--size-hit); padding: 0 var(--space-4); border-radius: var(--radius-control); background: var(--ink); color: var(--tray-on-ink); font: 600 1rem/1 var(--font-sans); text-decoration: none; }
+.tray-skip:not(:focus) { inline-size: 1px; block-size: 1px; min-block-size: 0; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* Icons: a 20px box, drawn with a round stroke in the text colour: 2.4 in the 24-unit drawing, 2px on the screen. */
 .tray-icon { flex: none; display: block; inline-size: var(--size-icon); block-size: var(--size-icon); fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }

@@ -22,7 +22,7 @@ The wrapper fires `tray:change` with `detail.tab` (the chosen tab's `id`) when a
 - Hover turns a tab the colour of the ground behind the strip.
 - `tray-tabs--fill` spreads the tabs across the full width.
 - A tab may carry a `tray-badge tray-badge--count`.
-- A strip that may not fit takes `data-tray="strip"`: it scrolls sideways, and fades over its last 56px while tabs run past the end.
+- A strip that may not fit takes `data-tray="strip"`: it scrolls sideways, and fades over its last 56px while tabs run past the end. It scrolls the chosen tab, or the current link, into view when the page loads, clear of the fade, and again when a script moves `aria-selected` or `aria-current`; a tab that takes keyboard focus is scrolled wholly into view the same way, so its ring is never under the fade. Only the strip moves, never the page.
 
 - The ink pill of the chosen tab slides to the next one chosen, and a panel chosen by a press fades in; a strip of links follows its `aria-current` the same way.
 

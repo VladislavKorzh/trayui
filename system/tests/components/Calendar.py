@@ -144,3 +144,9 @@ def test_parity_keys(t):
     a = drive(t, h, h.locator(ONE))
     b = drive(t, r, t.cell(r, 'SingleAndRange').locator('.tray-card .tray-cal'))
     t.eq('React: the keys, the pick, tray:change and the month buttons work as in HTML', b, a)
+
+
+# Static parity (trayui-react/static): the empty root carries data-tray="calendar" and its options as data-* there, and
+# bundle.js draws the month grid and picks.
+STATIC = True
+STATIC_SKIP = {'Controlled': "the sentence under the calendar follows the preview's own React state (the day), which a static page's own script keeps"}

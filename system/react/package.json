@@ -1,6 +1,6 @@
 {
   "name": "trayui-react",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Tray UI for React: typed components over the system's own stylesheet and behaviours, and charts drawn with Recharts.",
   "license": "MIT",
   "author": "Vladyslav Korzh (https://github.com/VladislavKorzh)",
@@ -39,6 +39,10 @@
     "./charts": {
       "types": "./dist/charts/index.d.ts",
       "import": "./dist/charts/index.js"
+    },
+    "./static": {
+      "types": "./dist/static.d.ts",
+      "import": "./dist/static.js"
     },
     "./styles.css": "./dist/styles.css"
   },

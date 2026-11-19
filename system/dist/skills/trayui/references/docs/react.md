@@ -54,6 +54,10 @@ A block keeps the script of its HTML page, if it has one (a filter that narrows 
 
 In Next.js, every component file that needs the browser (state, effects, an event handler, a behaviour) starts with `'use client'`, in the package and in the copies, so a Server Component can render them as they are.
 
+## Static HTML from the same source
+
+`renderToStaticHTML`, from `trayui-react/static`, renders a React tree at build time to HTML that works with the three files and no React in the browser. [Static HTML from React](https://trayui.com/docs/static-html.md) explains it.
+
 ## What it does not have yet
 
 The page layouts added for the blocks (the shell and sidebar variants, the screen frame) are in the stylesheet, so their classes work in React, but the components have no props for them yet: the React blocks write those classes as they are.

@@ -1,6 +1,7 @@
 'use client';
 import * as React from 'react';
 import type { IconSource } from '../lib/icon';
+import { useStaticMode } from '../lib/static';
 import { cx, useControlled, useUid } from '../lib/util';
 import { Avatar } from './Avatar';
 import { Badge } from './Badge';
@@ -83,6 +84,8 @@ export const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(function Side
   const sideId = id ?? auto;
   const [current, setCurrent] = useControlled<string | undefined>(value, defaultValue, onChange as ((v: string | undefined) => void) | undefined);
   const [rail, setRail] = useControlled(collapsed, defaultCollapsed, onCollapsedChange);
+  // static mode: bundle.js's sidebar-toggle behaviour collapses it (data-collapsed) and renames the button, in place of the state above
+  const wired = useStaticMode();
 
   const item = (it: SidebarItem, sub: boolean) => {
     const v = it.value ?? it.label;
@@ -128,6 +131,7 @@ export const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(function Side
               aria-label={rail ? 'Expand the sidebar' : 'Collapse the sidebar'}
               aria-controls={sideId}
               aria-expanded={!rail}
+              data-tray={wired ? 'sidebar-toggle' : undefined}
               onClick={() => setRail(!rail)}
             />
           ) : null}

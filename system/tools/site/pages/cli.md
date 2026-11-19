@@ -42,7 +42,7 @@ The files are yours: rename them, change them, delete what you do not use. Compo
 npx trayui check index.html pages/
 ```
 
-It reads plain HTML and reports classes, behaviours and icons that do not exist, more than one yellow button in a view, buttons and fields without a name, missing `autocomplete`, references to ids that are not there, tabs wired wrong, skipped headings, literal colours and sizes, and a page without its language, its theme or the three files in order. It exits with 1 when it finds an error, so it can run in CI; `--json` gives the findings to another tool. It cannot see the page: look at it as well, at 1280, 768 and 390 pixels wide, in a light and a dark theme.
+It reads plain HTML and reports classes, behaviours and icons that do not exist, more than one yellow button in a view, buttons and fields without a name, missing `autocomplete`, references to ids that are not there, tabs wired wrong, skipped headings, literal colours and sizes, and a page without its language, its theme or the three files in order. It exits with 1 when it finds an error, so it can run in CI; `--json` gives the findings to another tool. A project with classes of its own names their start with `--prefix` (`--prefix kit-`, or `--prefix kit-,app-` for more), and they are no longer reported as foreign. It cannot see the page: look at it as well, at 1280, 768 and 390 pixels wide, in a light and a dark theme.
 
 ## The commands
 

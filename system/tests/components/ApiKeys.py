@@ -110,3 +110,10 @@ def test_parity_secret(t):
 
 
 PARITY = [('.tray-table-wrap', 'Keys', '.tray-table-wrap'), ('.tray-stage dialog', 'NewKey', 'dialog')]
+
+
+# Static parity (trayui-react/static): the new-key dialog over the page (a test page: the preview shows it in place) opens
+# at load with data-open and closes on "I have copied it" (data-close), as the plain-HTML system's does.
+STATIC = True
+STATIC_PAGES = {'ApiKeys-new-key': 1440}
+STATIC_SKIP = {'NewKey: button "I have copied it"': "the preview passes no onNewKeyDone, so React keeps the dialog open; in static the button closes it, as the plain-HTML system's does. ApiKeys-new-key checks it against a page that closes it"}

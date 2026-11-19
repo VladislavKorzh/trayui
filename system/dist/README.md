@@ -7,9 +7,9 @@ Docs and live examples of every component, with a playground for 52 of them: htt
 ## Link it from a CDN
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.3.0/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.3.0/components/bundle.css">
-<script src="https://cdn.jsdelivr.net/npm/trayui@0.3.0/components/bundle.js" defer></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.4.0/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.4.0/components/bundle.css">
+<script src="https://cdn.jsdelivr.net/npm/trayui@0.4.0/components/bundle.js" defer></script>
 ```
 
 Then write HTML with `tray-` classes. A button is one class; a menu, a calendar or a chart is one attribute more:

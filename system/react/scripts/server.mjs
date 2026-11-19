@@ -97,6 +97,11 @@ while (queue.length) {
     queue.push(imp.path);
   }
 }
+// react-dom/server belongs to the static entry alone (static.ts): an app that imports the package must not bring it along
+for (const rel of modules.keys()) {
+  if (rel !== 'static.ts' && /from\s+['"]react-dom\/server['"]/.test(strip(readFileSync(join(src, rel), 'utf8'))))
+    problems.push(`${rel} imports react-dom/server: only static.ts, the entry trayui-react/static, may`);
+}
 const marked = [...modules].filter(([rel, m]) => isComponent(rel) && m.client).length;
 const plain = [...modules].filter(([rel, m]) => isComponent(rel) && !m.client).map(([rel]) => rel.replace(/^.*\/|\.tsx$/g, ''));
 

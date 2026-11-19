@@ -56,6 +56,52 @@ def test_keys(t):
     t.eq('in ink', ring['outline-color'], probe)
 
 
+def test_busy_presses(t):
+    """A busy button ignores presses: click, Enter, Space, and Enter in a field of its form; a busy link does not go. It
+    keeps focus. Once aria-busy goes, it presses again; a button that is not busy always does."""
+    pg = t.open()
+    pg.evaluate('''() => { window.__n = { busy: 0, plain: 0, sent: 0, link: 0 };
+        const f = document.createElement('form'); f.action = 'javascript:void 0'; f.className = 'tray-stack';
+        f.innerHTML = '<label class="tray-label" for="bt-name">Name</label><input class="tray-input" id="bt-name">'
+          + '<button class="tray-btn" type="submit" id="bt-send" aria-busy="true"><span class="tray-spinner" aria-hidden="true"></span>Sending</button>'
+          + '<a class="tray-btn tray-btn--quiet" href="#gone" id="bt-link" aria-busy="true">Opening</a>';
+        document.querySelector('.tray-demo').append(f); TrayUI.init(f);
+        f.addEventListener('submit', (e) => { e.preventDefault(); __n.sent++; });
+        document.getElementById('bt-link').addEventListener('click', () => __n.link++);
+        document.querySelector('.tray-demo > [aria-busy="true"]').addEventListener('click', () => __n.busy++);
+        document.querySelector('.tray-btn').addEventListener('click', () => __n.plain++); }''')
+    busy = pg.locator('.tray-demo > [aria-busy="true"]')
+    busy.click()
+    busy.focus(); pg.keyboard.press('Enter'); pg.keyboard.press('Space')
+    t.check('a busy button keeps focus', t.is_focused(busy))
+    send = pg.locator('#bt-send')
+    send.click(); send.focus(); pg.keyboard.press('Enter')
+    pg.locator('#bt-name').focus(); pg.keyboard.press('Enter')
+    pg.locator('#bt-link').click()
+    n = pg.evaluate('window.__n')
+    t.eq('click, Enter and Space on a busy button reach no handler', n['busy'], 0)
+    t.eq('a busy submit button sends its form neither when pressed nor on Enter in a field', n['sent'], 0)
+    t.check('a busy link does not go', n['link'] == 0 and not pg.url.endswith('#gone'), [n['link'], pg.url])
+    pg.locator('.tray-btn').first.click()
+    t.eq('a button that is not busy presses as before', pg.evaluate('window.__n.plain'), 1)
+    send.evaluate('e => e.removeAttribute("aria-busy")')
+    pg.locator('#bt-name').focus(); pg.keyboard.press('Enter')
+    t.eq('once aria-busy goes, Enter in the field sends the form', pg.evaluate('window.__n.sent'), 1)
+
+
+def test_react_busy(t):
+    """React: a click on a busy Button is cancelled (no form sent, no link followed) and its onClick is not called."""
+    pg = t.open_react()
+    pg.evaluate('''() => { window.__seen = []; document.addEventListener('click', (e) => { const b = e.target.closest('.tray-btn'); if (b) __seen.push([b.textContent.trim(), e.defaultPrevented]); }); }''')
+    busy = pg.locator('.tray-btn[aria-busy="true"]').first
+    busy.click()
+    busy.focus(); pg.keyboard.press('Enter'); pg.keyboard.press('Space')
+    pg.locator('.tray-btn:not([aria-busy]):not(a)').first.click()
+    seen = pg.evaluate('window.__seen')
+    t.check('react: every press of the busy button is cancelled', len([s for s in seen if s[0] == 'Sending']) == 3 and all(s[1] for s in seen if s[0] == 'Sending'), seen)
+    t.check('react: a button that is not busy is not', any(s[0] != 'Sending' and not s[1] for s in seen), seen)
+
+
 def test_sizes(t):
     pg = t.open()
     for label, px in SIZES.items():

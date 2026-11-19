@@ -121,3 +121,9 @@ def test_react(t):
 
 
 PARITY = [('.tray-filterbar', 'OverTheOrders', '.tray-filterbar')]
+
+
+# Static parity (trayui-react/static): the bar carries data-tray="filterbar" there, each check item its chip words
+# (data-label) and "Clear all" data-filter="clear"; bundle.js turns a checked item into a chip and back.
+STATIC = True
+STATIC_SKIP = {'Controlled': "the sentence under the bar follows the preview's own React state (the count, the view, the filters), which a static page's own script keeps"}
