@@ -321,6 +321,12 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
   .site-maker { grid-template-columns: minmax(0, 1fr); }
   .site-maker__stage { position: static; }
 }
+/* Between a phone's menu and a wide screen the six sections fit beside the search only when it is folded to its icon, as a
+   phone shows it; unfolded, the strip would hide Kits and Charts behind its scroll. */
+@media (min-width: 56.01rem) and (max-width: 72rem) {
+  .site-top .tray-topbar__search--fold { flex: none; justify-content: center; inline-size: var(--size-sm); padding: 0; color: var(--ink); }
+  .site-top .tray-topbar__search--fold > :not(.tray-icon) { display: none; }
+}
 @media (max-width: 56rem) {
   .site-charts--pair { grid-template-columns: minmax(0, 1fr); }
   .site-top .site-sections { display: none; }

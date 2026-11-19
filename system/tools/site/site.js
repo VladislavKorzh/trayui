@@ -169,8 +169,9 @@
        words would vanish against the pill on its way. */
     switches.forEach(function (n) {
       if (n.getAttribute('data-section') === key) return;
-      var tabs = S.sections.filter(function (s) { return s.tab !== false; });
-      if ($$('.tray-tab', n).length !== tabs.length) n.innerHTML = tabs.map(function (s) { return '<a class="tray-tab" href="' + href(s.home) + '">' + esc(s.title) + '</a>'; }).join('');
+      var tabs = S.sections.filter(function (s) { return s.tab !== false; }), links = S.links || [];
+      if ($$('.tray-tab', n).length !== tabs.length + links.length) n.innerHTML = tabs.map(function (s) { return '<a class="tray-tab" href="' + href(s.home) + '">' + esc(s.title) + '</a>'; }).join('')
+        + links.map(function (l) { return '<a class="tray-tab" href="' + esc(l.href) + '">' + esc(l.title) + '</a>'; }).join('');
       tabs.forEach(function (s, i) {
         var a = $$('.tray-tab', n)[i];
         if (s === sec) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');

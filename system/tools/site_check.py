@@ -176,7 +176,9 @@ def main():
     mds = [SITE / (m['path'] + '.md') for i, m in index.items() if i != 'home']
     check('every page but the home page is also Markdown, at its address with .md added', all(f.exists() for f in mds), [str(f) for f in mds if not f.exists()][:4])
     robots = (SITE / 'robots.txt').read_text(encoding='utf-8') if (SITE / 'robots.txt').exists() else ''
-    check('robots.txt lets every reader in, keeps none off a page, and names the sitemap', 'User-agent: *\nAllow: /' in robots and 'Disallow' not in robots
+    shut = re.findall(r'^Disallow: (.*)$', robots, re.M)
+    check('robots.txt lets every reader in, keeps none off a page (only the shop\'s checkout, downloads and account), and names the sitemap',
+          'User-agent: *\nAllow: /' in robots and shut == ['/kits/buy/', '/kits/thanks', '/kits/download/', '/kits/account', '/kits/webhook']
           and f'Sitemap: {site["site"]}/sitemap.xml' in robots, robots)
     links = json.loads((ROOT / 'tools' / 'links.json').read_text(encoding='utf-8'))
     licence = links.get('license', 'MIT')
@@ -333,8 +335,8 @@ def main():
         check('until the visitor chooses a theme, the site follows the system\'s light or dark setting, also when it changes, and keeps nothing',
               followed == 'dark' and pg.evaluate('document.documentElement.dataset.theme') == 'light' and pg.evaluate("localStorage.getItem('tray-site-theme')") is None, followed)
         check('the home page has no sidebar and the header links every section, none of them current',
-              pg.locator('.tray-app__side').is_hidden() and pg.locator('#site-sections .tray-tab').all_inner_texts() == titles
-              and titles == ['Docs', 'Components', 'Blocks', 'Templates', 'Charts']
+              pg.locator('.tray-app__side').is_hidden() and pg.locator('#site-sections .tray-tab').all_inner_texts() == titles + ['Kits']
+              and titles == ['Docs', 'Components', 'Blocks', 'Templates', 'Charts'] and pg.locator('#site-sections .tray-tab').last.get_attribute('href') == '/kits'
               and pg.locator('#site-sections [aria-current]').count() == 0, pg.locator('#site-sections .tray-tab').all_inner_texts())
         mark = pg.evaluate("(() => { const m = document.querySelector('.site-top a.site-logo .site-mark'); if (!m) return null; const cs = getComputedStyle(document.documentElement); "
                            "return [getComputedStyle(m.querySelector('.site-mark__tile')).fill, getComputedStyle(m.querySelector('.site-mark__bar')).fill, Math.round(m.getBoundingClientRect().width), m.getAttribute('aria-hidden'), "
@@ -372,6 +374,10 @@ def main():
         pg.locator('.tray-hero__actions .tray-btn').first.click(); pg.wait_for_timeout(200)
         check('"Get started" opens the installation page, in the Docs section', here(pg) == 'd-installation' and pg.locator('#site-sections [aria-current="page"]').inner_text() == 'Docs'
               and pg.locator('.tray-app__side').is_visible() and pg.locator('#site-nav [aria-current="page"]').inner_text() == 'Installation')
+        kits = pg.evaluate('''() => { const a = [...document.querySelectorAll('#site-sections .tray-tab')].pop(); let left = null;
+          window.addEventListener('click', e => { left = !e.defaultPrevented; e.preventDefault(); }, { once: true }); a.click();
+          return [a.textContent, a.getAttribute('href'), left]; }''')
+        check('inside a section the header still ends with the Kits link, and a click on it is left to the browser (the shop serves /kits)', kits == ['Kits', '/kits', True], kits)
         check('the installation page offers the download and shows the markup to link', pg.locator('.site-prose a[download]').count() == 1 and pg.locator('.site-prose .tray-code').count() >= 3)
         pg.screenshot(path=str(SHOTS / 'installation.png'))
         tints = pg.evaluate('''() => { const k = document.querySelector('.site-prose .tray-code .hljs-tag .hljs-name');
@@ -938,7 +944,7 @@ def main():
         go(pg, 'home'); pg.wait_for_timeout(500)
         pg.screenshot(path=str(SHOTS / 'phone-home.png'))
         pg.click('.tray-app__menu'); pg.wait_for_timeout(250)
-        check('the menu button opens every section in a sheet', pg.locator('#site-sheet').evaluate('d => d.open') and pg.locator('#site-sections-sheet .tray-tab').count() == len(titles))
+        check('the menu button opens every section in a sheet', pg.locator('#site-sheet').evaluate('d => d.open') and pg.locator('#site-sections-sheet .tray-tab').count() == len(titles) + 1)
         pg.locator('#site-sections-sheet .tray-tab', has_text='Components').click(); pg.wait_for_timeout(300)
         check('choosing a section closes the sheet and opens it', not pg.locator('#site-sheet').evaluate('d => d.open') and pg.inner_text('#site-view h1') == 'Components')
         pg.click('.tray-app__menu'); pg.wait_for_timeout(250)
