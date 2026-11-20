@@ -373,6 +373,15 @@ def main():
         pg.evaluate("document.getElementById('home-charts').scrollIntoView({ block: 'start' })"); pg.wait_for_timeout(1500)
         check('the home page draws three charts when they come into view', 'charts.js' in asked and pg.locator('.site-home [data-rechart] svg.recharts-surface').count() == 3,
               pg.locator('.site-home [data-rechart] svg.recharts-surface').count())
+        kits = pg.evaluate('''() => { const cards = [...document.querySelectorAll('#site-view .site-kits a.site-thumb')];
+          const all = document.querySelector('#site-view a[href="/kits"].tray-btn'); let left = null;
+          window.addEventListener('click', e => { left = !e.defaultPrevented; e.preventDefault(); }, { once: true }); cards[0]?.click();
+          return { left, all: !!all, cards: cards.map(a => { const i = a.querySelector('img');
+            return [a.getAttribute('href'), i.getAttribute('loading'), i.getAttribute('width'), i.getAttribute('height'), (i.getAttribute('srcset') || '').split(',').length,
+                    !!a.querySelector('.site-thumb__text b')?.textContent]; }) }; }''')
+        check('the home page shows six kits, each a link to its page in the shop with its picture in four widths, and a link to all the kits; '
+              'a click on one is left to the browser', kits['left'] is True and kits['all'] and len(kits['cards']) == 6
+              and all(re.fullmatch(r'/kits/[a-z0-9-]+', h) and l == 'lazy' and w == '1280' and ht == '800' and n == 4 and named for h, l, w, ht, n, named in kits['cards']), kits)
         pg.evaluate('window.scrollTo(0, 0)'); pg.wait_for_timeout(200)
         pg.screenshot(path=str(SHOTS / 'home.png'))
         pg.locator('.tray-hero__actions .tray-btn').first.click(); pg.wait_for_timeout(200)

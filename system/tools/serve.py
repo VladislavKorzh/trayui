@@ -9,7 +9,7 @@ Cloudflare Workers serves components/lightbox.html at /components/lightbox and s
 status 404 (not_found_handling "404-page"). This does the same, so a page opened, reloaded or linked straight to
 behaves here as it will on the site. tools/site_check.py serves the site with it.
 """
-import functools, http.server, pathlib, sys, threading, urllib.parse
+import functools, http.server, pathlib, re, sys, threading, urllib.parse
 
 SITE = pathlib.Path(__file__).resolve().parent.parent / 'site'
 
@@ -50,6 +50,15 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         query = '?' + url.query if url.query else ''
         if path == '/favicon.ico':
             self.send_response(204); self.end_headers(); return True
+        if re.fullmatch(r'/kits/[a-z0-9-]+/card-\d+\.webp', path):
+            # A kit's picture comes from the shop, another Worker on trayui.com/kits: here the home page gets a stand-in.
+            body = (b'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800"><rect width="1280" height="800" fill="#f3f2ef"/>'
+                    b'<rect x="64" y="64" width="560" height="64" rx="16" fill="#e2e0db"/></svg>')
+            self.send_response(200); self.send_header('Content-Type', 'image/svg+xml'); self.send_header('Content-Length', str(len(body)))
+            self.end_headers()
+            if self.command != 'HEAD':
+                self.wfile.write(body)
+            return True
         rel = path.lstrip('/')
         if rel.endswith('.html') and rel != '404.html':
             bare = rel[:-5]

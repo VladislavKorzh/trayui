@@ -21,6 +21,10 @@
      content, drawn in the shell this site builds (shell/kits.html). Nothing here draws over it or holds back its links and
      forms; a page of the site chosen from it (in the search) is loaded as any address is. */
   var OUTSIDE = document.documentElement.hasAttribute('data-outside');
+  /* outside(href): an address under one of the links to such pages (S.links: /kits), which only the browser can follow. */
+  function outside(raw) {
+    return (S.links || []).some(function (l) { return raw === l.href || raw.indexOf(l.href + '/') === 0 || raw.indexOf(l.href + '?') === 0; });
+  }
 
   /* ---------- Addresses ----------
      On the web a page is at its address, /components/lightbox, and the host serves the file it is drawn in. Inside another
@@ -685,6 +689,7 @@
     var raw = a.getAttribute('href');
     if (a.hasAttribute('data-retry')) { e.preventDefault(); render(); return; }
     if (PATHS ? idOf(raw) !== null : raw.charAt(0) === '#' && has(S.index, raw.slice(1))) return;  /* another page: the address changes */
+    if (outside(raw)) return;  /* a page another Worker makes on this host (the kits): the browser goes there */
     if (/^(https?:\/\/|mailto:)/.test(raw)) return;
     /* the contents of an article: a heading on this page. With addresses the browser goes there and the address keeps it;
        with hashes the hash names the page, so the heading is scrolled to instead. */

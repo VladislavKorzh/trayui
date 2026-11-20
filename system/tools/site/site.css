@@ -81,7 +81,7 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 
 .site-home { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--section-gap); padding-block-start: var(--space-2); }
 .site-section { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; }
-.site-section > .tray-bento, .site-section > .site-show, .site-section > .site-iconwall, .site-section > .site-charts { justify-self: stretch; }
+.site-section > .tray-bento, .site-section > .site-show, .site-section > .site-iconwall, .site-section > .site-charts, .site-section > .site-gallery { justify-self: stretch; }
 .site-section > .tray-section__head { margin-block-end: var(--space-8); }
 .site-section > p:last-child { margin-block-start: var(--space-6); }
 .site-section .lead a { color: var(--ink); }
@@ -224,6 +224,11 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 .site-thumb__view { box-sizing: content-box; display: block; aspect-ratio: 1280 / 800; padding: var(--space-2); border-radius: var(--radius-panel); background: var(--surface); transition: filter var(--duration-fill) var(--ease); }
 .site-thumb:hover .site-thumb__view { filter: brightness(.96); }
 .site-thumb__view iframe { pointer-events: none; }
+/* A kit's picture (the home page's kits, a picture the shop serves at /kits/<slug>/card-<w>.webp): the top of its home page,
+   filling the frame as a block's live picture does. */
+.site-thumb__view > img { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; object-position: top; border-radius: var(--radius-button); background: var(--page); }
+/* In one column the home page shows three kits, not six: the button under them leads to the rest. */
+@media (max-width: 47.99rem) { .site-kits > :nth-child(n+4) { display: none; } }
 .site-thumb__text { display: grid; gap: 2px; padding-inline: var(--space-2); }
 .site-thumb__text b { font: 600 1.0625rem/1.3 var(--font-sans); }
 .site-thumb__text small { color: var(--ink-muted); font: 400 .9375rem/1.4 var(--font-sans); }
