@@ -54,19 +54,25 @@ def test_keys(t):
     t.check('Tab reaches the file input', t.is_focused(pg.locator(INPUT)))
     s = t.style(pg.locator(DROP), 'outline-style', 'outline-width', 'outline-offset')
     t.eq('the whole tray draws the 3px ring', s, {'outline-style': 'solid', 'outline-width': '3px', 'outline-offset': '3px'})
-    # Each key on a page of its own, reached with Tab as a person would: Chrome keeps one picker at a time, and the one
-    # Space opened can still be on its way out when Enter is pressed, which on a busy machine (CI) left Enter's picker
-    # unseen. Focus given by a script, not by Tab, opens no picker in Chrome on Linux.
-    for key in ('Space', 'Enter'):
+    # Each key on a page of its own, reached with Tab as a person would (focus given by a script opens no picker in
+    # Chrome on Linux). Chrome keeps one picker at a time: a picker the test catches stays open until it is answered,
+    # and one left open made the next key's picker never come, now and then, on CI. So each picker is answered (no
+    # file) and its page closed before the next key; a key whose picker still does not come gets one more fresh page,
+    # so only a key that never opens it fails.
+    def opens(key):
         kp = t.open()
-        kp.keyboard.press('Tab')
         try:
+            kp.keyboard.press('Tab')
             with kp.expect_file_chooser(timeout=5000) as fc:
                 kp.keyboard.press(key)
-            ok = fc.value is not None
+            fc.value.set_files([])
+            return True
         except Exception:
-            ok = False
-        t.check(f'{key} opens the picker', ok)
+            return False
+        finally:
+            kp.close()
+    for key in ('Space', 'Enter'):
+        t.check(f'{key} opens the picker', opens(key) or opens(key))
 
 
 def test_choose(t):
