@@ -54,10 +54,14 @@ def test_keys(t):
     t.check('Tab reaches the file input', t.is_focused(pg.locator(INPUT)))
     s = t.style(pg.locator(DROP), 'outline-style', 'outline-width', 'outline-offset')
     t.eq('the whole tray draws the 3px ring', s, {'outline-style': 'solid', 'outline-width': '3px', 'outline-offset': '3px'})
+    # Each key on a page of its own: Chrome keeps one picker at a time, and the one Space opened can still be on its way
+    # out when Enter is pressed, which on a busy machine (CI) left Enter's picker unseen.
     for key in ('Space', 'Enter'):
+        kp = t.open()
+        kp.locator(INPUT).focus()
         try:
-            with pg.expect_file_chooser(timeout=1500) as fc:
-                pg.keyboard.press(key)
+            with kp.expect_file_chooser(timeout=5000) as fc:
+                kp.keyboard.press(key)
             ok = fc.value is not None
         except Exception:
             ok = False
