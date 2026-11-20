@@ -2,8 +2,11 @@
 
 What changed in each version of Tray UI, the design system in plain HTML and CSS: its components, blocks, themes and tools, newest first.
 
-## Not released yet
+## 0.4.1, November 2026
 
+Both packages, `trayui` and `trayui-react`, are 0.4.1: a kit from trayui.com/kits can be installed from the command line, and the words in an Input Group addon sit next to the value. The site has a few fixes of its own.
+
+- **A kit from the command line.** `npx trayui kit <name>` downloads one of the paid kits from trayui.com/kits with your licence key, from the environment variable `TRAYUI_KEY` or `--key`, and unpacks it into `<name>-html/`, or `<name>-react/` with `--react`. `npx trayui kit --list` names the kits your licence opens, with their versions and editions. Before it writes a file it checks the download's sha256 and every path in the archive. It stops at a folder that already holds files unless `--force`, and it never prints the key. `npx trayui help kit` says more.
 - **Input Group: words in an addon sit a word from the value**, so `https://` and an address, or `$` and a price, read as one. An icon or a key in an addon keeps its room.
 - **The site:** the header shows GitHub's mark and the count of stars, which the build now always knows; the theme button is a sun in a light theme and a moon in a dark one; the footer links the package on npm and names no maintainer. In the playgrounds a choice whose names would not fit its segments is a list. The cards of the galleries hold their words, and the charts on the home page are one height.
 

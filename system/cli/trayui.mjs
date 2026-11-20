@@ -12,9 +12,10 @@
    syntax stays within what Node 14 parses, so an older Node gets a clear message instead of a syntax error. */
 import { createHash } from 'crypto';
 import { spawnSync } from 'child_process';
-import { existsSync, mkdirSync, readFileSync, readdirSync, realpathSync, statSync, writeFileSync } from 'fs';
+import { existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, realpathSync, statSync, writeFileSync } from 'fs';
 import { dirname, isAbsolute, join, posix, relative, resolve, sep } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
+import { inflateRawSync } from 'zlib';
 
 const NODE = Number(process.versions.node.split('.')[0]);
 if (NODE < 18) {
@@ -23,13 +24,14 @@ if (NODE < 18) {
 }
 
 const DEFAULT_REGISTRY = 'https://trayui.com/r';
+const DEFAULT_SHOP = 'https://trayui.com/kits';
 const SITE = 'https://trayui.com';
 const HERE = dirname(fileURLToPath(import.meta.url));
 
 // ---------- the command line ----------
 
-const VALUE_FLAGS = ['registry', 'cwd', 'dir', 'pages', 'rules', 'prefix'];
-const BOOL_FLAGS = ['react', 'html', 'overwrite', 'dry-run', 'no-install', 'json', 'help', 'version', 'agents', 'stat', 'yes'];
+const VALUE_FLAGS = ['registry', 'cwd', 'dir', 'pages', 'rules', 'prefix', 'key', 'edition', 'shop'];
+const BOOL_FLAGS = ['react', 'html', 'overwrite', 'dry-run', 'no-install', 'json', 'help', 'version', 'agents', 'stat', 'yes', 'list', 'force'];
 const SHORT = { h: 'help', v: 'version', n: 'dry-run', f: 'overwrite', y: 'yes' };
 
 function parseArgs(argv) {
@@ -45,12 +47,17 @@ function parseArgs(argv) {
       if (value === undefined || value.startsWith('--')) throw new UsageError(`--${key} needs a value`);
       flags[key] = value;
     } else if (BOOL_FLAGS.includes(key)) flags[key] = true;
-    else throw new UsageError(`unknown option ${a}`);
+    else {   // the option's name alone, never what follows it (=, :, …), which may be a key
+      const name = (a.match(/^-+[A-Za-z][A-Za-z-]{0,11}/) || ['-'])[0];
+      throw new UsageError(`unknown option ${name}${a.length > name.length ? '…' : ''}`);
+    }
   }
   return { flags, command: rest.shift(), names: rest };
 }
 
-class UsageError extends Error {}
+class UsageError extends Error {
+  constructor(message, topic) { super(message); this.topic = topic; }   // topic: the help that says more
+}
 
 const HELP = {
   '': `trayui: add Tray UI to a project, a block or a component at a time, and check its markup.
@@ -65,6 +72,7 @@ Commands
   list                     what the registry holds
   check <file|folder|->    check HTML against the system's rules (exit 1 on an error)
   skill                    copy the agent skill into .claude/skills/trayui (or --agents, --dir)
+  kit <name>               a paid kit from trayui.com/kits, unpacked into <name>-html/ (or -react/), with your licence key
 
 Options
   --react, --html          the kind of project (found by itself: React when package.json depends on react)
@@ -75,10 +83,14 @@ Options
   --overwrite              replace files you changed (without it they are kept, and diff shows them)
   --dry-run                say what would be written, write nothing
   --no-install             do not run the package manager for the packages an item needs
-  --json                   list, check: the result as JSON
+  --json                   list, check, kit --list: the result as JSON
   --stat                   diff: the names of the files that differ, without the diff
   --rules <file>           check: rules of your own in place of the system's (rules.json)
   --prefix <start>         check: the start of your own classes (kit-), not reported as foreign (kit-,app- for more)
+  --key <key>              kit: your licence key (better in the environment variable TRAYUI_KEY: npx trayui help kit)
+  --edition <html|react>   kit: the edition (html by default; --react is the same as --edition react)
+  --list                   kit: the kits your licence opens, with their versions and editions
+  --force                  kit: unpack into a folder that already holds files, writing the kit's over them
   --yes, -y                accepted and ignored, for scripts written for other CLIs: nothing here asks a question
   --version, --help
 
@@ -86,6 +98,7 @@ Examples
   npx trayui init && npx trayui add login-01        a sign-in page in a folder of plain HTML pages
   npx trayui add button tabs login-01               in a React app (Vite, Next.js): the source, yours to change
   npx trayui check index.html                       the markup against the rules
+  npx trayui kit --list                             with TRAYUI_KEY set: the kits your licence opens
 
 Every page of the system: ${SITE}. This command: ${SITE}/docs/cli`,
   init: `Usage: npx trayui init [--react | --html] [--dir <folder>]
@@ -123,6 +136,20 @@ theme, too.`,
 Copies the agent skill that comes with this package (SKILL.md, a page for every component and block, and the
 checker) into .claude/skills/trayui, where Claude Code finds it; --agents puts it in .agents/skills/trayui for other
 agents; --dir in a folder you name. A file you changed is kept unless --overwrite.`,
+  kit: `Usage: npx trayui kit <name> [--react | --edition html|react] [--dir <folder>] [--force] [--dry-run]
+       npx trayui kit --list [--json]
+
+Downloads a paid kit from ${DEFAULT_SHOP}, a whole site or app built with Tray UI, and unpacks it into
+<name>-html/, or <name>-react/ with --react, in this folder or in the folder --dir names. --list names the kits your
+licence opens, with their versions and editions.
+
+The licence key is in your licence mail and at ${DEFAULT_SHOP}/account. Give it in the environment variable
+TRAYUI_KEY, which keeps it out of your shell's history (read -rs TRAYUI_KEY && export TRAYUI_KEY, then paste it and
+press Enter), or with --key. This command never prints it.
+
+Before it writes a file it checks the download against its sha256 and every path in the archive, so nothing lands
+outside the kit's folder. A folder that already holds files is left alone unless --force, which writes the kit's files
+over it and keeps the others (--overwrite does the same). Exit code 1 when the shop refuses or the download is wrong.`,
 };
 
 // ---------- small helpers ----------
@@ -596,6 +623,330 @@ async function check(args) {
   return mod.main(args, { name: 'npx trayui check' });
 }
 
+// ---------- a kit: a paid site or app from the shop, unpacked from its zip ----------
+
+let secret = '';   // the licence key once it is known: taken out of anything this command prints
+const SLUG = /^[a-z0-9][a-z0-9-]{0,63}$/;
+const EDITION = { html: 'HTML', react: 'React' };
+
+const hide = (s) => (secret ? String(s).split(secret).join('[your key]') : String(s));
+/** Text from the shop or an archive, fit to print on one line: no control characters (no terminal escapes), no key, not too long. */
+function clean(s) {
+  const t = hide(s === undefined || s === null ? '' : s).replace(/[\u0000-\u001f\u007f-\u009f]/g, ' ');
+  return t.length > 400 ? t.slice(0, 400) + '…' : t;
+}
+const tell = (s = '') => say(String(s).split('\n').map(clean).join('\n'));
+const size = (n) => (!(n >= 0) ? '' : n < 1000 ? `${n} B` : n < 1e6 ? `${Math.round(n / 1000)} KB` : `${(n / 1e6).toFixed(1)} MB`);
+const shown = (abs) => { const r = relative(process.cwd(), abs); return r && !r.startsWith('..') && !isAbsolute(r) ? toPosix(r) : abs; };
+
+function licenceKey(flags) {
+  const raw = flags.key !== undefined ? flags.key : (process.env.TRAYUI_KEY || '');
+  const key = raw.trim();
+  if (!key) {
+    throw new UsageError(`a kit needs your licence key, in the environment variable TRAYUI_KEY (or --key). It is in your licence mail, and at ${DEFAULT_SHOP}/account.`, 'kit');
+  }
+  secret = key;
+  // a header cannot carry these, and fetch's own error would quote the key: say it here, without the key
+  if (!/^[\x21-\x7e]+$/.test(key)) {
+    throw new UsageError('the licence key holds a character no key has (a space, a line break, or a letter beyond plain ASCII): copy it again from your licence mail.', 'kit');
+  }
+  return key;
+}
+
+/** https, or plain http on this computer alone (a test's shop): the key never travels in the clear. */
+const secure = (u) => u.protocol === 'https:' || (u.protocol === 'http:' && ['localhost', '127.0.0.1', '[::1]'].includes(u.hostname));
+
+function shopAddress(flags) {
+  const given = String(flags.shop || process.env.TRAYUI_SHOP || DEFAULT_SHOP).replace(/\/+$/, '');
+  let u;
+  try { u = new URL(given); } catch (e) { throw new UsageError(`the shop's address is not an address: ${clean(given)}`, 'kit'); }
+  if (!secure(u)) {
+    throw new UsageError(`the shop's address must start with https:// (http only on this computer), so the key never travels in the clear: ${clean(given)}`, 'kit');
+  }
+  return given;
+}
+
+/** A request to the shop's API. The key goes only to the shop's own origin: a redirect elsewhere is followed without it. */
+async function ask(shop, path, key, timeout) {
+  const origin = new URL(shop).origin;
+  let url = `${shop}/api/v1${path}`;
+  for (let hop = 0; hop < 5; hop++) {
+    const headers = { 'User-Agent': `trayui-cli/${version()}` };
+    if (new URL(url).origin === origin) headers.Authorization = `Bearer ${key}`;
+    let res;
+    try {
+      res = await fetch(url, { headers, redirect: 'manual', signal: AbortSignal.timeout(timeout) });
+    } catch (e) {   // never e.message: it can quote a header
+      const why = e.name === 'TimeoutError' ? `no answer in ${timeout / 1000} seconds` : (e.cause && e.cause.code) || 'no connection';
+      throw new Error(`could not reach ${shop} (${why}). Check the connection and try again.`);
+    }
+    const to = res.status >= 300 && res.status < 400 && res.headers.get('location');
+    if (!to) return res;
+    url = new URL(to, url).href;
+    if (!secure(new URL(url))) throw new Error(`${shop} sent the request on to an address that is not https; it was not followed.`);
+  }
+  throw new Error(`${shop} sent the request on too many times.`);
+}
+
+/** The shop's refusal, as it words it: { "error": "<code>", "message": "<sentence>" }. */
+async function refusal(res, shop) {
+  let body = null;
+  try { body = JSON.parse(await res.text()); } catch (e) { /* not JSON: a proxy's page */ }
+  const code = body && typeof body.error === 'string' ? clean(body.error) : '';
+  let text = body && typeof body.message === 'string' && body.message.trim() ? clean(body.message.trim()) : `${shop} answered ${res.status} ${clean(res.statusText)}`.trim();
+  if (!/[.!?]$/.test(text)) text += '.';
+  if (code) text += ` [${code}]`;
+  if (code === 'no_key' || code === 'bad_key' || (!code && res.status === 401)) {
+    text += `\nYour licence key is in your licence mail, and at ${shop}/account. Give it in TRAYUI_KEY or with --key.`;
+  }
+  return new Error(text);
+}
+
+async function licence(shop, key) {
+  const res = await ask(shop, '/licence', key, 30000);
+  if (!res.ok) throw await refusal(res, shop);
+  let data = null;
+  try { data = await res.json(); } catch (e) { /* said below */ }
+  if (!data || !Array.isArray(data.kits)) throw new Error(`${shop} sent no list of kits for this licence. Try again later.`);
+  data.kits = data.kits.filter((k) => k && typeof k.slug === 'string');
+  return data;
+}
+
+// CRC-32 of a file in the archive (zlib.crc32 is newer than Node 18)
+const CRC = (() => {
+  const t = new Int32Array(256);
+  for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; t[n] = c; }
+  return t;
+})();
+function crc32(buf) {
+  let c = -1;
+  for (let i = 0; i < buf.length; i++) c = CRC[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
+  return (c ^ -1) >>> 0;
+}
+
+/** The files of a zip, read from its central directory and checked before anything is written: every path inside one
+    folder, `top`, none that climbs out of it, no link; stored and deflated entries only, each the size and the CRC its
+    directory says. Folders are 0755, files 0644, or 0755 when the archive made them executable. */
+function readZip(buf, top) {
+  const bad = (why) => new Error(`the kit's archive ${why}. Nothing was written.`);
+  const zip64 = () => bad('is a zip64 archive, which this command does not read');
+  let end = -1;   // the end of the central directory: 22 bytes, then a comment of up to 64 KB, at the very end
+  for (let i = buf.length - 22; i >= 0 && i >= buf.length - 22 - 0xffff; i--) {
+    if (buf.readUInt32LE(i) === 0x06054b50 && i + 22 + buf.readUInt16LE(i + 20) === buf.length) { end = i; break; }
+  }
+  if (end < 0) throw bad('is not a zip file');
+  if (end >= 20 && buf.readUInt32LE(end - 20) === 0x07064b50) throw zip64();
+  const count = buf.readUInt16LE(end + 10), dirSize = buf.readUInt32LE(end + 12), dirAt = buf.readUInt32LE(end + 16);
+  if (count === 0xffff || dirSize === 0xffffffff || dirAt === 0xffffffff) throw zip64();
+  if (buf.readUInt16LE(end + 4) || buf.readUInt16LE(end + 6) || buf.readUInt16LE(end + 8) !== count) throw bad('is split over several files');
+  if (dirAt + dirSize > end) throw bad('is cut short');
+  const entries = [], seen = new Map();
+  let p = dirAt, total = 0;
+  for (let n = 0; n < count; n++) {
+    if (p + 46 > end || buf.readUInt32LE(p) !== 0x02014b50) throw bad('has a broken directory');
+    const os = buf[p + 5], flags = buf.readUInt16LE(p + 8), method = buf.readUInt16LE(p + 10);
+    const crc = buf.readUInt32LE(p + 16), packed = buf.readUInt32LE(p + 20), length = buf.readUInt32LE(p + 24);
+    const nameLength = buf.readUInt16LE(p + 28), next = p + 46 + nameLength + buf.readUInt16LE(p + 30) + buf.readUInt16LE(p + 32);
+    const attrs = buf.readUInt32LE(p + 38), at = buf.readUInt32LE(p + 42);
+    if (next > end) throw bad('has a broken directory');
+    const name = buf.toString('utf8', p + 46, p + 46 + nameLength);
+    p = next;
+    const what = clean(name);
+    if (packed === 0xffffffff || length === 0xffffffff || at === 0xffffffff) throw zip64();
+    if (flags & 0x41) throw bad(`is encrypted (${what}), which this command does not read`);
+    if (method !== 0 && method !== 8) throw bad(`packs ${what} in a way this command does not read (method ${method}; it reads stored and deflated files)`);
+    // the path: inside the one folder, and nothing that leaves it
+    if (!name || /[\u0000-\u001f\\:]/.test(name) || name.startsWith('/')) throw bad(`names a path that is not safe to write (${what})`);
+    const parts = name.replace(/\/$/, '').split('/');
+    if (parts.some((s) => s === '' || s === '.' || s === '..')) throw bad(`names a path that is not safe to write (${what})`);
+    if (parts[0] !== top) throw bad(`holds ${what}, outside the folder ${top}/ that it should hold alone`);
+    const unix = os === 3 || os === 19;   // made on Unix or macOS: the type and the mode are in the high 16 bits
+    const mode = unix ? attrs >>> 16 : 0, type = mode & 0o170000;
+    if (type === 0o120000) throw bad(`holds a link (${what}), which this command does not write`);
+    const dir = name.endsWith('/') || type === 0o040000 || (!unix && (attrs & 0x10) !== 0);
+    if (type && type !== 0o040000 && type !== 0o100000) throw bad(`holds ${what}, which is neither a file nor a folder`);
+    const lower = parts.join('/').toLowerCase();   // a disk that ignores case would write them to one place
+    if (seen.has(lower) && !(dir && seen.get(lower).dir)) throw bad(`names ${what} twice`);
+    if (dir) { if (!seen.has(lower)) { const e = { parts, dir: true, mode: 0o755 }; seen.set(lower, e); entries.push(e); } continue; }
+    if (parts.length < 2) throw bad(`holds a file named ${what} where its folder should be`);
+    total += length;
+    if (total > 2 ** 31) throw bad('unpacks to more than 2 GB');
+    // where the data starts is the local header's own business: its name and extra field can differ from the directory's
+    if (at + 30 > dirAt || buf.readUInt32LE(at) !== 0x04034b50) throw bad(`is broken where ${what} should start`);
+    const from = at + 30 + buf.readUInt16LE(at + 26) + buf.readUInt16LE(at + 28);
+    if (from + packed > dirAt) throw bad(`is cut short in ${what}`);
+    const raw = buf.subarray(from, from + packed);
+    let data;
+    if (method === 0) data = raw;
+    else {
+      try { data = inflateRawSync(raw, { maxOutputLength: Math.max(length, 1) }); } catch (e) { throw bad(`is damaged: ${what} does not inflate to the size its directory says`); }
+    }
+    if (data.length !== length || crc32(data) !== crc) throw bad(`is damaged: ${what} is not what its directory says (size or CRC)`);
+    const e = { parts, dir: false, mode: unix && (mode & 0o111) ? 0o755 : 0o644, data };
+    seen.set(lower, e);
+    entries.push(e);
+  }
+  // a file that is also a folder of other entries
+  for (const e of entries) {
+    for (let i = 1; i < e.parts.length; i++) {
+      const up = seen.get(e.parts.slice(0, i).join('/').toLowerCase());
+      if (up && !up.dir) throw bad(`holds ${clean(up.parts.join('/'))} both as a file and as a folder`);
+    }
+  }
+  if (!entries.some((e) => !e.dir)) throw bad('holds no files');
+  return entries;
+}
+
+/** Is the folder free to unpack into: missing, empty, or (with --force) a real folder of the user's. */
+function freeFolder(folder, force) {
+  let st = null;
+  try { st = lstatSync(folder); } catch (e) { return { existed: false }; }
+  if (st.isSymbolicLink()) throw new Error(`${shown(folder)} is a link to another place; the kit is not unpacked through it. Move it away, or unpack elsewhere with --dir.`);
+  if (!st.isDirectory()) throw new Error(`${shown(folder)} is a file; the kit unpacks into a folder of that name. Move it away, or unpack elsewhere with --dir.`);
+  const files = readdirSync(folder);
+  if (files.length && !force) {
+    throw new Error(`${shown(folder)}/ already exists and holds files. Unpack the kit elsewhere with --dir <folder>, move that folder away, or add --force to write the kit's files over it (the files the kit does not have are kept).`);
+  }
+  return { existed: files.length > 0 };
+}
+
+/** Writes the checked entries under root. With --force the folder may hold the user's files: nothing on the way may be a link. */
+function unpack(entries, root) {
+  for (const e of entries) {
+    let at = root;
+    for (let i = 1; i < e.parts.length; i++) {
+      at = join(at, e.parts[i]);
+      let st;
+      try { st = lstatSync(at); } catch (x) { break; }
+      if (st.isSymbolicLink()) throw new Error(`${shown(at)} is a link to another place; the kit is not unpacked through it. Move it away and run this again. Nothing was written.`);
+      if ((i < e.parts.length - 1 || e.dir) ? !st.isDirectory() : st.isDirectory()) {
+        throw new Error(`${shown(at)} is a ${st.isDirectory() ? 'folder' : 'file'} where the kit has a ${st.isDirectory() ? 'file' : 'folder'}. Move it away and run this again. Nothing was written.`);
+      }
+    }
+  }
+  mkdirSync(root, { recursive: true, mode: 0o755 });
+  const counts = { files: 0, replaced: 0, bytes: 0 };
+  for (const e of entries) {
+    const abs = join(root, ...e.parts.slice(1));
+    if (e.dir) { mkdirSync(abs, { recursive: true, mode: 0o755 }); continue; }
+    mkdirSync(dirname(abs), { recursive: true, mode: 0o755 });
+    if (existsSync(abs)) counts.replaced++;
+    writeFileSync(abs, e.data, { mode: e.mode });
+    counts.files++;
+    counts.bytes += e.data.length;
+  }
+  return counts;
+}
+
+/** What to do next, from what the kit holds: its page to open, or its package's scripts. Nothing assumed beyond that. */
+function nextSteps(root) {
+  const lines = [], where = shown(root);
+  const readme = existsSync(join(root, 'README.md')) ? `${where}/README.md` : '';
+  let pkg = null;
+  try { pkg = readJson(join(root, 'package.json')); } catch (e) { /* not a package */ }
+  const scripts = (pkg && pkg.scripts) || {};
+  if (pkg && (scripts.dev || scripts.start)) {
+    const pm = existsSync(join(root, 'pnpm-lock.yaml')) ? 'pnpm' : existsSync(join(root, 'yarn.lock')) ? 'yarn' : existsSync(join(root, 'bun.lock')) ? 'bun' : 'npm';
+    const run = scripts.dev ? (pm === 'npm' ? 'npm run dev' : `${pm} dev`) : `${pm} start`;
+    lines.push('Then:', `  cd ${/\s/.test(where) ? `"${where}"` : where}`, `  ${pm} install`, `  ${run}`);
+    const node = pkg.engines && typeof pkg.engines.node === 'string' ? pkg.engines.node : '';
+    if (node || readme) lines.push([node ? `It needs Node ${clean(node)} (its package.json says so).` : '', readme ? `${readme} says more.` : ''].filter(Boolean).join(' '));
+  } else if (existsSync(join(root, 'index.html'))) {
+    lines.push(`Open ${where}/index.html in a browser.${readme ? ` ${readme} says more.` : ''}`);
+  } else if (readme) lines.push(`${readme} says how to start.`);
+  return lines;
+}
+
+async function kitList(shop, flags) {
+  const lic = await licence(shop, licenceKey(flags));
+  if (flags.json) {
+    const kits = lic.kits.map((k) => ({ slug: k.slug, name: k.name, version: k.version, editions: k.editions }));
+    say(hide(JSON.stringify({ licence: lic.licence, sku: lic.sku, name: lic.name, kits }, null, 1)));   // JSON escapes control characters itself
+    return 0;
+  }
+  const what = [lic.name || lic.sku, lic.licence ? `a ${lic.licence} licence` : ''].filter(Boolean).join(', ');
+  tell(`trayui kit: ${what ? what + ': ' : ''}${plural(lic.kits.length, 'kit')}, from ${shop}`);
+  if (!lic.kits.length) { tell('\nThis licence opens no kit yet.'); return 0; }
+  const rows = lic.kits.map((k) => [clean(k.slug), clean(k.version || ''),
+    Object.keys(k.editions || {}).map((e) => `${clean(e)}${k.editions[e] && k.editions[e].bytes ? ' ' + size(k.editions[e].bytes) : ''}`).join(', '), clean(k.name || '')]);
+  const w = [0, 1, 2].map((i) => Math.max(...rows.map((r) => r[i].length)));
+  say('');
+  for (const r of rows) say(`  ${r[0].padEnd(w[0])}  ${r[1].padEnd(w[1])}  ${r[2].padEnd(w[2])}  ${r[3]}`.replace(/\s+$/, ''));
+  say('\nUnpack one: npx trayui kit <name> (the HTML edition), or npx trayui kit <name> --react.');
+  return 0;
+}
+
+async function kit(flags, names) {
+  if (flags.react && flags.html) throw new UsageError('--react and --html cannot go together', 'kit');
+  const edition = flags.edition ? String(flags.edition).toLowerCase() : flags.react ? 'react' : 'html';
+  if (!EDITION[edition]) throw new UsageError('--edition is html or react', 'kit');
+  if ((flags.react && edition !== 'react') || (flags.html && edition !== 'html')) throw new UsageError(`--${flags.react ? 'react' : 'html'} and --edition ${edition} cannot go together`, 'kit');
+  const shop = shopAddress(flags);
+  if (flags.list) {
+    if (names.length) throw new UsageError('kit --list takes no name: npx trayui kit --list', 'kit');
+    return kitList(shop, flags);
+  }
+  // the words given are never echoed: a key pasted in the wrong place must not be printed
+  if (names.length !== 1) throw new UsageError(names.length ? 'kit takes one name, such as npx trayui kit <name> --react (a key goes in TRAYUI_KEY or after --key)' : 'kit needs the name of a kit: npx trayui kit <name> (npx trayui kit --list names those your licence opens)', 'kit');
+  const slug = names[0];
+  if (!SLUG.test(slug)) throw new UsageError('a kit\'s name is in lowercase letters, digits and hyphens: npx trayui kit --list names those your licence opens', 'kit');
+  const base = resolve(flags.cwd || '.', flags.dir || '.');
+  if (existsSync(base) && !statSync(base).isDirectory()) throw new Error(`${shown(base)} is a file, not a folder to unpack the kit in.`);
+  const top = `${slug}-${edition}`, root = join(base, top);
+  const force = !!(flags.force || flags.overwrite);
+  const dry = !!flags['dry-run'];
+  freeFolder(root, force || dry);
+  const key = licenceKey(flags);
+
+  // the licence first: a friendly word when the kit or the edition is not in it, before anything is downloaded
+  const lic = await licence(shop, key);
+  const item = lic.kits.find((k) => k.slug === slug);
+  if (!item) {
+    const open = lic.kits.map((k) => k.slug);
+    const close = near(slug, open);
+    throw new Error(`your licence does not open a kit named ${slug}.${close.length ? ` Did you mean ${close.map(clean).join(', ')}?` : ''}`
+      + (open.length ? ` npx trayui kit --list names the ${plural(open.length, 'kit')} it opens.` : ' It opens no kit yet.'));
+  }
+  const editions = Object.keys(item.editions || {});
+  if (!editions.includes(edition)) {
+    throw new Error(`${slug} has no ${EDITION[edition]} edition; it has ${editions.length ? editions.map((e) => EDITION[e] || clean(e)).join(' and ') : 'none'}.`
+      + (editions.length === 1 && EDITION[editions[0]] ? ` npx trayui kit ${slug}${editions[0] === 'react' ? ' --react' : ''} unpacks it.` : ''));
+  }
+  const listed = item.editions[edition] || {};
+  if (dry) {
+    tell(`trayui (dry run) kit ${slug} ${clean(item.version || '')}, the ${EDITION[edition]} edition${listed.bytes ? ` (${size(listed.bytes)})` : ''}, from ${shop}`);
+    const busy = existsSync(root) && readdirSync(root).length;
+    tell(`  would unpack into ${shown(root)}/${busy ? (force ? ', writing over the files there' : ', which holds files: without --force it would stop there') : ''}`);
+    tell('\nNothing was downloaded or written (--dry-run).');
+    return 0;
+  }
+
+  const res = await ask(shop, `/kits/${slug}/${edition}`, key, 300000);
+  if (!res.ok) throw await refusal(res, shop);
+  let bytes;
+  try { bytes = Buffer.from(await res.arrayBuffer()); } catch (e) {
+    throw new Error(`the download from ${shop} stopped before its end (${e.name === 'TimeoutError' ? 'no end in 300 seconds' : 'the connection broke'}). Nothing was written; run the command again.`);
+  }
+  const version = clean(res.headers.get('x-kit-version') || item.version || '');
+  // the checksum the download came with, or else the licence's when it is for the same version
+  const sent = (res.headers.get('x-content-sha256') || '').trim();
+  const same = !res.headers.get('x-kit-version') || res.headers.get('x-kit-version') === item.version;
+  const want = sent || (same && typeof listed.sha256 === 'string' ? listed.sha256.trim() : '');
+  const got = sha(bytes);
+  if (want && want.toLowerCase() !== got && want !== Buffer.from(got, 'hex').toString('base64')) {
+    throw new Error(`the download does not match its sha256: it was changed or cut short on the way (${size(bytes.length)} came). Nothing was written; run the command again.`);
+  }
+  const entries = readZip(bytes, top);
+  freeFolder(root, force);   // again: the download took a while
+  const counts = unpack(entries, root);
+  tell(`trayui kit ${slug} ${version}, the ${EDITION[edition]} edition, from ${shop}`);
+  tell(`  checked  ${want ? 'the download against its sha256' : 'nothing: the shop sent no sha256 for this download'} (${size(bytes.length)})`);
+  tell(`  wrote    ${shown(root)}/: ${plural(counts.files, 'file')}${counts.replaced ? ` (${counts.replaced} written over the files there; files the kit does not have were kept)` : ''}, ${size(counts.bytes)}`);
+  const steps = nextSteps(root);
+  if (steps.length) { tell(''); for (const l of steps) tell(l); }
+  return 0;
+}
+
 async function main(argv) {
   if (argv[0] === 'check') return check(argv.slice(1));   // the checker reads its own options
   const { flags, command, names } = parseArgs(argv);
@@ -611,6 +962,7 @@ async function main(argv) {
     const base = resolve(flags.cwd || '.');
     return check(names.map((n) => (n === '-' ? n : resolve(base, n))).concat(flags.json ? ['--json'] : [], flags.rules ? ['--rules', flags.rules] : [], flags.prefix ? ['--prefix', flags.prefix] : []));
   }
+  if (command === 'kit') return kit(flags, names);   // not a project's files: --dir is any folder, trayui.json is not read
   const project = new Project(flags);
   if (command === 'init') {
     if (names.length) throw new UsageError('init takes no names; add takes them: npx trayui add ' + names.join(' '));
@@ -642,9 +994,9 @@ let self = '';
 try { self = pathToFileURL(realpathSync(process.argv[1])).href; } catch (e) { /* not a file */ }
 if (self === import.meta.url) {
   main(process.argv.slice(2)).then((code) => { process.exitCode = code; }, (e) => {
-    console.error(`trayui: ${e.message}`);
-    if (e instanceof UsageError) console.error('npx trayui --help says how to use it.');
-    if (process.env.TRAYUI_DEBUG) console.error(e.stack);
+    console.error(`trayui: ${hide(e.message)}`);   // hide: no message prints the licence key, should one carry it
+    if (e instanceof UsageError) console.error(`npx trayui ${e.topic ? 'help ' + e.topic : '--help'} says how to use it.`);
+    if (process.env.TRAYUI_DEBUG) console.error(hide(e.stack));
     process.exitCode = e instanceof UsageError ? 2 : 1;
   });
 }

@@ -5,7 +5,7 @@ Chrome at 1440 and 390 pixels wide.
 
     python3 tools/cli_check.py                 serve site/ (tools/serve.py) and check it all
     python3 tools/cli_check.py --site DIR      serve another folder that holds r/ and fonts/ (registry.py --out DIR)
-    python3 tools/cli_check.py --skip compare,shadcn     leave steps out (registry plain updates skill vite next types compare shadcn)
+    python3 tools/cli_check.py --skip compare,shadcn     leave steps out (registry plain updates skill vite next types compare shadcn kit)
 
 It needs Node 20.19 or later (what the current Vite and Next.js ask for), npm and the network (it creates the apps with npm and installs Vite and Next.js once; they
 are kept in .cache/cli-check/ and reused), Google Chrome and Pillow. The steps:
@@ -23,6 +23,8 @@ are kept in .cache/cli-check/ and reused), Google Chrome and Pillow. The steps:
   compare   all the blocks, the React component against the HTML page, in Chrome: the same pixels and no script error
   skill     npx trayui skill copies the agent skill into .claude/skills/trayui and keeps a SKILL.md you changed
   shadcn    npx shadcn add of a plain HTML block and of a React block (universal items), into empty folders
+  kit       npx trayui kit against a mock of the shop's API, serving zips Python's zipfile wrote: the list, both editions
+            byte for byte with an executable kept, a folder that holds files, a path out of the folder, a bad key
 
 The items name the package trayui at this version, which npm has only once it is published. So init and shadcn install
 it from a small npm registry of this check's own that holds the package built here (dist/, packed with npm pack) and
@@ -345,6 +347,95 @@ export default function App() {
 '''
 
 
+def kit_check(cli_path):
+    """npx trayui kit against a mock of the shop's API on this computer. The zips are written by Python's zipfile, not by
+    the zip writer of cli/test.mjs, so a mistake the reader and that writer share shows here."""
+    import hashlib, io, zipfile
+    key = 'tk_check_' + os.urandom(8).hex()
+
+    def make(entries):
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, 'w', zipfile.ZIP_DEFLATED) as z:
+            for name, data, mode in entries:
+                info = zipfile.ZipInfo(name, (2026, 11, 20, 12, 0, 0))
+                info.create_system = 3
+                info.external_attr = (mode << 16) | (0x10 if name.endswith('/') else 0)
+                info.compress_type = zipfile.ZIP_STORED if name.endswith('/') else zipfile.ZIP_DEFLATED
+                z.writestr(info, data)
+        return buf.getvalue()
+
+    html = [('meadow-html/', b'', 0o40755), ('meadow-html/index.html', b'<!doctype html>\n<title>Meadow</title>\n' * 50, 0o100644),
+            ('meadow-html/README.md', b'# Meadow\n', 0o100644), ('meadow-html/bin/serve.sh', b'#!/bin/sh\nexit 0\n', 0o100755)]
+    react = [('meadow-react/', b'', 0o40755), ('meadow-react/package.json', json.dumps({'name': 'meadow', 'scripts': {'dev': 'vite'}}).encode(), 0o100644),
+             ('meadow-react/src/main.tsx', b'export {};\n', 0o100644)]
+    zips = {('meadow', 'html'): make(html), ('meadow', 'react'): make(react)}
+    state = {'zip': None}
+
+    class Shop(http.server.BaseHTTPRequestHandler):
+        def log_message(self, *a):
+            pass
+
+        def answer(self, status, body, kind='application/json', headers=()):
+            self.send_response(status)
+            self.send_header('Content-Type', kind)
+            for k, v in headers:
+                self.send_header(k, v)
+            self.end_headers()
+            self.wfile.write(body)
+
+        def do_GET(self):
+            if self.headers.get('Authorization') != f'Bearer {key}':
+                return self.answer(401, json.dumps({'error': 'bad_key', 'message': 'The shop does not know this key.'}).encode())
+            path = self.path.removeprefix('/kits/api/v1')
+            if path == '/licence':
+                kits = [{'slug': 'meadow', 'name': 'Meadow: a garden centre', 'version': '2.0.1',
+                         'editions': {e: {'bytes': len(b), 'sha256': hashlib.sha256(b).hexdigest()} for (_, e), b in zips.items()}}]
+                return self.answer(200, json.dumps({'licence': 'personal', 'sku': 'kit-meadow', 'name': 'Meadow', 'kits': kits}).encode())
+            m = re.fullmatch(r'/kits/([a-z0-9-]+)/([a-z]+)', path)
+            body = state['zip'] or (zips.get((m.group(1), m.group(2))) if m else None)
+            if not body:
+                return self.answer(404, json.dumps({'error': 'no_such_kit', 'message': 'There is no kit of that name.'}).encode())
+            self.answer(200, body, 'application/zip', [('X-Kit-Version', '2.0.1'), ('X-Content-SHA256', hashlib.sha256(body).hexdigest())])
+
+    srv = http.server.ThreadingHTTPServer(('127.0.0.1', 0), Shop)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    env = {k: v for k, v in ENV.items() if not k.startswith('TRAYUI_')}
+    env.update(TRAYUI_KEY=key, TRAYUI_SHOP=f'http://127.0.0.1:{srv.server_address[1]}/kits')
+    outs = []
+
+    def kit(args, cwd, e=None):
+        code, out = run(['node', str(cli_path), 'kit', *args], cwd, env=e or env, quiet=False)
+        outs.append(out)
+        return code, out
+
+    try:
+        proj = fresh(WORK / 'kit')
+        code, out = kit(['--list'], proj)
+        check('kit --list names the kits the licence opens, with the version and both editions', code == 0 and 'meadow' in out and '2.0.1' in out and 'html' in out and 'react' in out, out[-300:])
+        code, out = kit(['meadow'], proj)
+        root = proj / 'meadow-html'
+        same = all((root / n.split('/', 1)[1]).read_bytes() == d for n, d, _ in html if not n.endswith('/')) if root.exists() else False
+        check('kit meadow unpacks the HTML edition into meadow-html/, every file byte for byte as zipfile wrote it', code == 0 and same, out[-300:])
+        if os.name == 'posix' and (root / 'bin' / 'serve.sh').exists():
+            check('the executable file stays executable, the others do not become so', os.stat(root / 'bin' / 'serve.sh').st_mode & 0o111 and not os.stat(root / 'index.html').st_mode & 0o111)
+        check('it says to open index.html', 'Open meadow-html/index.html in a browser' in out, out[-300:])
+        code, out = kit(['meadow'], proj)
+        check('a second time the folder holds files: refused, exit 1, --force named', code == 1 and 'already exists and holds files' in out and '--force' in out, out[-300:])
+        code, out = kit(['meadow', '--react'], proj)
+        check('kit meadow --react unpacks the React edition and says cd, npm install, npm run dev', code == 0 and (proj / 'meadow-react' / 'package.json').exists()
+              and 'cd meadow-react' in out and 'npm run dev' in out, out[-300:])
+        state['zip'] = make([('meadow-html/index.html', b'x', 0o100644), ('meadow-html/../../escape.txt', b'x', 0o100644)])
+        other = fresh(WORK / 'kit-slip')
+        code, out = kit(['meadow'], other)
+        state['zip'] = None
+        check('an archive with a path out of its folder is refused, and nothing is written', code == 1 and 'not safe to write' in out and not any(other.iterdir()) and not (WORK / 'escape.txt').exists(), out[-300:])
+        code, out = kit(['meadow'], fresh(WORK / 'kit-key'), dict(env, TRAYUI_KEY='tk_check_wrong'))
+        check('a key the shop does not know: its message, where the key is, exit 1', code == 1 and 'The shop does not know this key.' in out and '/kits/account' in out, out[-300:])
+        check(f'no key is in any of the {len(outs)} outputs', not any('tk_check_' in o for o in outs))
+    finally:
+        srv.shutdown()
+
+
 def tsc_errors(out):
     return [l for l in out.split('\n') if 'error TS' in l]
 
@@ -612,6 +703,10 @@ def main():
             check('npx shadcn add of a React block writes it, the core, and adds trayui to package.json', code == 0 and (sv / 'src/components/trayui/blocks/Login01.tsx').exists()
                   and (sv / 'src/components/trayui/lib/util.ts').exists() and 'trayui' in json.loads((sv / 'package.json').read_text()).get('dependencies', {}), out[-400:])
         s.shutdown()
+
+    if 'kit' not in skip:
+        step('npx trayui kit, against a mock of the shop\'s API')
+        kit_check(CLI)
 
     server.shutdown()
     if npm_srv:

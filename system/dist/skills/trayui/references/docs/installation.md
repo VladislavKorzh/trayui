@@ -7,9 +7,9 @@ Three files and a font. Link them from a CDN or copy them into your project, the
 The quickest start: put these lines in the `<head>` of a page, the script before `</body>` or with `defer`, and write HTML.
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.4.0/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.4.0/components/bundle.css">
-<script src="https://cdn.jsdelivr.net/npm/trayui@0.4.0/components/bundle.js" defer></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.4.1/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.4.1/components/bundle.css">
+<script src="https://cdn.jsdelivr.net/npm/trayui@0.4.1/components/bundle.js" defer></script>
 ```
 
 jsDelivr serves every release of the `trayui` package on npm, and the address names the release, so a page keeps the version it was built with. For production, copy the files into your project or pin the release you tested.
@@ -42,7 +42,7 @@ The first line writes the three files and the font into a `trayui/` folder; the 
 
 ## Or get the files
 
-Download [trayui-0.4.0.zip](https://trayui.com/trayui-0.4.0.zip) and unpack it beside your pages. The same files are in the `system/dist` folder of [the repository](https://github.com/VladislavKorzh/trayui).
+Download [trayui-0.4.1.zip](https://trayui.com/trayui-0.4.1.zip) and unpack it beside your pages. The same files are in the `system/dist` folder of [the repository](https://github.com/VladislavKorzh/trayui).
 
 ```text
 trayui/

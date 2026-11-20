@@ -58,6 +58,7 @@ npx trayui init              # the three files and the font, in trayui/
 npx trayui add login-01      # a block beside your pages, its links pointed at trayui/
 npx trayui diff              # what you changed, and what a new release changed
 npx trayui check page.html   # the markup checked against the system's rules
+npx trayui kit <name>        # a paid kit from trayui.com/kits, with your licence key in TRAYUI_KEY
 ```
 
 In a React app (Vite, Next.js) the same commands copy the source of components and blocks into `src/components/trayui/`, as files you own: `npx trayui add button tabs login-01`. `npx trayui update` brings them to a new release and keeps every file you changed. The items are also a registry in shadcn's format, so `npx shadcn add https://trayui.com/r/login-01.json` works too. It needs Node 18 or later and nothing else; [the CLI page](https://trayui.com/docs/cli) lists the commands. Its source is [`system/cli`](system/cli).

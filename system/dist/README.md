@@ -7,9 +7,9 @@ Docs and live examples of every component, with a playground for 52 of them: htt
 ## Link it from a CDN
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.4.0/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.4.0/components/bundle.css">
-<script src="https://cdn.jsdelivr.net/npm/trayui@0.4.0/components/bundle.js" defer></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.4.1/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trayui@0.4.1/components/bundle.css">
+<script src="https://cdn.jsdelivr.net/npm/trayui@0.4.1/components/bundle.js" defer></script>
 ```
 
 Then write HTML with `tray-` classes. A button is one class; a menu, a calendar or a chart is one attribute more:
@@ -52,6 +52,7 @@ npx trayui add login-01      # a block, beside your pages, its links pointed at 
 npx trayui add button --react   # in React: the component's source, yours to change
 npx trayui diff              # what you changed, and what changed upstream
 npx trayui check page.html   # check the markup against the system's rules
+npx trayui kit <name>        # a paid kit from https://trayui.com/kits, with your licence key in TRAYUI_KEY
 ```
 
 It needs Node 18 or later and nothing else. It works in a folder of plain HTML pages, in a Vite or Next.js app, with npm, pnpm, yarn or bun, and it never overwrites a file you changed unless you ask with `--overwrite`. The same items are a registry in shadcn's format, at https://trayui.com/r/registry.json: `npx shadcn add https://trayui.com/r/login-01.json`. https://trayui.com/docs/cli says more.

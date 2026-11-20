@@ -165,6 +165,7 @@ npx trayui add login-01      # a block, beside your pages, its links pointed at 
 npx trayui add button --react   # in React: the component's source, yours to change
 npx trayui diff              # what you changed, and what changed upstream
 npx trayui check page.html   # check the markup against the system's rules
+npx trayui kit <name>        # a paid kit from {site}/kits, with your licence key in TRAYUI_KEY
 ```
 
 It needs Node 18 or later and nothing else. It works in a folder of plain HTML pages, in a Vite or Next.js app, with npm, pnpm, yarn or bun, and it never overwrites a file you changed unless you ask with `--overwrite`. The same items are a registry in shadcn's format, at {site}/r/registry.json: `npx shadcn add {site}/r/login-01.json`. {site}/docs/cli says more.

@@ -1812,7 +1812,8 @@ def build():
         (OUT / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                                          + ''.join(f'  <url><loc>{html.escape(facts["site"] + "/" + m["path"])}</loc>' + (f'<lastmod>{m["lastmod"]}</lastmod>' if m.get('lastmod') else '') + '</url>\n'
                                                    for m in index.values()) + '</urlset>\n', encoding='utf-8')
-        # The shop's pages that do something rather than show something stay off: each visit to /kits/buy/ starts a payment.
+        # The shop's pages that do something rather than show something stay off: each visit to /kits/buy/ starts a payment,
+        # and /kits/api/ answers only `npx trayui kit` with a licence key.
         # The kits are sold, so the crawlers that gather pages to train models (each by the name its maker publishes; Google-
         # Extended and Applebot-Extended are the names Google's and Apple's crawlers obey for training) keep out of /kits; a
         # crawler with a group of its own follows only that group. Search engines and the agents that fetch a page to answer
@@ -1822,8 +1823,8 @@ def build():
                     'Bytespider', 'Amazonbot', 'cohere-training-data-crawler', 'AI2Bot')
         robots = ('# Tray UI documentation (MIT). Search, AI answers, agent fetches and training are welcome.\n'
                   '# The kits under /kits are sold, not MIT: no model may be trained on them, and their checkout, downloads and\n'
-                  '# account pages are not for robots.\n'
-                  'User-agent: *\n' + ''.join(f'Disallow: /kits/{p}\n' for p in ('buy/', 'thanks', 'download/', 'account', 'webhook')) + 'Allow: /\n'
+                  '# account pages and its API are not for robots.\n'
+                  'User-agent: *\n' + ''.join(f'Disallow: /kits/{p}\n' for p in ('buy/', 'thanks', 'download/', 'account', 'webhook', 'api/')) + 'Allow: /\n'
                   + '\n# Crawlers that gather pages to train models: every page but the kits.\n'
                   + ''.join(f'User-agent: {t}\n' for t in trainers) + 'Disallow: /kits\nAllow: /\n')
         (OUT / 'robots.txt').write_text(robots + f'\nSitemap: {facts["site"]}/sitemap.xml\n', encoding='utf-8')

@@ -181,7 +181,7 @@ def main():
     trainers = [a for agents, d in groups if d == ['/kits'] for a in agents]
     check('robots.txt lets every reader in, keeps none off a page (only the shop\'s checkout, downloads and account), keeps the crawlers '
           'that train models out of the kits only, and names the sitemap',
-          all(re.search(r'^Allow: /$', g, re.M) for g in re.split(r'\n\s*\n', robots) if 'User-agent:' in g) and everyone == [['/kits/buy/', '/kits/thanks', '/kits/download/', '/kits/account', '/kits/webhook']]
+          all(re.search(r'^Allow: /$', g, re.M) for g in re.split(r'\n\s*\n', robots) if 'User-agent:' in g) and everyone == [['/kits/buy/', '/kits/thanks', '/kits/download/', '/kits/account', '/kits/webhook', '/kits/api/']]
           and len(groups) == 2 and {'GPTBot', 'ClaudeBot', 'Google-Extended', 'CCBot'} <= set(trainers) and '*' not in trainers
           and f'Sitemap: {site["site"]}/sitemap.xml' in robots, robots)
     links = json.loads((ROOT / 'tools' / 'links.json').read_text(encoding='utf-8'))

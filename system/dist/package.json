@@ -1,6 +1,6 @@
 {
   "name": "trayui",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "A design system in plain HTML and CSS: 108 components, 64 blocks, 10 page templates, 10 themes. Three files, no build step.",
   "license": "MIT",
   "author": "Vladyslav Korzh (https://github.com/VladislavKorzh)",

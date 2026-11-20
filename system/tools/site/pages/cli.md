@@ -44,6 +44,19 @@ npx trayui check index.html pages/
 
 It reads plain HTML and reports classes, behaviours and icons that do not exist, more than one yellow button in a view, buttons and fields without a name, missing `autocomplete`, references to ids that are not there, tabs wired wrong, skipped headings, literal colours and sizes, and a page without its language, its theme or the three files in order. It exits with 1 when it finds an error, so it can run in CI; `--json` gives the findings to another tool. A project with classes of its own names their start with `--prefix` (`--prefix kit-`, or `--prefix kit-,app-` for more), and they are no longer reported as foreign. It cannot see the page: look at it as well, at 1280, 768 and 390 pixels wide, in a light and a dark theme.
 
+## A kit
+
+The paid kits from {{site}}/kits are whole sites and apps built with Tray UI. With the licence key from your licence mail, `kit` downloads one and unpacks it:
+
+```sh
+read -rs TRAYUI_KEY && export TRAYUI_KEY   # paste the key, then Enter: it is not shown, nor kept in the history
+npx trayui kit --list                      # the kits your licence opens, with their versions and editions
+npx trayui kit <name>                      # the HTML edition, into <name>-html/
+npx trayui kit <name> --react              # the React edition, into <name>-react/
+```
+
+`--key <key>` gives the key on the command line instead, where your shell keeps it in its history; the command never prints it. The key is also on {{site}}/kits/account. `--dir <folder>` unpacks the kit in another folder. Before it writes a file, the command checks the download against its sha256 and every path in the archive, so nothing lands outside the kit's folder. It stops when that folder already holds files, unless you add `--force`, which writes the kit's files over them and keeps the others. Then it says how to start: open `index.html`, or `cd` into the folder, `npm install` and `npm run dev`, as the kit's `package.json` has it.
+
 ## The commands
 
 | Command | What it does |
@@ -55,6 +68,7 @@ It reads plain HTML and reports classes, behaviours and icons that do not exist,
 | `list` | Every item there is to add |
 | `check <file or folder>…` | The markup checked against the system's rules |
 | `skill` | The skill for agents, copied into `.claude/skills/trayui` (`--agents` for `.agents/skills/trayui`) |
+| `kit <name>` | A paid kit from {{site}}/kits, unpacked into `<name>-html/`, or `<name>-react/` with `--react`; `--list` names those your licence opens |
 
 | Option | What it does |
 | --- | --- |
@@ -66,6 +80,10 @@ It reads plain HTML and reports classes, behaviours and icons that do not exist,
 | `--no-install` | Do not run the package manager |
 | `--registry <address or folder>` | Where the items come from: {{site}}/r by default, or a folder, to work offline |
 | `--cwd <folder>` | The project, when it is not the folder you are in |
+| `--key <key>` | `kit`: your licence key, when it is not in the environment variable `TRAYUI_KEY` |
+| `--react`, `--edition html` or `react` | `kit`: the edition (HTML by default) |
+| `--dir <folder>` | `kit`: the folder the kit's folder goes in (this one by default) |
+| `--force` | `kit`: unpack into a folder that already holds files |
 
 `npx trayui --help` lists them all, and `npx trayui <command> --help` explains one.
 
