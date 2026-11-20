@@ -457,28 +457,56 @@ GITHUB_MARK = ('<svg class="tray-icon" viewBox="0 0 24 24" aria-hidden="true" fo
 
 
 def stars(repo):
-    """The stars of the repository on GitHub, asked once while the site is built (so a visitor's page asks GitHub nothing),
-    or None when GitHub does not answer. GITHUB_TOKEN, when it is set, lifts the limit on asking."""
+    """The stars of the repository on GitHub, asked once while the site is built (so a visitor's page asks GitHub nothing).
+    Without a token GitHub answers 60 questions an hour from one address, and the machine that builds the site may have
+    used them up (other tools, other builds): then the count used to go missing from the header. So the question goes
+    with a token when there is one (GITHUB_TOKEN, or the gh command's when it is signed in), and the last count GitHub
+    gave is kept in .cache/stars.json for a build it does not answer. None when neither is known."""
     import urllib.request
     path = urllib.parse.urlsplit(repo).path.strip('/')
     if not path:
         return None
+    kept = ROOT / '.cache' / 'stars.json'
+    token = os.environ.get('GITHUB_TOKEN', '')
+    if not token and shutil.which('gh'):
+        try:
+            token = subprocess.run(['gh', 'auth', 'token'], capture_output=True, text=True, timeout=5).stdout.strip()
+        except Exception:
+            token = ''
     ask = urllib.request.Request(f'https://api.github.com/repos/{path}', headers={'Accept': 'application/vnd.github+json', 'User-Agent': 'trayui-site-build'})
-    if os.environ.get('GITHUB_TOKEN'):
-        ask.add_header('Authorization', f'Bearer {os.environ["GITHUB_TOKEN"]}')
+    if token:
+        ask.add_header('Authorization', f'Bearer {token}')
     try:
         with urllib.request.urlopen(ask, timeout=8) as r:
-            return int(json.loads(r.read())['stargazers_count'])
-    except Exception:
+            count = int(json.loads(r.read())['stargazers_count'])
+        kept.parent.mkdir(parents=True, exist_ok=True)
+        kept.write_text(json.dumps({'repo': path, 'stars': count}) + '\n', encoding='utf-8')
+        return count
+    except Exception as e:
+        try:
+            last = json.loads(kept.read_text(encoding='utf-8'))
+            if last.get('repo') == path:
+                print(f'GitHub did not answer ({e}): the header shows the last count it gave, {last["stars"]}', file=sys.stderr)
+                return int(last['stars'])
+        except Exception:
+            pass
+        print(f'GitHub did not answer ({e}), and no count was kept: the header shows no stars', file=sys.stderr)
         return None
 
 
-def github_link(repo, count, cls=''):
-    """The link to the repository, with its stars when they are known: "GitHub ★ 12", read as "GitHub 12 stars"."""
+def github_link(repo, count, cls='', word=True):
+    """The link to the repository, with its stars when they are known. word: GitHub's name beside its mark, as the
+    phone's menu shows it ("GitHub ★ 12"); without it, as the header does, the mark and the count alone ("12"). Both are
+    read as "GitHub, 12 stars"."""
     short = '' if count is None else str(count) if count < 1000 else f'{count / 1000:.1f}'.rstrip('0').rstrip('.') + 'k'
-    n = (f'<span class="site-stars__n">{icon("star", "tray-icon--sm")}{short}<span class="tray-vh"> {"star" if count == 1 else "stars"}</span></span>'
-         if short else '')
-    return f'<a class="tray-btn tray-btn--quiet tray-btn--sm site-stars{" " + cls if cls else ""}" href="{html.escape(repo)}">{GITHUB_MARK}<span>GitHub</span>{n}</a>'
+    noun = f'<span class="tray-vh"> {"star" if count == 1 else "stars"}</span>'
+    if word:
+        n = f'<span class="site-stars__n">{icon("star", "tray-icon--sm")}{short}{noun}</span>' if short else ''
+        return f'<a class="tray-btn tray-btn--quiet tray-btn--sm site-stars{" " + cls if cls else ""}" href="{html.escape(repo)}">{GITHUB_MARK}<span>GitHub</span>{n}</a>'
+    n = f'<span class="site-stars__n">{short}{noun}</span>' if short else ''
+    shape = ' site-stars--bare' + ('' if short else ' tray-btn--icon')
+    return (f'<a class="tray-btn tray-btn--quiet tray-btn--sm site-stars{shape}{" " + cls if cls else ""}" href="{html.escape(repo)}">'
+            f'{GITHUB_MARK}<span class="tray-vh">GitHub{", " if short else ""}</span>{n}</a>')
 
 
 def gallery(title, summary, groups, lead, more=None):
@@ -1059,7 +1087,7 @@ def build():
              'icon_wall': ''.join(icon(n) for n in sorted(icons)), 'themes': len(tok['color']['themes']),
              'theme_menu': theme_menu(theme_data(tok)['list']), 'mark': MARK, 'plays': len(plays), 'articles': len(articles), 'templates': len(templates)}
     count = stars(facts['repo']) if facts['repo'] else None
-    facts['github'] = github_link(facts['repo'], count, 'tray-topbar__wide') if facts['repo'] else ''  # in the header, and in the sheet on a phone
+    facts['github'] = github_link(facts['repo'], count, 'tray-topbar__wide', word=False) if facts['repo'] else ''  # in the header, and in the sheet on a phone
     facts['github_sheet'] = github_link(facts['repo'], count) if facts['repo'] else ''
     at = site_url or facts['cdn'] or 'trayui'  # the home page's lines are short: the site's own copies of the current release; the docs give jsDelivr by version
     # the three ways in that the home page copies: the lines that link the files, from where they come, and a prompt that has

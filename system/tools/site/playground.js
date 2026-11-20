@@ -80,6 +80,16 @@
   var GROUNDS = [['page', 'Page', ''], ['tray', 'Tray', 'tray-card'], ['ink', 'Ink', 'tray-card tray-card--inverse'], ['accent', 'Yellow', 'tray-card tray-card--accent']];
 
   /* ---------- The controls ---------- */
+  /* textWidth(text): how wide a short text is in a segment (Onest, weight 500, 16px), near enough, by the kind of each
+     letter: the wide ones, the narrow ones, the half-narrow ones, capitals, figures and the rest. */
+  function textWidth(text) {
+    var w = 0;
+    for (var i = 0; i < text.length; i++) {
+      var ch = text.charAt(i);
+      w += /[mwMW%@]/.test(ch) ? 13.8 : /[iljI'.,:;!|\/\\ ]/.test(ch) ? 4 : /[frt1()\[\]{}"\-_*]/.test(ch) ? 6.2 : /[A-Z]/.test(ch) ? 10.8 : /[0-9]/.test(ch) ? 9.9 : 9.2;
+    }
+    return w;
+  }
   function control(c, id, value) {
     var type = c.type || 'choice', label = esc(c.label);
     if (type === 'switch') {
@@ -93,8 +103,12 @@
       return '<div class="tray-slider-field"><div class="tray-slider-field__head"><label class="tray-label tray-label--inline" for="' + id + '">' + label + '</label><output for="' + id + '"></output></div>' +
         '<input class="tray-slider" id="' + id + '" type="range" min="' + c.min + '" max="' + c.max + '" step="' + (c.step || 1) + '" value="' + esc(value) + '" data-tray="slider"' + (c.unit ? ' data-unit="' + esc(c.unit) + '"' : '') + ' data-play-name="' + c.name + '"></div>';
     }
-    /* a choice: segments when there are a few short ones, a list otherwise */
-    var short = c.options.length <= 4 && c.options.every(function (o) { return String(o[1]).length <= 9; });
+    /* a choice: segments when every name fits its segment, a list otherwise. The panel is 20rem at its narrowest
+       (site.css .site-play__box), 272px inside its padding; a segmented control shares that out in equal columns (262px
+       inside its own border and padding, 4px between two), and a name needs its own width and 5px on either side. The
+       names are measured in advance (textWidth), because the build draws the controls, where nothing can be measured. */
+    var n = c.options.length, column = (262 - 4 * (n - 1)) / n;
+    var short = n <= 4 && c.options.every(function (o) { return textWidth(String(o[1])) + 10 <= column; });
     if (short) {
       return '<div class="tray-field"><span class="tray-label" id="' + id + '-l">' + label + '</span><div class="tray-seg tray-seg--sm tray-seg--fill" role="radiogroup" aria-labelledby="' + id + '-l">' +
         c.options.map(function (o) { return '<label class="tray-seg__item"><input type="radio" name="' + id + '" value="' + esc(o[0]) + '" data-play-name="' + c.name + '"' + (String(o[0]) === value ? ' checked' : '') + '><span>' + esc(o[1]) + '</span></label>'; }).join('') + '</div></div>';

@@ -32,6 +32,8 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 .site-top .tray-topbar__search { flex: 0 1 15rem; }
 /* the link to the repository, with its stars after a hairline, in figures that keep their width */
 .site-stars__n { display: inline-flex; align-items: center; gap: var(--space-1); padding-inline-start: var(--space-2); border-inline-start: 1px solid var(--hairline); font-variant-numeric: tabular-nums; }
+/* in the header the mark and the count alone, side by side */
+.site-stars--bare .site-stars__n { padding-inline-start: 0; border-inline-start: 0; }
 .site-sheet__repo { padding-block-start: var(--space-5); }
 .site-nav .tray-sidebar__item { min-block-size: 36px; }
 .site-nav .tray-sidebar__label { padding-block-start: var(--space-3); }
@@ -217,9 +219,10 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 
 /* The first page of a section: every block or template as a small live picture. */
 .site-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr)); gap: var(--space-7) var(--grid-gap); }
-/* A card of a gallery (blocks, templates) shares its name with the picture of an article above, whose box keeps 16:9 and
-   hides what overflows it: here the card is as tall as its picture and its words. */
-.site-thumb { display: grid; align-content: start; gap: var(--space-3); aspect-ratio: auto; overflow: visible; border-radius: var(--radius-panel); color: var(--ink); text-decoration: none; }
+/* A card of a gallery (blocks, templates, the home page's kits) shares its name with the picture of an article above, whose
+   box keeps 16:9 and hides what overflows it: here the card is a tray as tall as its picture and its words, with room
+   under the words, so the last line never meets the tray's edge. */
+.site-gallery > .site-thumb { display: grid; align-content: start; gap: var(--space-3); aspect-ratio: auto; overflow: visible; padding-block-end: var(--space-5); border-radius: var(--radius-panel); color: var(--ink); text-decoration: none; }
 /* The tray has the shape of the frame it will hold (1280 by 800) before the frame arrives, so nothing moves when it does. */
 .site-thumb__view { box-sizing: content-box; display: block; aspect-ratio: 1280 / 800; padding: var(--space-2); border-radius: var(--radius-panel); background: var(--surface); transition: filter var(--duration-fill) var(--ease); }
 .site-thumb:hover .site-thumb__view { filter: brightness(.96); }
@@ -229,12 +232,20 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 .site-thumb__view > img { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; object-position: top; border-radius: var(--radius-button); background: var(--page); }
 /* In one column the home page shows three kits, not six: the button under them leads to the rest. */
 @media (max-width: 47.99rem) { .site-kits > :nth-child(n+4) { display: none; } }
-.site-thumb__text { display: grid; gap: 2px; padding-inline: var(--space-2); }
+.site-thumb__text { display: grid; gap: 2px; padding-inline: var(--space-4); }
 .site-thumb__text b { font: 600 1.0625rem/1.3 var(--font-sans); }
 .site-thumb__text small { color: var(--ink-muted); font: 400 .9375rem/1.4 var(--font-sans); }
 
 /* ---------- Themes: the mark of a theme, the menu, the list, the maker ---------- */
 
+/* The theme button in the header: a sun while the page wears a light theme, a moon while it wears a dark one, both in the
+   theme's accent, drawn in its ink. Which of the two shows follows the theme's color-scheme (every theme sets one, a made
+   one too), so it is right before any script runs; a browser without light-dark() shows the sun. */
+.site-mode { display: block; inline-size: 24px; block-size: 24px; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.site-mode__sun { fill: var(--accent); stroke: var(--ink); }
+.site-mode__moon { fill: transparent; stroke: transparent; }
+.site-mode__sun { fill: light-dark(var(--accent), transparent); stroke: light-dark(var(--ink), transparent); }
+.site-mode__moon { fill: light-dark(transparent, var(--accent)); stroke: light-dark(transparent, var(--ink)); }
 /* A theme in one mark: its accent, ringed in its ink. */
 .site-dot { flex: none; display: block; inline-size: 20px; block-size: 20px; border: 2.4px solid var(--ink); border-radius: 50%; background: var(--accent); }
 .site-thememenu { min-inline-size: 15rem; max-block-size: min(42rem, calc(100vh - 6rem)); overflow-y: auto; }
@@ -294,6 +305,8 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 .site-charts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr)); align-items: start; gap: var(--space-8) var(--grid-gap); }
 /* The overview shows two of each form: a pair side by side, never a third alone on a line. */
 .site-charts--pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* The home page's charts, straight in the grid: a row of trays of one height, whatever each one holds. */
+.site-charts > .site-chart__view { display: grid; align-self: stretch; }
 .site-chart { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); min-inline-size: 0; }
 .site-chart--wide { grid-column: 1 / -1; }
 .site-chart__bar { display: flex; align-items: end; justify-content: space-between; gap: var(--space-4); padding-inline: var(--space-2); }
@@ -359,7 +372,7 @@ a.site-logo:active .site-mark__bar { transform: scale(1.14, .78); }
 .site-play { display: grid; gap: var(--space-4); min-inline-size: 0; margin-block-start: var(--space-10); }
 .site-play__head { display: grid; gap: var(--space-2); }
 .site-play__head p { max-inline-size: 46rem; color: var(--ink-soft); font: 400 1.0625rem/1.5 var(--font-sans); }
-.site-play__box { display: grid; grid-template-columns: minmax(0, 1fr) 18rem; gap: var(--space-4); align-items: stretch; }
+.site-play__box { display: grid; grid-template-columns: minmax(0, 1fr) 20rem; gap: var(--space-4); align-items: stretch; }
 @media (max-width: 64rem) { .site-play__box { grid-template-columns: minmax(0, 1fr); } }
 .site-play__stage { display: grid; place-items: center; min-block-size: 20rem; padding: var(--space-6); border-radius: var(--radius-panel); box-shadow: inset 0 0 0 1px var(--hairline); overflow-x: auto; }
 .site-play__ground { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-4); inline-size: min(100%, var(--play-w, 30rem)); }

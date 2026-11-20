@@ -312,10 +312,11 @@
     </nav>
   </div>
   <div class="tray-footer__bottom">
-    <p>Tray UI {{version}}, released under the {{license}} licence{{#author}}, maintained by <a href="{{author_url}}">{{author}}</a>{{/author}}. Counter and Perly Farm, in the examples, are invented, and so is every figure.</p>
+    <p>Tray UI {{version}}, released under the {{license}} licence. Counter and Perly Farm, in the examples, are invented, and so is every figure.</p>
     <ul class="tray-footer__legal">
       <li><a href="llms.txt">llms.txt</a></li>{{#repo}}
-      <li><a href="{{repo}}">GitHub</a></li>{{/repo}}
+      <li><a href="{{repo}}">GitHub</a></li>{{/repo}}{{#npm}}
+      <li><a href="https://www.npmjs.com/package/trayui">npm</a></li>{{/npm}}
     </ul>
   </div>
 </footer>

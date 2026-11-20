@@ -1035,6 +1035,10 @@ mark { padding-inline: .12em; border-radius: var(--radius-mark); background: var
 .tray-input-group .tray-input[aria-invalid="true"] { outline: none; box-shadow: none; }
 .tray-input-group__addon { display: inline-flex; align-items: center; gap: var(--space-2); padding-inline: var(--space-3); color: var(--ink-muted); font: 400 1rem/1 var(--font-sans); white-space: nowrap; }
 .tray-input-group__addon + .tray-input { padding-inline-start: 0; }
+/* Words in an addon are a word away from the value, so "https://" and an address, or "$" and a price, read as one; an
+   icon or a key keeps its room. */
+.tray-input-group__addon:not(:has(> svg, > .tray-kbd)):has(+ .tray-input) { padding-inline-end: 0; }
+.tray-input + .tray-input-group__addon:not(:has(> svg, > .tray-kbd)) { padding-inline-start: 0; }
 .tray-input-group__btn { flex: none; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-inline-size: var(--size-hit); block-size: var(--size-hit); padding: 0 var(--space-3); border: 0; border-radius: var(--radius-chip); background: var(--tray-ground); color: var(--ink); font: 500 .9375rem/1 var(--font-sans); cursor: pointer; transition: transform var(--duration-press) ease; }
 .tray-input-group__btn:active { transform: scale(.94); }
 .tray-input-group__btn--accent { background: var(--accent); color: var(--on-accent); }

@@ -2,6 +2,11 @@
 
 What changed in each version of Tray UI, the design system in plain HTML and CSS: its components, blocks, themes and tools, newest first.
 
+## Not released yet
+
+- **Input Group: words in an addon sit a word from the value**, so `https://` and an address, or `$` and a price, read as one. An icon or a key in an addon keeps its room.
+- **The site:** the header shows GitHub's mark and the count of stars, which the build now always knows; the theme button is a sun in a light theme and a moon in a dark one; the footer links the package on npm and names no maintainer. In the playgrounds a choice whose names would not fit its segments is a list. The cards of the galleries hold their words, and the charts on the home page are one height.
+
 ## 0.4.0, November 2026
 
 Both packages, `trayui` and `trayui-react`, are 0.4.0. A page written once in React can now ship as plain HTML that works with no React (`trayui-react/static`); a strip of tabs shows where you are; a skip link, a busy button that ignores presses and footer headings at any level; the checker learns a project's own classes and counts one yellow per screen. The ten templates are open, and the repository is public. Each change was checked in Chrome and its accessibility tree; none was tested in a screen reader.

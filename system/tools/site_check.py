@@ -189,8 +189,15 @@ def main():
     if links.get('public'):
         front = (SITE / 'index.html').read_text(encoding='utf-8')
         check('with the repository open, the header and the sheet link it, the stars read as words, and the home page names it as the code\'s repository',
-              front.count(f'href="{links["repo"]}"') >= 3 and 'site-stars tray-topbar__wide' in front and 'class="site-sheet__repo"' in front
+              front.count(f'href="{links["repo"]}"') >= 3 and 'site-stars site-stars--bare' in front and 'tray-topbar__wide' in front and 'class="site-sheet__repo"' in front
               and f'"codeRepository":"{links["repo"]}"' in front and ('class="site-stars__n"' not in front or '<span class="tray-vh"> star' in front), links['repo'])
+        top = re.search(r'<a class="tray-btn[^"]*site-stars--bare[^"]*"[^>]*>(.*?)</a>', front, re.S)
+        check('the header\'s link to the repository shows GitHub\'s mark and the count of its stars, not the word, which it says to a screen reader',
+              top is not None and '<span class="tray-vh">GitHub' in top.group(1) and '<span>GitHub</span>' not in top.group(1), top.group(1)[-200:] if top else None)
+        bottom = front[front.find('tray-footer__bottom'):]
+        check('the footer names no maintainer, and links npm beside GitHub when the packages are on npm',
+              'maintained by' not in bottom.lower() and (not links.get('npm') or bottom.find('>GitHub</a></li>') < bottom.find('<li><a href="https://www.npmjs.com/package/trayui">npm</a></li>')),
+              bottom[:300])
     headers = (SITE / '_headers').read_text(encoding='utf-8') if (SITE / '_headers').exists() else ''
     check('the host is told to send the Markdown pages as UTF-8', '/*.md\n  Content-Type: text/markdown; charset=utf-8' in headers)
     check('the download and the site hold the tokens for Tailwind 4 and 3 and the Figma variables, a file for each theme',
@@ -373,14 +380,18 @@ def main():
         pg.evaluate("document.getElementById('home-charts').scrollIntoView({ block: 'start' })"); pg.wait_for_timeout(1500)
         check('the home page draws three charts when they come into view', 'charts.js' in asked and pg.locator('.site-home [data-rechart] svg.recharts-surface').count() == 3,
               pg.locator('.site-home [data-rechart] svg.recharts-surface').count())
+        tall = pg.evaluate("[...document.querySelectorAll('.site-home .site-charts > .site-chart__view')].map(v => [Math.round(v.getBoundingClientRect().height), Math.round(v.firstElementChild.getBoundingClientRect().height)])")
+        check('the three charts of the home page stand in a row as cards of one height', len(tall) == 3 and len({h for pair in tall for h in pair}) == 1, tall)
         kits = pg.evaluate('''() => { const cards = [...document.querySelectorAll('#site-view .site-kits a.site-thumb')];
           const all = document.querySelector('#site-view a[href="/kits"].tray-btn'); let left = null;
           window.addEventListener('click', e => { left = !e.defaultPrevented; e.preventDefault(); }, { once: true }); cards[0]?.click();
-          return { left, all: !!all, cards: cards.map(a => { const i = a.querySelector('img');
+          const room = cards.map(a => Math.round(a.getBoundingClientRect().bottom - a.querySelector('.site-thumb__text').getBoundingClientRect().bottom));
+          return { left, all: !!all, room, cards: cards.map(a => { const i = a.querySelector('img');
             return [a.getAttribute('href'), i.getAttribute('loading'), i.getAttribute('width'), i.getAttribute('height'), (i.getAttribute('srcset') || '').split(',').length,
                     !!a.querySelector('.site-thumb__text b')?.textContent]; }) }; }''')
         check('the home page shows six kits, each a link to its page in the shop with its picture in four widths, and a link to all the kits; '
-              'a click on one is left to the browser', kits['left'] is True and kits['all'] and len(kits['cards']) == 6
+              'a click on one is left to the browser; each card\'s tray holds its words, with room under them',
+              kits['left'] is True and kits['all'] and len(kits['cards']) == 6 and all(r >= 16 for r in kits['room'][:3])
               and all(re.fullmatch(r'/kits/[a-z0-9-]+', h) and l == 'lazy' and w == '1280' and ht == '800' and n == 4 and named for h, l, w, ht, n, named in kits['cards']), kits)
         pg.evaluate('window.scrollTo(0, 0)'); pg.wait_for_timeout(200)
         pg.screenshot(path=str(SHOTS / 'home.png'))
@@ -577,7 +588,7 @@ def main():
         pg.locator('[data-play-reset]').click(); pg.wait_for_timeout(80)
         check('"Start again" puts every control back', play() == first and pg.locator('[data-play-stage] .tray-card').count() == 0 and pg.input_value('.site-play__controls input.tray-input') == 'Order a jar')
         pg.locator('.site-play').screenshot(path=str(SHOTS / 'playground.png'))
-        plays, undrawn = sorted(f.stem for f in (ROOT / 'tools' / 'site' / 'play').glob('*.json')), []
+        plays, undrawn, cramped = sorted(f.stem for f in (ROOT / 'tools' / 'site' / 'play').glob('*.json')), [], []
         for name in plays:
             ident = 'c-' + re.sub(r'(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])', '-', name).lower()
             go(pg, ident)
@@ -587,7 +598,10 @@ def main():
                 undrawn.append(name); continue
             if not pg.inner_text('[data-play-code]').strip() or pg.evaluate('document.documentElement.scrollWidth - document.documentElement.clientWidth') > 1:
                 undrawn.append(name)
+            cramped += [f'{name}: {t}' for t in pg.evaluate('''() => [...document.querySelectorAll('.site-play__controls .tray-seg__item span')].filter(s => {
+              const r = document.createRange(); r.selectNodeContents(s); return r.getBoundingClientRect().width + 4 > s.getBoundingClientRect().width; }).map(s => s.textContent)''')]
         check(f'each of the {len(plays)} playgrounds draws its component and its markup, and the page does not scroll sideways', len(plays) >= 2 and not undrawn, undrawn)
+        check('in every playground a name in a segmented control fits its segment (a choice whose names would not is a list)', not cramped, cramped)
         go(pg, 'c-button'); pg.wait_for_timeout(150)
         pg.click('#site-t2'); pg.wait_for_timeout(80)
         code = pg.inner_text('#site-src-code')
@@ -834,6 +848,8 @@ def main():
                       and pg.locator('#site-theme-list [aria-checked="true"]').get_attribute('data-value') == 'dark' and pg.locator('#site-theme-list').is_visible()
                       and pg.evaluate('getComputedStyle(document.documentElement).colorScheme') == 'dark', listed)
                 pg.keyboard.press('Escape'); pg.wait_for_timeout(150)
+            drawn = pg.evaluate("['sun', 'moon'].map(k => getComputedStyle(document.querySelector('#site-theme-btn .site-mode__' + k)).stroke !== 'rgba(0, 0, 0, 0)')")
+            check(f'the theme button shows a {"moon" if theme == "dark" else "sun"} while the page is in {theme.capitalize()}', drawn == ([False, True] if theme == 'dark' else [True, False]), drawn)
             for i in ('home', 'd-installation', 'f-colours', 'f-type', 'f-icons', 'g-layouts', 'components', 'c-date-picker', 'c-pricing-table', 'blocks', 'b-login-01', 'ch-use', 'ch-bar', 'ch-pie', 'ch-ready'):
                 go(pg, i); pg.wait_for_timeout(250)
                 if i.startswith('ch-') and i != 'ch-use': walk(); pg.evaluate('window.scrollTo(0, 0)')
