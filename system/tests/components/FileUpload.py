@@ -54,11 +54,12 @@ def test_keys(t):
     t.check('Tab reaches the file input', t.is_focused(pg.locator(INPUT)))
     s = t.style(pg.locator(DROP), 'outline-style', 'outline-width', 'outline-offset')
     t.eq('the whole tray draws the 3px ring', s, {'outline-style': 'solid', 'outline-width': '3px', 'outline-offset': '3px'})
-    # Each key on a page of its own: Chrome keeps one picker at a time, and the one Space opened can still be on its way
-    # out when Enter is pressed, which on a busy machine (CI) left Enter's picker unseen.
+    # Each key on a page of its own, reached with Tab as a person would: Chrome keeps one picker at a time, and the one
+    # Space opened can still be on its way out when Enter is pressed, which on a busy machine (CI) left Enter's picker
+    # unseen. Focus given by a script, not by Tab, opens no picker in Chrome on Linux.
     for key in ('Space', 'Enter'):
         kp = t.open()
-        kp.locator(INPUT).focus()
+        kp.keyboard.press('Tab')
         try:
             with kp.expect_file_chooser(timeout=5000) as fc:
                 kp.keyboard.press(key)
