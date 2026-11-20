@@ -1,0 +1,32 @@
+{
+  "name": "trayui",
+  "owner": {
+    "name": "Tray UI",
+    "url": "https://trayui.com"
+  },
+  "description": "Tray UI for AI agents: a skill to build screens with the design system in plain HTML and CSS.",
+  "plugins": [
+    {
+      "name": "trayui",
+      "source": "./system/dist/skills/trayui",
+      "description": "Build screens with Tray UI, the design system in plain HTML and CSS: the markup and rules of its 108 components, its 64 blocks as whole pages, the tokens, and a checker for the markup.",
+      "author": {
+        "name": "Vladyslav Korzh",
+        "url": "https://github.com/VladislavKorzh"
+      },
+      "homepage": "https://trayui.com/docs/skill",
+      "repository": "https://github.com/VladislavKorzh/trayui",
+      "license": "MIT",
+      "category": "design",
+      "keywords": [
+        "design-system",
+        "html",
+        "css",
+        "ui",
+        "accessibility",
+        "tray-ui"
+      ],
+      "strict": false
+    }
+  ]
+}

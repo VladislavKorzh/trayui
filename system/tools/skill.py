@@ -172,6 +172,17 @@ def write(site, dist, facts=None, cli=None, out=None):
                            'description': manifest['description'], 'category': 'design', 'tags': ['design-system', 'html', 'css', 'accessibility'],
                            'homepage': f'{site_url}/docs/skill'}]}
     (out / 'skills' / 'marketplace.json').write_text(json.dumps(market, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    # the repository is a marketplace too, for claude plugin marketplace add <owner>/<repo> and the directories that look for
+    # .claude-plugin/marketplace.json: the plugin is the skill's folder in dist/ (SKILL.md at its root loads as one skill),
+    # and strict false makes this entry its manifest. Written only when the skill goes to the repository's own dist/.
+    if pathlib.Path(dist).resolve() == (ROOT / 'dist').resolve():
+        repo_market = {**market, 'plugins': [{'name': 'trayui', 'source': './' + folder.resolve().relative_to(ROOT.parent).as_posix(),
+                                              'description': manifest['description'], 'author': manifest['author'],
+                                              'homepage': manifest['homepage'], **({'repository': facts['repo']} if facts['repo'] else {}),
+                                              'license': facts['license'], 'category': 'design', 'keywords': manifest['keywords'],
+                                              'strict': False}]}
+        (ROOT.parent / '.claude-plugin').mkdir(exist_ok=True)
+        (ROOT.parent / '.claude-plugin' / 'marketplace.json').write_text(json.dumps(repo_market, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     return {'folder': str(folder), 'files': len(files), 'references': len(refs), 'kb': sum(map(len, files.values())) // 1024,
             'zip_kb': len(archive) // 1024, 'sha256': digest}
 

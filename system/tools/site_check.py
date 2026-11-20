@@ -112,6 +112,14 @@ def registry_and_skill(site, index, url):
     digest = hashlib.sha256(zipped.read_bytes()).hexdigest() if zipped.exists() else ''
     check('marketplace.json lists the plugin with the archive as its source, pinned by the archive\'s sha256', market.get('name') == 'trayui' and market.get('owner', {}).get('name')
           and entry.get('source', {}).get('source') == 'archive' and entry['source'].get('sha256') == digest and entry['source'].get('url') == f'{site["site"]}/skills/trayui.zip', entry)
+    repo_market = load(ROOT.parent / '.claude-plugin' / 'marketplace.json')
+    repo_entry = next(iter(repo_market.get('plugins', [])), {})
+    check('the repository is a marketplace too: its one plugin is the skill folder in dist/, with the same description as the archive\'s',
+          repo_market.get('name') == 'trayui' and repo_entry.get('source') == './system/dist/skills/trayui' and repo_entry.get('strict') is False
+          and repo_entry.get('description') == plugin.get('description') and (ROOT / 'dist' / 'skills' / 'trayui' / 'SKILL.md').exists(), repo_entry)
+    skills_sh = load(ROOT.parent / 'skills.sh.json')
+    check('skills.sh.json points the skills CLI at dist/skills, so it finds the built skill and not skill/SKILL.md with its marks',
+          skills_sh.get('paths') == ['./system/dist/skills'], skills_sh)
 
     headers = (SITE / '_headers').read_text(encoding='utf-8')
     check('the host lets any site fetch the registry and the skill', '/r/*\n  Access-Control-Allow-Origin: *' in headers and '/skills/*\n  Access-Control-Allow-Origin: *' in headers)
