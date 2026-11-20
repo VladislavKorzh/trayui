@@ -1827,7 +1827,8 @@ def build():
                   'User-agent: *\n' + ''.join(f'Disallow: /kits/{p}\n' for p in ('buy/', 'thanks', 'download/', 'account', 'webhook', 'api/')) + 'Allow: /\n'
                   + '\n# Crawlers that gather pages to train models: every page but the kits.\n'
                   + ''.join(f'User-agent: {t}\n' for t in trainers) + 'Disallow: /kits\nAllow: /\n')
-        (OUT / 'robots.txt').write_text(robots + f'\nSitemap: {facts["site"]}/sitemap.xml\n', encoding='utf-8')
+        # the shop at /kits keeps a sitemap of its own (the list and every kit), from the day it is open to search engines
+        (OUT / 'robots.txt').write_text(robots + f'\nSitemap: {facts["site"]}/sitemap.xml\nSitemap: {facts["site"]}/kits/sitemap.xml\n', encoding='utf-8')
         if articles:  # the articles as an Atom feed, whole, for readers and for sites that take a feed (with the address here as the original)
             site, esc = facts['site'], lambda s: html.escape(s, quote=False)
             stamp = lambda a: max(d for d in (index[a['id']].get('lastmod'), a['published']) if d) + 'T00:00:00Z'
@@ -1877,6 +1878,10 @@ def build():
     lines.append(f'\n## Blocks\n\nWhole screens to copy, each one HTML file.\n\n- [All {len(blocks)} blocks]({link("blocks")}): every block with a sentence on what it holds\n'
                  f'- [Sign-in and sign-up pages]({link("b-login")})\n- [Sidebars]({link("b-sidebar")})\n')
     lines.append(f'\n## Templates\n\nWhole pages of a product to copy, each one HTML file.\n\n- [All {len(templates)} templates]({link("templates")}): every template with a sentence on what it holds\n')
+    if base:  # the kits: sold at /kits by the shop, under their own licence, not MIT and not for training models (robots.txt)
+        lines.append(f'\n## Kits\n\nPaid sites and apps built on Tray UI, in HTML and React, under [their own licence]({base}/kits/licence) '
+                     '(not MIT, not for training). `npx trayui kit <name>` installs one with a licence key.\n\n'
+                     f'- [All the kits]({base}/kits): each with its pages, live demo and price\n')
     lines.append('\n## Charts\n\n' + f'- [Using the charts]({link("ch-use")}): {index["ch-use"]["desc"]}\n'
                  + ''.join(f'- [{g["title"]}]({link(g["page"])}): {unmark(g["summary"])}\n' for g in chart_groups))
     if articles:

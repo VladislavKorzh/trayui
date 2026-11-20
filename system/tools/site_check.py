@@ -168,7 +168,8 @@ def main():
     check('dist/templates/ holds a copy of every template, so the npm package does', sorted(f.name for f in (ROOT / 'dist' / 'templates').glob('*.html')) == sorted(f'{i[2:]}.html' for i in template_ids))
     check('llms.txt and llms-full.txt name the templates', '## Templates' in index_txt and '## Templates' in llms and f'{site["site"]}/templates.md' in index_txt
           and 'rights reserved' not in (index_txt + llms).lower())
-    check('llms.txt is a short index: what Tray UI is, how to install it, and a link to the Markdown of every component', index_txt.startswith('# Tray UI\n\n> ') and len(index_txt) < 16000
+    # 17 kB, not 16: since 0.4.1 it also names the paid kits at /kits, a product line of its own, in four lines
+    check('llms.txt is a short index: what Tray UI is, how to install it, and a link to the Markdown of every component', index_txt.startswith('# Tray UI\n\n> ') and len(index_txt) < 17000
           and index_txt.count('/components/') >= len(comps) and '.md)' in index_txt and 'tokens.css' in index_txt, len(index_txt))
     check('llms-full.txt holds the rules, the guides and every component, each heading under its component', llms.startswith('# Tray UI') and '### Button' in llms and '### Footer' in llms
           and '#### Markup' in llms and '\n## Markup' not in llms and 'data-tray' in llms, len(llms))
@@ -183,7 +184,7 @@ def main():
           'that train models out of the kits only, and names the sitemap',
           all(re.search(r'^Allow: /$', g, re.M) for g in re.split(r'\n\s*\n', robots) if 'User-agent:' in g) and everyone == [['/kits/buy/', '/kits/thanks', '/kits/download/', '/kits/account', '/kits/webhook', '/kits/api/']]
           and len(groups) == 2 and {'GPTBot', 'ClaudeBot', 'Google-Extended', 'CCBot'} <= set(trainers) and '*' not in trainers
-          and f'Sitemap: {site["site"]}/sitemap.xml' in robots, robots)
+          and f'Sitemap: {site["site"]}/sitemap.xml' in robots and f'Sitemap: {site["site"]}/kits/sitemap.xml' in robots, robots)
     links = json.loads((ROOT / 'tools' / 'links.json').read_text(encoding='utf-8'))
     licence = links.get('license', 'MIT')
     if links.get('public'):
