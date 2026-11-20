@@ -176,9 +176,13 @@ def main():
     mds = [SITE / (m['path'] + '.md') for i, m in index.items() if i != 'home']
     check('every page but the home page is also Markdown, at its address with .md added', all(f.exists() for f in mds), [str(f) for f in mds if not f.exists()][:4])
     robots = (SITE / 'robots.txt').read_text(encoding='utf-8') if (SITE / 'robots.txt').exists() else ''
-    shut = re.findall(r'^Disallow: (.*)$', robots, re.M)
-    check('robots.txt lets every reader in, keeps none off a page (only the shop\'s checkout, downloads and account), and names the sitemap',
-          'User-agent: *\nAllow: /' in robots and shut == ['/kits/buy/', '/kits/thanks', '/kits/download/', '/kits/account', '/kits/webhook']
+    groups = [(re.findall(r'^User-agent: (.*)$', g, re.M), re.findall(r'^Disallow: (.*)$', g, re.M)) for g in re.split(r'\n\s*\n', robots) if 'User-agent:' in g]
+    everyone = [d for agents, d in groups if agents == ['*']]
+    trainers = [a for agents, d in groups if d == ['/kits'] for a in agents]
+    check('robots.txt lets every reader in, keeps none off a page (only the shop\'s checkout, downloads and account), keeps the crawlers '
+          'that train models out of the kits only, and names the sitemap',
+          all(re.search(r'^Allow: /$', g, re.M) for g in re.split(r'\n\s*\n', robots) if 'User-agent:' in g) and everyone == [['/kits/buy/', '/kits/thanks', '/kits/download/', '/kits/account', '/kits/webhook']]
+          and len(groups) == 2 and {'GPTBot', 'ClaudeBot', 'Google-Extended', 'CCBot'} <= set(trainers) and '*' not in trainers
           and f'Sitemap: {site["site"]}/sitemap.xml' in robots, robots)
     links = json.loads((ROOT / 'tools' / 'links.json').read_text(encoding='utf-8'))
     licence = links.get('license', 'MIT')
