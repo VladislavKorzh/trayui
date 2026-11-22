@@ -59,9 +59,15 @@ def test_keys(t):
     # and one left open made the next key's picker never come, now and then, on CI. So each picker is answered (no
     # file) and its page closed before the next key; a key whose picker still does not come gets one more fresh page,
     # so only a key that never opens it fails.
+    # Playwright turns on its catching of pickers when the first listener is added, and does not wait for Chrome to say it
+    # is on. Enter opens the picker on keydown, so on a slow machine the key could come first and the picker open for
+    # nobody; Space opens it on keyup, a round trip later, which is why only Enter failed. So the page listens first, and
+    # a round trip to the page passes before the key.
     def opens(key):
         kp = t.open()
         try:
+            kp.on('filechooser', lambda chooser: None)
+            kp.evaluate('0')
             kp.keyboard.press('Tab')
             with kp.expect_file_chooser(timeout=5000) as fc:
                 kp.keyboard.press(key)
