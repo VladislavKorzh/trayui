@@ -20,7 +20,7 @@ jsDelivr serves every release of the `trayui` package on npm, and the address na
 In a project with a bundler, install the package and import the three files once, at the entry of the app:
 
 ```sh
-npm install trayui
+npm install trayui@0.4.1
 ```
 
 ```js
@@ -34,8 +34,8 @@ The package also holds the font, the blocks and the tokens for Tailwind and Figm
 ## Or add them with the CLI
 
 ```sh
-npx trayui init
-npx trayui add login-01
+npx trayui@0.4.1 init
+npx trayui@0.4.1 add login-01
 ```
 
 The first line writes the three files and the font into a `trayui/` folder; the second puts a block beside your pages, its links pointed at that folder. In a React app the same commands copy the source of components and blocks. [Add with a CLI](https://trayui.com/docs/cli.md) says more.

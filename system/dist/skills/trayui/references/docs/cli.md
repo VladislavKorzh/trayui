@@ -1,23 +1,23 @@
 # Add with a CLI
 
-`npx trayui` puts the system into a project: the three files and the font, a block beside your pages, or in React the source of a component or a block, which is then yours to change. It needs Node 18 or later and nothing else, and it never overwrites a file you have changed unless you ask it to.
+`npx trayui@0.4.1` puts the system into a project: the three files and the font, a block beside your pages, or in React the source of a component or a block, which is then yours to change. It needs Node 18 or later and nothing else, and it never overwrites a file you have changed unless you ask it to.
 
 ## In a folder of HTML pages
 
 ```sh
-npx trayui init
-npx trayui add login-01
+npx trayui@0.4.1 init
+npx trayui@0.4.1 add login-01
 ```
 
 `init` writes the three files, the font and their licences into a `trayui/` folder. `add` puts a block beside your pages, here `login-01.html`, with its links pointed at that folder, so it opens as it is. `--pages <folder>` puts the block in another folder, and its links follow. The folder needs no `package.json`.
 
-`npx trayui list` names every block. A component in plain HTML is markup rather than a file: copy it from its page, such as [Button](https://trayui.com/components/button.md).
+`npx trayui@0.4.1 list` names every block. A component in plain HTML is markup rather than a file: copy it from its page, such as [Button](https://trayui.com/components/button.md).
 
 ## In React
 
 ```sh
-npx trayui init
-npx trayui add button tabs login-01
+npx trayui@0.4.1 init
+npx trayui@0.4.1 add button tabs login-01
 ```
 
 In a project whose `package.json` lists React, such as a Vite or a Next.js app, the same commands copy source files into `src/components/trayui/`, or `components/trayui/` when there is no `src/` folder:
@@ -32,14 +32,14 @@ The files are yours: rename them, change them, delete what you do not use. Compo
 
 `trayui.json`, at the root of the project, records what was added and a fingerprint of each file as it was written.
 
-- `npx trayui update` brings every file it added to the current release, and keeps each one you changed. It names those it kept.
-- `npx trayui diff` shows, file by file, what you changed and what the release changed, with the lines.
+- `npx trayui@0.4.1 update` brings every file it added to the current release, and keeps each one you changed. It names those it kept.
+- `npx trayui@0.4.1 diff` shows, file by file, what you changed and what the release changed, with the lines.
 - `--overwrite` replaces the files you changed with the release's. `--dry-run` says what would be written and writes nothing.
 
 ## Check the markup
 
 ```sh
-npx trayui check index.html pages/
+npx trayui@0.4.1 check index.html pages/
 ```
 
 It reads plain HTML and reports classes, behaviours and icons that do not exist, more than one yellow button in a view, buttons and fields without a name, missing `autocomplete`, references to ids that are not there, tabs wired wrong, skipped headings, literal colours and sizes, and a page without its language, its theme or the three files in order. It exits with 1 when it finds an error, so it can run in CI; `--json` gives the findings to another tool. A project with classes of its own names their start with `--prefix` (`--prefix kit-`, or `--prefix kit-,app-` for more), and they are no longer reported as foreign. It cannot see the page: look at it as well, at 1280, 768 and 390 pixels wide, in a light and a dark theme.
@@ -50,9 +50,9 @@ The paid kits from https://trayui.com/kits are whole sites and apps built with T
 
 ```sh
 read -rs TRAYUI_KEY && export TRAYUI_KEY   # paste the key, then Enter: it is not shown, nor kept in the history
-npx trayui kit --list                      # the kits your licence opens, with their versions and editions
-npx trayui kit <name>                      # the HTML edition, into <name>-html/
-npx trayui kit <name> --react              # the React edition, into <name>-react/
+npx trayui@0.4.1 kit --list                      # the kits your licence opens, with their versions and editions
+npx trayui@0.4.1 kit <name>                      # the HTML edition, into <name>-html/
+npx trayui@0.4.1 kit <name> --react              # the React edition, into <name>-react/
 ```
 
 `--key <key>` gives the key on the command line instead, where your shell keeps it in its history; the command never prints it. The key is also on https://trayui.com/kits/account. `--dir <folder>` unpacks the kit in another folder. Before it writes a file, the command checks the download against its sha256 and every path in the archive, so nothing lands outside the kit's folder. It stops when that folder already holds files, unless you add `--force`, which writes the kit's files over them and keeps the others. Then it says how to start: open `index.html`, or `cd` into the folder, `npm install` and `npm run dev`, as the kit's `package.json` has it.
@@ -85,19 +85,19 @@ npx trayui kit <name> --react              # the React edition, into <name>-reac
 | `--dir <folder>` | `kit`: the folder the kit's folder goes in (this one by default) |
 | `--force` | `kit`: unpack into a folder that already holds files |
 
-`npx trayui --help` lists them all, and `npx trayui <command> --help` explains one.
+`npx trayui@0.4.1 --help` lists them all, and `npx trayui@0.4.1 <command> --help` explains one.
 
 ## With the shadcn CLI
 
 The same items make a registry in shadcn's format: https://trayui.com/r/registry.json lists the React items, https://trayui.com/r/html/registry.json the plain HTML ones. Each file goes to a path of its own, so no `components.json` and no Tailwind are needed:
 
 ```sh
-npx shadcn@latest add https://trayui.com/r/login-01.json
-npx shadcn@latest add https://trayui.com/r/html/login-01.json
+npx shadcn@4.23.0 add https://trayui.com/r/login-01.json
+npx shadcn@4.23.0 add https://trayui.com/r/html/login-01.json
 ```
 
-The shadcn CLI cannot bring the font of the plain HTML files, which is not text: copy `fonts/` from the download on [Installation](https://trayui.com/docs/installation.md), or run `npx trayui init`, which does. In React the font comes with the `trayui` package.
+The shadcn CLI cannot bring the font of the plain HTML files, which is not text: copy `fonts/` from the download on [Installation](https://trayui.com/docs/installation.md), or run `npx trayui@0.4.1 init`, which does. In React the font comes with the `trayui` package.
 
 ## For an agent
 
-An agent can run the same commands, and check what it wrote with `npx trayui check`. `npx trayui skill` gives it the skill, which holds the rules, a page for every component and block, and the checker; [The agent skill](https://trayui.com/docs/skill.md) says more.
+An agent can run the same commands, and check what it wrote with `npx trayui@0.4.1 check`. `npx trayui@0.4.1 skill` gives it the skill, which holds the rules, a page for every component and block, and the checker; [The agent skill](https://trayui.com/docs/skill.md) says more.

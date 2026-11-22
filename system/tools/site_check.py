@@ -104,6 +104,13 @@ def registry_and_skill(site, index, url):
           and read('trayui/scripts/rules.json') == (ROOT / 'dist' / 'cli' / 'rules.json').read_text(encoding='utf-8')
           and (ROOT / 'dist' / 'skills' / 'trayui' / 'SKILL.md').exists() and (ROOT / 'dist' / 'skills' / 'trayui' / 'SKILL.md').read_text(encoding='utf-8') == skill_md,
           [n for n in names if n.count('/') < 3][:12])
+    import skill  # tools/skill.py: unpinned() reads a page for commands that would fetch whatever release is newest
+    version = json.loads((ROOT / 'tools' / 'links.json').read_text(encoding='utf-8'))['version']
+    loose = {n: skill.unpinned(read(n)) for n in names if n.endswith('.md')}
+    cli_md = read('trayui/references/docs/cli.md')
+    check('every command in the skill that fetches a package names a release (npx trayui@<this version>), and the site\'s own page keeps the plain command',
+          f'`npx trayui@{version} init`' in skill_md and f'npx trayui@{version} add login-01' in cli_md and 'shadcn@latest' not in cli_md
+          and not any(loose.values()) and 'npx trayui init' in (SITE / 'docs' / 'cli.md').read_text(encoding='utf-8'), {n: v for n, v in loose.items() if v})
     plugin = json.loads(read('trayui/.claude-plugin/plugin.json') or '{}')
     check('the archive is also a Claude Code plugin: its manifest, a README and an icon, and no version, so an install follows the site',
           plugin.get('name') == 'trayui' and 'version' not in plugin and 'trayui/README.md' in names and plugin.get('icon', '').lstrip('./') and f'trayui/{plugin.get("icon", "").lstrip("./")}' in names, plugin)

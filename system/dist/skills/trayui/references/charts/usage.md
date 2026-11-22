@@ -7,7 +7,7 @@ In React, charts are drawn by Recharts. The package adds the frame, the colours,
 The charts are a separate entry of the React package, so the rest of the package does not depend on a chart library. Add Recharts next to it:
 
 ```sh
-npm install recharts
+npm install recharts@3.10.1
 ```
 
 ```tsx

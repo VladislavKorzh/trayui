@@ -9,7 +9,10 @@ the site serves at each address with .md added) it writes:
   dist/skills/trayui/          the skill, which the npm package trayui carries: SKILL.md (skill/SKILL.md with the facts of
                                this build filled in), references/ (the site's Markdown by the same paths: the page at
                                /components/button.md is references/components/button.md), scripts/check.mjs and
-                               scripts/rules.json (the markup checker and its rules, from dist/cli, which tools/build.py writes)
+                               scripts/rules.json (the markup checker and its rules, from dist/cli, which tools/build.py writes).
+                               A command in it that fetches a package names a release (npx trayui@<this version>), where the
+                               site's page says npx trayui: an agent runs the release the skill was written with, and a
+                               directory that pins the skill to a commit has pinned what the skill runs as well.
   site/skills/trayui.zip       one folder, trayui/: the skill, and around it what makes it a Claude Code plugin as well
                                (.claude-plugin/plugin.json, README.md from skill/README.md, icon.png drawn from src/logo.svg).
                                The same file is the upload for claude.ai (a folder with SKILL.md at its root) and the archive a
@@ -29,6 +32,11 @@ SECTIONS = ('components', 'blocks', 'docs', 'charts')       # the site's folders
 LISTS = ('components.md', 'blocks.md', 'docs.md', 'charts.md')
 LEAVE_OUT = {'docs/changelog.md', 'docs/agents.md', 'docs/skill.md'}  # the history, and the pages about agents and this skill itself
 STAMP = (1980, 1, 1, 0, 0, 0)                                # the one date of every entry in the zip
+SHADCN = '4.23.0'                             # the release of the shadcn CLI the skill names: the one tools/cli_check.py last passed with
+# a command that fetches a package: the four the pages name, which pinned() gives a release, and any at all, which unpinned() reads
+NAMED = re.compile(r'\b(npx|npm install) (trayui-react|trayui|shadcn|recharts)(?:@latest)?(?![\w@-])(?!\.\w)')
+RUNS = re.compile(r'\b(npx|bunx|npm exec|pnpm dlx|yarn dlx)((?: +-[\w-]+)*) +(@?[a-z][\w./-]*)(@[\w.-]+)?')
+ADDS = re.compile(r'\b(npm (?:install|i|add)|pnpm add|yarn add|bun add)\b([^\n`]*)')
 
 
 def defaults():
@@ -38,7 +46,9 @@ def defaults():
     version, site = links.get('version', '0.0.0'), links.get('site', '').rstrip('/')
     cdn = f'https://cdn.jsdelivr.net/npm/trayui@{version}' if links.get('npm') else site
     themes = [t['id'] for t in tok['color']['themes']]
+    lock = json.loads((ROOT / 'react' / 'package-lock.json').read_text(encoding='utf-8'))  # the Recharts the charts are built and checked with
     return {'version': version, 'site': site, 'cdn': cdn, 'license': links.get('license', 'MIT'), 'author': links.get('author', ''),
+            'shadcn': SHADCN, 'recharts': lock['packages']['node_modules/recharts']['version'],
             'author_url': links.get('author_url', ''), 'repo': links.get('repo', '') if links.get('public') else '',
             'themes': len(themes), 'theme_names': ', '.join(f'`{t}`' for t in themes[:-1]) + f' or `{themes[-1]}`',
             'icons': len(json.loads((ROOT / 'src' / 'icons.json').read_text(encoding='utf-8')))}
@@ -51,6 +61,30 @@ def fill(text, facts, where):
     if left:
         sys.exit(f'{where}: a mark is left unfilled: {left.group(0)}')
     return text
+
+
+def pinned(text, facts):
+    """A page with a release named in each command that fetches a package: this build's version for trayui and trayui-react,
+    and for shadcn and Recharts the releases this build was proved with. Only the skill's copy: the site says npx trayui."""
+    at = {'trayui': facts['version'], 'trayui-react': facts['version'], 'shadcn': facts['shadcn'], 'recharts': facts['recharts']}
+    return NAMED.sub(lambda m: f'{m.group(1)} {m.group(2)}@{at[m.group(2)]}', text)
+
+
+def unpinned(text):
+    """The commands in a page that would fetch whatever release of a package is newest, each as it is written."""
+    found = [m.group(0) for m in RUNS.finditer(text) if not re.match(r'@\d', m.group(4) or '')]
+    for m in ADDS.finditer(text):
+        for written in m.group(2).split():
+            word = written.rstrip('.,;:)')
+            if word.startswith('-'):
+                continue
+            if not re.fullmatch(r'@?[a-z][\w./-]*(@[\w.-]+)?', word):
+                break  # the command has ended
+            if not re.search(r'.@\d', word):
+                found.append(f'{m.group(1)} {word}')
+            if word != written:
+                break  # so has the sentence
+    return found
 
 
 def pages(site):
@@ -125,12 +159,17 @@ def write(site, dist, facts=None, cli=None, out=None):
     out = pathlib.Path(out) if out else site
     facts = dict(defaults(), **{k: v for k, v in (facts or {}).items() if v not in (None, '')})
     cli = pathlib.Path(cli) if cli else (dist / 'cli' if (dist / 'cli' / 'rules.json').exists() else ROOT / 'dist' / 'cli')
-    refs = pages(site)
+    refs = {p: pinned(text, facts) for p, text in pages(site).items()}
     facts.setdefault('components', sum(1 for p in refs if p.startswith('components/')))
     facts.setdefault('blocks', sum(1 for p in refs if re.fullmatch(r'blocks/[a-z]+-\d+\.md', p)))
 
     files = {'SKILL.md': fill((SOURCE / 'SKILL.md').read_text(encoding='utf-8'), facts, 'skill/SKILL.md').encode('utf-8')}
     files.update({f'references/{p}': text.encode('utf-8') for p, text in refs.items()})
+    readme = fill((SOURCE / 'README.md').read_text(encoding='utf-8'), facts, 'skill/README.md').encode('utf-8')
+    # every command a page gives that fetches a package names a release: one that does not stops the build, as an unfilled mark does
+    loose = {rel: unpinned(data.decode('utf-8')) for rel, data in {**files, 'README.md': readme}.items() if rel.endswith('.md')}
+    if any(loose.values()):
+        sys.exit(f'the skill has commands that fetch a package without naming a release: { {k: v for k, v in loose.items() if v} }')
     for name in ('check.mjs', 'rules.json'):
         if not (cli / name).exists():
             sys.exit(f'{cli / name} is missing: run tools/build.py, which writes the checker and its rules')
@@ -160,7 +199,7 @@ def write(site, dist, facts=None, cli=None, out=None):
                 'license': facts['license'], 'keywords': ['design-system', 'html', 'css', 'ui', 'accessibility', 'tray-ui'], 'icon': './icon.png'}
     plugin = {f'trayui/{rel}': data for rel, data in files.items()}
     plugin['trayui/.claude-plugin/plugin.json'] = (json.dumps(manifest, indent=2, ensure_ascii=False) + '\n').encode('utf-8')
-    plugin['trayui/README.md'] = fill((SOURCE / 'README.md').read_text(encoding='utf-8'), facts, 'skill/README.md').encode('utf-8')
+    plugin['trayui/README.md'] = readme
     plugin['trayui/icon.png'] = icon_png()
     archive = zipped(plugin)
     digest = hashlib.sha256(archive).hexdigest()

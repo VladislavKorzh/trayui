@@ -1,6 +1,6 @@
 ---
 name: trayui
-description: Build and fix web pages and app screens with Tray UI, the design system in plain HTML and CSS (tray- classes, data-tray behaviours, tokens.css, components/bundle.css, components/bundle.js; the trayui and trayui-react packages; npx trayui). Use when the user names Tray UI or trayui, when a project links tokens.css and components/bundle.css or depends on trayui or trayui-react, or when asked to build a sign-in page, dashboard, settings page, table, pricing page, shop, article or other screen in that system.
+description: Build and fix web pages and app screens with Tray UI, the design system in plain HTML and CSS (tray- classes, data-tray behaviours, tokens.css, components/bundle.css, components/bundle.js; the trayui and trayui-react packages; the trayui command line). Use when the user names Tray UI or trayui, when a project links tokens.css and components/bundle.css or depends on trayui or trayui-react, or when asked to build a sign-in page, dashboard, settings page, table, pricing page, shop, article or other screen in that system.
 license: MIT
 metadata:
   version: "0.4.1"
@@ -36,13 +36,13 @@ Link the three files, in this order:
 </head>
 ```
 
-If the project already has its own copies (a `trayui/` folder, `npm install trayui`), link those instead. `data-theme` is one of `light`, `dark`, `linen`, `mint`, `sky`, `rose`, `lilac`, `midnight`, `forest` or `espresso`.
+If the project already has its own copies (a `trayui/` folder, or the `trayui` package among its dependencies), link those instead. `data-theme` is one of `light`, `dark`, `linen`, `mint`, `sky`, `rose`, `lilac`, `midnight`, `forest` or `espresso`.
 
 Or let the command line put it in, when the project may have files added (Node 18 or later):
 
-- `npx trayui init` copies the three files and the font into `trayui/`; `npx trayui add login-01` puts a block beside the pages, its links pointed at `trayui/`.
-- In a React app (Vite, Next.js), `npx trayui init` and `npx trayui add tabs login-01` copy the components' and the blocks' source into `src/components/trayui/`, for the project to own. Or use the package: `npm install trayui-react` and `import 'trayui-react/styles.css'`; `references/docs/react.md` says how.
-- `npx trayui diff` shows what was changed since; a file someone edited is never overwritten without `--overwrite`. `references/docs/cli.md` has the rest.
+- `npx trayui@0.4.1 init` copies the three files and the font into `trayui/`; `npx trayui@0.4.1 add login-01` puts a block beside the pages, its links pointed at `trayui/`.
+- In a React app (Vite, Next.js), `npx trayui@0.4.1 init` and `npx trayui@0.4.1 add tabs login-01` copy the components' and the blocks' source into `src/components/trayui/`, for the project to own. Or use the package: `npm install trayui-react@0.4.1` and `import 'trayui-react/styles.css'`; `references/docs/react.md` says how.
+- `npx trayui@0.4.1 diff` shows what was changed since; a file someone edited is never overwritten without `--overwrite`. `references/docs/cli.md` has the rest.
 
 ## 2. Start from the nearest block, never from an empty page
 
@@ -88,4 +88,4 @@ Run the checker that comes with this skill on every page you wrote (Node 18 or l
 node <this skill's folder>/scripts/check.mjs page.html
 ```
 
-In a project with npm, `npx trayui check page.html` runs the same checker. It reports classes, behaviours and icons that do not exist, more than one yellow button in a view, buttons and fields without names, missing autocomplete, broken references and repeated ids, tabs wired wrong, skipped headings, literal colours and sizes, a `<style>` of its own, and the three files missing or out of order. Fix every error and every warning you can. Then say what it cannot check: look at the page at 1280, 768 and 390px wide, in `light` and `dark`, and tab through it.
+In a project with npm, `npx trayui@0.4.1 check page.html` runs the same checker. It reports classes, behaviours and icons that do not exist, more than one yellow button in a view, buttons and fields without names, missing autocomplete, broken references and repeated ids, tabs wired wrong, skipped headings, literal colours and sizes, a `<style>` of its own, and the three files missing or out of order. Fix every error and every warning you can. Then say what it cannot check: look at the page at 1280, 768 and 390px wide, in `light` and `dark`, and tab through it.

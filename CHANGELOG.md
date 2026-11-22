@@ -2,6 +2,10 @@
 
 What changed in each version of Tray UI, the design system in plain HTML and CSS: its components, blocks, themes and tools, newest first.
 
+## Not released yet
+
+- **The agent skill names a release in every command that fetches a package.** Where the site says `npx trayui init`, the skill's copy of the page says `npx trayui@<its version> init`, and the same for `npm install trayui`, `npm install trayui-react`, the shadcn CLI and Recharts. An agent with the skill runs the release the skill was written with, and a directory that pins the skill to a commit has pinned what it runs as well. The build stops if a page of the skill gains a command without one. The site's own pages are as before.
+
 ## 0.4.1, November 2026
 
 Both packages, `trayui` and `trayui-react`, are 0.4.1: a kit from trayui.com/kits can be installed from the command line, and the words in an Input Group addon sit next to the value. The site has a few fixes of its own.

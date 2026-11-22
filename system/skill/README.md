@@ -16,7 +16,7 @@ It reads nothing from the network and runs nothing by itself.
 
 - **Claude Code:** `claude plugin marketplace add {{site}}/skills/marketplace.json`, then `claude plugin install trayui@trayui`.
 - **claude.ai:** download [trayui.zip]({{site}}/skills/trayui.zip) and upload it under Settings, Capabilities, Skills.
-- **Any agent that reads skills:** copy the `trayui` folder of the zip, or `node_modules/trayui/skills/trayui` after `npm install trayui`, into the project's `.claude/skills/` or `.agents/skills/`.
+- **Any agent that reads skills:** copy the `trayui` folder of the zip, or `node_modules/trayui/skills/trayui` after `npm install trayui@{{version}}`, into the project's `.claude/skills/` or `.agents/skills/`.
 
 {{site}}/docs/skill says more.
 

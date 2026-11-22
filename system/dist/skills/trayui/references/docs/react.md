@@ -7,7 +7,7 @@ The same 108 components as typed React components, over the same stylesheet and 
 The package is called `trayui-react`, and it is on npm. It needs `react` and `react-dom`; the charts also need `recharts`.
 
 ```sh
-npm install trayui-react
+npm install trayui-react@0.4.1
 ```
 
 Its source is the `system/react` folder of the repository ([open it](https://github.com/VladislavKorzh/trayui)).
@@ -48,7 +48,7 @@ import { Chart, ChartContainer, ChartTooltip } from 'trayui-react/charts';
 
 ## Blocks, and source you own
 
-The 64 blocks exist in React too, as components with the same markup and classes as the HTML pages: `npx trayui add login-01` copies `Login01` into your app, with what it needs, and the components come the same way (`npx trayui add button tabs`). These are copies of the source rather than the package: change them as you like, and `npx trayui update` keeps your changes when a release changes the originals. [Add with a CLI](https://trayui.com/docs/cli.md) explains it, and the same items install with `npx shadcn add https://trayui.com/r/login-01.json`.
+The 64 blocks exist in React too, as components with the same markup and classes as the HTML pages: `npx trayui@0.4.1 add login-01` copies `Login01` into your app, with what it needs, and the components come the same way (`npx trayui@0.4.1 add button tabs`). These are copies of the source rather than the package: change them as you like, and `npx trayui@0.4.1 update` keeps your changes when a release changes the originals. [Add with a CLI](https://trayui.com/docs/cli.md) explains it, and the same items install with `npx shadcn@4.23.0 add https://trayui.com/r/login-01.json`.
 
 A block keeps the script of its HTML page, if it has one (a filter that narrows a table, a total that follows the quantities), as plain DOM code that runs once it is mounted: rewrite it with React state when you make the screen yours.
 
