@@ -6,7 +6,7 @@
 tools/site.py calls write(OUT, DIST, facts) once the site's pages are written. From the Markdown of every page (the files
 the site serves at each address with .md added) it writes:
 
-  dist/skills/trayui/          the skill, which the npm package trayui carries: SKILL.md (skill/SKILL.md with the facts of
+  dist/skills/trayui/          the skill, which the npm package trayui carries: SKILL.md (skill/SKILL.template.md with the facts of
                                this build filled in), references/ (the site's Markdown by the same paths: the page at
                                /components/button.md is references/components/button.md), scripts/check.mjs and
                                scripts/rules.json (the markup checker and its rules, from dist/cli, which tools/build.py writes).
@@ -26,7 +26,8 @@ The zip is deterministic (sorted entries, one date, one mode), so an unchanged s
 import argparse, hashlib, io, json, pathlib, re, shutil, struct, sys, zipfile, zlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-SOURCE = ROOT / 'skill'                       # SKILL.md and the plugin's README, written by hand, with {{marks}}
+SOURCE = ROOT / 'skill'                       # SKILL.template.md and the plugin's README, written by hand, with {{marks}}.
+                                              # The template is not called SKILL.md, so a crawler that walks the repository finds only the built skill
 NOTE = re.compile(r'^> Part of Tray UI [^\n]*\n\n?', re.M)  # the line every Markdown page of the site carries under its title
 SECTIONS = ('components', 'blocks', 'docs', 'charts')       # the site's folders of pages the skill carries
 LISTS = ('components.md', 'blocks.md', 'docs.md', 'charts.md')
@@ -163,7 +164,7 @@ def write(site, dist, facts=None, cli=None, out=None):
     facts.setdefault('components', sum(1 for p in refs if p.startswith('components/')))
     facts.setdefault('blocks', sum(1 for p in refs if re.fullmatch(r'blocks/[a-z]+-\d+\.md', p)))
 
-    files = {'SKILL.md': fill((SOURCE / 'SKILL.md').read_text(encoding='utf-8'), facts, 'skill/SKILL.md').encode('utf-8')}
+    files = {'SKILL.md': fill((SOURCE / 'SKILL.template.md').read_text(encoding='utf-8'), facts, 'skill/SKILL.template.md').encode('utf-8')}
     files.update({f'references/{p}': text.encode('utf-8') for p, text in refs.items()})
     readme = fill((SOURCE / 'README.md').read_text(encoding='utf-8'), facts, 'skill/README.md').encode('utf-8')
     # every command a page gives that fetches a package names a release: one that does not stops the build, as an unfilled mark does
@@ -180,7 +181,7 @@ def write(site, dist, facts=None, cli=None, out=None):
     named |= {f'references/docs/{n}' for n in re.findall(r'`([\w-]+\.md)`', said) if n != 'SKILL.md'}
     missing = sorted(n for n in named if n not in files)
     if missing:
-        sys.exit(f'skill/SKILL.md names files the skill does not have: {missing}')
+        sys.exit(f'skill/SKILL.template.md names files the skill does not have: {missing}')
 
     folder = dist / 'skills' / 'trayui'
     if folder.exists():

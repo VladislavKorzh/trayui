@@ -125,8 +125,13 @@ def registry_and_skill(site, index, url):
           repo_market.get('name') == 'trayui' and repo_entry.get('source') == './system/dist/skills/trayui' and repo_entry.get('strict') is False
           and repo_entry.get('description') == plugin.get('description') and (ROOT / 'dist' / 'skills' / 'trayui' / 'SKILL.md').exists(), repo_entry)
     skills_sh = load(ROOT.parent / 'skills.sh.json')
-    check('skills.sh.json points the skills CLI at dist/skills, so it finds the built skill and not skill/SKILL.md with its marks',
+    check('skills.sh.json points the skills CLI at dist/skills, so it finds the built skill and not skill/SKILL.template.md with its marks',
           skills_sh.get('paths') == ['./system/dist/skills'], skills_sh)
+    import subprocess
+    tracked = subprocess.run(['git', 'ls-files'], cwd=ROOT.parent, capture_output=True, text=True).stdout.split('\n')
+    skill_files = sorted(p for p in tracked if p.rsplit('/', 1)[-1] == 'SKILL.md')
+    check('the repository holds one SKILL.md, the built skill\'s, so a directory that walks it lists no template with {{marks}}',
+          skill_files == ['system/dist/skills/trayui/SKILL.md'], skill_files)
 
     headers = (SITE / '_headers').read_text(encoding='utf-8')
     check('the host lets any site fetch the registry and the skill', '/r/*\n  Access-Control-Allow-Origin: *' in headers and '/skills/*\n  Access-Control-Allow-Origin: *' in headers)
