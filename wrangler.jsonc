@@ -6,18 +6,26 @@
 
   // The site lives at trayui.com. The old workers.dev address still answers, but _headers tells search engines not
   // to index it, and every page names trayui.com as its canonical address. The addresses of single versions stay off.
-  // To put the site behind a password again: add "main": "system/tools/site/worker.js" and, under "assets",
-  // "binding": "ASSETS" and "run_worker_first": true, set the secret with `npx wrangler secret put SITE_PASSWORD`,
-  // then deploy (system/README.md says more).
+  // To put the site behind a password again: set "main" to "system/tools/site/worker.js" and "run_worker_first" to
+  // true, set the secret with `npx wrangler secret put SITE_PASSWORD`, then deploy (system/README.md says more).
   "routes": [{ "pattern": "trayui.com", "custom_domain": true }],
   "workers_dev": true,
   "preview_urls": false,
+
+  // The one address a script answers: /stars.json, the stars of the repository as they are now (the static files
+  // hold the count of the build). With the secret GITHUB_TOKEN it asks GitHub with that token: a fine-grained token that
+  // may only read public repositories, set with `npx wrangler secret put GITHUB_TOKEN`.
+  "main": "system/tools/site/stars.js",
 
   "build": {
     "command": "python3 system/tools/build.py && python3 system/tools/site.py"
   },
   "assets": {
     "directory": "./system/site",
+    // The Worker runs first for /stars.json only; every other address is served by the files as before (one that reaches
+    // the Worker is handed back to them, with their 404 page).
+    "binding": "ASSETS",
+    "run_worker_first": ["/stars.json"],
     // Every page is a file: components/lightbox.html is served at /components/lightbox, and /components/lightbox.html
     // or /components/lightbox/ redirect there. index.html is /.
     "html_handling": "auto-trailing-slash",

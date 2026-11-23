@@ -151,6 +151,82 @@ FRAME_JS = '''() => { const f = document.querySelector('.site-frame iframe'); if
            styled: getComputedStyle(d.body).fontFamily.includes('Onest'), wired: !!f.contentWindow.TrayUI, theme: d.documentElement.dataset.theme }; }'''
 
 
+# The Worker that answers /stars.json (tools/site/stars.js), run in node with GitHub, the cache and the static files made
+# up: what it answers, and when it asks GitHub. Time is made up too, so the 15 minutes and the minute pass at once.
+STARS_WORKER = r"""
+const { readFileSync } = await import('node:fs');  /* as a data: address, the file is a module whatever node's version */
+const worker = (await import('data:text/javascript,' + encodeURIComponent(readFileSync(process.argv[1], 'utf8')))).default;
+let now = 1.8e12; Date.now = () => now;
+const store = new Map();
+globalThis.caches = { default: {
+  async match(req) { const e = store.get(req.url); return e === undefined ? undefined : new Response(e); },
+  async put(req, res) { store.set(req.url, await res.text()); } } };
+let github = [], gives = 0, refuse = 0;  /* the stars GitHub gives, or the status it refuses with */
+globalThis.fetch = async (url, init) => {
+  github.push({ url: String(url), headers: init.headers });
+  return refuse ? new Response('{"message":"API rate limit exceeded"}', { status: refuse }) : new Response(JSON.stringify({ stargazers_count: gives }));
+};
+const files = (built) => ({ ASSETS: { async fetch(u) {
+  const path = new URL(u.url || u).pathname;
+  if (path === '/stars.json') return built ? new Response(JSON.stringify(built)) : new Response('not found', { status: 404 });
+  return new Response('page ' + path, { status: path === '/nope' ? 404 : 200 });
+} } });
+const env = { ...files({ repo: 'VladislavKorzh/trayui', stars: 3 }), GITHUB_TOKEN: 'a-token' };
+const waits = [], ctx = { waitUntil: (p) => waits.push(p) };
+async function get(e, path = '/stars.json', method = 'GET') {
+  const r = await worker.fetch(new Request('https://trayui.com' + path, { method }), e, ctx);
+  await Promise.all(waits.splice(0));
+  return [r.status, (await r.text()).trim(), r.headers.get('Content-Type'), r.headers.get('Cache-Control')];
+}
+const o = {};
+gives = 7; o.first = await get(env); o.asked = github.slice();
+o.again = await get(env); o.n_again = github.length;
+now += 15 * 60 * 1000 + 1; refuse = 403; o.stale = await get(env); o.n_stale = github.length;
+o.soon = await get(env); o.n_soon = github.length;
+now += 60 * 1000 + 1; refuse = 0; gives = 9; o.later = await get(env); o.n_later = github.length;
+store.clear(); refuse = 500; o.cold = await get(env);
+store.clear(); refuse = 0; gives = -1; o.odd = await get(env);
+store.clear(); github = []; o.none = await get(files(null)); o.n_none = github.length;
+store.clear(); github = []; gives = 5; o.bare = await get(files({ repo: 'VladislavKorzh/trayui', stars: 3 })); o.bare_auth = github[0] ? github[0].headers.Authorization || null : 'not asked';
+o.post = await get(env, '/stars.json', 'POST');
+o.page = await get(env, '/components/button'); o.missing = await get(env, '/nope');
+console.log(JSON.stringify(o));
+"""
+
+
+def stars_worker():
+    """Check the Worker of /stars.json on its own, before the site is opened."""
+    import subprocess
+    done = subprocess.run(['node', '--input-type=module', '-e', STARS_WORKER, str(ROOT / 'tools' / 'site' / 'stars.js')], capture_output=True, text=True, timeout=60)
+    try:
+        o = json.loads(done.stdout.strip().splitlines()[-1])
+    except Exception:
+        check('the Worker of /stars.json runs', False, (done.stderr or done.stdout)[-300:])
+        return
+    def json_ok(r, n, whose):
+        """An answer of 200 in JSON, with the count n, whose it is, and when GitHub gave it (not for the build's)."""
+        try:
+            body = json.loads(r[1])
+        except Exception:
+            return False
+        return (r[0] == 200 and r[2:] == ['application/json; charset=utf-8', 'public, max-age=600'] and body.get('stars') == n and body.get('from') == whose
+                and (body.get('at') is None) == (whose in ('build', 'none')))
+    first = o['asked'][0] if o['asked'] else {}
+    check('/stars.json answers the count GitHub gives, says it is GitHub\'s and when, asking for the repository the build names, with a User-Agent and the token',
+          json_ok(o['first'], 7, 'github') and len(o['asked']) == 1 and first.get('url') == 'https://api.github.com/repos/VladislavKorzh/trayui'
+          and first.get('headers', {}).get('User-Agent') and first.get('headers', {}).get('Authorization') == 'Bearer a-token', [o['first'], o['asked']])
+    check('within 15 minutes it answers from the cache without asking GitHub again', json_ok(o['again'], 7, 'github') and o['n_again'] == 1, o['again'])
+    check('when GitHub refuses, it keeps the last count (saying so, and when GitHub gave it), and asks again only after a minute',
+          json_ok(o['stale'], 7, 'kept') and o['n_stale'] == 2 and json_ok(o['soon'], 7, 'kept') and o['n_soon'] == 2 and json_ok(o['later'], 9, 'github') and o['n_later'] == 3,
+          [o['stale'], o['soon'], o['later'], o['n_stale'], o['n_soon'], o['n_later']])
+    check('with nothing kept and GitHub down, or an answer that is not a count, it gives the build\'s count, still with 200',
+          json_ok(o['cold'], 3, 'build') and json_ok(o['odd'], 3, 'build'), [o['cold'], o['odd']])
+    check('with no stars.json from the build it answers null and asks GitHub nothing', json_ok(o['none'], None, 'none') and o['n_none'] == 0, [o['none'], o['n_none']])
+    check('without the secret it asks GitHub without a token', json_ok(o['bare'], 5, 'github') and o['bare_auth'] is None, [o['bare'], o['bare_auth']])
+    check('it takes only GET and HEAD, and hands any other address back to the files', o['post'][0] == 405
+          and o['page'][:2] == [200, 'page /components/button'] and o['missing'][0] == 404, [o['post'], o['page'], o['missing']])
+
+
 def main():
     SHOTS.mkdir(parents=True, exist_ok=True)
     data = next((SITE / '_').glob('data.*.js')).read_text(encoding='utf-8')  # the map of the site: its name holds a hash of it
@@ -215,6 +291,12 @@ def main():
         top = re.search(r'<a class="tray-btn[^"]*site-stars--bare[^"]*"[^>]*>(.*?)</a>', front, re.S)
         check('the header\'s link to the repository shows GitHub\'s mark and the count of its stars, not the word, which it says to a screen reader',
               top is not None and '<span class="tray-vh">GitHub' in top.group(1) and '<span>GitHub</span>' not in top.group(1), top.group(1)[-200:] if top else None)
+        kept = json.loads((SITE / 'stars.json').read_text(encoding='utf-8')) if (SITE / 'stars.json').exists() else {}
+        shown = re.findall(r'class="site-stars__n">(?:<svg.*?</svg>)?([^<]*)<', front)
+        n = kept.get('stars')
+        check('the build writes the repository and the count the pages show to stars.json, which the Worker of /stars.json reads',
+              kept.get('repo') == urllib.parse.urlsplit(links['repo']).path.strip('/') and len(shown) == (0 if n is None else 2)
+              and (n is None or n >= 1000 or shown == [str(n)] * 2), [kept, shown])
         bottom = front[front.find('tray-footer__bottom'):]
         check('the footer names no maintainer, and links npm beside GitHub when the packages are on npm',
               'maintained by' not in bottom.lower() and (not links.get('npm') or bottom.find('>GitHub</a></li>') < bottom.find('<li><a href="https://www.npmjs.com/package/trayui">npm</a></li>')),
@@ -327,6 +409,7 @@ def main():
     notice = (SITE / 'charts.licenses.txt').read_text(encoding='utf-8') if (SITE / 'charts.licenses.txt').exists() else ''
     check('the script that draws the charts comes with the licences of what it holds', any((SITE / '_').glob('charts.*.js')) and all(f'\n{n} ' in notice for n in ('recharts', 'react', 'react-dom')) and 'MIT License' in notice, len(notice))
 
+    stars_worker()
     server, url = serve()
     registry_and_skill(site, index, url)
     with sync_playwright() as p:
@@ -359,6 +442,23 @@ def main():
                 cp.goto(url + where, wait_until='load'); cp.wait_for_timeout(1500)
                 shifts[f'{where or "home"} {w}'] = round(cp.evaluate('window.__cls'), 4); cp.close()
         check('opening the site, or a link straight to a component, a doc or a block, moves nothing on the page, at 1440 and at 390 wide', all(v < 0.01 for v in shifts.values()), shifts)
+        if (SITE / 'stars.json').exists() and json.loads((SITE / 'stars.json').read_text(encoding='utf-8'))['stars'] is not None:
+            # (a build that got no count from GitHub, as CI's may, draws no place for one, and nothing is put there)
+            # After the page has loaded it asks /stars.json (on the web the Worker answers it with GitHub's count now) and puts
+            # the count in the header and the sheet, written as the build writes it; an answer with no count changes nothing.
+            told = {}
+            for given in ({'stars': 1234}, {'stars': 1}, {'stars': None}, 'not json'):
+                sp = b.new_page(viewport={'width': 1440, 'height': 900}); serr = []
+                sp.on('pageerror', lambda e: serr.append(str(e)[:200]))
+                body = given if isinstance(given, str) else json.dumps(given)  # a handler of one argument: Playwright gives a second, the request, to one of two
+                sp.route('**/stars.json', (lambda body: lambda r: r.fulfill(status=200, content_type='application/json', body=body))(body))
+                sp.goto(url, wait_until='load'); sp.wait_for_timeout(600)
+                told[json.dumps(given)] = sp.evaluate("[...document.querySelectorAll('.site-stars__n')].map(n => n.textContent)") + serr
+                sp.close()
+            built_n = json.loads((SITE / 'stars.json').read_text(encoding='utf-8'))['stars']
+            was = [f'{built_n} {"star" if built_n == 1 else "stars"}'] * 2 if built_n is not None and built_n < 1000 else None
+            check('after the page loads, the header and the sheet show the count /stars.json gives (1.2k, 1 star), and keep the build\'s when it gives none',
+                  list(told.values())[:2] == [['1.2k stars'] * 2, ['1 star'] * 2] and (was is None or list(told.values())[2:] == [was, was]), told)
         check('the font loads from the site\'s own file', pg.evaluate('document.fonts.check("16px Onest")'))
         check('the site opens on the home page', pg.locator('#site-view h1').inner_text().endswith('components in plain HTML and CSS') and pg.title().startswith('Tray UI'), pg.title())
         pg.emulate_media(color_scheme='dark'); pg.wait_for_timeout(200)
@@ -431,6 +531,7 @@ def main():
         filled = re.sub(r'(<nav class="tray-sidebar site-nav" id="site-nav"[^>]*>)(</nav>)', r'\1<div class="tray-sidebar__group"><a class="tray-sidebar__item" href="/kits" aria-current="page">All kits</a></div>\2', filled)
         op = pg.context.new_page()
         op.route('**/kits/shell-check', lambda r: r.fulfill(status=200, content_type='text/html; charset=utf-8', body=filled))
+        op.route('**/stars.json', lambda r: r.fulfill(status=200, content_type='application/json', body='{"stars":42}'))
         op.goto(url + 'kits/shell-check', wait_until='load'); op.wait_for_timeout(700)
         kept = op.evaluate('''() => { const out = [document.querySelector('#site-view h1')?.textContent, document.querySelector('#site-nav [aria-current]')?.textContent,
             document.querySelector('#site-sections [aria-current]')?.textContent];
@@ -438,10 +539,13 @@ def main():
             window.addEventListener(ev, e => { left = !e.defaultPrevented; e.preventDefault(); }, { once: true });
             const el = document.querySelector(sel); if (ev === 'click') el.click(); else el.requestSubmit(); out.push(left); }
           return out; }''')
+        kit_stars = op.evaluate("[...document.querySelectorAll('.site-stars__n')].map(n => n.textContent)")
         op.keyboard.press('/'); op.wait_for_timeout(250); op.keyboard.type('Lightbox'); op.wait_for_timeout(250); op.keyboard.press('Enter')
         op.wait_for_url('**/components/lightbox', timeout=5000); op.wait_for_timeout(500)
         check('a page of the kits, drawn in the shell, keeps its page, sidebar, links and forms, and its search opens a page of the site at its address',
               kept == ['Kits', 'All kits', 'Kits', True, True] and op.inner_text('#site-view h1') == 'Lightbox', [kept, op.url])
+        built_stars = json.loads((SITE / 'stars.json').read_text(encoding='utf-8'))['stars'] if (SITE / 'stars.json').exists() else None
+        check('a page of the kits shows the stars of the moment in its header too', built_stars is None or kit_stars == ['42 stars'] * 2, kit_stars)
         op.close()
         check('the installation page offers the download and shows the markup to link', pg.locator('.site-prose a[download]').count() == 1 and pg.locator('.site-prose .tray-code').count() >= 3)
         pg.screenshot(path=str(SHOTS / 'installation.png'))

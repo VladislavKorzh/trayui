@@ -457,8 +457,9 @@ GITHUB_MARK = ('<svg class="tray-icon" viewBox="0 0 24 24" aria-hidden="true" fo
 
 
 def stars(repo):
-    """The stars of the repository on GitHub, asked once while the site is built (so a visitor's page asks GitHub nothing).
-    Without a token GitHub answers 60 questions an hour from one address, and the machine that builds the site may have
+    """The stars of the repository on GitHub, asked once while the site is built (so a visitor's page asks GitHub nothing):
+    the count every page holds. On the web site.js then asks /stars.json, which the Worker (tools/site/stars.js) answers
+    with the count of the moment, and puts that in the header. Without a token GitHub answers 60 questions an hour from one address, and the machine that builds the site may have
     used them up (other tools, other builds): then the count used to go missing from the header. So the question goes
     with a token when there is one (GITHUB_TOKEN, or the gh command's when it is signed in), and the last count GitHub
     gave is kept in .cache/stars.json for a build it does not answer. None when neither is known."""
@@ -1086,9 +1087,9 @@ def build():
              'site': site_url, 'author': LINKS.get('author', ''), 'author_url': LINKS.get('author_url', ''),
              'icon_wall': ''.join(icon(n) for n in sorted(icons)), 'themes': len(tok['color']['themes']),
              'theme_menu': theme_menu(theme_data(tok)['list']), 'mark': MARK, 'plays': len(plays), 'articles': len(articles), 'templates': len(templates)}
-    count = stars(facts['repo']) if facts['repo'] else None
-    facts['github'] = github_link(facts['repo'], count, 'tray-topbar__wide', word=False) if facts['repo'] else ''  # in the header, and in the sheet on a phone
-    facts['github_sheet'] = github_link(facts['repo'], count) if facts['repo'] else ''
+    star_count = stars(facts['repo']) if facts['repo'] else None
+    facts['github'] = github_link(facts['repo'], star_count, 'tray-topbar__wide', word=False) if facts['repo'] else ''  # in the header, and in the sheet on a phone
+    facts['github_sheet'] = github_link(facts['repo'], star_count) if facts['repo'] else ''
     at = site_url or facts['cdn'] or 'trayui'  # the home page's lines are short: the site's own copies of the current release; the docs give jsDelivr by version
     # the three ways in that the home page copies: the lines that link the files, from where they come, and a prompt that has
     # an agent set the system up in the project it works in (the agents page shows the same words)
@@ -1636,6 +1637,11 @@ def build():
         shutil.copyfile(DIST / rel, OUT / rel)
     for f in (DIST / 'fonts').iterdir():
         shutil.copyfile(f, OUT / 'fonts' / f.name)
+    if facts['repo']:
+        # The repository and its stars at this build. The pages hold the same count; on the web /stars.json is answered by
+        # the Worker (tools/site/stars.js) with the count GitHub gives now, which site.js puts in the header after the page
+        # has loaded. The Worker reads the repository's name here, and falls back on this count when GitHub does not answer.
+        (OUT / 'stars.json').write_text(json.dumps({'repo': urllib.parse.urlsplit(facts['repo']).path.strip('/'), 'stars': star_count}) + '\n', encoding='utf-8')
     for folder in ('tailwind', 'figma'):  # the tokens for other tools, to link and download from the Tailwind and Figma page
         if (DIST / folder).exists():
             shutil.copytree(DIST / folder, OUT / folder)

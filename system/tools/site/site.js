@@ -842,6 +842,27 @@
   });
   $('#site-skip').addEventListener('click', function () { view.focus(); });
 
+  /* ---------- The stars of the repository, as they are now ----------
+     The page holds the count of the build. Once it has loaded, the count of the moment comes from /stars.json (a Worker on
+     this host asks GitHub, tools/site/stars.js), and goes in the header and the sheet, written as the build writes it:
+     12, 1.2k, and " star" or " stars" for a screen reader. Only on the web; on a page of the kits as well, whose header is
+     the site's. Nothing changes when the answer has no count. */
+  function freshStars() {
+    var spots = $$('.site-stars__n');
+    if (!PATHS || !spots.length || !window.fetch) return;
+    fetch('/stars.json', { headers: { Accept: 'application/json' } }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      var n = d && d.stars;
+      if (typeof n !== 'number' || n < 0 || n % 1 !== 0) return;
+      var short = n < 1000 ? String(n) : (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+      spots.forEach(function (s) {
+        var text = [].filter.call(s.childNodes, function (c) { return c.nodeType === 3; })[0], noun = $('.tray-vh', s);
+        if (text) text.data = short;
+        if (noun) noun.textContent = n === 1 ? ' star' : ' stars';
+      });
+    }).catch(function () { /* the count of the build stays */ });
+  }
+  if (document.readyState === 'complete') freshStars(); else window.addEventListener('load', freshStars, { once: true });
+
   /* For tests, and for the pages that make links (the Themes page). */
   S.go = go; S.here = current; S.urlOf = urlOf; S.query = query; S.paths = PATHS;
 
