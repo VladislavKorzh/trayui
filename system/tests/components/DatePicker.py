@@ -111,3 +111,34 @@ def test_parity_keys(t):
     a = drive(t, h, h.locator(DAY))
     b = drive(t, r, t.cell(r, 'DeliveryDay'))
     t.eq('React: the down arrow opens on today, a pick closes and returns focus, the trigger is renamed, as in HTML', b, a)
+
+
+def test_side(t):
+    """At the bottom of the window the panel opens upward, chosen before focus moves to the day, so the page does not jump;
+    a picker inside a popover (a From / To range under a list of presets) does the same."""
+    pg = t.open(width=1190, height=773)
+    pg.evaluate("""() => { const box = document.createElement('div'); box.id = 'low'; box.style.cssText = 'position: fixed; inset-block-end: 24px; inset-inline-start: 24px;';
+        box.append(document.querySelectorAll('[data-tray="datepicker"]')[1]); document.body.append(box); }""")
+    root = pg.locator('#low [data-tray="datepicker"]')
+    tr, panel = root.locator('.tray-select-trigger'), root.locator('.tray-pop')
+    tr.focus()
+    pg.keyboard.press('ArrowDown')
+    b, p = tr.bounding_box(), panel.bounding_box()
+    t.check('near the bottom of the window it opens upward', p['y'] + p['height'] <= b['y'] and panel.get_attribute('data-up') == '', (b, p))
+    t.eq('focus is on today and the page did not scroll', (pg.evaluate('document.activeElement.dataset.date'), pg.evaluate('scrollY')), ('2026-11-15', 0))
+    pg.keyboard.press('Escape')
+    t.settle(pg)
+    t.check('Escape still puts focus back on the trigger', t.is_focused(tr))
+    pg = t.open(width=1190, height=773)
+    pg.evaluate("""() => { const pick = document.querySelectorAll('[data-tray="datepicker"]')[1];
+        const s = document.createElement('span'); s.className = 'tray-anchor'; s.dataset.tray = 'popover'; s.id = 'range';
+        s.innerHTML = '<button class="tray-btn tray-btn--sm" type="button">Custom range</button><div class="tray-pop tray-pop--roomy"><div class="tray-stack">'
+          + '<button class="tray-option" type="button">Last 7 days</button><button class="tray-option" type="button">Last 30 days</button><button class="tray-option" type="button">This quarter</button></div></div>';
+        const box = document.createElement('div'); box.style.cssText = 'position: fixed; z-index: 50; inset-block-start: 300px; inset-inline-start: 24px;'; box.append(s);
+        document.body.append(box); TrayUI.init(s); s.querySelector('.tray-stack').append(pick); }""")
+    pg.click('#range > button')
+    tr, panel = pg.locator('#range [data-tray="datepicker"] .tray-select-trigger'), pg.locator('#range [data-tray="datepicker"] .tray-pop')
+    tr.click()
+    b, p = tr.bounding_box(), panel.bounding_box()
+    t.check('a picker inside a popover opens upward when only the room above holds it', p['y'] + p['height'] <= b['y'] and p['y'] >= 0, (b, p))
+    t.eq('and the page did not scroll', pg.evaluate('scrollY'), 0)

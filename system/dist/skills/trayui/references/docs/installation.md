@@ -102,7 +102,7 @@ That is a grey tray on the white page, a white field in it, and the one yellow b
 | File | With gzip |
 | --- | --- |
 | `tokens.css` | 3 KB |
-| `components/bundle.css` | 38 KB |
+| `components/bundle.css` | 39 KB |
 | `components/bundle.js` | 49 KB |
 
 ## Browsers

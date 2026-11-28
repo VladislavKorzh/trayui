@@ -4,6 +4,8 @@ What changed in each version of Tray UI, the design system in plain HTML and CSS
 
 ## Not released yet
 
+- **A floating panel opens upward when there is no room below** ([#1](https://github.com/VladislavKorzh/trayui/issues/1)). A Select, a Date Picker, a Dropdown Menu, a Popover or any other `tray-pop` near the bottom of the window opens above its trigger if it fits there, and stays below if it fits on neither side. The side is chosen as it opens, before focus moves into it, so the page no longer jumps to a calendar that opened under the fold, and a Date Picker inside a Popover opens where it can be seen. `tray-pop--top` in the markup is kept as it is.
+- **A panel opened from the ink card or the yellow card is readable** ([#2](https://github.com/VladislavKorzh/trayui/issues/2)). Menus, selects, popovers, date pickers and dialogs took the card's text colour onto the page's panel: white on white from the ink card in Light, near-black on dark from the yellow card in Dark. A raised panel now takes the theme's text, rules and light or dark back, and looks like every other panel of the page. `data-theme` on the panel still pins it to one theme.
 - **The agent skill names a release in every command that fetches a package.** Where the site says `npx trayui init`, the skill's copy of the page says `npx trayui@<its version> init`, and the same for `npm install trayui`, `npm install trayui-react`, the shadcn CLI and Recharts. An agent with the skill runs the release the skill was written with, and a directory that pins the skill to a commit has pinned what it runs as well. The build stops if a page of the skill gains a command without one. The site's own pages are as before.
 
 ## 0.4.1, November 2026

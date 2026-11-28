@@ -146,19 +146,36 @@
   }
   function show(el) { el.removeAttribute('data-closing'); el.hidden = false; fit(el); }
 
+  /* side(panel): below its trigger, or above it when only the room above holds it (see fit). Measured without the entrance
+     scale: offsetTop and offsetHeight, from the box of the anchor it is placed against. */
+  function side(el) {
+    if (el.hasAttribute('data-up')) { el.classList.remove('tray-pop--top'); el.removeAttribute('data-up'); }
+    var host = el.offsetParent;
+    if (!host || el.classList.contains('tray-pop--top') || el.classList.contains('tray-pop--side') || el.parentElement.matches('.tray-submenu, .tray-context')) return;
+    var gap = 8, room = document.documentElement.clientHeight, top = host.getBoundingClientRect().top + host.clientTop, h = el.offsetHeight;
+    var away = el.offsetTop - host.clientHeight; /* from the trigger's bottom to the panel's top, the same gap it keeps above */
+    if (top + el.offsetTop + h + gap > room && top - away - h >= gap) { el.classList.add('tray-pop--top'); el.setAttribute('data-up', ''); }
+  }
   /* fit(panel): a floating panel (.tray-pop) that CSS places under its trigger, and that would leave the window sideways,
      moves back inside it, 8px from the edge, but never past the other edge: by a margin on the side it is placed from.
      It is measured without its entrance scale (offsetLeft, offsetWidth), and fitted again when the window changes size or
-     the font arrives. A panel that fits is left where CSS put it. */
+     the font arrives. A panel that fits is left where CSS put it.
+     As it opens it also chooses a side: a panel that does not fit in the window below its trigger, but does above it,
+     opens upward, as tray-pop--top does (marked data-up, so the next opening chooses again from where the trigger is
+     then). It stays below when it fits on neither side, since the page can scroll down to it but not above its own top.
+     This happens before focus moves into the panel, which would scroll the page to it. A panel the markup placed itself
+     (tray-pop--top, --side, a submenu's, a context menu's) keeps its place, and an open panel does not change sides when
+     the window changes size. */
   var fitting = false;
-  function fit(el) {
+  function fit(el, again) {
     if (!el || !el.classList || !el.classList.contains('tray-pop')) return;
     if (!fitting) {
       fitting = true;
-      var all = function () { $$('.tray-pop').forEach(function (p) { if (!p.hidden) fit(p); }); };
+      var all = function () { $$('.tray-pop').forEach(function (p) { if (!p.hidden) fit(p, true); }); };
       window.addEventListener('resize', all);
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(all);
     }
+    if (!again && !el.hidden) side(el);
     el.style.marginLeft = el.style.marginRight = '';
     var host = el.offsetParent;
     if (el.hidden || !host) return;

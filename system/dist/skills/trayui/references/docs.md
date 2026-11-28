@@ -17,7 +17,7 @@ A clean, well-lit shop counter: a white page, black type that says the thing pla
 
 ## How it works
 
-- **Three files.** `tokens.css` declares every token as a custom property, `components/bundle.css` holds the classes, `components/bundle.js` wires up behaviour. Together they are 90 KB when compressed. There is no framework and no build step.
+- **Three files.** `tokens.css` declares every token as a custom property, `components/bundle.css` holds the classes, `components/bundle.js` wires up behaviour. Together they are 91 KB when compressed. There is no framework and no build step.
 - **Classes on plain HTML.** A button is `<button class="tray-btn">`. Every class starts with `tray-`; the type styles are classes too (`display`, `title`, `body`).
 - **Behaviour by attribute.** What needs a script (a menu, a calendar, a chart) takes `data-tray="menu"` on its element and wires itself. Most components need none. [Styles and behaviour](https://trayui.com/docs/behaviour.md) lists them all.
 - **Grounds.** A surface tells its children what they sit on: put a field in a card and it turns white. You do not set those fills by hand. [Grounds and nesting](https://trayui.com/docs/grounds.md) explains it.

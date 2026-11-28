@@ -27,6 +27,8 @@ Four local custom properties carry the ground down the tree. Component styles us
 
 When you build something new, use the same four and it will sit correctly on every ground and in every theme.
 
+A floating panel belongs to the page, not to the card it opened from. A menu, a select, a popover or a dialog whose trigger sits on the ink card or on yellow takes the theme's text, rules and light or dark back, so it reads as every other panel of the page: dark text on white in Light, light text on dark in Dark. To pin a panel to one theme, give it `data-theme` (`<div class="tray-pop" data-theme="dark">`); a ground class on the panel itself, such as `tray-inverse`, also wins.
+
 ## Radii step down with nesting
 
 | Level | Token | Examples |

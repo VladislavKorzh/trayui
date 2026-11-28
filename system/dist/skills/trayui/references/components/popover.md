@@ -13,7 +13,7 @@ A popover is a small panel that opens beside the button that asked for it, for a
   </div>
 </span>
 ```
-The panel is `raised` with the float shadow. `tray-pop` alone is a tight list panel (20px corners, used by menus); add `tray-pop--card` for a 22rem panel with 28px corners and room for text, or `tray-pop--roomy` to keep the natural width. Placement: under the trigger from its start edge; `tray-pop--end` aligns it to the end edge, `tray-pop--top` opens it upward.
+The panel is `raised` with the float shadow. `tray-pop` alone is a tight list panel (20px corners, used by menus); add `tray-pop--card` for a 22rem panel with 28px corners and room for text, or `tray-pop--roomy` to keep the natural width. Placement: under the trigger from its start edge; `tray-pop--end` aligns it to the end edge, `tray-pop--top` opens it upward. A panel that does not fit in the window below its trigger, but does above it, opens upward by itself (it carries `data-up` while it does), and the next opening chooses again; one that fits on neither side stays below, where the page can scroll to it. This goes for every `tray-pop`: menus, selects, comboboxes, date pickers and hover cards too. The side is chosen as the panel opens, before focus moves into it, so the page does not jump.
 
 ## Popover, Tooltip or Dialog
 A Tooltip is one line that names a control and cannot be interacted with. A popover holds controls or a paragraph and does not block the page. A Dialog blocks the page until answered.

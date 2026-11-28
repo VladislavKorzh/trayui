@@ -336,10 +336,11 @@ def build():
           '   and the small measures inside a part (a 28px knob, 22px of padding, a 2px ring) are written in the rules. Local\n' \
           '   names start with --tray-. Loaded after tokens.css. Built from src/css by tools/build.py. */\n\n'
     # Which themes are dark. tokens.css says it for each theme; these two rules, which give way to any other, are for a page
-    # whose tokens come from somewhere else and do not say.
+    # whose tokens come from somewhere else and do not say. --tray-theme-scheme says the same to a raised panel, which takes the
+    # theme's light or dark back inside the yellow card (00-base.css).
     css += ('/* ---------- Themes: light unless the theme is one of the dark ones ---------- */\n\n'
-            ':where(:root, [data-theme]) { color-scheme: light; }\n'
-            ':where(' + ', '.join(f'[data-theme="{th}"]' for th in dark_themes(tok)) + ') { color-scheme: dark; }\n\n')
+            ':where(:root, [data-theme]) { color-scheme: light; --tray-theme-scheme: light; }\n'
+            ':where(' + ', '.join(f'[data-theme="{th}"]' for th in dark_themes(tok)) + ') { color-scheme: dark; --tray-theme-scheme: dark; }\n\n')
     css += '\n'.join(p.read_text(encoding='utf-8').rstrip() + '\n' for p in css_parts)
     if re.search(r'</style', css, re.I):
         problems.append('bundle.css holds a literal </style')

@@ -224,3 +224,18 @@ def test_data_open(t):
 STATIC = True
 STATIC_PAGES = {'Dialog-open-at-load': 1440}
 STATIC_SKIP = {'Controlled': "the button that opens it and the day under it follow the preview's own React state, which a static page's own script keeps"}
+
+
+def test_in_an_ink_card(t):
+    """A dialog written inside the ink card or the yellow one is a raised panel of the page: the theme's ink on the theme's
+    raised fill, not the card's ink on it."""
+    for theme in ('light', 'dark'):
+        pg = t.open(theme=theme)
+        for kind in ('inverse', 'accent'):
+            got = pg.evaluate('''(kind) => { const card = document.createElement('section'); card.className = 'tray-card tray-card--' + kind;
+                card.innerHTML = '<dialog class="tray-dialog" aria-label="Rename"><p class="tray-dialog__text">Give the batch a new name.</p></dialog>';
+                document.body.append(card); const d = card.querySelector('dialog'); d.showModal();
+                const probe = document.createElement('i'); probe.style.color = 'var(--ink)'; document.documentElement.append(probe);
+                const r = [getComputedStyle(d).color, getComputedStyle(probe).color, getComputedStyle(d).backgroundColor, getComputedStyle(d.firstChild).color];
+                probe.remove(); d.close(); card.remove(); return r; }''', kind)
+            t.check(f'{theme}, inside the {kind} card: the theme\'s ink on the theme\'s raised fill', got[0] == got[1] and got[0] != got[2] and got[3] != got[2], got)

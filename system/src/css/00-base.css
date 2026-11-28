@@ -13,6 +13,8 @@
 }
 /* A part of a page in another theme: data-theme on any element declares the grounds again for what is inside it.
    Whether the theme is light or dark comes with its tokens. */
+/* The theme's own colours, kept under names no card overrides, for a raised panel to take back (see Grounds). */
+:root, [data-theme]:not(:root) { --tray-theme-page: var(--page); --tray-theme-surface: var(--surface); --tray-theme-ink: var(--ink); --tray-theme-ink-soft: var(--ink-soft); --tray-theme-ink-muted: var(--ink-muted); --tray-theme-ink-hint: var(--ink-hint); --tray-theme-hairline: var(--hairline); --tray-theme-track: var(--track); --tray-theme-rule-strong: var(--rule-strong); --tray-theme-control-off: var(--control-off); --tray-theme-danger: var(--danger); --tray-theme-success: var(--success); --tray-theme-on-danger: var(--on-danger); --tray-theme-code-comment: var(--code-comment); --tray-theme-code-keyword: var(--code-keyword); --tray-theme-code-string: var(--code-string); --tray-theme-code-function: var(--code-function); --tray-theme-code-tag: var(--code-tag); --tray-theme-code-constant: var(--code-constant); --tray-theme-code-variable: var(--code-variable); }
 [data-theme]:not(:root) { --tray-ground: var(--page); --tray-fill: var(--surface); --tray-off: var(--control-off); --tray-on-ink: var(--page); --tray-outer-ink: var(--ink); --tray-ground-up: var(--page); --tray-fill-up: var(--surface); color: var(--ink); }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -71,6 +73,15 @@ mark { padding-inline: .12em; border-radius: var(--radius-mark); background: var
 .tray-card { --tray-ground: var(--surface); --tray-fill: var(--page); --tray-ground-up: var(--surface); --tray-fill-up: var(--page); padding: var(--card-pad); border-radius: var(--radius-card); background: var(--surface); }
 .tray-panel { --tray-ground: var(--page); --tray-fill: var(--surface); --tray-ground-up: var(--page); --tray-fill-up: var(--surface); padding: var(--space-7); border-radius: var(--radius-panel); background: var(--page); }
 .tray-raised { --tray-ground: var(--raised); --tray-fill: var(--surface); --tray-ground-up: var(--raised); --tray-fill-up: var(--surface); --tray-off: var(--ink-hint); background: var(--raised); box-shadow: var(--shadow-float); }
+
+/* A raised panel (a menu, a popover, a dialog, a toast) floats above the page and is part of no card: opened from the ink
+   card or the yellow one, it takes the theme's text and rules back, and reads as every other panel of the page. data-theme
+   or a ground class on the panel itself still wins. */
+:where(.tray-pop, .tray-raised, .tray-dialog, .tray-sheet, .tray-drawer, .tray-toast, .tray-command):not([data-theme], .tray-card--inverse, .tray-inverse, .tray-card--accent, .tray-island) {
+  color-scheme: var(--tray-theme-scheme, normal);
+  --page: var(--tray-theme-page); --surface: var(--tray-theme-surface); --ink: var(--tray-theme-ink); --ink-soft: var(--tray-theme-ink-soft); --ink-muted: var(--tray-theme-ink-muted); --ink-hint: var(--tray-theme-ink-hint); --hairline: var(--tray-theme-hairline); --track: var(--tray-theme-track); --rule-strong: var(--tray-theme-rule-strong); --control-off: var(--tray-theme-control-off); --danger: var(--tray-theme-danger); --success: var(--tray-theme-success); --on-danger: var(--tray-theme-on-danger); --code-comment: var(--tray-theme-code-comment); --code-keyword: var(--tray-theme-code-keyword); --code-string: var(--tray-theme-code-string); --code-function: var(--tray-theme-code-function); --code-tag: var(--tray-theme-code-tag); --code-constant: var(--tray-theme-code-constant); --code-variable: var(--tray-theme-code-variable);
+  --tray-on-ink: var(--page); --tray-outer-ink: var(--ink);
+}
 
 /* Yellow is an island: it, and everything on it, keeps the light palette in every theme. */
 .tray-card--accent, .tray-island {

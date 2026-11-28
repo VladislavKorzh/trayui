@@ -137,3 +137,85 @@ def test_parity_keys(t):
     r = t.open_react()
     drive(t, r, t.cell(r, 'Share'), 'react: ')
 
+
+
+LOW = '''(where) => { const box = document.createElement('div'); box.id = 'low'; box.style.cssText = 'position: fixed; inset-inline-start: 24px; ' + where;
+    box.innerHTML = '<span class="tray-anchor" data-tray="popover"><button class="tray-btn tray-btn--sm" type="button">Share low</button>'
+      + '<div class="tray-pop tray-pop--card"><p class="tray-pop__title">Share this note</p><p class="tray-pop__text">Anyone with the link can read it.</p>'
+      + '<input class="tray-input" aria-label="Low link" value="https://example.com/n/1"></div></span>';
+    document.body.append(box); TrayUI.init(box); }'''
+
+
+def test_side(t):
+    """A panel that does not fit under its trigger, but does above it, opens upward; the next opening chooses again."""
+    pg = t.open(width=1280, height=700)
+    pg.evaluate(LOW, 'inset-block-end: 24px;')
+    btn, panel = pg.locator('#low button'), pg.locator('#low .tray-pop')
+    btn.click()
+    b, p = btn.bounding_box(), panel.bounding_box()
+    t.check('near the bottom of the window it opens upward', p['y'] + p['height'] <= b['y'] and panel.get_attribute('data-up') == '', (b, p))
+    t.eq('the page did not scroll to it', pg.evaluate('scrollY'), 0)
+    pg.keyboard.press('Escape')
+    t.settle(pg)
+    pg.evaluate('document.getElementById("low").style.cssText += "inset-block-end: auto; inset-block-start: 24px;"')
+    btn.click()
+    b, p = btn.bounding_box(), panel.bounding_box()
+    t.check('moved to the top, the next opening is below again', p['y'] > b['y'] + b['height'] and not panel.evaluate('p => p.classList.contains("tray-pop--top") || p.hasAttribute("data-up")'), (b, p))
+    pg.keyboard.press('Escape')
+    t.settle(pg)
+    pg.set_viewport_size({'width': 1280, 'height': 240})
+    pg.evaluate('document.getElementById("low").style.cssText += "inset-block-start: 110px;"')
+    btn.click()
+    b, p = btn.bounding_box(), panel.bounding_box()
+    t.check('fitting on neither side, it stays below, where the page can scroll to it', p['y'] > b['y'] + b['height'] and panel.get_attribute('data-up') is None, (b, p))
+    pg.keyboard.press('Escape')
+    t.settle(pg)
+    pg.set_viewport_size({'width': 1280, 'height': 700})
+    pg.evaluate('document.getElementById("low").style.cssText += "inset-block-start: 24px;"')
+    panel.evaluate('p => p.classList.add("tray-pop--top")')
+    btn.click()
+    b, p = btn.bounding_box(), panel.bounding_box()
+    t.check('tray-pop--top from the markup stays above, with room below', p['y'] + p['height'] <= b['y'] and panel.get_attribute('data-up') is None, (b, p))
+    pg.keyboard.press('Escape')
+    t.settle(pg)
+    pg.set_viewport_size({'width': 1280, 'height': 900})
+    t.check('and keeps its class when it closes', panel.evaluate('p => p.classList.contains("tray-pop--top")'))
+
+
+INK = '''(kind) => { const card = document.createElement('section'); card.id = 'ground'; card.className = 'tray-card tray-card--' + kind;
+    card.innerHTML = '<span class="tray-anchor" data-tray="menu"><button class="tray-btn tray-btn--quiet tray-btn--sm" type="button">Actions</button>'
+      + '<div class="tray-pop"><div class="tray-list"><button class="tray-option" role="menuitem" type="button"><span class="tray-option__text">Duplicate</span></button>'
+      + '<button class="tray-option tray-option--danger" role="menuitem" type="button"><span class="tray-option__text">Delete</span></button></div></div></span>'
+      + '<span class="tray-anchor" data-tray="menu"><button class="tray-btn tray-btn--quiet tray-btn--sm" type="button">Pinned</button>'
+      + '<div class="tray-pop" data-theme="dark"><div class="tray-list"><button class="tray-option" role="menuitem" type="button"><span class="tray-option__text">Archive</span></button></div></div></span>';
+    document.querySelector('.tray-demo').prepend(card); TrayUI.init(card); }'''
+COLOURS = '''(p) => { const o = p.querySelector('.tray-option'), d = p.querySelector('.tray-option--danger'), s = getComputedStyle(p), v = (n) => s.getPropertyValue(n).trim();
+    const probe = document.createElement('i'); probe.style.color = 'var(--ink)'; document.documentElement.append(probe);
+    const theme = getComputedStyle(probe).color; probe.remove();
+    return { bg: s.backgroundColor, ink: getComputedStyle(o).color, danger: d ? getComputedStyle(d).color : null, scheme: s.colorScheme, theme }; }'''
+
+
+def test_grounds(t):
+    """A panel opened from the ink card or the yellow one reads as every other panel of the page: the theme's raised fill
+    and the theme's ink, whatever the card around its trigger. data-theme on the panel still wins."""
+    plain = {}
+    for theme in ('light', 'dark'):
+        pg = t.open(theme=theme)
+        plain[theme] = pg.evaluate('() => { const s = getComputedStyle(document.documentElement); return s.getPropertyValue("--danger").trim(); }')
+        for kind in ('inverse', 'accent'):
+            pg.evaluate(INK, kind)
+            g = pg.locator('#ground')
+            btn, panel = g.locator('> span >> nth=0').locator('> button'), g.locator('> span >> nth=0').locator('> .tray-pop')
+            btn.click()
+            c = panel.evaluate(COLOURS)
+            t.check(f'{theme}, from the {kind} card: the theme\'s raised fill and the theme\'s ink', c['ink'] == c['theme'] and c['bg'] != c['ink'] and c['scheme'] == ('dark' if theme == 'dark' else 'light'), c)
+            t.check(f'{theme}, from the {kind} card: a danger item takes the theme\'s red', c['danger'] != c['ink'], c)
+            t.scan(pg, f'{theme.capitalize()}, a menu open in the {kind} card', include='#ground')
+            pg.keyboard.press('Escape')
+            t.settle(pg)
+            g.locator('> span >> nth=1').locator('> button').click()
+            pinned = g.locator('> span >> nth=1').locator('> .tray-pop').evaluate('p => [getComputedStyle(p).backgroundColor, getComputedStyle(p.querySelector(".tray-option")).color]')
+            t.eq(f'{theme}, from the {kind} card: a panel with data-theme="dark" stays dark', pinned, ['rgb(38, 38, 36)', 'rgb(244, 243, 240)'])
+            pg.keyboard.press('Escape')
+            t.settle(pg)
+            pg.evaluate('document.getElementById("ground").remove()')
